@@ -119,7 +119,7 @@ public final class ImmutableVflBlockOperator {
         String startLogId = UUID.randomUUID().toString();
 
         // Create sub-block
-        ImmutableVflBlockOperator block = new ImmutableVflBlockOperator(subBlockId, buffer);
+        ImmutableVflBlockOperator block = buffer.createBlock(this.blockId, subBlockId, blockName);
 
         // Create START log
         buffer.createLog(startLogId, this.blockId, this.latestLogId,
@@ -127,7 +127,7 @@ public final class ImmutableVflBlockOperator {
 
         // Start async operation (fire-and-forget)
         fn.apply(block)
-                .whenComplete((result, throwable) -> {
+                .whenComplete((_, throwable) -> {
                     String endLogId = UUID.randomUUID().toString();
                     String message = throwable != null ?
                             "Failed: " + throwable.getMessage() :
