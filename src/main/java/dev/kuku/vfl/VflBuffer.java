@@ -5,12 +5,19 @@ import org.json.JSONObject;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class VflBuffer {
     private final Map<String, VflBlock> blocks;
     private final Map<String, VflLog> logs;
+
+    // DateTimeFormatter for human-readable timestamps
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS 'UTC'")
+                    .withZone(ZoneOffset.UTC);
 
     public VflBuffer(int bufferSize) {
         blocks = new HashMap<>();
@@ -45,6 +52,13 @@ public class VflBuffer {
         return log;
     }
 
+    /**
+     * Converts UTC milliseconds timestamp to human-readable format
+     */
+    private String formatTimestamp(long timestampMillis) {
+        return TIMESTAMP_FORMATTER.format(Instant.ofEpochMilli(timestampMillis));
+    }
+
     public String flushToJSON() {
         JSONObject root = new JSONObject();
 
@@ -70,7 +84,11 @@ public class VflBuffer {
                 log.getLogValue().ifPresent(value -> logObj.put("value", value));
                 log.getBlockPointers().ifPresent(pointers ->
                         logObj.put("blockPointers", new JSONArray(pointers)));
+
+                // Add both raw timestamp and human-readable format
                 logObj.put("timestamp", log.getTimeStamp());
+                logObj.put("timestampFormatted", formatTimestamp(log.getTimeStamp()));
+
                 logsArray.put(logObj);
             }
             blockObj.put("logs", logsArray);
@@ -92,8 +110,10 @@ public class VflBuffer {
                     log.getLogValue().ifPresent(value -> logObj.put("value", value));
                     log.getBlockPointers().ifPresent(pointers ->
                             logObj.put("blockPointers", new JSONArray(pointers)));
+
+                    // Add both raw timestamp and human-readable format
                     logObj.put("timestamp", log.getTimeStamp());
-                    orphanedLogsArray.put(logObj);
+                    logObj.put("timestampFormatted", formatTimestamp(log.getTimeStamp()));
                 });
 
         if (orphanedLogsArray.length() > 0) {
