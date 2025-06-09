@@ -3,24 +3,41 @@ package dev.kuku;
 import dev.kuku.vfl.VflBlockOperator;
 import dev.kuku.vfl.VflClientBuilder;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Main {
     public static void main(String[] args) {
-        rootOperation();
-    }
-
-    public static void rootOperation() {
         var client = VflClientBuilder.start().build();
-        client.startRootBlock("root", a -> {
-            a.log("start root block");
-            a.log("Next block will be nested block");
-            double ans = a.log(vflBlockOperator -> sum(1, 2, vflBlockOperator), "Adding 1 and 2", aDouble -> "Sum result is " + aDouble, "sum");
-            System.out.println("GGEZ");
-            return null;
-        });
+        client.startRootBlock("Root Block", Main::rootOperation);
+        var json = client.buffer.flushToJSON();
+        System.out.println(json);
     }
 
-    public static double sum(double a, double b, VflBlockOperator block) {
-        block.log("sum " + a + " + " + b + " is " + (a + b));
-        return a + b;
+    public static void rootOperation(VflBlockOperator vfl) {
+        vfl = vfl.log("Root operation started");
+
+        // Fire-and-forget async operation
+        vfl.log(
+                Main::asyncOperation,
+                "Running Async operation",
+                () -> "Fire and forget operation complete",
+                "Fire and Forget Operation"
+        );
+
+        // Continue with root operation (prints before async completes)
+        vfl = vfl.log("Root operation continuing while async runs...");
+        vfl.log("Root operation finished");
+    }
+
+    public static void asyncOperation(VflBlockOperator a) {
+        CompletableFuture.runAsync(() -> {
+            VflBlockOperator current = a.log("Async operation started");
+            try {
+                Thread.sleep(2000); // Simulate async work
+                current.log("Async operation completed after 2 seconds");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
     }
 }
