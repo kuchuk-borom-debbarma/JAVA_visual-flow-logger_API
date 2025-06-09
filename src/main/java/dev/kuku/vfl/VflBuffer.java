@@ -4,6 +4,7 @@ import javax.management.openmbean.KeyAlreadyExistsException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 class VflBuffer {
     private Map<String, VflBlock> blocks;
@@ -33,7 +34,7 @@ class VflBuffer {
 
 
 
-    public VflLog createLog(String logId, String blockId, String parentLogId, VflLogType logType, String logValue, String[] blockPointers) {
+    public VflLog createLog(String logId, String blockId, String parentLogId, VflLogType logType, String logValue, Set<String> blockPointers) {
         if (logs.containsKey(logId)) {
             throw new KeyAlreadyExistsException("Log ID " + logId + " already exists");
         }

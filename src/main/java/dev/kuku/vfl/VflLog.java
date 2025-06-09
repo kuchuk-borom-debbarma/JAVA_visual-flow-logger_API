@@ -1,22 +1,20 @@
 package dev.kuku.vfl;
 
 import java.util.Optional;
+import java.util.Set;
 
- class VflLog {
+class VflLog {
     private final String id;
     private final String blockId;
     private final String parentLogId;
     private final VflLogType logType;
     private final String logValue;
-    private final String[] blockPointers;
+    private final Set<String> blockPointers;
     private final long timeStamp;
 
-    public VflLog(String id, String blockId, String parentLogId, VflLogType logType, String logValue, String[] blockPointers, long timeStamp) {
+    public VflLog(String id, String blockId, String parentLogId, VflLogType logType, String logValue, Set<String> blockPointers, long timeStamp) {
         if (id == null || blockId == null) {
             throw new IllegalArgumentException("id, blockId can not be null");
-        }
-        if (blockPointers == null) {
-            blockPointers = new String[0];
         }
         this.id = id;
         this.blockId = blockId;
@@ -47,8 +45,8 @@ import java.util.Optional;
         return Optional.ofNullable(logValue);
     }
 
-    public String[] getBlockPointers() {
-        return blockPointers;
+    public Optional<Set<String>> getBlockPointers() {
+        return Optional.ofNullable(blockPointers);
     }
 
     public long getTimeStamp() {
