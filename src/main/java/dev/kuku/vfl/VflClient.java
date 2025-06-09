@@ -4,12 +4,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class VflClient {
-    public final VflBuffer buffer;
-
-    public VflClient(VflBuffer buffer) {
-        this.buffer = buffer;
-    }
+public record VflClient(VflBuffer buffer) {
 
     /**
      * Starts a root block for operations that return a value
@@ -35,5 +30,9 @@ public class VflClient {
         String id = UUID.randomUUID().toString();
         var block = buffer.createBlock(null, id, blockName);
         fn.accept(block);
+    }
+
+    public ImmutableVflBlockOperator startSubBlock(String blockName) {
+        return buffer.createBlock(null, UUID.randomUUID().toString(), blockName);
     }
 }
