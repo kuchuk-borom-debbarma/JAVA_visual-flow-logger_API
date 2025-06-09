@@ -24,22 +24,13 @@ public class VflBuffer {
         logs = new HashMap<>();
     }
 
-    public VflBlockOperator createBlock(String parentBlockId, String id, String blockName) {
+    public ImmutableVflBlockOperator createBlock(String parentBlockId, String id, String blockName) {
         if (blocks.containsKey(id)) {
             throw new KeyAlreadyExistsException("Block ID " + id + " already exists");
         }
         var block = new VflBlock(parentBlockId, id, blockName);
         blocks.put(id, block);
-        return new VflBlockOperator(id, this);
-    }
-
-    public VflBlockOperator createBlock(String parentBlockId, String id, String blockName, String latestLogId) {
-        if (blocks.containsKey(id)) {
-            throw new KeyAlreadyExistsException("Block ID " + id + " already exists");
-        }
-        var block = new VflBlock(parentBlockId, id, blockName);
-        blocks.put(id, block);
-        return new VflBlockOperator(id, this, latestLogId);
+        return new ImmutableVflBlockOperator(id, this);
     }
 
 
