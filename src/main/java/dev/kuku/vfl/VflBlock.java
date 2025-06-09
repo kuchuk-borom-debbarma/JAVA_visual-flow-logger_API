@@ -2,8 +2,7 @@ package dev.kuku.vfl;
 
 import java.util.Optional;
 
-
- class VflBlock {
+class VflBlock {
     private final String parentBlockId;
     private final String id;
     private final String blockName;

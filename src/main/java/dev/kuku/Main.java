@@ -13,7 +13,7 @@ public class Main {
         client.startRootBlock("root", a -> {
             a.log("start root block");
             a.log("Next block will be nested block");
-            double ans = a.startNestedBlock("sum", b -> sum(1, 2, b));
+            double ans = a.log(o -> "Sum is " + o, () -> a.startNestedBlock("summer", vflBlockOperator -> sum(10, 2, vflBlockOperator)));
             a.log("sum result is " + ans);
             System.out.println("GGEZ");
             return "a";
