@@ -16,8 +16,9 @@ public class Main {
     //We need to update VFLBlockOperator per log
     public static void testSimple(VisFlowLogger logger) {
         logger.log("Test Simple stated");
+        int sum = logger.logWithResult(l -> sum(1, 2, l), integer -> "Result is " + integer);
+        logger.log("so after sum we have " + sum);
         logger.log("Test Simple completed");
-        int sum = logger.logWithResult("Sum", l -> sum(1, 2, l), integer -> "Result is " + integer);
     }
 
     public static int sum(int a, int b, VisFlowLogger logger) {
