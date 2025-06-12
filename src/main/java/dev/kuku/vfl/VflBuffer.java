@@ -11,8 +11,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class VflBuffer {
-    private final Map<String, VflBlock> blocks;
-    private final Map<String, VflLog> logs;
+    private final Map<String, VflBlockDataType> blocks;
+    private final Map<String, VflLogDataType> logs;
 
     // DateTimeFormatter for human-readable timestamps
     private static final DateTimeFormatter TIMESTAMP_FORMATTER =
@@ -24,21 +24,21 @@ public class VflBuffer {
         logs = new HashMap<>();
     }
 
-    public ImmutableVflBlockOperator createBlock(String parentBlockId, String id, String blockName) {
+    public VflLogger createBlock(String parentBlockId, String id, String blockName) {
         if (blocks.containsKey(id)) {
             throw new KeyAlreadyExistsException("Block ID " + id + " already exists");
         }
-        var block = new VflBlock(parentBlockId, id, blockName);
+        var block = new VflBlockDataType(parentBlockId, id, blockName);
         blocks.put(id, block);
-        return new ImmutableVflBlockOperator(id, this);
+        return new VflLogger(id, this);
     }
 
 
-    public VflLog createLog(String logId, String blockId, String parentLogId, VflLogType logType, String logValue, Set<String> blockPointers) {
+    public VflLogDataType createLog(String logId, String blockId, String parentLogId, VflLogType logType, String logValue, Set<String> blockPointers) {
         if (logs.containsKey(logId)) {
             throw new KeyAlreadyExistsException("Log ID " + logId + " already exists");
         }
-        var log = new VflLog(logId, blockId, parentLogId, logType, logValue, blockPointers, Instant.now().toEpochMilli());
+        var log = new VflLogDataType(logId, blockId, parentLogId, logType, logValue, blockPointers, Instant.now().toEpochMilli());
         logs.put(logId, log);
         return log;
     }
@@ -54,20 +54,20 @@ public class VflBuffer {
         JSONObject root = new JSONObject();
 
         // Get blocks in hierarchical order
-        List<VflBlock> orderedBlocks = getBlocksInHierarchicalOrder();
+        List<VflBlockDataType> orderedBlocks = getBlocksInHierarchicalOrder();
 
         // Add blocks with their logs nested inside
         JSONArray blocksArray = new JSONArray();
-        for (VflBlock block : orderedBlocks) {
+        for (VflBlockDataType block : orderedBlocks) {
             JSONObject blockObj = new JSONObject();
             blockObj.put("id", block.getId());
             block.getParentBlockId().ifPresent(parentId -> blockObj.put("parentBlockId", parentId));
             blockObj.put("name", block.getBlockName());
 
             // Add logs for this block in hierarchical order
-            List<VflLog> blockLogs = getLogsForBlockInHierarchicalOrder(block.getId());
+            List<VflLogDataType> blockLogs = getLogsForBlockInHierarchicalOrder(block.getId());
             JSONArray logsArray = new JSONArray();
-            for (VflLog log : blockLogs) {
+            for (VflLogDataType log : blockLogs) {
                 JSONObject logObj = new JSONObject();
                 logObj.put("id", log.getId());
                 log.getParentLogId().ifPresent(parentId -> logObj.put("parentLogId", parentId));
@@ -114,21 +114,21 @@ public class VflBuffer {
         return root.toString(4);
     }
 
-    private List<VflBlock> getBlocksInHierarchicalOrder() {
-        List<VflBlock> result = new ArrayList<>();
+    private List<VflBlockDataType> getBlocksInHierarchicalOrder() {
+        List<VflBlockDataType> result = new ArrayList<>();
         Set<String> processed = new HashSet<>();
 
         // First, add all root blocks (blocks with no parent)
-        List<VflBlock> rootBlocks = blocks.values().stream()
+        List<VflBlockDataType> rootBlocks = blocks.values().stream()
                 .filter(block -> block.getParentBlockId().isEmpty())
                 .collect(Collectors.toList());
 
-        for (VflBlock rootBlock : rootBlocks) {
+        for (VflBlockDataType rootBlock : rootBlocks) {
             addBlockAndChildrenRecursively(rootBlock, result, processed);
         }
 
         // Add any remaining blocks that might have invalid parent references
-        for (VflBlock block : blocks.values()) {
+        for (VflBlockDataType block : blocks.values()) {
             if (!processed.contains(block.getId())) {
                 result.add(block);
             }
@@ -137,7 +137,7 @@ public class VflBuffer {
         return result;
     }
 
-    private void addBlockAndChildrenRecursively(VflBlock block, List<VflBlock> result, Set<String> processed) {
+    private void addBlockAndChildrenRecursively(VflBlockDataType block, List<VflBlockDataType> result, Set<String> processed) {
         if (processed.contains(block.getId())) {
             return; // Avoid infinite loops in case of circular references
         }
@@ -146,36 +146,36 @@ public class VflBuffer {
         processed.add(block.getId());
 
         // Find and add all children of this block
-        List<VflBlock> children = blocks.values().stream()
+        List<VflBlockDataType> children = blocks.values().stream()
                 .filter(b -> b.getParentBlockId().isPresent() &&
                         b.getParentBlockId().get().equals(block.getId()))
                 .collect(Collectors.toList());
 
-        for (VflBlock child : children) {
+        for (VflBlockDataType child : children) {
             addBlockAndChildrenRecursively(child, result, processed);
         }
     }
 
-    private List<VflLog> getLogsForBlockInHierarchicalOrder(String blockId) {
-        List<VflLog> result = new ArrayList<>();
+    private List<VflLogDataType> getLogsForBlockInHierarchicalOrder(String blockId) {
+        List<VflLogDataType> result = new ArrayList<>();
         Set<String> processed = new HashSet<>();
 
         // Get all logs for this block
-        List<VflLog> blockLogs = logs.values().stream()
+        List<VflLogDataType> blockLogs = logs.values().stream()
                 .filter(log -> log.getBlockId().equals(blockId))
                 .collect(Collectors.toList());
 
         // First, add all root logs (logs with no parent)
-        List<VflLog> rootLogs = blockLogs.stream()
+        List<VflLogDataType> rootLogs = blockLogs.stream()
                 .filter(log -> log.getParentLogId().isEmpty())
                 .collect(Collectors.toList());
 
-        for (VflLog rootLog : rootLogs) {
+        for (VflLogDataType rootLog : rootLogs) {
             addLogAndChildrenRecursively(rootLog, blockLogs, result, processed);
         }
 
         // Add any remaining logs that might have invalid parent references
-        for (VflLog log : blockLogs) {
+        for (VflLogDataType log : blockLogs) {
             if (!processed.contains(log.getId())) {
                 result.add(log);
             }
@@ -184,8 +184,8 @@ public class VflBuffer {
         return result;
     }
 
-    private void addLogAndChildrenRecursively(VflLog log, List<VflLog> allBlockLogs,
-                                              List<VflLog> result, Set<String> processed) {
+    private void addLogAndChildrenRecursively(VflLogDataType log, List<VflLogDataType> allBlockLogs,
+                                              List<VflLogDataType> result, Set<String> processed) {
         if (processed.contains(log.getId())) {
             return; // Avoid infinite loops in case of circular references
         }
@@ -194,12 +194,12 @@ public class VflBuffer {
         processed.add(log.getId());
 
         // Find and add all children of this log within the same block
-        List<VflLog> children = allBlockLogs.stream()
+        List<VflLogDataType> children = allBlockLogs.stream()
                 .filter(l -> l.getParentLogId().isPresent() &&
                         l.getParentLogId().get().equals(log.getId()))
                 .collect(Collectors.toList());
 
-        for (VflLog child : children) {
+        for (VflLogDataType child : children) {
             addLogAndChildrenRecursively(child, allBlockLogs, result, processed);
         }
     }

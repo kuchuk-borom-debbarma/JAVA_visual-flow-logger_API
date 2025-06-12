@@ -6,18 +6,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 
-public final class ImmutableVflBlockOperator {
+public final class VflLogger {
     private final String blockId;
     private final VflBuffer buffer;
     private final String latestLogId; // Final field - immutable!
 
-    public ImmutableVflBlockOperator(String blockId, VflBuffer buffer) {
+    public VflLogger(String blockId, VflBuffer buffer) {
         this.blockId = blockId;
         this.buffer = buffer;
         this.latestLogId = null;
     }
 
-    public ImmutableVflBlockOperator(String blockId, VflBuffer buffer, String latestLogId) {
+    public VflLogger(String blockId, VflBuffer buffer, String latestLogId) {
         this.blockId = blockId;
         this.buffer = buffer;
         this.latestLogId = latestLogId;
@@ -26,18 +26,18 @@ public final class ImmutableVflBlockOperator {
     /**
      * Add a log and return NEW instance with updated latestLogId
      */
-    public ImmutableVflBlockOperator log(String message) {
+    public VflLogger log(String message) {
         String logId = UUID.randomUUID().toString();
         var log = buffer.createLog(logId, this.blockId, this.latestLogId, VflLogType.MESSAGE, message, null);
         // Return NEW instance - no mutation!
-        return new ImmutableVflBlockOperator(this.blockId, this.buffer, log.getId());
+        return new VflLogger(this.blockId, this.buffer, log.getId());
     }
 
     /**
      * Execute block and return NEW instance with updated chain
      */
     public <T> BlockResult<T> log(
-            Function<ImmutableVflBlockOperator, BlockResult<T>> fn,
+            Function<VflLogger, BlockResult<T>> fn,
             String preBlockMessage,
             Function<T, String> postBlockMessage,
             String blockName
@@ -46,7 +46,7 @@ public final class ImmutableVflBlockOperator {
         String startLogId = UUID.randomUUID().toString();
 
         // Create sub-block
-        ImmutableVflBlockOperator block = buffer.createBlock(this.blockId, subBlockId, blockName);
+        VflLogger block = buffer.createBlock(this.blockId, subBlockId, blockName);
 
         // Create START log
         buffer.createLog(startLogId, this.blockId, this.latestLogId,
@@ -61,7 +61,7 @@ public final class ImmutableVflBlockOperator {
                 VflLogType.END, postBlockMessage.apply(result.value()), Set.of(subBlockId));
 
         // Return result with NEW parent instance
-        ImmutableVflBlockOperator newParent = new ImmutableVflBlockOperator(this.blockId, this.buffer, startLogId);
+        VflLogger newParent = new VflLogger(this.blockId, this.buffer, startLogId);
         return new BlockResult<>(result.value(), newParent);
     }
 
@@ -69,7 +69,7 @@ public final class ImmutableVflBlockOperator {
      * Async version - returns CompletableFuture with new instance
      */
     public <T> CompletableFuture<BlockResult<T>> logAsync(
-            Function<ImmutableVflBlockOperator, CompletableFuture<T>> fn,
+            Function<VflLogger, CompletableFuture<T>> fn,
             String preBlockMessage,
             Function<T, String> postBlockMessage,
             String blockName
@@ -78,14 +78,14 @@ public final class ImmutableVflBlockOperator {
         String startLogId = UUID.randomUUID().toString();
 
         // Create sub-block
-        ImmutableVflBlockOperator block = buffer.createBlock(this.blockId, subBlockId, blockName);
+        VflLogger block = buffer.createBlock(this.blockId, subBlockId, blockName);
 
         // Create START log immediately
         buffer.createLog(startLogId, this.blockId, this.latestLogId,
                 VflLogType.SUB_BLOCK_START, preBlockMessage, Set.of(subBlockId));
 
         // Create new parent instance immediately (for ordering)
-        ImmutableVflBlockOperator newParent = new ImmutableVflBlockOperator(this.blockId, this.buffer, startLogId);
+        VflLogger newParent = new VflLogger(this.blockId, this.buffer, startLogId);
 
         // Execute async function
         return fn.apply(block)
@@ -110,8 +110,8 @@ public final class ImmutableVflBlockOperator {
     /**
      * Fire-and-forget async - returns new instance immediately
      */
-    public ImmutableVflBlockOperator logAsyncFireAndForget(
-            Function<ImmutableVflBlockOperator, CompletableFuture<Void>> fn,
+    public VflLogger logAsyncFireAndForget(
+            Function<VflLogger, CompletableFuture<Void>> fn,
             String preBlockMessage,
             String blockName
     ) {
@@ -119,7 +119,7 @@ public final class ImmutableVflBlockOperator {
         String startLogId = UUID.randomUUID().toString();
 
         // Create sub-block
-        ImmutableVflBlockOperator block = buffer.createBlock(this.blockId, subBlockId, blockName);
+        VflLogger block = buffer.createBlock(this.blockId, subBlockId, blockName);
 
         // Create START log
         buffer.createLog(startLogId, this.blockId, this.latestLogId,
@@ -137,10 +137,10 @@ public final class ImmutableVflBlockOperator {
                 });
 
         // Return new instance immediately
-        return new ImmutableVflBlockOperator(this.blockId, this.buffer, startLogId);
+        return new VflLogger(this.blockId, this.buffer, startLogId);
     }
 
     // Helper record for returning both value and new VFL instance
-    public record BlockResult<T>(T value, ImmutableVflBlockOperator vfl) {
+    public record BlockResult<T>(T value, VflLogger vfl) {
     }
 }

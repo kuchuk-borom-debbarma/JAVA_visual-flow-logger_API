@@ -14,7 +14,7 @@ public record VflClient(VflBuffer buffer) {
      * @param fn        Operation to execute that returns a value
      * @return The result of the operation
      */
-    public <T> T startRootBlock(String blockName, Function<ImmutableVflBlockOperator, T> fn) {
+    public <T> T startRootBlock(String blockName, Function<VflLogger, T> fn) {
         String id = UUID.randomUUID().toString();
         var block = buffer.createBlock(null, id, blockName);
         return fn.apply(block);
@@ -26,13 +26,13 @@ public record VflClient(VflBuffer buffer) {
      * @param blockName Name of the root block
      * @param fn        Void operation to execute
      */
-    public void startRootBlock(String blockName, Consumer<ImmutableVflBlockOperator> fn) {
+    public void startRootBlock(String blockName, Consumer<VflLogger> fn) {
         String id = UUID.randomUUID().toString();
         var block = buffer.createBlock(null, id, blockName);
         fn.accept(block);
     }
 
-    public ImmutableVflBlockOperator startSubBlock(String blockName) {
+    public VflLogger startSubBlock(String blockName) {
         return buffer.createBlock(null, UUID.randomUUID().toString(), blockName);
     }
 }
