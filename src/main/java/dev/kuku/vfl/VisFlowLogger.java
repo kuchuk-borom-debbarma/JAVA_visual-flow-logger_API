@@ -41,10 +41,10 @@ public class VisFlowLogger {
         }
     }
 
-    private String[] setupSubBlock(String blockName, String preFnMessage) {
+    private String[] setupSubBlock(String blockName, String preFnMessage, VflLogType logType) {
         String preLogId = UUID.randomUUID().toString();
         String subBlockId = UUID.randomUUID().toString();
-        VflLogDataType preLog = new VflLogDataType(preLogId, block.getId(), lastLogId, VflLogType.SUB_BLOCK_START, preFnMessage, Set.of(subBlockId), Instant.now().toEpochMilli());
+        VflLogDataType preLog = new VflLogDataType(preLogId, block.getId(), lastLogId, logType, preFnMessage, Set.of(subBlockId), Instant.now().toEpochMilli());
         VflBlockDataType subBlock = new VflBlockDataType(block.getId(), subBlockId, blockName);
         buffer.pushBlockToBuffer(subBlock);
         buffer.pushLogToBuffer(preLog);
@@ -53,7 +53,7 @@ public class VisFlowLogger {
     }
 
     public <T> void log(String blockName, String preFnMessage, Function<T, String> postFnMessage, Function<VisFlowLogger, T> fn) {
-        String[] blockInfo = setupSubBlock(blockName, preFnMessage);
+        String[] blockInfo = setupSubBlock(blockName, preFnMessage, VflLogType.SUB_BLOCK_START);
         String preLogId = blockInfo[0];
         String subBlockId = blockInfo[1];
 
@@ -64,7 +64,7 @@ public class VisFlowLogger {
     }
 
     public void log(String blockName, String preFnMessage, Function<Void, String> postFnMessage, Consumer<VisFlowLogger> fn) {
-        String[] blockInfo = setupSubBlock(blockName, preFnMessage);
+        String[] blockInfo = setupSubBlock(blockName, preFnMessage, VflLogType.SUB_BLOCK_START);
         String preLogId = blockInfo[0];
         String subBlockId = blockInfo[1];
 
@@ -73,4 +73,15 @@ public class VisFlowLogger {
 
         logWithBlock(blockName, preFnMessage, postFnMessage, null, subBlockId, preLogId);
     }
+
+    public VisFlowLogger branchOff(String branchName, String message) {
+        String[] blockInfo = setupSubBlock(branchName, message, VflLogType.BRANCH);
+        String preLogId = blockInfo[0];
+        String branchBlockId = blockInfo[1];
+
+        VflBlockDataType branchBlock = new VflBlockDataType(block.getId(), branchBlockId, branchName);
+        return new VisFlowLogger(branchBlock, buffer);
+    }
+
+    //TODO showing async operation that joins back is left
 }
