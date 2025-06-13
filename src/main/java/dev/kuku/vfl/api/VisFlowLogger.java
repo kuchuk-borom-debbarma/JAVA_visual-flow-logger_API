@@ -1,4 +1,11 @@
-package dev.kuku.vfl;
+package dev.kuku.vfl.api;
+
+import dev.kuku.vfl.api.models.VflLogType;
+import dev.kuku.vfl.internal.VisFlowLogBuffer;
+import dev.kuku.vfl.api.models.VflBlockDataType;
+import dev.kuku.vfl.api.models.VflLogDataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.Set;
@@ -12,9 +19,11 @@ import java.util.function.Function;
 public class VisFlowLogger {
     private final VflBlockDataType block;
     private final VisFlowLogBuffer buffer;
+    Logger logger = LoggerFactory.getLogger(VisFlowLogger.class);
     private String lastLogId;
 
     public VisFlowLogger(VflBlockDataType block, VisFlowLogBuffer buffer) {
+        logger.debug("Create new logger with block {} and buffer {}", block, buffer);
         this.block = block;
         this.buffer = buffer;
     }
@@ -33,6 +42,7 @@ public class VisFlowLogger {
      * @param message what happened in this step (will appear in the diagram box)
      */
     public void log(String message) {
+        logger.debug("logging message {}", message);
         log(message, true);
     }
 
@@ -44,37 +54,18 @@ public class VisFlowLogger {
      *                             false = next step branches from the same point as this one (parallel operations)
      */
     public void log(String message, boolean continueSequentially) {
+        logger.debug("logging message {} with continueSequentially {}", message, continueSequentially);
+        logger.debug("Generating log ID");
         String logId = UUID.randomUUID().toString();
+        logger.debug("logId {}", logId);
         VflLogDataType log = new VflLogDataType(logId, block.getId(), lastLogId, VflLogType.MESSAGE, message, null, Instant.now().toEpochMilli());
+        logger.debug("Created log = {}", log);
+        logger.debug("Pushing log to buffer");
         buffer.pushLogToBuffer(log);
         if (continueSequentially) {
+            logger.debug("Setting lastLogId from {} to {}", lastLogId, logId);
             lastLogId = logId;
         }
-    }
-
-    /**
-     * Add a subprocess to the diagram that can be expanded/collapsed and returns a result.
-     * Block name is auto-generated based on calling method.
-     *
-     * @param operation  the work to do in this subprocess - you get a logger to track steps inside
-     * @param endMessage function that creates the completion message from the result
-     * @param <T>        the type of result your sub-process returns
-     */
-    public <T> T logWithResult(Function<VisFlowLogger, T> operation, Function<T, String> endMessage) {
-        return logWithResult(generateBlockName(), operation, endMessage, true);
-    }
-
-    /**
-     * Add a subprocess to the diagram that can be expanded/collapsed and returns a result.
-     * Block name is auto-generated based on calling method.
-     *
-     * @param operation            the work to do in this subprocess - you get a logger to track steps inside
-     * @param endMessage           function that creates the completion message from the result
-     * @param continueSequentially true = next step follows this sub-process in sequence (normal flow)
-     * @param <T>                  the type of result your sub-process returns
-     */
-    public <T> T logWithResult(Function<VisFlowLogger, T> operation, Function<T, String> endMessage, boolean continueSequentially) {
-        return logWithResult(generateBlockName(), operation, endMessage, continueSequentially);
     }
 
     /**
@@ -87,6 +78,7 @@ public class VisFlowLogger {
      * @param <T>            the type of result your sub-process returns
      */
     public <T> T logWithResult(String subProcessName, Function<VisFlowLogger, T> operation, Function<T, String> endMessage) {
+        logger.debug("logWithResult subProcessName {} operation {} endMessage {}", subProcessName, operation, endMessage);
         return logWithResult(subProcessName, operation, endMessage, true);
     }
 
@@ -100,38 +92,21 @@ public class VisFlowLogger {
      * @param <T>                  the type of result your sub-process returns
      */
     public <T> T logWithResult(String subProcessName, Function<VisFlowLogger, T> operation, Function<T, String> endMessage, boolean continueSequentially) {
+        logger.debug("logWithResult subProcessName {} operation {} endMessage {} continueSequentially {}", subProcessName, operation, endMessage, continueSequentially);
+        logger.debug("Setting up sub block");
         String[] blockInfo = setupSubBlock(subProcessName, VflLogType.SUB_BLOCK_START, continueSequentially);
         String preLogId = blockInfo[0];
         String subBlockId = blockInfo[1];
-
+        logger.debug("setup complete. preLogId = {}, subBlockId = {}", preLogId, subBlockId);
+        logger.debug("Creating sub block object");
         VflBlockDataType subBlock = new VflBlockDataType(block.getId(), subBlockId, subProcessName);
+        logger.debug("Created subBlock = {}", subBlock);
+        logger.debug("Calling operation with buffer {}", buffer);
         T result = operation.apply(new VisFlowLogger(subBlock, buffer));
-
+        logger.debug("Operation complete. result = {}", result);
+        logger.debug("Creating log for end of sub-process");
         logSubBlockCompletion(endMessage, result, subBlockId, preLogId);
         return result;
-    }
-
-    /**
-     * Add a sub-process to your diagram that doesn't return a result.
-     * Block name is auto-generated based on calling method.
-     *
-     * @param operation  the work to do in this sub-process - you get a logger to track steps inside
-     * @param endMessage function that creates the completion message (can use null for no end message)
-     */
-    public void logSubProcess(Consumer<VisFlowLogger> operation, Function<Void, String> endMessage) {
-        logSubProcess(generateBlockName(), operation, endMessage, true);
-    }
-
-    /**
-     * Add a sub-process to your diagram that doesn't return a result.
-     * Block name is auto-generated based on calling method.
-     *
-     * @param operation            the work to do in this sub-process - you get a logger to track steps inside
-     * @param endMessage           function that creates the completion message (can use null for no end message)
-     * @param continueSequentially true = next step follows this sub-process in sequence (normal flow)
-     */
-    public void logSubProcess(Consumer<VisFlowLogger> operation, Function<Void, String> endMessage, boolean continueSequentially) {
-        logSubProcess(generateBlockName(), operation, endMessage, continueSequentially);
     }
 
     /**
@@ -143,6 +118,7 @@ public class VisFlowLogger {
      * @param endMessage     function that creates the completion message (can use null for no end message)
      */
     public void logSubProcess(String subProcessName, Consumer<VisFlowLogger> operation, Function<Void, String> endMessage) {
+        logger.debug("logSubProcess subProcessName {} operation {} endMessage {}", subProcessName, operation, endMessage);
         logSubProcess(subProcessName, operation, endMessage, true);
     }
 
@@ -155,13 +131,19 @@ public class VisFlowLogger {
      * @param continueSequentially true = next step follows this sub-process in sequence (normal flow)
      */
     public void logSubProcess(String subProcessName, Consumer<VisFlowLogger> operation, Function<Void, String> endMessage, boolean continueSequentially) {
+        logger.debug("logSubProcess subProcessName {} operation {} endMessage {} continueSequentially {}", subProcessName, operation, endMessage, continueSequentially);
+        logger.debug("Setting up sub block");
         String[] blockInfo = setupSubBlock(subProcessName, VflLogType.SUB_BLOCK_START, continueSequentially);
         String preLogId = blockInfo[0];
         String subBlockId = blockInfo[1];
+        logger.debug("setup complete. preLogId = {}, subBlockId = {}", preLogId, subBlockId);
+        logger.debug("Creating subBlock object");
 
         VflBlockDataType subBlock = new VflBlockDataType(block.getId(), subBlockId, subProcessName);
+        logger.debug("Created subBlock = {}", subBlock);
+        logger.debug("Calling operation with buffer {}", buffer);
         operation.accept(new VisFlowLogger(subBlock, buffer));
-
+        logger.debug("Operation complete. Running logSubBlockCompletion with endMessage {} and subBlockId {}", endMessage, subBlockId);
         logSubBlockCompletion(endMessage, null, subBlockId, preLogId);
     }
 
@@ -174,48 +156,13 @@ public class VisFlowLogger {
      * @return a new logger for tracking this parallel operation
      */
     public VisFlowLogger createBranch(String subProcessName) {
+        logger.debug("createBranch subProcessName {}", subProcessName);
         String[] blockInfo = setupSubBlock(subProcessName, VflLogType.SUB_BLOCK_START, false);
+        logger.debug("setup complete. preLogId = {}, subBlockId = {}", blockInfo[0], blockInfo[1]);
         String subBlockId = blockInfo[1];
         return new VisFlowLogger(new VflBlockDataType(this.block.getId(), subBlockId, subProcessName), buffer);
     }
 
-    /**
-     * Generate a block name based on the calling method.
-     * Format: ClassName_methodName@address
-     */
-    private String generateBlockName() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-        // Find the caller (skip this method and the calling logXXX method)
-        StackTraceElement caller = null;
-        for (int i = 2; i < stackTrace.length; i++) {
-            StackTraceElement element = stackTrace[i];
-            // Skip internal VisFlowLogger methods
-            if (!element.getClassName().equals(this.getClass().getName())) {
-                caller = element;
-                break;
-            }
-        }
-
-        if (caller == null) {
-            // Fallback if we can't determine the caller
-            return "UnknownCaller@" + System.identityHashCode(this);
-        }
-
-        String className = getSimpleClassName(caller.getClassName());
-        String methodName = caller.getMethodName();
-        String address = Integer.toHexString(System.identityHashCode(this)).toUpperCase();
-
-        return String.format("%s_%s@%s", className, methodName, address);
-    }
-
-    /**
-     * Extract simple class name from fully qualified class name.
-     */
-    private String getSimpleClassName(String fullyQualifiedName) {
-        int lastDotIndex = fullyQualifiedName.lastIndexOf('.');
-        return lastDotIndex >= 0 ? fullyQualifiedName.substring(lastDotIndex + 1) : fullyQualifiedName;
-    }
 
     /**
      * Internal method to handle sub-process completion logging. <br>
@@ -223,16 +170,25 @@ public class VisFlowLogger {
      * Adds postFnMessage if valid.
      */
     private <T> void logSubBlockCompletion(Function<T, String> postFnMessage, T result, String subBlockId, String preLogId) {
+        logger.debug("logSubBlockCompletion postFnMessage {} result {} subBlockId {} preLogId {}", postFnMessage, result, subBlockId, preLogId);
         try {
             String postFnMessageResult = null;
             if (postFnMessage != null) {
+                logger.debug("postFnMessage is not null. Calling postFnMessage with result {}", result);
                 postFnMessageResult = postFnMessage.apply(result);
+                logger.debug("postFnMessageResult is {}", postFnMessageResult);
             }
             String postLogId = UUID.randomUUID().toString();
+            logger.debug("Generated postLogId {}", postLogId);
             VflLogDataType postLog = new VflLogDataType(postLogId, block.getId(), preLogId, VflLogType.SUB_BLOCK_END, postFnMessageResult, Set.of(subBlockId), Instant.now().toEpochMilli());
+            logger.debug("Created postLog = {}", postLog);
+            logger.debug("Pushing postLog to buffer");
             buffer.pushLogToBuffer(postLog);
         } catch (Exception e) {
+            logger.error("Exception occurred while logging sub-process completion. Setting up exception log", e);
             VflLogDataType exceptionLog = new VflLogDataType(UUID.randomUUID().toString(), block.getId(), preLogId, VflLogType.SUB_BLOCK_EXCEPTION, e.getMessage(), Set.of(subBlockId), Instant.now().toEpochMilli());
+            logger.debug("Created exceptionLog = {}", exceptionLog);
+            logger.debug("Pushing exceptionLog to buffer");
             buffer.pushLogToBuffer(exceptionLog);
         }
 
@@ -244,13 +200,21 @@ public class VisFlowLogger {
      * Creates log stating the start of the block and adds both of them to buffer
      */
     private String[] setupSubBlock(String blockName, VflLogType logType, boolean continueSequentially) {
+        logger.debug("setupSubBlock blockName {} logType {} continueSequentially {}", blockName, logType, continueSequentially);
         String preLogId = UUID.randomUUID().toString();
+        logger.debug("Generated preLogId {}", preLogId);
         String subBlockId = UUID.randomUUID().toString();
+        logger.debug("Generated subBlockId {}", subBlockId);
         VflLogDataType preLog = new VflLogDataType(preLogId, block.getId(), lastLogId, logType, null, Set.of(subBlockId), Instant.now().toEpochMilli());
+        logger.debug("Created preLog = {}", preLog);
         VflBlockDataType subBlock = new VflBlockDataType(block.getId(), subBlockId, blockName);
+        logger.debug("Created subBlock = {}", subBlock);
+        logger.debug("Pushing subBlock to buffer");
         buffer.pushBlockToBuffer(subBlock);
+        logger.debug("Pushing preLog to buffer");
         buffer.pushLogToBuffer(preLog);
         if (continueSequentially) {
+            logger.debug("Setting lastLogId from {} to {}", lastLogId, preLogId);
             lastLogId = preLogId;
         }
         return new String[]{preLogId, subBlockId};

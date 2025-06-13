@@ -1,8 +1,8 @@
 package dev.kuku;
 
-import dev.kuku.vfl.DefaultBufferImpl;
-import dev.kuku.vfl.VflBlockDataType;
-import dev.kuku.vfl.VisFlowLogger;
+import dev.kuku.vfl.api.buffer.DefaultBufferImpl;
+import dev.kuku.vfl.api.models.VflBlockDataType;
+import dev.kuku.vfl.api.VisFlowLogger;
 
 import java.util.UUID;
 

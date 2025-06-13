@@ -1,4 +1,4 @@
-package dev.kuku.vfl;
+package dev.kuku.vfl.api.models;
 
 import java.util.Optional;
 import java.util.Set;
