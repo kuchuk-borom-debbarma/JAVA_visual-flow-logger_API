@@ -8,15 +8,16 @@ import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) {
-        var mainLogger = new VisFlowLogger(new VflBlockDataType(null, UUID.randomUUID().toString(), "MAIN"), new DefaultBufferImpl());
+        var mainLogger = new VisFlowLogger(new VflBlockDataType(null, UUID.randomUUID().toString(), "MAIN"), new DefaultBufferImpl(5, 5));
         testSimple(mainLogger);
+        mainLogger.shutdown();
 
     }
 
     //We need to update VFLBlockOperator per log
     public static void testSimple(VisFlowLogger logger) {
         logger.log("Test Simple stated");
-        int sum = logger.logWithResult(l -> sum(1, 2, l), integer -> "Result is " + integer);
+        int sum = logger.logWithResult("SUM", l -> sum(1, 2, l), integer -> "Result is " + integer);
         logger.log("so after sum we have " + sum);
         logger.log("Test Simple completed");
     }

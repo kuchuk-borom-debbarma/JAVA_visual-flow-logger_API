@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -149,6 +150,14 @@ public class VisFlowLogger {
 
         SubBlockInfo subBlockInfo = startSubBlock(subProcessName, false);
         return createSubLogger(subBlockInfo.blockId, subProcessName);
+    }
+
+    /**
+     * Flushes everything inside the buffer in blocking manner
+     */
+    public void shutdown() {
+        logger.info("Shutting down logger");
+        buffer.shutdown().join();
     }
 
     // Private helper methods

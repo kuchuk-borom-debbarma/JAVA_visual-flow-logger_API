@@ -13,7 +13,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DefaultBufferImpl implements VisFlowLogBuffer {
     private static final Logger logger = LoggerFactory.getLogger(DefaultBufferImpl.class);
@@ -24,19 +23,16 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
     private final int logBufferSize;
     private final Executor flushExecutor;
 
-    // Prevent multiple concurrent flushes
-    private final AtomicBoolean isFlushingLogs = new AtomicBoolean(false);
-    private final AtomicBoolean isFlushingBlocks = new AtomicBoolean(false);
-
     // For shutdown handling
     private volatile boolean isShuttingDown = false;
 
     public DefaultBufferImpl(int blockBufferSize, int logBufferSize) {
-        this.logs = Collections.synchronizedList(new ArrayList<>());
-        this.blocks = Collections.synchronizedList(new ArrayList<>());
+        this.logs = new ArrayList<>();
+        this.blocks = new ArrayList<>();
         this.blockBufferSize = blockBufferSize;
         this.logBufferSize = logBufferSize;
-        this.flushExecutor = Executors.newFixedThreadPool(2, r -> {
+        //We will run our flush operation in this thread
+        this.flushExecutor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "vfl-buffer-flush");
             t.setDaemon(true); // Don't prevent JVM shutdown
             return t;
@@ -44,65 +40,46 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
     }
 
     @Override
-    public CompletableFuture<Void> pushLogToBuffer(VflLogDataType log) {
+    public void pushLogToBuffer(VflLogDataType log) {
         if (isShuttingDown) {
             logger.warn("Attempted to add log during shutdown, ignoring");
-            return CompletableFuture.completedFuture(null);
+            return;
         }
-
         logs.add(log);
-
-        // Fire and forget - only flush if buffer is full
         if (logs.size() >= logBufferSize) {
             flushLogsAsync();
         }
-
-        return CompletableFuture.completedFuture(null);
     }
 
     @Override
-    public CompletableFuture<Void> pushBlockToBuffer(VflBlockDataType block) {
+    public void pushBlockToBuffer(VflBlockDataType block) {
         if (isShuttingDown) {
             logger.warn("Attempted to add block during shutdown, ignoring");
-            return CompletableFuture.completedFuture(null);
+            return;
         }
-
         blocks.add(block);
-
-        // Fire and forget - only flush if buffer is full
         if (blocks.size() >= blockBufferSize) {
             flushBlocksAsync();
         }
-
-        return CompletableFuture.completedFuture(null);
     }
 
-    private void flushLogsAsync() {
-        // Prevent multiple concurrent log flushes
-        if (!isFlushingLogs.compareAndSet(false, true)) {
-            logger.debug("Log flush already in progress, skipping");
-            return;
-        }
-
+    private synchronized void flushLogsAsync() {
+        //synchronized stops others to use this function when it is already running
         CompletableFuture.runAsync(() -> {
             try {
                 flushLogs();
-            } finally {
-                isFlushingLogs.set(false);
+            } catch (Exception e) {
+                logger.error("Async log flush failed", e);
             }
         }, flushExecutor);
     }
 
-    private void flushBlocksAsync() {
-        // Prevent multiple concurrent block flushes
-        if (!isFlushingBlocks.compareAndSet(false, true)) {
-            logger.debug("Block flush already in progress, skipping");
-            return;
-        }
-
+    private synchronized void flushBlocksAsync() {
         CompletableFuture.runAsync(() -> {
             try {
                 flushBlocks();
+            } catch (Exception e) {
+                logger.error("Async block flush failed", e);
             } finally {
                 isFlushingBlocks.set(false);
             }
@@ -122,19 +99,10 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
             logsToFlush = new ArrayList<>(logs);
             logs.clear();
         }
-
         try {
             // TODO: Replace with actual persistence logic
-            // For now, simulate some work
             Thread.sleep(100);
-
             logger.debug("Successfully flushed {} logs", logsToFlush.size());
-
-            // Here you would typically:
-            // - Send to database
-            // - Write to file
-            // - Send to external service
-            // - etc.
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -195,7 +163,11 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
     /**
      * Force flush all remaining logs and blocks.
      * This should be called during application shutdown.
+     * <p>
+     * This method DOES return a CompletableFuture because shutdown
+     * is a coordination operation that callers need to wait for.
      */
+    @Override
     public CompletableFuture<Void> shutdown() {
         logger.info("Shutting down buffer, flushing remaining data");
         isShuttingDown = true;
