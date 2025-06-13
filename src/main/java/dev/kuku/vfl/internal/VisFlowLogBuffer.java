@@ -19,5 +19,5 @@ public interface VisFlowLogBuffer {
     /**
      * Graceful shutdown - this IS appropriate to return a future.
      */
-    CompletableFuture<Void> shutdown();
+    CompletableFuture<Void> flushAll();
 }

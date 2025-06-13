@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -157,7 +156,7 @@ public class VisFlowLogger {
      */
     public void shutdown() {
         logger.info("Shutting down logger");
-        buffer.shutdown().join();
+        buffer.flushAll().join();
     }
 
     // Private helper methods

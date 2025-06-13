@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -63,8 +62,7 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
         }
     }
 
-    private synchronized void flushLogsAsync() {
-        //synchronized stops others to use this function when it is already running
+    private void flushLogsAsync() {
         CompletableFuture.runAsync(() -> {
             try {
                 flushLogs();
@@ -80,8 +78,6 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
                 flushBlocks();
             } catch (Exception e) {
                 logger.error("Async block flush failed", e);
-            } finally {
-                isFlushingBlocks.set(false);
             }
         }, flushExecutor);
     }
@@ -92,8 +88,6 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
         }
 
         logger.debug("Flushing {} logs", logs.size());
-
-        // Create a snapshot of current logs and clear the buffer
         List<VflLogDataType> logsToFlush;
         synchronized (logs) {
             logsToFlush = new ArrayList<>(logs);
@@ -168,7 +162,7 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
      * is a coordination operation that callers need to wait for.
      */
     @Override
-    public CompletableFuture<Void> shutdown() {
+    public CompletableFuture<Void> flushAll() {
         logger.info("Shutting down buffer, flushing remaining data");
         isShuttingDown = true;
 
