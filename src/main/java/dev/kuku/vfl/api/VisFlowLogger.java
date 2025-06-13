@@ -38,7 +38,7 @@ public class VisFlowLogger {
 
     /**
      * Add a step to the flow.
-     * This creates a box in diagram showing this step happened.
+     * This creates a box in the diagram showing this step happened.
      *
      * @param message what happened in this step (will appear in the diagram box)
      */
@@ -68,25 +68,25 @@ public class VisFlowLogger {
 
     /**
      * Add a subprocess to the diagram that can be expanded/collapsed and returns a result.
-     * This creates a nested section in the diagram showing the sub-process steps.
+     * This creates a nested section in the diagram showing the subprocess steps.
      *
-     * @param subProcessName name for this sub-process (appears as the sub-process title)
+     * @param subProcessName name for this subprocess (appears as the subprocess title)
      * @param operation      the work to do in this subprocess - you get a logger to track steps inside
      * @param endMessage     function that creates the completion message from the result
-     * @param <T>            the type of result your sub-process returns
+     * @param <T>            the type of result your subprocess returns
      */
     public <T> T logWithResult(String subProcessName, Function<VisFlowLogger, T> operation, Function<T, String> endMessage) {
         return logWithResult(subProcessName, operation, endMessage, true);
     }
 
     /**
-     * Add a sub-process to your diagram with control over the flow direction and returns a result.
+     * Add a subprocess to your diagram with control over the flow direction and returns a result.
      *
-     * @param subProcessName       name for this sub-process (appears as the sub-process title)
-     * @param operation            the work to do in this sub-process - you get a logger to track steps inside
+     * @param subProcessName       name for this subprocess (appears as the subprocess title)
+     * @param operation            the work to do in this subprocess - you get a logger to track steps inside
      * @param endMessage           function that creates the completion message from the result
-     * @param continueSequentially true = next step follows this sub-process in sequence (normal flow)
-     * @param <T>                  the type of result your sub-process returns
+     * @param continueSequentially true = next step follows this subprocess in sequence (normal flow)
+     * @param <T>                  the type of result your subprocess returns
      */
     public <T> T logWithResult(String subProcessName, Function<VisFlowLogger, T> operation, Function<T, String> endMessage, boolean continueSequentially) {
         logger.debug("Starting sub-process '{}' with result, continueSequentially={}", subProcessName, continueSequentially);
@@ -107,11 +107,11 @@ public class VisFlowLogger {
     }
 
     /**
-     * Add a sub-process to your diagram that doesn't return a result.
-     * This creates a nested section in your diagram showing the sub-process steps.
+     * Add a subprocess to your diagram that doesn't return a result.
+     * This creates a nested section in your diagram showing the subprocess steps.
      *
-     * @param subProcessName name for this sub-process (appears as the sub-process title)
-     * @param operation      the work to do in this sub-process - you get a logger to track steps inside
+     * @param subProcessName name for this `subprocess (appears as the subprocess title)
+     * @param operation      the work to do in this subprocess - you get a logger to track steps inside
      * @param endMessage     function that creates the completion message (can use null for no end message)
      */
     public void logSubProcess(String subProcessName, Consumer<VisFlowLogger> operation, Function<Void, String> endMessage) {
@@ -119,12 +119,12 @@ public class VisFlowLogger {
     }
 
     /**
-     * Add a sub-process to your diagram with control over the flow direction.
+     * Add a subprocess to your diagram with control over the flow direction.
      *
-     * @param subProcessName       name for this sub-process (appears as the sub-process title)
-     * @param operation            the work to do in this sub-process - you get a logger to track steps inside
+     * @param subProcessName       name for this subprocess (appears as the subprocess title)
+     * @param operation            the work to do in this subprocess - you get a logger to track steps inside
      * @param endMessage           function that creates the completion message (can use null for no end message)
-     * @param continueSequentially true = next step follows this sub-process in sequence (normal flow)
+     * @param continueSequentially true = next step follows this subprocess in sequence (normal flow)
      */
     public void logSubProcess(String subProcessName, Consumer<VisFlowLogger> operation, Function<Void, String> endMessage, boolean continueSequentially) {
         logger.debug("Starting sub-process '{}', continueSequentially={}", subProcessName, continueSequentially);
@@ -141,7 +141,7 @@ public class VisFlowLogger {
      * Create a separate logger for branching operations. Good for representing Async operations, events, Fire-Forget operations.
      * Use this when you want multiple operations to branch from the same point in your diagram.
      *
-     * @param subProcessName name for this parallel sub-process
+     * @param subProcessName name for this parallel subprocess
      * @return a new logger for tracking this parallel operation
      */
     public VisFlowLogger createBranch(String subProcessName) {
@@ -215,14 +215,7 @@ public class VisFlowLogger {
         buffer.pushLogToBuffer(exceptionLog);
     }
 
-    // Helper class to hold sub-block information
-    private static class SubBlockInfo {
-        final String preLogId;
-        final String blockId;
-
-        SubBlockInfo(String preLogId, String blockId) {
-            this.preLogId = preLogId;
-            this.blockId = blockId;
-        }
+    // Helper class to hold subblock information
+        private record SubBlockInfo(String preLogId, String blockId) {
     }
 }
