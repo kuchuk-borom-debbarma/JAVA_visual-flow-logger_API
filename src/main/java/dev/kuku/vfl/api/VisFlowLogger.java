@@ -1,9 +1,9 @@
 package dev.kuku.vfl.api;
 
-import dev.kuku.vfl.api.models.VflLogType;
-import dev.kuku.vfl.internal.VisFlowLogBuffer;
 import dev.kuku.vfl.api.models.VflBlockDataType;
 import dev.kuku.vfl.api.models.VflLogDataType;
+import dev.kuku.vfl.api.models.VflLogType;
+import dev.kuku.vfl.internal.VisFlowLogBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,6 +216,6 @@ public class VisFlowLogger {
     }
 
     // Helper class to hold subblock information
-        private record SubBlockInfo(String preLogId, String blockId) {
+    private record SubBlockInfo(String preLogId, String blockId) {
     }
 }

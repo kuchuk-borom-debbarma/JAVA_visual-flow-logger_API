@@ -3,8 +3,10 @@ package dev.kuku.vfl.internal;
 import dev.kuku.vfl.api.models.VflBlockDataType;
 import dev.kuku.vfl.api.models.VflLogDataType;
 
-public interface VisFlowLogBuffer {
-    void pushLogToBuffer(VflLogDataType log);
+import java.util.concurrent.CompletableFuture;
 
-    void pushBlockToBuffer(VflBlockDataType subBlock);
+public interface VisFlowLogBuffer {
+    CompletableFuture<Void> pushLogToBuffer(VflLogDataType log);
+
+    CompletableFuture<Void> pushBlockToBuffer(VflBlockDataType subBlock);
 }
