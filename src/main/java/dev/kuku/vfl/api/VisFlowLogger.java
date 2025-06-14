@@ -156,7 +156,7 @@ public class VisFlowLogger {
      */
     public void shutdown() {
         logger.info("Shutting down logger");
-        buffer.flushAll().join();
+        buffer.flushAllAsync().join();
     }
 
     // Private helper methods
