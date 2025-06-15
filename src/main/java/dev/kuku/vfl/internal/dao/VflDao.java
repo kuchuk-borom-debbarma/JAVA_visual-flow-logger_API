@@ -9,7 +9,10 @@ public interface VflDao {
     /**
      * Upsert blocks to datastore.<br>
      * On ID conflicting, skip updating it.<br>
-     * For a block with parentBlockId, the ID must be of an existing block OR ID of a block that is being inserted.
+     * For a block with parentBlockId, the ID must be of an existing block OR ID of a block that is being inserted.<br>
+     * If even one block is invalid, abort the whole process.<br>
+     *
+     * The caller is thread-safe as it locks when pushing items from buffer to Dao.
      * @param blocks blocks to insert
      */
     void upsertBlocks(List<VflBlockDataType> blocks);
