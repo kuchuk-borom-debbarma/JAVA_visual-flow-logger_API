@@ -2,12 +2,9 @@ package dev.kuku.vfl.api.buffer;
 
 import dev.kuku.vfl.api.models.VflBlockDataType;
 import dev.kuku.vfl.api.models.VflLogDataType;
-import dev.kuku.vfl.internal.VisFlowLogBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -29,7 +26,6 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
     private final int blockBufferSize;
     private final int logBufferSize;
     private final Executor flushExecutor;
-    Connection connection;
     // Volatile because we want the value directly from source and not the per-thread cached value
     private volatile boolean isShuttingDown = false;
 
@@ -45,7 +41,6 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
             t.setDaemon(true); // Don't prevent JVM shutdown
             return t;
         });
-        connection = DriverManager.getConnection("jdbc:sqlite:vfl_java.db");
     }
 
     @Override

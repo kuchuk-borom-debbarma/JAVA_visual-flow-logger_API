@@ -1,4 +1,4 @@
-package dev.kuku.vfl.internal;
+package dev.kuku.vfl.api.buffer;
 
 import dev.kuku.vfl.api.models.VflBlockDataType;
 import dev.kuku.vfl.api.models.VflLogDataType;
