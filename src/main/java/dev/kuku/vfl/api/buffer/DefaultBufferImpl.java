@@ -5,7 +5,6 @@ import dev.kuku.vfl.api.models.VflLogDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,7 @@ public class DefaultBufferImpl implements VisFlowLogBuffer {
     // Volatile because we want the value directly from source and not the per-thread cached value
     private volatile boolean isShuttingDown = false;
 
-    public DefaultBufferImpl(int blockBufferSize, int logBufferSize) throws SQLException {
+    public DefaultBufferImpl(int blockBufferSize, int logBufferSize) {
         //TODO use ring buffer in future
         this.logs = new ArrayList<>();
         this.blocks = new ArrayList<>();
