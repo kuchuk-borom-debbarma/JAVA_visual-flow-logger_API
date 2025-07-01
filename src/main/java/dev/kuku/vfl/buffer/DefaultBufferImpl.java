@@ -5,7 +5,6 @@ import dev.kuku.vfl.models.LogData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -35,11 +34,7 @@ public class DefaultBufferImpl implements VFLBuffer {
         this.blockBufferSize = blockBufferSize;
         this.logBufferSize = logBufferSize;
         //We will run our flush operation in this thread
-        this.flushExecutor = Executors.newSingleThreadExecutor(r -> {
-            Thread t = new Thread(r, "vfl-buffer-flush" + Instant.now().toEpochMilli());
-            t.setDaemon(true); // Don't prevent JVM shutdown
-            return t;
-        });
+        this.flushExecutor = Executors.newVirtualThreadPerTaskExecutor();
     }
 
     @Override
@@ -49,14 +44,12 @@ public class DefaultBufferImpl implements VFLBuffer {
             return;
         }
         //Even though it may look like allowing multiple pushes parallelly should be fine, it really is not.
-        //The values such as size, etc may end up being different, and two elements may get pushed to the same index.
+        //The values such as size, etc. May end up being different, and two elements may get pushed to the same index.
         //Using volatile keyword is also not going to do anything because we are not only reading but modifying.
         synchronized (logs) {
             logs.add(log);
             //Consistent size as it's locked
-            if (logs.size() >= logBufferSize) {
-                flushLogsAsync();
-            }
+            checkAndFlushIfNeeded();
         }
     }
 
@@ -72,30 +65,49 @@ public class DefaultBufferImpl implements VFLBuffer {
         synchronized (blocks) {
             blocks.add(block);
             //Consistent size as its locked
-            if (blocks.size() >= blockBufferSize) {
-                flushBlocksAsync();
-            }
+            checkAndFlushIfNeeded();
         }
     }
 
-    private CompletableFuture<Void> flushLogsAsync() {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                flushLogs();
-            } catch (Exception e) {
-                logger.error("Async log flush failed", e);
+    private void checkAndFlushIfNeeded() {
+        // Check if either buffer has reached its individual limit
+        boolean shouldFlush;
+        synchronized (logs) {
+            synchronized (blocks) {
+                shouldFlush = logs.size() >= logBufferSize ||
+                        blocks.size() >= blockBufferSize ||
+                        (logs.size() + blocks.size()) >= (logBufferSize + blockBufferSize);
             }
-        }, flushExecutor);
+        }
+
+        if (shouldFlush) {
+            flushExecutor.execute(() -> {
+                flushBlocks();
+                flushLogs();
+            });
+        }
     }
 
-    private CompletableFuture<Void> flushBlocksAsync() {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                flushBlocks();
-            } catch (Exception e) {
-                logger.error("Async block flush failed", e);
+    private void flushBlocks() {
+        List<BlockData> blocksToFlush;
+        synchronized (blocks) {
+            if (blocks.isEmpty()) {
+                return;
             }
-        }, flushExecutor);
+            logger.debug("Flushing {} blocks", blocks.size());
+            blocksToFlush = new ArrayList<>(blocks);
+            blocks.clear();
+        }
+        try {
+            //TODO save using SQL
+            logger.debug("Successfully flushed {} blocks", blocksToFlush.size());
+        } catch (Exception e) {
+            logger.error("Failed to save blocks to database", e);
+            //Re-add failed blocks back to the buffer
+            synchronized (blocks) {
+                blocks.addAll(0, blocksToFlush); // Add at beginning to maintain some ordering
+            }
+        }
     }
 
     private void flushLogs() {
@@ -112,6 +124,7 @@ public class DefaultBufferImpl implements VFLBuffer {
         //Critical section over. Now another thread can safely mutate logs
         try {
             //TODO save using SQL
+            logger.debug("Successfully flushed {} logs", logsToFlush.size());
         } catch (Exception e) {
             logger.error("Failed to save logs to database", e);
             //Re-add failed logs back to the buffer
@@ -121,45 +134,15 @@ public class DefaultBufferImpl implements VFLBuffer {
         }
     }
 
-    private void flushBlocks() {
-        List<BlockData> blocksToFlush;
-        synchronized (blocks) {
-            if (blocks.isEmpty()) {
-                return;
-            }
-            logger.debug("Flushing {} blocks", blocks.size());
-            blocksToFlush = new ArrayList<>(blocks);
-            blocks.clear(); // FIX: Clear the original list
-        }
-        try {
-            //TODO save using SQL
-        } catch (Exception e) {
-            logger.error("Failed to save blocks to database", e);
-            //Re-add failed blocks back to the buffer
-            synchronized (blocks) {
-                blocks.addAll(0, blocksToFlush); // Add at beginning to maintain some ordering
-            }
-        }
-    }
-
     @Override
     public CompletableFuture<Void> flushAllAsync() {
-        logger.info("Flushing remaining data");
         isShuttingDown = true;
-        return CompletableFuture.allOf(flushBlocksAsync(), flushLogsAsync());
-    }
+        logger.info("Flushing remaining data");
 
-    // Getters for monitoring/debugging - now thread-safe
-    public int getLogBufferSize() {
-        synchronized (logs) {
-            return logs.size();
-        }
+        return CompletableFuture.runAsync(() -> {
+            flushBlocks();
+            flushLogs();
+            logger.info("Final flush completed");
+        }, flushExecutor);
     }
-
-    public int getBlockBufferSize() {
-        synchronized (blocks) {
-            return blocks.size();
-        }
-    }
-
 }
