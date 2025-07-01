@@ -1,7 +1,7 @@
 package dev.kuku.vfl.buffer;
 
-import dev.kuku.vfl.models.VflBlockDataType;
-import dev.kuku.vfl.models.VflLogDataType;
+import dev.kuku.vfl.models.BlockData;
+import dev.kuku.vfl.models.LogData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 public class DefaultBufferImpl implements VFLBuffer {
     private static final Logger logger = LoggerFactory.getLogger(DefaultBufferImpl.class);
 
-    private final List<VflLogDataType> logs;
-    private final List<VflBlockDataType> blocks;
+    private final List<LogData> logs;
+    private final List<BlockData> blocks;
     private final int blockBufferSize;
     private final int logBufferSize;
     private final Executor flushExecutor;
@@ -43,7 +43,7 @@ public class DefaultBufferImpl implements VFLBuffer {
     }
 
     @Override
-    public void pushLogToBuffer(VflLogDataType log) {
+    public void pushLogToBuffer(LogData log) {
         if (isShuttingDown) {
             logger.warn("Attempted to add log during shutdown, ignoring");
             return;
@@ -61,7 +61,7 @@ public class DefaultBufferImpl implements VFLBuffer {
     }
 
     @Override
-    public void pushBlockToBuffer(VflBlockDataType block) {
+    public void pushBlockToBuffer(BlockData block) {
         if (isShuttingDown) {
             logger.warn("Attempted to add block during shutdown, ignoring");
             return;
@@ -99,7 +99,7 @@ public class DefaultBufferImpl implements VFLBuffer {
     }
 
     private void flushLogs() {
-        List<VflLogDataType> logsToFlush;
+        List<LogData> logsToFlush;
         synchronized (logs) {
             if (logs.isEmpty()) {
                 return;
@@ -122,7 +122,7 @@ public class DefaultBufferImpl implements VFLBuffer {
     }
 
     private void flushBlocks() {
-        List<VflBlockDataType> blocksToFlush;
+        List<BlockData> blocksToFlush;
         synchronized (blocks) {
             if (blocks.isEmpty()) {
                 return;

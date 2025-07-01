@@ -1,15 +1,14 @@
 package dev.kuku;
 
 import dev.kuku.vfl.buffer.DefaultBufferImpl;
-import dev.kuku.vfl.models.VflBlockDataType;
-import dev.kuku.vfl.StartedVFL;
+import dev.kuku.vfl.models.BlockData;
 
 import java.util.UUID;
 
 public class Main {
     //TODO add a common output so that the results of dao can be used to give us the same output. This will help the diagram loader to work flawlessly. Need to figure out how to extract them and when. Or In client have different types of loader that can load from different source. This one is easier but more work.
     public static void main(String[] args) {
-        var mainLogger = new StartedVFL(new VflBlockDataType(null, UUID.randomUUID().toString(), "MAIN"), new DefaultBufferImpl(5, 5));
+        var mainLogger = new StartedVFL(new BlockData(null, UUID.randomUUID().toString(), "MAIN"), new DefaultBufferImpl(5, 5));
         testSimple(mainLogger);
         mainLogger.shutdown();
 

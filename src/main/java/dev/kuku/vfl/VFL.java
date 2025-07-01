@@ -1,8 +1,9 @@
 package dev.kuku.vfl;
 
+import dev.kuku.VFLBlockLogger;
 import dev.kuku.vfl.buffer.VFLBuffer;
-import dev.kuku.vfl.models.VflBlockDataType;
-import dev.kuku.vfl.models.VflLogDataType;
+import dev.kuku.vfl.models.BlockData;
+import dev.kuku.vfl.models.LogData;
 import dev.kuku.vfl.models.VflLogType;
 
 import java.time.Instant;
@@ -13,50 +14,57 @@ import java.util.function.Function;
 
 public class VFL {
     private final VFLBuffer buffer;
-    private StartedVFL rootBlock;
+    private VFLBlockLogger rootBlockLogger;
 
     public VFL(VFLBuffer vflBuffer) {
         this.buffer = vflBuffer;
     }
 
-    public <T> T startWithResult(String blockName, Function<StartedVFL, T> operation) {
+    public <T> T startWithResult(String blockName, Function<VFLBlockLogger, T> operation) {
         return executeInBlock(blockName, operation);
     }
 
-    public void start(String blockName, Consumer<StartedVFL> operation) {
+    public void start(String blockName, Consumer<VFLBlockLogger> operation) {
         executeInBlock(blockName, vfl -> {
             operation.accept(vfl);
             return null;
         });
     }
 
-    private <T> T executeInBlock(String blockName, Function<StartedVFL, T> operation) {
+    private <T> T executeInBlock(String blockName, Function<VFLBlockLogger, T> operation) {
         String rootBlockId = UUID.randomUUID().toString();
         T result;
-
         try {
-            this.rootBlock = new StartedVFL(new VflBlockDataType(null, rootBlockId, blockName), this.buffer);
-            result = operation.apply(rootBlock);
+            //Create root block model
+            var rootBlock = new BlockData(null, rootBlockId, blockName);
+            //Push the newly created root block model to buffer
+            this.buffer.pushBlockToBuffer(rootBlock);
+            //Create blockLogger instance for rootBlock
+            this.rootBlockLogger = new VFLBlockLogger(new BlockData(null, rootBlockId, blockName), this.buffer);
+            //Execute the operation with blockLogger passed as argument
+            result = operation.apply(rootBlockLogger);
         } catch (RuntimeException e) {
-            if (rootBlock != null) {
-                rootBlock.log("Exception : " + e.getMessage());
+            //if exception is thrown, add it to blockLogger
+            if (rootBlockLogger != null) {
+                rootBlockLogger.log("Exception : " + e.getMessage(), VflLogType.EXCEPTION, true);
             }
             throw e; // Re-throw to allow proper error handling upstream
         } finally {
-            if (rootBlock != null) {
+            //Finally, finalize the block after the operation is over
+            if (rootBlockLogger != null) {
                 finalizeBlock(rootBlockId);
             }
         }
-
         return result;
     }
 
+    /// Add ending log to rootBlockLogger and flushes everything
     private void finalizeBlock(String rootBlockId) {
-        var endingLog = new VflLogDataType(
+        var endingLog = new LogData(
                 UUID.randomUUID().toString(),
                 rootBlockId,
                 null,
-                VflLogType.SUB_BLOCK_END,
+                VflLogType.EXCEPTION,
                 null,
                 Set.of(rootBlockId),
                 Instant.now().toEpochMilli()

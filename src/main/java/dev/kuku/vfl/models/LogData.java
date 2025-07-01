@@ -3,7 +3,7 @@ package dev.kuku.vfl.models;
 import java.util.Optional;
 import java.util.Set;
 
-public class VflLogDataType {
+public class LogData {
     private final String id;
     private final String blockId;
     private final String parentLogId;
@@ -12,7 +12,7 @@ public class VflLogDataType {
     private final Set<String> blockPointers;
     private final long timeStamp;
 
-    public VflLogDataType(String id, String blockId, String parentLogId, VflLogType logType, String logValue, Set<String> blockPointers, long timeStamp) {
+    public LogData(String id, String blockId, String parentLogId, VflLogType logType, String logValue, Set<String> blockPointers, long timeStamp) {
         if (id == null || blockId == null) {
             throw new IllegalArgumentException("id, blockId can not be null");
         }
