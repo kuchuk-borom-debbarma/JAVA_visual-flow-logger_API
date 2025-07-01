@@ -1,4 +1,4 @@
-package dev.kuku;
+package dev.kuku.vfl;
 
 import dev.kuku.vfl.buffer.VFLBuffer;
 import dev.kuku.vfl.models.BlockData;
@@ -6,6 +6,7 @@ import dev.kuku.vfl.models.LogData;
 import dev.kuku.vfl.models.VflLogType;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -14,7 +15,7 @@ import java.util.function.Function;
 public class VFLBlockLogger {
     private final VFLBuffer buffer;
     private final BlockData blockData;
-    private String currentLog = null;
+    private String currentLogId = null;
 
     public VFLBlockLogger(BlockData blockData, VFLBuffer buffer) {
         this.buffer = buffer;
@@ -26,29 +27,36 @@ public class VFLBlockLogger {
         String logId = UUID.randomUUID().toString();
         var messageLog = new LogData(logId,
                 blockData.getId(),
-                currentLog,
+                currentLogId,
                 logType,
                 message,
                 null,
                 Instant.now().toEpochMilli());
         this.buffer.pushLogToBuffer(messageLog);
         if (moveForward) {
-            currentLog = logId;
+            currentLogId = logId;
         }
     }
 
     /**
-     * Log a nested sub process contained within a nested sub-block.
+     * Creates a new block and runs the passed function inside it. Once completed the block is closed.
+     * In case of exception during function execution, the exception is added as log in the sub block.
+     * In case of any other exception It is added as log to this current instance of BlockLogger.
      *
-     * @param blockName   name of the block where the sub-process will take place
-     * @param process     process to execute
-     * @param moveForward whether to move forward the flow or stay at the same place
-     * @return result of the process execution
+     * @param blockName   name of the sub-block that will be created
+     * @param message     message to print for starting log
+     * @param process     the process to execute
+     * @param moveForward to move forward or not
      */
-    public <T> T logSubProcess(String blockName, String message, Function<T, String> postExecutionMessageFn, Function<VFLBlockLogger, T> process, boolean moveForward) {
-        String subBlockId = UUID.randomUUID().toString();
-        String subBlockStartLogId = UUID.randomUUID().toString();
+    public <T> T logSubProcess(String blockName,
+                               String message,
+                               Function<VFLBlockLogger, T> process,
+                               boolean moveForward) {
         try {
+            Objects.requireNonNull(process, "Process cannot be null");
+            Objects.requireNonNull(blockName, "Block name cannot be null");
+            String subBlockId = UUID.randomUUID().toString();
+            String subBlockStartLogId = UUID.randomUUID().toString();
             //Create the sub-block and push it to buffer before we start execution
             BlockData subBlock = new BlockData(blockData.getId(),
                     subBlockId,
@@ -57,7 +65,7 @@ public class VFLBlockLogger {
             //Create a log of type BLOCK_START and push it to buffer
             LogData subBlockLog = new LogData(subBlockStartLogId,
                     blockData.getId(),
-                    currentLog,
+                    currentLogId,
                     VflLogType.BLOCK_START,
                     message,
                     Set.of(subBlockId),
@@ -65,62 +73,50 @@ public class VFLBlockLogger {
             buffer.pushLogToBuffer(subBlockLog);
             //Move forward if desired before executing process
             if (moveForward) {
-                currentLog = subBlockStartLogId;
+                currentLogId = subBlockStartLogId;
             }
-            //Execute process in a try catch. If an exception is thrown, add it as a log in its own block
+            //Execute a process in a try catch. If an exception is thrown, add it as a log in its own block
             VFLBlockLogger subProcessBlockLogger = new VFLBlockLogger(subBlock, buffer);
             T result;
             try {
                 result = process.apply(subProcessBlockLogger);
             } catch (Exception e) {
+                //Store the exception as a log within the sub block
+
+                //To show the exception as part of the flow we move forward.
+                //TO show the exception as a side log we do not move forward.
+                //TODO make this part of configuration and ability to pass explicitly.
                 subProcessBlockLogger.log("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
-                throw e;
-            }
-            //After executing the process, end the sub-block where the sub-process executed.
-            //TODO reduce code repetition
-            String postExecutionMsg;
-            //If there is a post-Execution message then we execute it and add it as ending log's message
-            if (postExecutionMessageFn != null) {
-                try {
-                    postExecutionMsg = postExecutionMessageFn.apply(result);
-                    String endLogId = UUID.randomUUID().toString();
-                    LogData endLog = new LogData(endLogId,
-                            blockData.getId(),
-                            subBlockStartLogId, VflLogType.BLOCK_END,
-                            postExecutionMsg,
-                            Set.of(subBlockId),
-                            Instant.now().toEpochMilli());
-                    buffer.pushLogToBuffer(endLog);
-                } catch (Exception e) {
-                    String endLogId = UUID.randomUUID().toString();
-                    LogData endLog = new LogData(endLogId,
-                            blockData.getId(),
-                            subBlockStartLogId, VflLogType.BLOCK_END,
-                            null,
-                            Set.of(subBlockId),
-                            Instant.now().toEpochMilli());
-                    buffer.pushLogToBuffer(endLog);
-                    throw e;
-                }
-            } else {
+                //Add process end log to current block
                 String endLogId = UUID.randomUUID().toString();
-                LogData endLog = new LogData(endLogId,
+                var endLog = new LogData(endLogId,
                         blockData.getId(),
-                        subBlockStartLogId, VflLogType.BLOCK_END,
+                        subBlockStartLogId, //points to log that started the subBlock
+                        VflLogType.BLOCK_END,
                         null,
                         Set.of(subBlockId),
                         Instant.now().toEpochMilli());
                 buffer.pushLogToBuffer(endLog);
+                throw e;
             }
-
+            //Add process end log to current block
+            String endLogId = UUID.randomUUID().toString();
+            var endLog = new LogData(endLogId,
+                    blockData.getId(),
+                    subBlockStartLogId, //points to log that started the subBlock
+                    VflLogType.BLOCK_END,
+                    null,
+                    Set.of(subBlockId),
+                    Instant.now().toEpochMilli());
+            buffer.pushLogToBuffer(endLog);
             return result;
         } catch (Exception e) {
-            //If something went wrong at any stage add it as log to this block
-            //TODO exception log type
-            this.log("Exception when attempting to execute sub-process\n" + e.getMessage(), VflLogType.EXCEPTION, moveForward);
+            //To show the exception as part of the flow we move forward.
+            //TO show the exception as a side log we do not move forward.
+            //TODO make this part of configuration and ability to pass explicitly.
+            log("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
             throw e;
         }
-
     }
 
     public void logSubProcess(String blockName, String message, boolean moveForward, Consumer<VFLBlockLogger> process) {
@@ -133,7 +129,7 @@ public class VFLBlockLogger {
             LogData subBlockStartLog = new LogData(
                     subBlockStartLogId,
                     blockData.getId(),
-                    currentLog,
+                    currentLogId,
                     VflLogType.BLOCK_START,
                     message,
                     Set.of(subBlockId),
@@ -141,7 +137,7 @@ public class VFLBlockLogger {
             );
             buffer.pushLogToBuffer(subBlockStartLog);
             if (moveForward) {
-                currentLog = subBlockStartLogId;
+                currentLogId = subBlockStartLogId;
             }
             VFLBlockLogger subBlockLogger = new VFLBlockLogger(subBlock, buffer);
             try {
