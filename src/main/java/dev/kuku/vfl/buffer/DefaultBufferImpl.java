@@ -1,7 +1,7 @@
-package dev.kuku.vfl.api.buffer;
+package dev.kuku.vfl.buffer;
 
-import dev.kuku.vfl.api.models.VflBlockDataType;
-import dev.kuku.vfl.api.models.VflLogDataType;
+import dev.kuku.vfl.models.VflBlockDataType;
+import dev.kuku.vfl.models.VflLogDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  * Flush operations are considered critical section and thus is locked to prevent mutation during flushing.
  */
 //TODO use interface and builder for defaultBufferImpl so that devs can utilize this while maintaining core functionality
-public class DefaultBufferImpl implements VisFlowLogBuffer {
+public class DefaultBufferImpl implements VFLBuffer {
     private static final Logger logger = LoggerFactory.getLogger(DefaultBufferImpl.class);
 
     private final List<VflLogDataType> logs;

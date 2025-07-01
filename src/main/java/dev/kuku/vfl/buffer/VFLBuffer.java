@@ -1,11 +1,11 @@
-package dev.kuku.vfl.api.buffer;
+package dev.kuku.vfl.buffer;
 
-import dev.kuku.vfl.api.models.VflBlockDataType;
-import dev.kuku.vfl.api.models.VflLogDataType;
+import dev.kuku.vfl.models.VflBlockDataType;
+import dev.kuku.vfl.models.VflLogDataType;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface VisFlowLogBuffer {
+public interface VFLBuffer {
     /**
      * Add a log entry to the buffer (fire-and-forget).
      */

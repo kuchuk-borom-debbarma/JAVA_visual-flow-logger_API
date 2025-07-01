@@ -1,9 +1,9 @@
-package dev.kuku.vfl.api;
+package dev.kuku.vfl;
 
-import dev.kuku.vfl.api.buffer.VisFlowLogBuffer;
-import dev.kuku.vfl.api.models.VflBlockDataType;
-import dev.kuku.vfl.api.models.VflLogDataType;
-import dev.kuku.vfl.api.models.VflLogType;
+import dev.kuku.vfl.buffer.VFLBuffer;
+import dev.kuku.vfl.models.VflBlockDataType;
+import dev.kuku.vfl.models.VflLogDataType;
+import dev.kuku.vfl.models.VflLogType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +16,14 @@ import java.util.function.Function;
 /**
  * Visual Flow Logger is a logging framework that allows developers to visualize their logs and how they flow.
  */
-public class VisFlowLogger {
-    private static final Logger logger = LoggerFactory.getLogger(VisFlowLogger.class);
+public class StartedVFL {
+    private static final Logger logger = LoggerFactory.getLogger(StartedVFL.class);
 
     private final VflBlockDataType block;
-    private final VisFlowLogBuffer buffer;
+    private final VFLBuffer buffer;
     private String lastLogId;
 
-    public VisFlowLogger(VflBlockDataType block, VisFlowLogBuffer buffer) {
+    public StartedVFL(VflBlockDataType block, VFLBuffer buffer) {
         logger.debug("Creating new logger with block {} and buffer {}", block, buffer);
         this.block = block;
         this.buffer = buffer;
@@ -75,7 +75,7 @@ public class VisFlowLogger {
      * @param endMessage     function that creates the completion message from the result
      * @param <T>            the type of result your subprocess returns
      */
-    public <T> T logWithResult(String subProcessName, Function<VisFlowLogger, T> operation, Function<T, String> endMessage) {
+    public <T> T logWithResult(String subProcessName, Function<StartedVFL, T> operation, Function<T, String> endMessage) {
         return logWithResult(subProcessName, operation, endMessage, true);
     }
 
@@ -88,11 +88,11 @@ public class VisFlowLogger {
      * @param continueSequentially true = next step follows this subprocess in sequence (normal flow)
      * @param <T>                  the type of result your subprocess returns
      */
-    public <T> T logWithResult(String subProcessName, Function<VisFlowLogger, T> operation, Function<T, String> endMessage, boolean continueSequentially) {
+    public <T> T logWithResult(String subProcessName, Function<StartedVFL, T> operation, Function<T, String> endMessage, boolean continueSequentially) {
         logger.debug("Starting sub-process '{}' with result, continueSequentially={}", subProcessName, continueSequentially);
 
         SubBlockInfo subBlockInfo = startSubBlock(subProcessName, continueSequentially);
-        VisFlowLogger subLogger = createSubLogger(subBlockInfo.blockId, subProcessName);
+        StartedVFL subLogger = createSubLogger(subBlockInfo.blockId, subProcessName);
 
         try {
             T result = operation.apply(subLogger);
@@ -114,7 +114,7 @@ public class VisFlowLogger {
      * @param operation      the work to do in this subprocess - you get a logger to track steps inside
      * @param endMessage     function that creates the completion message (can use null for no end message)
      */
-    public void logSubProcess(String subProcessName, Consumer<VisFlowLogger> operation, Function<Void, String> endMessage) {
+    public void logSubProcess(String subProcessName, Consumer<StartedVFL> operation, Function<Void, String> endMessage) {
         logSubProcess(subProcessName, operation, endMessage, true);
     }
 
@@ -126,11 +126,11 @@ public class VisFlowLogger {
      * @param endMessage           function that creates the completion message (can use null for no end message)
      * @param continueSequentially true = next step follows this subprocess in sequence (normal flow)
      */
-    public void logSubProcess(String subProcessName, Consumer<VisFlowLogger> operation, Function<Void, String> endMessage, boolean continueSequentially) {
+    public void logSubProcess(String subProcessName, Consumer<StartedVFL> operation, Function<Void, String> endMessage, boolean continueSequentially) {
         logger.debug("Starting sub-process '{}', continueSequentially={}", subProcessName, continueSequentially);
 
         SubBlockInfo subBlockInfo = startSubBlock(subProcessName, continueSequentially);
-        VisFlowLogger subLogger = createSubLogger(subBlockInfo.blockId, subProcessName);
+        StartedVFL subLogger = createSubLogger(subBlockInfo.blockId, subProcessName);
 
         operation.accept(subLogger);
         logger.debug("Sub-process '{}' completed", subProcessName);
@@ -144,7 +144,7 @@ public class VisFlowLogger {
      * @param subProcessName name for this parallel subprocess
      * @return a new logger for tracking this parallel operation
      */
-    public VisFlowLogger createBranch(String subProcessName) {
+    public StartedVFL createBranch(String subProcessName) {
         logger.debug("Creating branch for sub-process '{}'", subProcessName);
 
         SubBlockInfo subBlockInfo = startSubBlock(subProcessName, false);
@@ -155,7 +155,7 @@ public class VisFlowLogger {
      * Flushes everything inside the buffer in blocking manner
      */
     public void shutdown() {
-        logger.info("Shutting down logger");
+        logger.info("Shutting down logger. Creating ending log");
         buffer.flushAllAsync().join();
     }
 
@@ -195,9 +195,9 @@ public class VisFlowLogger {
         return new SubBlockInfo(preLogId, subBlockId);
     }
 
-    private VisFlowLogger createSubLogger(String subBlockId, String subProcessName) {
+    private StartedVFL createSubLogger(String subBlockId, String subProcessName) {
         VflBlockDataType subBlock = new VflBlockDataType(block.getId(), subBlockId, subProcessName);
-        return new VisFlowLogger(subBlock, buffer);
+        return new StartedVFL(subBlock, buffer);
     }
 
     private <T> void endSubBlock(Function<T, String> endMessageFunction, T result, SubBlockInfo subBlockInfo) {
