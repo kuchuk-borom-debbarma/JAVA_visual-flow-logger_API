@@ -81,7 +81,7 @@ public class VFLBlockLogger {
             try {
                 result = process.apply(subProcessBlockLogger);
             } catch (Exception e) {
-                //Store the exception as a log within the sub block
+                //Store the exception as a log within the sub-block and then rethrow the exception. This will help capture the exception at both block and caller block level
 
                 //To show the exception as part of the flow we move forward.
                 //TO show the exception as a side log we do not move forward.
@@ -114,50 +114,16 @@ public class VFLBlockLogger {
             //To show the exception as part of the flow we move forward.
             //TO show the exception as a side log we do not move forward.
             //TODO make this part of configuration and ability to pass explicitly.
-            log("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
+            log("Exception when trying to run sub-block operation" + e.getMessage(), VflLogType.EXCEPTION, true);
             throw e;
         }
     }
 
-    public void logSubProcess(String blockName, String message, boolean moveForward, Consumer<VFLBlockLogger> process) {
-        String subBlockId = UUID.randomUUID().toString();
-        String subBlockStartLogId = UUID.randomUUID().toString();
-        try {
-            BlockData subBlock = new BlockData(blockData.getId(),
-                    subBlockId, blockName);
-            buffer.pushBlockToBuffer(subBlock);
-            LogData subBlockStartLog = new LogData(
-                    subBlockStartLogId,
-                    blockData.getId(),
-                    currentLogId,
-                    VflLogType.BLOCK_START,
-                    message,
-                    Set.of(subBlockId),
-                    Instant.now().toEpochMilli()
-            );
-            buffer.pushLogToBuffer(subBlockStartLog);
-            if (moveForward) {
-                currentLogId = subBlockStartLogId;
-            }
-            VFLBlockLogger subBlockLogger = new VFLBlockLogger(subBlock, buffer);
-            try {
-                process.accept(subBlockLogger);
-            } catch (Exception e) {
-                subBlockLogger.log("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
-                throw e;
-            }
-            String subBlockEndLogId = UUID.randomUUID().toString();
-            LogData endingLog = new LogData(subBlockEndLogId,
-                    blockData.getId(),
-                    subBlockStartLogId,
-                    VflLogType.BLOCK_END,
-                    null,
-                    Set.of(subBlockId),
-                    Instant.now().toEpochMilli());
-            buffer.pushLogToBuffer(endingLog);
-        } catch (Exception e) {
-            log("Exception " + e.getMessage(), VflLogType.EXCEPTION, moveForward);
-            throw e;
-        }
+    public void logSubProcess(String blockName, String message, Consumer<VFLBlockLogger> process, boolean moveForward) {
+        Function<VFLBlockLogger, Void> a = vflBlockLogger -> {
+            process.accept(vflBlockLogger);
+            return null;
+        };
+        this.logSubProcess(blockName, message, a, moveForward);
     }
 }
