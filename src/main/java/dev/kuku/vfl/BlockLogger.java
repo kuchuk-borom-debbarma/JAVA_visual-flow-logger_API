@@ -16,6 +16,7 @@ public class BlockLogger {
     private final VFLBuffer buffer;
     private final BlockData blockData;
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private final StringLogSettingFactory stringLogSettingFactory = new StringLogSettingFactory(this);
     private String currentLogId = null;
 
     public BlockLogger(BlockData blockData, VFLBuffer buffer) {
@@ -23,8 +24,20 @@ public class BlockLogger {
         this.blockData = blockData;
     }
 
-    /// Log a message and move forward or stay at the current place
-    public void log(String message, VflLogType logType, boolean moveForward) {
+    public void write(String message) {
+        this.addMessageLog(message, VflLogType.MESSAGE, true);
+    }
+
+    public void error(String message) {
+        this.addMessageLog(message, VflLogType.EXCEPTION, true);
+    }
+
+    public StringLogSettingFactory writer() {
+        return this.stringLogSettingFactory;
+    }
+
+    /// Core Log function to log a message and move forward or stay at the current place
+    public void addMessageLog(String message, VflLogType logType, boolean moveForward) {
         // Ensure start log is created only once, even with concurrent access
         ensureStartLogCreated();
 
@@ -53,8 +66,9 @@ public class BlockLogger {
      * @param process     the process to execute
      * @param moveForward to move forward or not
      */
-    public <T> T logSubProcess(String blockName,
+    public <T> T logWithResult(String blockName,
                                String message,
+                               Function<T, String> endMessage,
                                Function<BlockLogger, T> process,
                                boolean moveForward) {
         try {
@@ -97,7 +111,7 @@ public class BlockLogger {
                 //To show the exception as part of the flow we move forward.
                 //TO show the exception as a side log we do not move forward.
                 //TODO make this part of configuration and ability to pass explicitly.
-                subProcessBlockLogger.log("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
+                subProcessBlockLogger.addMessageLog("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
                 //Add process end log to current block
                 String endLogId = UUID.randomUUID().toString();
                 var endLog = new LogData(
@@ -105,7 +119,7 @@ public class BlockLogger {
                         subBlockId, //points to the block that was created as sub-block
                         subBlockStartLogId, //points to log that started the subBlock
                         VflLogType.BLOCK_END,
-                        null,
+                        executeEndMessageFn(endMessage, null),
                         null,
                         Instant.now().toEpochMilli());
                 buffer.pushLogToBuffer(endLog);
@@ -119,7 +133,7 @@ public class BlockLogger {
                     subBlockId, //points to the block that was created as sub-block
                     subBlockStartLogId, //points to log that started the subBlock
                     VflLogType.BLOCK_END,
-                    null,
+                    executeEndMessageFn(endMessage, result),
                     null,
                     Instant.now().toEpochMilli());
             buffer.pushLogToBuffer(endLog);
@@ -128,18 +142,19 @@ public class BlockLogger {
             //To show the exception as part of the flow we move forward.
             //TO show the exception as a side log we do not move forward.
             //TODO make this part of configuration and ability to pass explicitly.
-            log("Exception when trying to run sub-block operation" + e.getMessage(), VflLogType.EXCEPTION, true);
+            addMessageLog("Exception when trying to run sub-block operation" + e.getMessage(), VflLogType.EXCEPTION, true);
             throw e;
         }
     }
 
-    public void logSubProcess(String blockName, String message, Consumer<BlockLogger> process, boolean moveForward) {
+    public void logWithoutResult(String blockName, String message, String endMessage, Consumer<BlockLogger> process, boolean moveForward) {
         Function<BlockLogger, Void> a = blockLogger -> {
             process.accept(blockLogger);
             return null;
         };
-        this.logSubProcess(blockName, message, a, moveForward);
+        this.logWithResult(blockName, message, (_) -> endMessage, a, moveForward);
     }
+
 
     private void ensureStartLogCreated() {
         /*
@@ -168,6 +183,18 @@ public class BlockLogger {
          */
         if (isInitialized.compareAndSet(false, true)) {
             createStartLog();
+        }
+    }
+
+    private <T> String executeEndMessageFn(Function<T, String> endMessage, T result) {
+        try {
+            String msg = endMessage.apply(result);
+            if (msg == null) {
+                return "Processed end message is null";
+            }
+            return msg;
+        } catch (Exception e) {
+            return "Error when processing End Message : " + e.getMessage();
         }
     }
 

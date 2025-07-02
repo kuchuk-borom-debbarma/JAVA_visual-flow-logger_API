@@ -18,7 +18,7 @@ public class VFL {
         this.buffer = vflBuffer;
     }
 
-    public <T> T startWithResult(String blockName, Function<BlockLogger, T> operation) {
+    public <T> T start(String blockName, Function<BlockLogger, T> operation) {
         return executeInBlock(blockName, operation);
     }
 
@@ -44,7 +44,7 @@ public class VFL {
         } catch (RuntimeException e) {
             //if an exception is thrown, add it to blockLogger
             if (rootBlockLogger != null) {
-                rootBlockLogger.log("Exception : " + e.getMessage(), VflLogType.EXCEPTION, true);
+                rootBlockLogger.addMessageLog("Exception : " + e.getMessage(), VflLogType.EXCEPTION, true);
             }
             if (rootBlockLogger != null) {
                 finalizeBlock(rootBlockId);
