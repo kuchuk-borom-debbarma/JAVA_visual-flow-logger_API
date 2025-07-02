@@ -49,6 +49,13 @@ public class LogData {
         return Optional.ofNullable(blockPointers);
     }
 
+    public Optional<String> getBlockPointersString() {
+        if (blockPointers == null) {
+            return Optional.empty();
+        }
+        return Optional.of(String.join("_", blockPointers));
+    }
+
     public long getTimeStamp() {
         return timeStamp;
     }

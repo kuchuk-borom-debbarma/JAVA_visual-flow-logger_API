@@ -1,10 +1,15 @@
 package dev.kuku.vfl.buffer;
 
+import dev.kuku.dto.BlockDTO;
+import dev.kuku.dto.LogDTO;
 import dev.kuku.vfl.models.BlockData;
 import dev.kuku.vfl.models.LogData;
+import dev.kuku.vfl.util.ApiClient;
+import dev.kuku.vfl.util.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -18,14 +23,15 @@ import java.util.concurrent.Executors;
 //TODO use interface and builder for defaultBufferImpl so that devs can utilize this while maintaining core functionality
 public class DefaultBufferImpl implements VFLBuffer {
     private static final Logger logger = LoggerFactory.getLogger(DefaultBufferImpl.class);
-
+    private final ApiClient apiClient = new ApiClient();
+    private final JSONUtil jsonUtil = new JSONUtil();
     private final List<LogData> logs;
     private final List<BlockData> blocks;
     private final int blockBufferSize;
     private final int logBufferSize;
     private final Executor flushExecutor;
     // Volatile because we want the value directly from source and not the per-thread cached value
-    private volatile boolean isShuttingDown = false;
+    private boolean isShuttingDown = false;
 
     public DefaultBufferImpl(int blockBufferSize, int logBufferSize) {
         //TODO use ring buffer in future
@@ -90,6 +96,7 @@ public class DefaultBufferImpl implements VFLBuffer {
 
     private void flushBlocks() {
         List<BlockData> blocksToFlush;
+        //Copy the blocks in local variable and then release it.
         synchronized (blocks) {
             if (blocks.isEmpty()) {
                 return;
@@ -99,8 +106,8 @@ public class DefaultBufferImpl implements VFLBuffer {
             blocks.clear();
         }
         try {
-            //TODO save using SQL
-            logger.debug("Successfully flushed {} blocks", blocksToFlush.size());
+            var blockDTOs = blocksToFlush.stream().map(b -> new BlockDTO(b.getId(), b.getBlockName(), b.getParentBlockId().orElse(null))).toList();
+            var resp = apiClient.post("http://localhost:8080/api/v1/block/", jsonUtil.toJson(blockDTOs), Boolean.class);
         } catch (Exception e) {
             logger.error("Failed to save blocks to database", e);
             //Re-add failed blocks back to the buffer
@@ -123,8 +130,14 @@ public class DefaultBufferImpl implements VFLBuffer {
         }
         //Critical section over. Now another thread can safely mutate logs
         try {
-            //TODO save using SQL
-            logger.debug("Successfully flushed {} logs", logsToFlush.size());
+            var logsToAdd = logsToFlush.stream().map(l -> new LogDTO(l.getId(),
+                    l.getParentLogId().orElse(null),
+                    l.getBlockId(),
+                    l.getLogValue().orElse(null),
+                    l.getLogType(),
+                    l.getBlockPointersString().orElse(null),
+                    Instant.now().toEpochMilli())).toList();
+            apiClient.post("http://localhost:8080/api/v1/vfl/logs", jsonUtil.toJson(logsToAdd), Boolean.class);
         } catch (Exception e) {
             logger.error("Failed to save logs to database", e);
             //Re-add failed logs back to the buffer
@@ -138,7 +151,6 @@ public class DefaultBufferImpl implements VFLBuffer {
     public CompletableFuture<Void> flushAllAsync() {
         isShuttingDown = true;
         logger.info("Flushing remaining data");
-
         return CompletableFuture.runAsync(() -> {
             flushBlocks();
             flushLogs();
