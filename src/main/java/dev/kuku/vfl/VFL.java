@@ -46,12 +46,13 @@ public class VFL {
             if (rootBlockLogger != null) {
                 rootBlockLogger.log("Exception : " + e.getMessage(), VflLogType.EXCEPTION, true);
             }
-            throw e; // Re-throw to allow proper error handling upstream
-        } finally {
-            //Finally, finalize the block after the operation is over
             if (rootBlockLogger != null) {
                 finalizeBlock(rootBlockId);
             }
+            throw e; // Re-throw to allow proper error handling upstream
+        }
+        if (rootBlockLogger != null) {
+            finalizeBlock(rootBlockId);
         }
         return result;
     }

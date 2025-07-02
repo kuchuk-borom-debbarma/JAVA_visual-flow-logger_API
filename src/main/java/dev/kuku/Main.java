@@ -5,11 +5,8 @@ import dev.kuku.vfl.VFL;
 import dev.kuku.vfl.buffer.SynchronousBuffer;
 import dev.kuku.vfl.models.VflLogType;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-
 public class Main {
-    static VFL vfl = new VFL(new SynchronousBuffer(10));
+    static VFL vfl = new VFL(new SynchronousBuffer(10000));
 
     public static void main(String... args) {
         new SimpleFlow().start();
@@ -17,7 +14,7 @@ public class Main {
 
     static class SimpleFlow {
         void start() {
-            vfl.start("Order nike 2", logger -> {
+            vfl.start("Order nike sync", logger -> {
                 logger.log("Attempt to order Nike started", VflLogType.MESSAGE, true);
                 var canOrder = logger.logSubProcess("Inventory Check", "Checking if shoe is in inventory", this::checkInventory, true);
                 if (!canOrder) {
@@ -49,28 +46,8 @@ public class Main {
         }
 
         void order(BlockLogger logger) {
-            var executor = Executors.newVirtualThreadPerTaskExecutor();
-            CountDownLatch latch = new CountDownLatch(1);
 
-            logger.logSubProcess("Write Order history", "Writing order history", l -> {
-                executor.execute(() -> {
-                    try {
-                        writeTransaction(l);
-                    } finally {
-                        latch.countDown();
-                    }
-                });
-            }, false);
-
-            try {
-                latch.await(); // Wait for the write operation to complete
-            } catch (InterruptedException e) {
-                logger.log("Write transaction interrupted: " + e.getMessage(), VflLogType.EXCEPTION, true);
-                Thread.currentThread().interrupt();
-            } finally {
-                executor.close();
-            }
-
+            logger.logSubProcess("Write Order history", "Writing order history", this::writeTransaction, false);
             logger.log("Removing item from inventory", VflLogType.MESSAGE, true);
             logger.logSubProcess("DbRemove", "Removing from db", this::dbRemove, true);
         }

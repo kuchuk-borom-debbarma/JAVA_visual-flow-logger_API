@@ -8,12 +8,14 @@ import dev.kuku.vfl.models.VflLogType;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BlockLogger {
     private final VFLBuffer buffer;
     private final BlockData blockData;
+    private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     private String currentLogId = null;
 
     public BlockLogger(BlockData blockData, VFLBuffer buffer) {
@@ -23,6 +25,9 @@ public class BlockLogger {
 
     /// Log a message and move forward or stay at the current place
     public void log(String message, VflLogType logType, boolean moveForward) {
+        // Ensure start log is created only once, even with concurrent access
+        ensureStartLogCreated();
+
         String logId = UUID.randomUUID().toString();
         var messageLog = new LogData(
                 logId,
@@ -55,6 +60,10 @@ public class BlockLogger {
         try {
             Objects.requireNonNull(process, "Process cannot be null");
             Objects.requireNonNull(blockName, "Block name cannot be null");
+
+            // Ensure start log is created only once
+            ensureStartLogCreated();
+
             String subBlockId = UUID.randomUUID().toString();
             String subBlockStartLogId = UUID.randomUUID().toString();
             //Create the sub-block and push it to buffer before we start execution
@@ -68,7 +77,7 @@ public class BlockLogger {
                     subBlockStartLogId,
                     blockData.getId(),
                     currentLogId,
-                    VflLogType.BLOCK_START,
+                    VflLogType.SUB_BLOCK_START,
                     message,
                     subBlockId,
                     Instant.now().toEpochMilli());
@@ -93,23 +102,25 @@ public class BlockLogger {
                 String endLogId = UUID.randomUUID().toString();
                 var endLog = new LogData(
                         endLogId,
-                        blockData.getId(),
+                        subBlockId, //points to the block that was created as sub-block
                         subBlockStartLogId, //points to log that started the subBlock
                         VflLogType.BLOCK_END,
                         null,
-                        subBlockId,
+                        null,
                         Instant.now().toEpochMilli());
                 buffer.pushLogToBuffer(endLog);
                 throw e;
             }
             //Add process end log to current block
+            //TODO add end message support
             String endLogId = UUID.randomUUID().toString();
-            var endLog = new LogData(endLogId,
-                    blockData.getId(),
+            var endLog = new LogData(
+                    endLogId,
+                    subBlockId, //points to the block that was created as sub-block
                     subBlockStartLogId, //points to log that started the subBlock
                     VflLogType.BLOCK_END,
                     null,
-                    subBlockId,
+                    null,
                     Instant.now().toEpochMilli());
             buffer.pushLogToBuffer(endLog);
             return result;
@@ -128,5 +139,49 @@ public class BlockLogger {
             return null;
         };
         this.logSubProcess(blockName, message, a, moveForward);
+    }
+
+    private void ensureStartLogCreated() {
+        /*
+         * ATOMICITY: compareAndSet() is an atomic operation - it executes as one indivisible unit
+         * at the CPU level using Compare-And-Swap (CAS) instruction. This means the read-compare-write
+         * happens in a single uninterruptible step.
+         *
+         * WHY WE NEED IT: Consider two threads calling log() simultaneously:
+         *
+         * WITHOUT atomicity (regular boolean):
+         * Thread-A: reads isInitialized (false) → [interrupted]
+         * Thread-B: reads isInitialized (false) → createStartLog() → set true
+         * Thread-A: [resumes] createStartLog() → set true
+         * Result: createStartLog() called TWICE ✗
+         *
+         * WITH atomicity (AtomicBoolean):
+         * Thread-A: compareAndSet(false, true) → CPU atomically: read+compare+write → returns true
+         * Thread-B: compareAndSet(false, true) → CPU sees value already true → returns false
+         * Result: Only Thread-A executes createStartLog() ✓
+         *
+         * BENEFITS IN OUR CASE:
+         * - Block start time accurately reflects when FIRST log occurred
+         * - No duplicate BLOCK_START entries in buffer
+         * - Thread-safe without blocking (lock-free)
+         * - Losing threads continue immediately without waiting
+         */
+        if (isInitialized.compareAndSet(false, true)) {
+            createStartLog();
+        }
+    }
+
+    private void createStartLog() {
+        String startLogId = UUID.randomUUID().toString();
+        LogData blockStartLog = new LogData(
+                startLogId,
+                blockData.getId(),
+                null,
+                VflLogType.BLOCK_START,
+                null,
+                null,
+                Instant.now().toEpochMilli()
+        );
+        buffer.pushLogToBuffer(blockStartLog);
     }
 }
