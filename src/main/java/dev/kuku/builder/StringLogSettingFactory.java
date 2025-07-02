@@ -1,5 +1,6 @@
-package dev.kuku.vfl;
+package dev.kuku.builder;
 
+import dev.kuku.vfl.BlockLogger;
 import dev.kuku.vfl.models.VflLogType;
 
 public class StringLogSettingFactory {

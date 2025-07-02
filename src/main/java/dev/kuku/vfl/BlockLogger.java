@@ -1,5 +1,6 @@
 package dev.kuku.vfl;
 
+import dev.kuku.builder.StringLogSettingFactory;
 import dev.kuku.vfl.buffer.VFLBuffer;
 import dev.kuku.vfl.models.BlockData;
 import dev.kuku.vfl.models.LogData;
@@ -16,7 +17,6 @@ public class BlockLogger {
     private final VFLBuffer buffer;
     private final BlockData blockData;
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
-    private final StringLogSettingFactory stringLogSettingFactory = new StringLogSettingFactory(this);
     private String currentLogId = null;
 
     public BlockLogger(BlockData blockData, VFLBuffer buffer) {
@@ -28,12 +28,12 @@ public class BlockLogger {
         this.addMessageLog(message, VflLogType.MESSAGE, true);
     }
 
-    public void error(String message) {
+    public void writeError(String message) {
         this.addMessageLog(message, VflLogType.EXCEPTION, true);
     }
 
     public StringLogSettingFactory writer() {
-        return this.stringLogSettingFactory;
+        return new StringLogSettingFactory(this);
     }
 
     /// Core Log function to log a message and move forward or stay at the current place
