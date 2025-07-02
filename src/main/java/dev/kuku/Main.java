@@ -13,8 +13,12 @@ public class Main {
     static class SimpleFlow {
         void start() {
             vfl.start("Simple Test", logger -> {
-
+                var b = logger.processWriter(l -> {
+                    int a = 10 + 2;
+                    return null;
+                }).writeProcess("GGEZ");
             });
         }
     }
 }
+
