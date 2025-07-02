@@ -1,4 +1,4 @@
-package dev.kuku.dto;
+package dev.kuku.vfl.models;
 
 public class VflResponse<T> {
     private String message;

@@ -1,13 +1,10 @@
 package dev.kuku.vfl.buffer;
 
-import dev.kuku.dto.BlockDTO;
-import dev.kuku.dto.LogDTO;
-import dev.kuku.dto.VflResponse;
+import dev.kuku.vfl.models.VflResponse;
 import dev.kuku.vfl.models.BlockData;
 import dev.kuku.vfl.models.LogData;
 import dev.kuku.vfl.util.ApiClient;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,22 +41,12 @@ public class SynchronousBuffer implements VFLBuffer {
     }
 
     private void flush() {
-        List<LogDTO> logsToFlush;
-        List<BlockDTO> blocksToFlush;
+        List<LogData> logsToFlush;
+        List<BlockData> blocksToFlush;
         synchronized (this.blocks) {
             synchronized (this.logs) {
-                logsToFlush = logs.stream().map(l -> new LogDTO(l.getId(),
-                                l.getParentLogId().orElse(null),
-                                l.getBlockId(),
-                                l.getLogValue().orElse(null),
-                                l.getLogType(),
-                                l.getBlockPointersString().orElse(null),
-                                Instant.now().toEpochMilli()))
-                        .toList();
-                blocksToFlush = blocks.stream().map(b -> new BlockDTO(b.getId(),
-                                b.getBlockName(),
-                                b.getParentBlockId().orElse(null)))
-                        .toList();
+                logsToFlush = new ArrayList<>(this.logs);
+                blocksToFlush = new ArrayList<>(this.blocks);
                 this.logs.clear();
             }
             this.blocks.clear();

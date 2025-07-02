@@ -3,7 +3,7 @@ package dev.kuku.vfl.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.kuku.dto.VflResponse;
+import dev.kuku.vfl.models.VflResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,19 +15,6 @@ public class ApiClient {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // GET Request
-    public <T> VflResponse<T> get(String url, Class<T> responseType) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(url))
-                .setHeader("User-Agent", "Java HttpClient")
-                .setHeader("Accept", "application/json")
-                .build();
-        HttpResponse<String> response = httpClient.send(request,
-                HttpResponse.BodyHandlers.ofString());
-        return objectMapper.readValue(response.body(),
-                objectMapper.getTypeFactory().constructParametricType(VflResponse.class, responseType));
-    }
 
     // POST Request with improved error handling
     public <T> VflResponse<T> post(String url, Object requestBody, Class<T> responseType) throws Exception {
@@ -46,7 +33,7 @@ public class ApiClient {
                     HttpResponse.BodyHandlers.ofString());
 
             // Check for HTTP error status codes
-            if (response.statusCode() >= 400) {
+            if (response.statusCode() != 200) {
                 throw new RuntimeException("HTTP Error: " + response.statusCode() + " - " + response.body());
             }
 

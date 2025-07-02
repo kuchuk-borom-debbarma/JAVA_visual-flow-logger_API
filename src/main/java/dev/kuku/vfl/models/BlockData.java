@@ -1,30 +1,41 @@
 package dev.kuku.vfl.models;
 
-import java.util.Optional;
-
 public class BlockData {
-    private final String parentBlockId;
-    private final String id;
-    private final String blockName;
+    private String id;
+    private String parentBlockId;
+    private String blockName;
 
-    public BlockData(String parentBlockId, String id, String blockName) {
-        if (id == null || blockName == null) {
-            throw new IllegalArgumentException("id and blockName can not be null");
-        }
-        this.parentBlockId = parentBlockId;
-        this.id = id;
-        this.blockName = blockName;
+    // No-args constructor for Jackson
+    public BlockData() {
     }
 
-    public Optional<String> getParentBlockId() {
-        return Optional.ofNullable(parentBlockId);
+    public BlockData(String id, String parentBlockId, String blockName) {
+        this.id = id;
+        this.parentBlockId = parentBlockId;
+        this.blockName = blockName;
     }
 
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getParentBlockId() {
+        return parentBlockId;
+    }
+
+    public void setParentBlockId(String parentBlockId) {
+        this.parentBlockId = parentBlockId;
+    }
+
     public String getBlockName() {
         return blockName;
+    }
+
+    public void setBlockName(String blockName) {
+        this.blockName = blockName;
     }
 }

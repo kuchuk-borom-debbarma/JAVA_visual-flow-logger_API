@@ -7,7 +7,6 @@ import dev.kuku.vfl.models.VflLogType;
 
 import java.time.Instant;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -25,7 +24,8 @@ public class BlockLogger {
     /// Log a message and move forward or stay at the current place
     public void log(String message, VflLogType logType, boolean moveForward) {
         String logId = UUID.randomUUID().toString();
-        var messageLog = new LogData(logId,
+        var messageLog = new LogData(
+                logId,
                 blockData.getId(),
                 currentLogId,
                 logType,
@@ -39,7 +39,7 @@ public class BlockLogger {
     }
 
     /**
-     * Creates a new block and runs the passed function inside it. Once completed the block is closed.
+     * Creates a new block and runs the passed function inside it. Once completed, the block is closed.
      * In case of exception during function execution, the exception is added as log in the sub block.
      * In case of any other exception It is added as log to this current instance of BlockLogger.
      *
@@ -58,17 +58,19 @@ public class BlockLogger {
             String subBlockId = UUID.randomUUID().toString();
             String subBlockStartLogId = UUID.randomUUID().toString();
             //Create the sub-block and push it to buffer before we start execution
-            BlockData subBlock = new BlockData(blockData.getId(),
+            BlockData subBlock = new BlockData(
                     subBlockId,
+                    blockData.getId(),
                     blockName);
             buffer.pushBlockToBuffer(subBlock);
             //Create a log of type BLOCK_START and push it to buffer
-            LogData subBlockLog = new LogData(subBlockStartLogId,
+            LogData subBlockLog = new LogData(
+                    subBlockStartLogId,
                     blockData.getId(),
                     currentLogId,
                     VflLogType.BLOCK_START,
                     message,
-                    Set.of(subBlockId),
+                    subBlockId,
                     Instant.now().toEpochMilli());
             buffer.pushLogToBuffer(subBlockLog);
             //Move forward if desired before executing process
@@ -89,12 +91,13 @@ public class BlockLogger {
                 subProcessBlockLogger.log("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
                 //Add process end log to current block
                 String endLogId = UUID.randomUUID().toString();
-                var endLog = new LogData(endLogId,
+                var endLog = new LogData(
+                        endLogId,
                         blockData.getId(),
                         subBlockStartLogId, //points to log that started the subBlock
                         VflLogType.BLOCK_END,
                         null,
-                        Set.of(subBlockId),
+                        subBlockId,
                         Instant.now().toEpochMilli());
                 buffer.pushLogToBuffer(endLog);
                 throw e;
@@ -106,7 +109,7 @@ public class BlockLogger {
                     subBlockStartLogId, //points to log that started the subBlock
                     VflLogType.BLOCK_END,
                     null,
-                    Set.of(subBlockId),
+                    subBlockId,
                     Instant.now().toEpochMilli());
             buffer.pushLogToBuffer(endLog);
             return result;

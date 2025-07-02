@@ -6,7 +6,6 @@ import dev.kuku.vfl.models.LogData;
 import dev.kuku.vfl.models.VflLogType;
 
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,11 +34,11 @@ public class VFL {
         T result;
         try {
             //Create root block model
-            var rootBlock = new BlockData(null, rootBlockId, blockName);
+            BlockData rootBlock = new BlockData(rootBlockId, null, blockName);
             //Push the newly created root block model to buffer
             this.buffer.pushBlockToBuffer(rootBlock);
             //Create blockLogger instance for rootBlock
-            this.rootBlockLogger = new BlockLogger(new BlockData(null, rootBlockId, blockName), this.buffer);
+            this.rootBlockLogger = new BlockLogger(new BlockData(rootBlockId, null, blockName), this.buffer);
             //Execute the operation with blockLogger passed as argument
             result = operation.apply(rootBlockLogger);
         } catch (RuntimeException e) {
@@ -59,13 +58,13 @@ public class VFL {
 
     /// Add ending log to rootBlockLogger and flushes everything
     private void finalizeBlock(String rootBlockId) {
-        var endingLog = new LogData(
+        LogData endingLog = new LogData(
                 UUID.randomUUID().toString(),
                 rootBlockId,
                 null,
                 VflLogType.BLOCK_END,
                 null,
-                Set.of(rootBlockId),
+                rootBlockId,
                 Instant.now().toEpochMilli()
         );
         this.buffer.pushLogToBuffer(endingLog);

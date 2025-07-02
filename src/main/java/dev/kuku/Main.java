@@ -5,19 +5,30 @@ import dev.kuku.vfl.VFL;
 import dev.kuku.vfl.buffer.SynchronousBuffer;
 import dev.kuku.vfl.models.VflLogType;
 
+import java.time.Instant;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
 public class Main {
+    static VFL vfl = new VFL(new SynchronousBuffer(10));
+
     public static void main(String... args) {
-        var s = new SimpleFlow();
-        s.orderProgram();
+        vfl.start("Time test", logger -> {
+            logger.log("Starting test at time " + Instant.now().toEpochMilli(), VflLogType.MESSAGE, true);
+            logger.log("Before sleep", VflLogType.MESSAGE, true);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            logger.log("After sleep", VflLogType.MESSAGE, true);
+            logger.log("Ending test at time " + Instant.now().toEpochMilli(), VflLogType.MESSAGE, true);
+        });
     }
 
     static class SimpleFlow {
         void orderProgram() {
-            var vfl = new VFL(new SynchronousBuffer(10));
-            vfl.start("Order nike", logger -> {
+            vfl.start("Order nike 2", logger -> {
                 logger.log("Attempt to order Nike started", VflLogType.MESSAGE, true);
                 var canOrder = logger.logSubProcess("Inventory Check", "Checking if shoe is in inventory", this::checkInventory, true);
                 if (!canOrder) {
@@ -78,7 +89,7 @@ public class Main {
         void writeTransaction(BlockLogger logger) {
             logger.log("Writing in database", VflLogType.MESSAGE, true);
             try {
-                Thread.sleep(5000);
+                Thread.sleep(10000);
             } catch (InterruptedException _) {
             }
             logger.log("Writing transaction complete", VflLogType.MESSAGE, true);
