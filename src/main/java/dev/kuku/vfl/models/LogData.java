@@ -7,19 +7,19 @@ public class LogData {
     private VflLogType logType;
     private String message;
     private String referenceValue;
-    private long timeStamp;
+    private long timestamp;
 
     public LogData() {
     }
 
-    public LogData(String id, String blockId, String parentLogId, VflLogType logType, String message, String referenceValue, long timeStamp) {
+    public LogData(String id, String blockId, String parentLogId, VflLogType logType, String message, String referenceValue, long timestamp) {
         this.id = id;
         this.blockId = blockId;
         this.parentLogId = parentLogId;
         this.logType = logType;
         this.message = message;
         this.referenceValue = referenceValue;
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
     }
 
     public String getId() {
@@ -70,12 +70,12 @@ public class LogData {
         this.referenceValue = referenceValue;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }
 

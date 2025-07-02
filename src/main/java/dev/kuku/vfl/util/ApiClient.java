@@ -17,7 +17,7 @@ public class ApiClient {
 
 
     // POST Request with improved error handling
-    public <T> VflResponse<T> post(String url, Object requestBody, Class<T> responseType) throws Exception {
+    public <T> VflResponse<T> post(String url, Object requestBody, Class<T> responseType) {
         try {
             String jsonBody = objectMapper.writeValueAsString(requestBody);
 
