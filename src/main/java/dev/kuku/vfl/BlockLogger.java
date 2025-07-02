@@ -12,12 +12,12 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class VFLBlockLogger {
+public class BlockLogger {
     private final VFLBuffer buffer;
     private final BlockData blockData;
     private String currentLogId = null;
 
-    public VFLBlockLogger(BlockData blockData, VFLBuffer buffer) {
+    public BlockLogger(BlockData blockData, VFLBuffer buffer) {
         this.buffer = buffer;
         this.blockData = blockData;
     }
@@ -50,7 +50,7 @@ public class VFLBlockLogger {
      */
     public <T> T logSubProcess(String blockName,
                                String message,
-                               Function<VFLBlockLogger, T> process,
+                               Function<BlockLogger, T> process,
                                boolean moveForward) {
         try {
             Objects.requireNonNull(process, "Process cannot be null");
@@ -76,7 +76,7 @@ public class VFLBlockLogger {
                 currentLogId = subBlockStartLogId;
             }
             //Execute a process in a try catch. If an exception is thrown, add it as a log in its own block
-            VFLBlockLogger subProcessBlockLogger = new VFLBlockLogger(subBlock, buffer);
+            BlockLogger subProcessBlockLogger = new BlockLogger(subBlock, buffer);
             T result;
             try {
                 result = process.apply(subProcessBlockLogger);
@@ -119,9 +119,9 @@ public class VFLBlockLogger {
         }
     }
 
-    public void logSubProcess(String blockName, String message, Consumer<VFLBlockLogger> process, boolean moveForward) {
-        Function<VFLBlockLogger, Void> a = vflBlockLogger -> {
-            process.accept(vflBlockLogger);
+    public void logSubProcess(String blockName, String message, Consumer<BlockLogger> process, boolean moveForward) {
+        Function<BlockLogger, Void> a = blockLogger -> {
+            process.accept(blockLogger);
             return null;
         };
         this.logSubProcess(blockName, message, a, moveForward);

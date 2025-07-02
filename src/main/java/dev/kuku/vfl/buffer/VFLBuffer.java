@@ -3,8 +3,6 @@ package dev.kuku.vfl.buffer;
 import dev.kuku.vfl.models.BlockData;
 import dev.kuku.vfl.models.LogData;
 
-import java.util.concurrent.CompletableFuture;
-
 public interface VFLBuffer {
     /**
      * Add a log entry to the buffer (fire-and-forget).
@@ -19,5 +17,5 @@ public interface VFLBuffer {
     /**
      * Graceful shutdown - this IS appropriate to return a future.
      */
-    CompletableFuture<Void> flushAllAsync();
+    void flushAll();
 }

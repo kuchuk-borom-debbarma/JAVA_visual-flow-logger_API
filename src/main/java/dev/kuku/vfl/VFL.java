@@ -13,24 +13,24 @@ import java.util.function.Function;
 
 public class VFL {
     private final VFLBuffer buffer;
-    private VFLBlockLogger rootBlockLogger;
+    private BlockLogger rootBlockLogger;
 
     public VFL(VFLBuffer vflBuffer) {
         this.buffer = vflBuffer;
     }
 
-    public <T> T startWithResult(String blockName, Function<VFLBlockLogger, T> operation) {
+    public <T> T startWithResult(String blockName, Function<BlockLogger, T> operation) {
         return executeInBlock(blockName, operation);
     }
 
-    public void start(String blockName, Consumer<VFLBlockLogger> operation) {
+    public void start(String blockName, Consumer<BlockLogger> operation) {
         executeInBlock(blockName, vfl -> {
             operation.accept(vfl);
             return null;
         });
     }
 
-    private <T> T executeInBlock(String blockName, Function<VFLBlockLogger, T> operation) {
+    private <T> T executeInBlock(String blockName, Function<BlockLogger, T> operation) {
         String rootBlockId = UUID.randomUUID().toString();
         T result;
         try {
@@ -39,11 +39,11 @@ public class VFL {
             //Push the newly created root block model to buffer
             this.buffer.pushBlockToBuffer(rootBlock);
             //Create blockLogger instance for rootBlock
-            this.rootBlockLogger = new VFLBlockLogger(new BlockData(null, rootBlockId, blockName), this.buffer);
+            this.rootBlockLogger = new BlockLogger(new BlockData(null, rootBlockId, blockName), this.buffer);
             //Execute the operation with blockLogger passed as argument
             result = operation.apply(rootBlockLogger);
         } catch (RuntimeException e) {
-            //if exception is thrown, add it to blockLogger
+            //if an exception is thrown, add it to blockLogger
             if (rootBlockLogger != null) {
                 rootBlockLogger.log("Exception : " + e.getMessage(), VflLogType.EXCEPTION, true);
             }
@@ -63,12 +63,12 @@ public class VFL {
                 UUID.randomUUID().toString(),
                 rootBlockId,
                 null,
-                VflLogType.EXCEPTION,
+                VflLogType.BLOCK_END,
                 null,
                 Set.of(rootBlockId),
                 Instant.now().toEpochMilli()
         );
         this.buffer.pushLogToBuffer(endingLog);
-        this.buffer.flushAllAsync();
+        this.buffer.flushAll();
     }
 }
