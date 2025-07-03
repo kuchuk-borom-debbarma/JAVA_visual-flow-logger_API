@@ -63,7 +63,7 @@ public class BlockLogger {
             this.blockLogger = blockLogger;
         }
 
-        public void addMessageLog(String message, VflLogType logType, boolean moveForward) {
+        private void addMessageLog(String message, VflLogType logType, boolean moveForward) {
             ensureStartLogCreated();
 
             String logId = UUID.randomUUID().toString();
@@ -81,11 +81,11 @@ public class BlockLogger {
             }
         }
 
-        public <T> T logWithResult(String blockName,
-                                   String message,
-                                   Function<T, String> endMessage,
-                                   Function<BlockLogger, T> process,
-                                   boolean moveForward) {
+        private <T> T logWithResult(String blockName,
+                                    String message,
+                                    Function<T, String> endMessage,
+                                    Function<BlockLogger, T> process,
+                                    boolean moveForward) {
             try {
                 Objects.requireNonNull(process, "Process cannot be null");
                 Objects.requireNonNull(blockName, "Block name cannot be null");
@@ -122,6 +122,10 @@ public class BlockLogger {
                 } catch (Exception e) {
                     subProcessBlockLogger.internalCoreLogger.addMessageLog("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
                     String endLogId = UUID.randomUUID().toString();
+                    /*
+                    End log is not stored as a log of a block.
+                    It is used to update the block's finishing time.
+                     */
                     var endLog = new LogData(
                             endLogId,
                             subBlockId,
@@ -176,6 +180,10 @@ public class BlockLogger {
         }
 
         private void createStartLog() {
+            /*
+            Start log doesn't stored as a log of the block.
+            Server processes it to update the block's start time
+             */
             String startLogId = UUID.randomUUID().toString();
             LogData blockStartLog = new LogData(
                     startLogId,
