@@ -44,7 +44,7 @@ public class VFL {
         } catch (RuntimeException e) {
             //if an exception is thrown, add it to blockLogger
             if (rootBlockLogger != null) {
-                rootBlockLogger.addMessageLog("Exception : " + e.getMessage(), VflLogType.EXCEPTION, true);
+                rootBlockLogger.error("Exception : " + e.getMessage());
             }
             if (rootBlockLogger != null) {
                 finalizeBlock(rootBlockId);
