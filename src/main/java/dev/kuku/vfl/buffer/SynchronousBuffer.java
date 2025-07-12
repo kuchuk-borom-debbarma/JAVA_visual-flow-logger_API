@@ -2,23 +2,23 @@ package dev.kuku.vfl.buffer;
 
 import dev.kuku.vfl.models.BlockData;
 import dev.kuku.vfl.models.LogData;
-import dev.kuku.vfl.models.VflResponse;
-import dev.kuku.vfl.util.ApiClient;
+import dev.kuku.vfl.serviceCall.VFLApi;
 
 import java.util.ArrayList;
 import java.util.List;
+
 //TODO use backend service interface to make api calls
 public class SynchronousBuffer implements VFLBuffer {
     final List<LogData> logs;
     final List<BlockData> blocks;
     private final int bufferSize;
-    private final ApiClient apiClient;
+    private final VFLApi vflApi;
 
-    public SynchronousBuffer(int bufferSize) {
+    public SynchronousBuffer(int bufferSize, VFLApi vflApi) {
         logs = new ArrayList<>();
         blocks = new ArrayList<>();
         this.bufferSize = bufferSize;
-        this.apiClient = new ApiClient();
+        this.vflApi = vflApi;
     }
 
     @Override
@@ -51,17 +51,13 @@ public class SynchronousBuffer implements VFLBuffer {
             }
             this.blocks.clear();
         }
-        VflResponse<Boolean> response;
-        String host = "http://localhost:8080/api/v1";
         try {
-            response = apiClient.post(String.format("%s/block/", host), blocksToFlush, Boolean.class);
-            System.out.printf("response for saving block = %s%n", response);
+            vflApi.pushBlocksToServer(blocksToFlush);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         try {
-            response = apiClient.post(String.format("%s/vfl/logs", host), logsToFlush, Boolean.class);
-            System.out.printf("response for saving logs : %s%n", response);
+            vflApi.pushLogsToServer(logsToFlush);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
