@@ -56,11 +56,49 @@ public class BlockLogger {
         internalCoreLogger.logWithoutResult(blockName, message, blockEndMsg, fn, false);
     }
 
+    /**
+     * Create a sub block logger instance and return it. It can't have an ending message as it is not possible to determine the end of the function. <br>
+     * The end message has to be specified by invoking a method.
+     *
+     * @param blockName name of the block
+     * @param message   message for the sub block start
+     * @return sub block logger instance
+     */
+    //TODO child class that has function for end message
+    public BlockLogger createSubBlockLogger(String blockName, String message) {
+        return this.internalCoreLogger.createSubBlockLogger(blockName, message);
+    }
+
     private static class InternalCoreLogger {
         private final BlockLogger blockLogger;
 
         private InternalCoreLogger(BlockLogger blockLogger) {
             this.blockLogger = blockLogger;
+        }
+
+        private BlockLogger createSubBlockLogger(String blockName, String message) {
+            //TODO reduce code duplication
+            ensureStartLogCreated();
+
+            String subBlockId = UUID.randomUUID().toString();
+            String subBlockStartLogId = UUID.randomUUID().toString();
+
+            BlockData subBlock = new BlockData(
+                    subBlockId,
+                    blockLogger.blockData.getId(),
+                    blockName);
+            blockLogger.buffer.pushBlockToBuffer(subBlock);
+
+            LogData subBlockLog = new LogData(
+                    subBlockStartLogId,
+                    blockLogger.blockData.getId(),
+                    blockLogger.currentLogId,
+                    VflLogType.SUB_BLOCK_START,
+                    message,
+                    subBlockId,
+                    Instant.now().toEpochMilli());
+            blockLogger.buffer.pushLogToBuffer(subBlockLog);
+            return new BlockLogger(subBlock, blockLogger.buffer);
         }
 
         private void addMessageLog(String message, VflLogType logType, boolean moveForward) {
