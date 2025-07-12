@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AsynchronousBuffer implements VFLBuffer {
     private final List<LogData> logsToFlush;
@@ -18,9 +17,6 @@ public class AsynchronousBuffer implements VFLBuffer {
     //ExecutorService are non-daemon threads by default so program does not terminate until all daemon threads are shut down
     private final ExecutorService workers;
     private final VFLApi backendAPI;
-    //Multi thread variables
-    private final AtomicBoolean flushInProgress = new AtomicBoolean(false);
-    private final Object bufferLock = new Object();
 
     public AsynchronousBuffer(int blockBufferSize, int logBufferSize, int threadPoolSize, VFLApi backend) {
         logsToFlush = new ArrayList<>();
@@ -32,45 +28,72 @@ public class AsynchronousBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogToBuffer(LogData log) {
-        synchronized (bufferLock) {
-            logsToFlush.add(log);
-            flushIfFull();
-        }
+    public synchronized void pushLogToBuffer(LogData log) {
+        logsToFlush.add(log);
+        flushIfFull();
     }
 
     @Override
-    public void pushBlockToBuffer(BlockData block) {
-        synchronized (bufferLock) {
-            blocksToFlush.add(block);
-            flushIfFull();
-        }
-    }
-
-    private void flushAll() {
-        if (flushInProgress.compareAndSet(false, true)) {
-            try {
-                flushLogs();
-                flushBlocks();
-            } finally {
-                flushInProgress.set(false);
-            }
-        }
+    public synchronized void pushBlockToBuffer(BlockData block) {
+        blocksToFlush.add(block);
+        flushIfFull();
     }
 
     // Called within synchronized block, so no additional sync needed
     private void flushIfFull() {
-        if (blocksToFlush.size() >= blockBufferSize || logsToFlush.size() >= logBufferSize) {
+        boolean shouldFlush = false;
+        synchronized (blocksToFlush) {
+            synchronized (logsToFlush) {
+                if (blocksToFlush.size() >= blockBufferSize || logsToFlush.size() >= logBufferSize) {
+                    shouldFlush = true;
+                }
+            }
+        }
+        if (shouldFlush) {
             flushAll();
         }
     }
+
+    private void flushAll() {
+        flushBlocks();
+        flushLogs();
+    }
+
+    private void flushBlocks() {
+        workers.submit(() -> {
+            List<BlockData> blocksToProcess;
+
+            synchronized (blocksToFlush) {
+                if (blocksToFlush.isEmpty()) {
+                    return;
+                }
+                blocksToProcess = new ArrayList<>(blocksToFlush);
+                blocksToFlush.clear();
+            }
+
+            try {
+                boolean success = backendAPI.pushBlocksToServer(blocksToProcess);
+                if (!success) {
+                    synchronized (blocksToFlush) {
+                        blocksToFlush.addAll(0, blocksToProcess);
+                    }
+                }
+            } catch (Exception e) {
+                synchronized (blocksToFlush) {
+                    blocksToFlush.addAll(0, blocksToProcess);
+                }
+                System.err.println("Failed to push blocks to server: " + e.getMessage());
+            }
+        });
+    }
+
 
     private void flushLogs() {
         workers.submit(() -> {
             List<LogData> logsToProcess;
 
             // Extract and clear logs atomically
-            synchronized (bufferLock) {
+            synchronized (logsToFlush) {
                 if (logsToFlush.isEmpty()) {
                     return;
                 }
@@ -82,47 +105,20 @@ public class AsynchronousBuffer implements VFLBuffer {
                 boolean success = backendAPI.pushLogsToServer(logsToProcess);
                 if (!success) {
                     // Re-add failed logs to the beginning of the buffer
-                    synchronized (bufferLock) {
+                    synchronized (logsToFlush) {
                         logsToFlush.addAll(0, logsToProcess);
                     }
                 }
             } catch (Exception e) {
                 // Re-add failed logs to the beginning of the buffer
-                synchronized (bufferLock) {
+                synchronized (logsToFlush) {
                     logsToFlush.addAll(0, logsToProcess);
                 }
             }
         });
     }
 
-    private void flushBlocks() {
-        workers.submit(() -> {
-            List<BlockData> blocksToProcess;
-
-            synchronized (bufferLock) {
-                if (blocksToFlush.isEmpty()) {
-                    return;
-                }
-                blocksToProcess = new ArrayList<>(blocksToFlush);
-                blocksToFlush.clear();
-            }
-
-            try {
-                boolean success = backendAPI.pushBlocksToServer(blocksToProcess);
-                if (!success) {
-                    synchronized (bufferLock) {
-                        blocksToFlush.addAll(0, blocksToProcess);
-                    }
-                }
-            } catch (Exception e) {
-                synchronized (bufferLock) {
-                    blocksToFlush.addAll(0, blocksToProcess);
-                }
-                System.err.println("Failed to push blocks to server: " + e.getMessage());
-            }
-        });
-    }
-
+    @Override
     public void shutdown() {
         workers.close();
     }
