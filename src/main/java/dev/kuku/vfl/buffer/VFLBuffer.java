@@ -15,7 +15,7 @@ public interface VFLBuffer {
     void pushBlockToBuffer(BlockData block);
 
     /**
-     * Graceful shutdown - this IS appropriate to return a future.
+     * Will flush all pending data and then shutdown
      */
-    void flushAll();
+    void shutdown();
 }

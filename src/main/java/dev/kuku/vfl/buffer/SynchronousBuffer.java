@@ -1,13 +1,13 @@
 package dev.kuku.vfl.buffer;
 
-import dev.kuku.vfl.models.VflResponse;
 import dev.kuku.vfl.models.BlockData;
 import dev.kuku.vfl.models.LogData;
+import dev.kuku.vfl.models.VflResponse;
 import dev.kuku.vfl.util.ApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO use backend service interface to make api calls
 public class SynchronousBuffer implements VFLBuffer {
     final List<LogData> logs;
     final List<BlockData> blocks;
@@ -68,7 +68,7 @@ public class SynchronousBuffer implements VFLBuffer {
     }
 
     @Override
-    public void flushAll() {
+    public void shutdown() {
         flush();
     }
 }
