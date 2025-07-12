@@ -14,7 +14,7 @@ public class AsynchronousBuffer implements VFLBuffer {
     private final List<BlockData> blocksToFlush;
     private final int blockBufferSize;
     private final int logBufferSize;
-    //ExecutorService are non-daemon threads by default so program does not terminate until all daemon threads are shut down
+    //ExecutorService are non-daemon threads by default, so program does not terminate until all daemon threads are shut down
     private final ExecutorService workers;
     private final VFLApi backendAPI;
 

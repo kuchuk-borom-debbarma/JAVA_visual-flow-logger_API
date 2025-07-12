@@ -69,6 +69,6 @@ public class VFL {
                 Instant.now().toEpochMilli()
         );
         this.buffer.pushLogToBuffer(endingLog);
-        this.buffer.flushAll();
+        this.buffer.shutdown();
     }
 }
