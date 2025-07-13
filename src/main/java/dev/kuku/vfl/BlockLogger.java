@@ -219,7 +219,7 @@ public class BlockLogger {
             if (endMessage == null) return null;
             try {
                 String msg = endMessage.apply(result);
-                return Objects.requireNonNullElse(msg, "Processed end message is null");
+                return msg;
             } catch (Exception e) {
                 return "Error when processing End Message : " + e.getMessage();
             }
