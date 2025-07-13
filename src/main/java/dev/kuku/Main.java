@@ -6,12 +6,14 @@ import dev.kuku.vfl.buffer.SynchronousBuffer;
 import dev.kuku.vfl.serviceCall.NaiveVFLServerAPI;
 
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 public class Main {
     static VFL vfl = new VFL(new SynchronousBuffer(10000, new NaiveVFLServerAPI("http://localhost:8080")));
 
     public static void main(String... args) {
-        new SimpleLinearFlow(vfl).run();
+        new AsyncFlowTest(vfl).run();
     }
 
     record SimpleLinearFlow(VFL vfl) {
@@ -44,6 +46,54 @@ public class Main {
                 throw new RuntimeException(e);
             }
             logger.message("Stored history = " + history);
+        }
+    }
+
+    record AsyncFlowTest(VFL vfl) {
+        public void run() {
+            vfl.start("Async flow test", this::startingPoint);
+        }
+
+        public void startingPoint(BlockLogger logger) {
+            logger.message("Starting async flow test");
+            var sumTask = CompletableFuture.supplyAsync(() -> logger.runBlockResultAndStay("Sum",
+                    "Sum of 1, 2",
+                    o -> "Sum = " + o,
+                    l -> sum(1, 2, l)), Executors.newVirtualThreadPerTaskExecutor());
+            var multiplyTask = CompletableFuture.supplyAsync(() -> logger.runBlockResultAndStay("Multiply",
+                    "1*2",
+                    o -> "1*2 = " + o,
+                    l -> multiply(1, 2, l)), Executors.newVirtualThreadPerTaskExecutor());
+
+            var r1 = sumTask.join();    // Wait for Task 1 to finish
+            var r2 = multiplyTask.join(); // Wait for Task 2 to finish
+
+            logger.message("r1 = " + r1 + " r2 = " + r2);
+
+        }
+
+        // In your sum method, add some logging
+        int sum(int a, int b, BlockLogger logger) {
+            logger.message("Sum of " + a + " and " + b);
+            logger.message("calculating...");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                logger.error("InterruptedException in sum: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+            return a + b;
+        }
+
+        int multiply(int a, int b, BlockLogger logger) {
+            logger.message("Multiply of " + a + " and " + b);
+            logger.message("calculating...");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return a * b;
         }
     }
 }
