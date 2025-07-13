@@ -41,10 +41,11 @@ public class VFL {
             this.rootBlockLogger = new BlockLogger(new BlockData(rootBlockId, null, blockName), this.buffer);
             //Execute the operation with blockLogger passed as argument
             result = operation.apply(rootBlockLogger);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             //if an exception is thrown, add it to blockLogger
             if (rootBlockLogger != null) {
-                rootBlockLogger.error("Exception : " + e.getMessage());
+                rootBlockLogger.error("Exception: " + e.getClass().getSimpleName() +
+                        (e.getMessage() != null ? " - " + e.getMessage() : ""));
             }
             if (rootBlockLogger != null) {
                 finalizeBlock(rootBlockId);

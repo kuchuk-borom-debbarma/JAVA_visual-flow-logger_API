@@ -52,8 +52,16 @@ public class BlockLogger {
         internalCoreLogger.logWithoutResult(blockName, message, blockEndMsg, fn, true);
     }
 
+    public void runBlock(String blockName, Consumer<BlockLogger> fn) {
+        internalCoreLogger.logWithoutResult(blockName, null, null, fn, true);
+    }
+
     public void runBlockAndStay(String blockName, String message, String blockEndMsg, Consumer<BlockLogger> fn) {
         internalCoreLogger.logWithoutResult(blockName, message, blockEndMsg, fn, false);
+    }
+
+    public void runBlockAndStay(String blockName, Consumer<BlockLogger> fn) {
+        internalCoreLogger.logWithoutResult(blockName, null, null, fn, false);
     }
 
     /**
