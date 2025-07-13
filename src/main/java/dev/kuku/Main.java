@@ -2,7 +2,7 @@ package dev.kuku;
 
 import dev.kuku.vfl.BlockLogger;
 import dev.kuku.vfl.VFL;
-import dev.kuku.vfl.buffer.SynchronousBuffer;
+import dev.kuku.vfl.buffer.AsynchronousBuffer;
 import dev.kuku.vfl.serviceCall.NaiveVFLServerAPI;
 
 import java.util.Scanner;
@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
 public class Main {
-    static VFL vfl = new VFL(new SynchronousBuffer(10000, new NaiveVFLServerAPI("http://localhost:8080")));
+    static VFL vfl = new VFL(new AsynchronousBuffer(1, 1, 2, new NaiveVFLServerAPI("http://localhost:8080")));
 
     public static void main(String... args) {
         new AsyncFlowTest(vfl).run();

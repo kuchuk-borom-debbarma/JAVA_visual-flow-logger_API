@@ -53,7 +53,8 @@ public class AsynchronousBuffer implements VFLBuffer {
             flushAll();
         }
     }
-
+    //TODO needs to be run  in async manner. First block and then log instead of two separate operations
+    //TODO single flush operation at once for less complexity. Use atomic bool for this
     private void flushAll() {
         flushBlocks();
         flushLogs();
