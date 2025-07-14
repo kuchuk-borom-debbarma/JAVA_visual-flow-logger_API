@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BlockLogger implements AutoCloseable {
-    private final InternalCoreLogger internalCoreLogger;
+public class BlockLogger {
+    protected final InternalCoreLogger internalCoreLogger;
 
     public BlockLogger(BlockData blockData, VFLBuffer buffer) {
         internalCoreLogger = new InternalCoreLogger(buffer, blockData);
@@ -68,17 +68,16 @@ public class BlockLogger implements AutoCloseable {
      * @return sub block logger instance
      */
     public SubBlockLogger createSubBlockLogger(String blockName, String message) {
-        return this.internalCoreLogger.createSubBlockLogger(blockName, message);
+        return this.internalCoreLogger.createSubBlockLogger(blockName, message, true);
     }
 
-    @Override
-    public void close() throws Exception {
-        //TODO
+    public SubBlockLogger createSubBlockLoggerAndStay(String blockName, String message) {
+        return this.internalCoreLogger.createSubBlockLogger(blockName, message, false);
     }
 
-    private static class InternalCoreLogger {
+    protected static class InternalCoreLogger {
+        protected final BlockData blockData;
         private final VFLBuffer buffer;
-        private final BlockData blockData;
         private final AtomicBoolean isInitialized = new AtomicBoolean(false);
         private String currentLogId = null;
 
@@ -93,18 +92,18 @@ public class BlockLogger implements AutoCloseable {
             return bd;
         }
 
-        private LogData createLogDataAndPush(String logId,
-                                             String blockId,
-                                             String parentLogId,
-                                             VflLogType logType,
-                                             String message,
-                                             String referenceValue) {
+        protected LogData createLogDataAndPush(String logId,
+                                               String blockId,
+                                               String parentLogId,
+                                               VflLogType logType,
+                                               String message,
+                                               String referenceValue) {
             LogData ld = new LogData(logId, blockId, parentLogId, logType, message, referenceValue, Instant.now().toEpochMilli());
             this.buffer.pushLogToBuffer(ld);
             return ld;
         }
 
-        private SubBlockLogger createSubBlockLogger(String blockName, String message) {
+        private SubBlockLogger createSubBlockLogger(String blockName, String message, boolean moveForward) {
             this.ensureStartLogCreated();
             String subBlockId = UUID.randomUUID().toString();
             String subBlockStartLogId = UUID.randomUUID().toString();
@@ -114,6 +113,9 @@ public class BlockLogger implements AutoCloseable {
                     this.currentLogId,
                     VflLogType.SUB_BLOCK_START,
                     message, subBlockId);
+            if (moveForward) {
+                this.currentLogId = subBlockStartLogId;
+            }
             return new SubBlockLogger(this.blockData, subBlockData, this.buffer);
         }
 
