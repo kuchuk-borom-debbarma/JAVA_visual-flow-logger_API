@@ -12,16 +12,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BlockLogger {
-    private final VFLBuffer buffer;
-    private final BlockData blockData;
-    private final AtomicBoolean isInitialized = new AtomicBoolean(false);
-    private final InternalCoreLogger internalCoreLogger = new InternalCoreLogger(this);
-    private String currentLogId = null;
+public class BlockLogger implements AutoCloseable {
+    private final InternalCoreLogger internalCoreLogger;
 
     public BlockLogger(BlockData blockData, VFLBuffer buffer) {
-        this.buffer = buffer;
-        this.blockData = blockData;
+        internalCoreLogger = new InternalCoreLogger(buffer, blockData);
     }
 
     public void message(String message) {
@@ -72,41 +67,62 @@ public class BlockLogger {
      * @param message   message for the sub block start
      * @return sub block logger instance
      */
-    //TODO child class that has function for end message
     public SubBlockLogger createSubBlockLogger(String blockName, String message) {
         return this.internalCoreLogger.createSubBlockLogger(blockName, message);
     }
 
-    private static class InternalCoreLogger {
-        private final BlockLogger blockLogger;
+    @Override
+    public void close() throws Exception {
+        //TODO
+    }
 
-        private InternalCoreLogger(BlockLogger blockLogger) {
-            this.blockLogger = blockLogger;
+    private static class InternalCoreLogger {
+        private final VFLBuffer buffer;
+        private final BlockData blockData;
+        private final AtomicBoolean isInitialized = new AtomicBoolean(false);
+        private String currentLogId = null;
+
+        private InternalCoreLogger(VFLBuffer buffer, BlockData blockData) {
+            this.buffer = buffer;
+            this.blockData = blockData;
+        }
+
+        private BlockData createBlockDataAndPush(String subBlockId, String blockName) {
+            BlockData bd = new BlockData(subBlockId, this.blockData.getId(), blockName);
+            this.buffer.pushBlockToBuffer(bd);
+            return bd;
+        }
+
+        private LogData createLogDataAndPush(String logId,
+                                             String blockId,
+                                             String parentLogId,
+                                             VflLogType logType,
+                                             String message,
+                                             String referenceValue) {
+            LogData ld = new LogData(logId, blockId, parentLogId, logType, message, referenceValue, Instant.now().toEpochMilli());
+            this.buffer.pushLogToBuffer(ld);
+            return ld;
         }
 
         private SubBlockLogger createSubBlockLogger(String blockName, String message) {
-            //TODO reduce code duplication
-            ensureStartLogCreated();
-
+            this.ensureStartLogCreated();
             String subBlockId = UUID.randomUUID().toString();
             String subBlockStartLogId = UUID.randomUUID().toString();
-
-            BlockData subBlock = new BlockData(subBlockId, blockLogger.blockData.getId(), blockName);
-            blockLogger.buffer.pushBlockToBuffer(subBlock);
-
-            LogData subBlockLog = new LogData(subBlockStartLogId, blockLogger.blockData.getId(), blockLogger.currentLogId, VflLogType.SUB_BLOCK_START, message, subBlockId, Instant.now().toEpochMilli());
-            blockLogger.buffer.pushLogToBuffer(subBlockLog);
-            return new SubBlockLogger(blockLogger.blockData, subBlock, blockLogger.buffer);
+            BlockData subBlockData = this.createBlockDataAndPush(subBlockId, blockName);
+            this.createLogDataAndPush(subBlockStartLogId,
+                    this.blockData.getId(),
+                    this.currentLogId,
+                    VflLogType.SUB_BLOCK_START,
+                    message, subBlockId);
+            return new SubBlockLogger(this.blockData, subBlockData, this.buffer);
         }
 
         private void addMessageLog(String message, VflLogType logType, boolean moveForward) {
             ensureStartLogCreated();
-
             String logId = UUID.randomUUID().toString();
-            var messageLog = new LogData(logId, blockLogger.blockData.getId(), blockLogger.currentLogId, logType, message, null, Instant.now().toEpochMilli());
-            blockLogger.buffer.pushLogToBuffer(messageLog);
+            this.createLogDataAndPush(logId, this.blockData.getId(), this.currentLogId, logType, message, null);
             if (moveForward) {
-                blockLogger.currentLogId = logId;
+                this.currentLogId = logId;
             }
         }
 
@@ -114,44 +130,48 @@ public class BlockLogger {
             try {
                 Objects.requireNonNull(process, "Process cannot be null");
                 Objects.requireNonNull(blockName, "Block name cannot be null");
-
                 ensureStartLogCreated();
-
                 String subBlockId = UUID.randomUUID().toString();
+                BlockData subBlockData = this.createBlockDataAndPush(subBlockId, blockName);
                 String subBlockStartLogId = UUID.randomUUID().toString();
-
-                BlockData subBlock = new BlockData(subBlockId, blockLogger.blockData.getId(), blockName);
-                blockLogger.buffer.pushBlockToBuffer(subBlock);
-
-                LogData subBlockLog = new LogData(subBlockStartLogId, blockLogger.blockData.getId(), blockLogger.currentLogId, VflLogType.SUB_BLOCK_START, message, subBlockId, Instant.now().toEpochMilli());
-                blockLogger.buffer.pushLogToBuffer(subBlockLog);
-
+                this.createLogDataAndPush(subBlockStartLogId,
+                        this.blockData.getId(),
+                        this.currentLogId,
+                        VflLogType.SUB_BLOCK_START,
+                        message,
+                        subBlockId);
                 if (moveForward) {
-                    blockLogger.currentLogId = subBlockStartLogId;
+                    this.currentLogId = subBlockStartLogId;
                 }
-
-                BlockLogger subProcessBlockLogger = new BlockLogger(subBlock, blockLogger.buffer);
+                BlockLogger subProcessBlockLogger = new BlockLogger(subBlockData, this.buffer);
                 T result;
                 try {
                     result = process.apply(subProcessBlockLogger);
                 } catch (Exception e) {
-                    subProcessBlockLogger.internalCoreLogger.addMessageLog("Exception " + e.getMessage(), VflLogType.EXCEPTION, true);
+                    subProcessBlockLogger.internalCoreLogger.addMessageLog("Exception " + e.getClass() + " : " + e.getMessage(), VflLogType.EXCEPTION, true);
                     String endLogId = UUID.randomUUID().toString();
                     /*
                     End log is not stored as a log of a block.
                     It is used to update the block's finishing time.
                      */
-                    var endLog = new LogData(endLogId, subBlockId, subBlockStartLogId, VflLogType.BLOCK_END, executeEndMessageFn(endMessage, null), null, Instant.now().toEpochMilli());
-                    blockLogger.buffer.pushLogToBuffer(endLog);
+                    this.createLogDataAndPush(endLogId,
+                            subBlockId,
+                            subBlockStartLogId,
+                            VflLogType.BLOCK_END,
+                            executeEndMessageFn(endMessage, null),
+                            null);
                     throw e;
                 }
-
                 String endLogId = UUID.randomUUID().toString();
-                var endLog = new LogData(endLogId, subBlockId, subBlockStartLogId, VflLogType.BLOCK_END, executeEndMessageFn(endMessage, result), null, Instant.now().toEpochMilli());
-                blockLogger.buffer.pushLogToBuffer(endLog);
+                this.createLogDataAndPush(endLogId,
+                        subBlockId,
+                        subBlockStartLogId,
+                        VflLogType.BLOCK_END,
+                        executeEndMessageFn(endMessage, null),
+                        null);
                 return result;
             } catch (Exception e) {
-                addMessageLog("Exception when trying to run sub-block operation" + e.getMessage(), VflLogType.EXCEPTION, true);
+                addMessageLog("Exception when trying to run sub-block operation. " + e.getClass() + " : " + e.getMessage(), VflLogType.EXCEPTION, true);
                 throw e;
             }
         }
@@ -164,8 +184,11 @@ public class BlockLogger {
             this.logWithResult(blockName, message, (_) -> endMessage, a, moveForward);
         }
 
+        /**
+         * Push BLOCK_START log to buffer if it has not been pushed.
+         */
         private void ensureStartLogCreated() {
-            if (blockLogger.isInitialized.compareAndSet(false, true)) {
+            if (this.isInitialized.compareAndSet(false, true)) {
                 createStartLog();
             }
         }
@@ -173,8 +196,7 @@ public class BlockLogger {
         private <T> String executeEndMessageFn(Function<T, String> endMessage, T result) {
             if (endMessage == null) return null;
             try {
-                String msg = endMessage.apply(result);
-                return msg;
+                return endMessage.apply(result);
             } catch (Exception e) {
                 return "Error when processing End Message : " + e.getMessage();
             }
@@ -186,8 +208,12 @@ public class BlockLogger {
             Server processes it to update the block's start time
              */
             String startLogId = UUID.randomUUID().toString();
-            LogData blockStartLog = new LogData(startLogId, blockLogger.blockData.getId(), null, VflLogType.BLOCK_START, null, null, Instant.now().toEpochMilli());
-            blockLogger.buffer.pushLogToBuffer(blockStartLog);
+            this.createLogDataAndPush(startLogId,
+                    this.blockData.getId(),
+                    null,
+                    VflLogType.BLOCK_START,
+                    null,
+                    null);
         }
     }
 }
