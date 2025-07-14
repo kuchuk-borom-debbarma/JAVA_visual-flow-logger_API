@@ -74,3 +74,4 @@ public class VFL {
     }
 }
 //TODO try with resource design support
+//TODO annotation based approach too
