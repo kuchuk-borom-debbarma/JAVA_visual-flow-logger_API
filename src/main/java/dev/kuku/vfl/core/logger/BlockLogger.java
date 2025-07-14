@@ -145,11 +145,11 @@ public class BlockLogger implements AutoCloseable {
                 }
                 BlockLogger subProcessBlockLogger = new BlockLogger(subBlockData, this.buffer);
                 T result;
+                String endLogId = UUID.randomUUID().toString();
                 try {
                     result = process.apply(subProcessBlockLogger);
                 } catch (Exception e) {
                     subProcessBlockLogger.internalCoreLogger.addMessageLog("Exception " + e.getClass() + " : " + e.getMessage(), VflLogType.EXCEPTION, true);
-                    String endLogId = UUID.randomUUID().toString();
                     /*
                     End log is not stored as a log of a block.
                     It is used to update the block's finishing time.
@@ -162,12 +162,11 @@ public class BlockLogger implements AutoCloseable {
                             null);
                     throw e;
                 }
-                String endLogId = UUID.randomUUID().toString();
                 this.createLogDataAndPush(endLogId,
                         subBlockId,
                         subBlockStartLogId,
                         VflLogType.BLOCK_END,
-                        executeEndMessageFn(endMessage, null),
+                        executeEndMessageFn(endMessage, result),
                         null);
                 return result;
             } catch (Exception e) {
@@ -177,11 +176,11 @@ public class BlockLogger implements AutoCloseable {
         }
 
         public void logWithoutResult(String blockName, String message, String endMessage, Consumer<BlockLogger> process, boolean moveForward) {
-            Function<BlockLogger, Void> a = blockLogger -> {
+            Function<BlockLogger, Void> fn = blockLogger -> {
                 process.accept(blockLogger);
                 return null;
             };
-            this.logWithResult(blockName, message, (_) -> endMessage, a, moveForward);
+            this.logWithResult(blockName, message, (_) -> endMessage, fn, moveForward);
         }
 
         /**
