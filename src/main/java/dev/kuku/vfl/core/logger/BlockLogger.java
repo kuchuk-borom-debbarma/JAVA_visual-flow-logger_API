@@ -1,9 +1,9 @@
 package dev.kuku.vfl.core.logger;
 
-import dev.kuku.vfl.buffer.VFLBuffer;
-import dev.kuku.vfl.models.BlockData;
-import dev.kuku.vfl.models.LogData;
-import dev.kuku.vfl.models.VflLogType;
+import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.models.BlockData;
+import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.VflLogType;
 
 import java.time.Instant;
 import java.util.Objects;

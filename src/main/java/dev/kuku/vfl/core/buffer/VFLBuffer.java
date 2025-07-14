@@ -1,7 +1,7 @@
-package dev.kuku.vfl.buffer;
+package dev.kuku.vfl.core.buffer;
 
-import dev.kuku.vfl.models.BlockData;
-import dev.kuku.vfl.models.LogData;
+import dev.kuku.vfl.core.models.BlockData;
+import dev.kuku.vfl.core.models.LogData;
 
 public interface VFLBuffer {
     /**

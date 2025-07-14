@@ -1,4 +1,4 @@
-package dev.kuku.vfl.models;
+package dev.kuku.vfl.core.models;
 
 public class LogData {
     private String id;

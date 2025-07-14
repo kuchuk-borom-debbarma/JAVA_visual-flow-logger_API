@@ -2,8 +2,8 @@ package dev.kuku;
 
 import dev.kuku.vfl.core.logger.BlockLogger;
 import dev.kuku.vfl.VFL;
-import dev.kuku.vfl.buffer.AsynchronousBuffer;
-import dev.kuku.vfl.serviceCall.NaiveVFLServerAPI;
+import dev.kuku.vfl.core.buffer.AsynchronousBuffer;
+import dev.kuku.vfl.core.serviceCall.NaiveVFLServerAPI;
 
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;

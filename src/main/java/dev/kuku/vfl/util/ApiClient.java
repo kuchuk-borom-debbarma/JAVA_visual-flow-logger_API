@@ -3,7 +3,7 @@ package dev.kuku.vfl.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.kuku.vfl.models.VflResponse;
+import dev.kuku.vfl.core.models.VflResponse;
 
 import java.io.IOException;
 import java.net.URI;

@@ -1,8 +1,8 @@
 package dev.kuku.vfl.core.logger;
 
-import dev.kuku.vfl.buffer.VFLBuffer;
-import dev.kuku.vfl.models.BlockData;
-import dev.kuku.vfl.models.VflLogType;
+import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.models.BlockData;
+import dev.kuku.vfl.core.models.VflLogType;
 
 import java.util.UUID;
 
@@ -11,6 +11,8 @@ import java.util.UUID;
  * Recommended to use with try-with-resource or close manually.
  */
 public class SubBlockLogger extends BlockLogger implements AutoCloseable {
+    //TODO isClosing thread safe variable
+    //TODO override functions to do isClosing check
     private final BlockData parentBlockData;
     private String endMessage;
 
