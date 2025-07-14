@@ -1,6 +1,7 @@
 package dev.kuku.vfl;
 
 import dev.kuku.vfl.buffer.VFLBuffer;
+import dev.kuku.vfl.core.logger.BlockLogger;
 import dev.kuku.vfl.models.BlockData;
 import dev.kuku.vfl.models.LogData;
 import dev.kuku.vfl.models.VflLogType;

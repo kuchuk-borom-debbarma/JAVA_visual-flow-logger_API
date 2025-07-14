@@ -1,4 +1,4 @@
-package dev.kuku.vfl;
+package dev.kuku.vfl.core.logger;
 
 import dev.kuku.vfl.buffer.VFLBuffer;
 import dev.kuku.vfl.models.BlockData;
@@ -65,7 +65,7 @@ public class BlockLogger {
     }
 
     /**
-     * Create a sub block logger instance and return it. It can't have an ending message as it is not possible to determine the end of the function. <br>
+     * Create a sub-block logger instance and return it. It can't have an ending message as it is not possible to determine the end of the function. <br>
      * The end message has to be specified by invoking a method.
      *
      * @param blockName name of the block
@@ -73,7 +73,7 @@ public class BlockLogger {
      * @return sub block logger instance
      */
     //TODO child class that has function for end message
-    public BlockLogger createSubBlockLogger(String blockName, String message) {
+    public SubBlockLogger createSubBlockLogger(String blockName, String message) {
         return this.internalCoreLogger.createSubBlockLogger(blockName, message);
     }
 
@@ -84,54 +84,33 @@ public class BlockLogger {
             this.blockLogger = blockLogger;
         }
 
-        private BlockLogger createSubBlockLogger(String blockName, String message) {
+        private SubBlockLogger createSubBlockLogger(String blockName, String message) {
             //TODO reduce code duplication
             ensureStartLogCreated();
 
             String subBlockId = UUID.randomUUID().toString();
             String subBlockStartLogId = UUID.randomUUID().toString();
 
-            BlockData subBlock = new BlockData(
-                    subBlockId,
-                    blockLogger.blockData.getId(),
-                    blockName);
+            BlockData subBlock = new BlockData(subBlockId, blockLogger.blockData.getId(), blockName);
             blockLogger.buffer.pushBlockToBuffer(subBlock);
 
-            LogData subBlockLog = new LogData(
-                    subBlockStartLogId,
-                    blockLogger.blockData.getId(),
-                    blockLogger.currentLogId,
-                    VflLogType.SUB_BLOCK_START,
-                    message,
-                    subBlockId,
-                    Instant.now().toEpochMilli());
+            LogData subBlockLog = new LogData(subBlockStartLogId, blockLogger.blockData.getId(), blockLogger.currentLogId, VflLogType.SUB_BLOCK_START, message, subBlockId, Instant.now().toEpochMilli());
             blockLogger.buffer.pushLogToBuffer(subBlockLog);
-            return new BlockLogger(subBlock, blockLogger.buffer);
+            return new SubBlockLogger(blockLogger.blockData, subBlock, blockLogger.buffer);
         }
 
         private void addMessageLog(String message, VflLogType logType, boolean moveForward) {
             ensureStartLogCreated();
 
             String logId = UUID.randomUUID().toString();
-            var messageLog = new LogData(
-                    logId,
-                    blockLogger.blockData.getId(),
-                    blockLogger.currentLogId,
-                    logType,
-                    message,
-                    null,
-                    Instant.now().toEpochMilli());
+            var messageLog = new LogData(logId, blockLogger.blockData.getId(), blockLogger.currentLogId, logType, message, null, Instant.now().toEpochMilli());
             blockLogger.buffer.pushLogToBuffer(messageLog);
             if (moveForward) {
                 blockLogger.currentLogId = logId;
             }
         }
 
-        private <T> T logWithResult(String blockName,
-                                    String message,
-                                    Function<T, String> endMessage,
-                                    Function<BlockLogger, T> process,
-                                    boolean moveForward) {
+        private <T> T logWithResult(String blockName, String message, Function<T, String> endMessage, Function<BlockLogger, T> process, boolean moveForward) {
             try {
                 Objects.requireNonNull(process, "Process cannot be null");
                 Objects.requireNonNull(blockName, "Block name cannot be null");
@@ -141,20 +120,10 @@ public class BlockLogger {
                 String subBlockId = UUID.randomUUID().toString();
                 String subBlockStartLogId = UUID.randomUUID().toString();
 
-                BlockData subBlock = new BlockData(
-                        subBlockId,
-                        blockLogger.blockData.getId(),
-                        blockName);
+                BlockData subBlock = new BlockData(subBlockId, blockLogger.blockData.getId(), blockName);
                 blockLogger.buffer.pushBlockToBuffer(subBlock);
 
-                LogData subBlockLog = new LogData(
-                        subBlockStartLogId,
-                        blockLogger.blockData.getId(),
-                        blockLogger.currentLogId,
-                        VflLogType.SUB_BLOCK_START,
-                        message,
-                        subBlockId,
-                        Instant.now().toEpochMilli());
+                LogData subBlockLog = new LogData(subBlockStartLogId, blockLogger.blockData.getId(), blockLogger.currentLogId, VflLogType.SUB_BLOCK_START, message, subBlockId, Instant.now().toEpochMilli());
                 blockLogger.buffer.pushLogToBuffer(subBlockLog);
 
                 if (moveForward) {
@@ -172,27 +141,13 @@ public class BlockLogger {
                     End log is not stored as a log of a block.
                     It is used to update the block's finishing time.
                      */
-                    var endLog = new LogData(
-                            endLogId,
-                            subBlockId,
-                            subBlockStartLogId,
-                            VflLogType.BLOCK_END,
-                            executeEndMessageFn(endMessage, null),
-                            null,
-                            Instant.now().toEpochMilli());
+                    var endLog = new LogData(endLogId, subBlockId, subBlockStartLogId, VflLogType.BLOCK_END, executeEndMessageFn(endMessage, null), null, Instant.now().toEpochMilli());
                     blockLogger.buffer.pushLogToBuffer(endLog);
                     throw e;
                 }
 
                 String endLogId = UUID.randomUUID().toString();
-                var endLog = new LogData(
-                        endLogId,
-                        subBlockId,
-                        subBlockStartLogId,
-                        VflLogType.BLOCK_END,
-                        executeEndMessageFn(endMessage, result),
-                        null,
-                        Instant.now().toEpochMilli());
+                var endLog = new LogData(endLogId, subBlockId, subBlockStartLogId, VflLogType.BLOCK_END, executeEndMessageFn(endMessage, result), null, Instant.now().toEpochMilli());
                 blockLogger.buffer.pushLogToBuffer(endLog);
                 return result;
             } catch (Exception e) {
@@ -231,15 +186,7 @@ public class BlockLogger {
             Server processes it to update the block's start time
              */
             String startLogId = UUID.randomUUID().toString();
-            LogData blockStartLog = new LogData(
-                    startLogId,
-                    blockLogger.blockData.getId(),
-                    null,
-                    VflLogType.BLOCK_START,
-                    null,
-                    null,
-                    Instant.now().toEpochMilli()
-            );
+            LogData blockStartLog = new LogData(startLogId, blockLogger.blockData.getId(), null, VflLogType.BLOCK_START, null, null, Instant.now().toEpochMilli());
             blockLogger.buffer.pushLogToBuffer(blockStartLog);
         }
     }

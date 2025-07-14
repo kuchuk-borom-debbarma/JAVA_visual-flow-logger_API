@@ -1,6 +1,6 @@
 package dev.kuku;
 
-import dev.kuku.vfl.BlockLogger;
+import dev.kuku.vfl.core.logger.BlockLogger;
 import dev.kuku.vfl.VFL;
 import dev.kuku.vfl.buffer.AsynchronousBuffer;
 import dev.kuku.vfl.serviceCall.NaiveVFLServerAPI;
