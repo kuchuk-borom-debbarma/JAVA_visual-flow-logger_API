@@ -1,4 +1,4 @@
-package dev.kuku.vfl.util;
+package dev.kuku.vfl.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
