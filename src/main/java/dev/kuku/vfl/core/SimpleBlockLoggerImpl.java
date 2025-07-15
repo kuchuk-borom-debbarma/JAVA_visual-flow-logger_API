@@ -1,18 +1,6 @@
 package dev.kuku.vfl.core;
 
-import java.util.concurrent.Callable;
-
-class BlockLoggerImpl implements BlockLogger {
-    @Override
-    public <T> T call(Callable<T> callable) {
-        return null;
-    }
-
-    @Override
-    public <T> T callHere(Callable<T> callable) {
-        return null;
-    }
-
+class SimpleBlockLoggerImpl implements SimpleBlockLogger {
     @Override
     public void text(String message) {
 
@@ -40,16 +28,6 @@ class BlockLoggerImpl implements BlockLogger {
 
     @Override
     public void errorHere(String message) {
-
-    }
-
-    @Override
-    public void run(Runnable runnable) {
-
-    }
-
-    @Override
-    public void runHere(Runnable runnable) {
 
     }
 }
