@@ -59,25 +59,9 @@ public class BlockLogger implements AutoCloseable {
         internalCoreLogger.logWithoutResult(blockName, null, null, fn, false);
     }
 
-    /**
-     * Create a sub-block logger instance and return it. It can't have an ending message as it is not possible to determine the end of the function. <br>
-     * The end message has to be specified by invoking a method.
-     *
-     * @param blockName name of the block
-     * @param message   message for the sub block start
-     * @return sub block logger instance
-     */
-    public SubBlockLogger createSubBlockLogger(String blockName, String message) {
-        return this.internalCoreLogger.createSubBlockLogger(blockName, message, true);
-    }
-
-    public SubBlockLogger createSubBlockLoggerAndStay(String blockName, String message) {
-        return this.internalCoreLogger.createSubBlockLogger(blockName, message, false);
-    }
-
     @Override
     public void close() {
-       //TODO close. use a boolean to determine if it's already closed or not. Atomic boolean or synchnorised
+        //TODO close. use a boolean to determine if it's already closed or not. Atomic boolean or synchnorised
     }
 
     protected static class InternalCoreLogger {
@@ -106,22 +90,6 @@ public class BlockLogger implements AutoCloseable {
             LogData ld = new LogData(logId, blockId, parentLogId, logType, message, referenceValue, Instant.now().toEpochMilli());
             this.buffer.pushLogToBuffer(ld);
             return ld;
-        }
-
-        private SubBlockLogger createSubBlockLogger(String blockName, String message, boolean moveForward) {
-            this.ensureStartLogCreated();
-            String subBlockId = UUID.randomUUID().toString();
-            String subBlockStartLogId = UUID.randomUUID().toString();
-            BlockData subBlockData = this.createBlockDataAndPush(subBlockId, blockName);
-            this.createLogDataAndPush(subBlockStartLogId,
-                    this.blockData.getId(),
-                    this.currentLogId,
-                    VflLogType.SUB_BLOCK_START,
-                    message, subBlockId);
-            if (moveForward) {
-                this.currentLogId = subBlockStartLogId;
-            }
-            return new SubBlockLogger(this.blockData, subBlockData, this.buffer);
         }
 
         private void addMessageLog(String message, VflLogType logType, boolean moveForward) {
