@@ -3,7 +3,7 @@ package dev.kuku.vfl.core;
 /**
  * Simple logger for logging strings.
  */
-public interface SimpleBlockLogger {
+public interface BlockLog {
     void text(String message);
 
     void textHere(String message);
@@ -15,5 +15,4 @@ public interface SimpleBlockLogger {
     void error(String message);
 
     void errorHere(String message);
-
 }

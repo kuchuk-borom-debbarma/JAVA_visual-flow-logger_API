@@ -10,39 +10,36 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-class SimpleBlockLoggerImpl implements SimpleBlockLogger {
+public class BlockLogImpl implements BlockLog {
+    /**
+     * Buffer implementation responsible for storing and processing log entries.
+     * All log data is pushed to this buffer for eventual persistence or transmission.
+     */
+    protected final VFLBuffer buffer;
+    /**
+     * The block context that this logger is associated with.
+     * Contains block metadata like ID and timing information.
+     */
+    protected final BlockData block;
     /**
      * Thread-safe flag to ensure BLOCK_START is only logged once per block instance.
      * Uses AtomicBoolean to prevent race conditions when multiple threads attempt
      * to initialize the same block simultaneously.
      */
-    private final AtomicBoolean blockInitialized = new AtomicBoolean(false);
-
-    /**
-     * Buffer implementation responsible for storing and processing log entries.
-     * All log data is pushed to this buffer for eventual persistence or transmission.
-     */
-    private final VFLBuffer buffer;
-
-    /**
-     * The block context that this logger is associated with.
-     * Contains block metadata like ID and timing information.
-     */
-    private final BlockData block;
-
+    protected final AtomicBoolean blockInitialized = new AtomicBoolean(false);
     /**
      * Reference to the most recently created log entry within this block.
      * Used to create a linked-list chain of logs by setting parent-child relationships.
      * Marked volatile to ensure visibility across threads when updating the chain.
      */
-    private volatile LogData currentLog;
+    protected volatile LogData currentLog;
 
-    public SimpleBlockLoggerImpl(VFLBuffer buffer, BlockData block) {
+    public BlockLogImpl(VFLBuffer buffer, BlockData block) {
         this.buffer = Objects.requireNonNull(buffer, "Buffer cannot be null");
         this.block = Objects.requireNonNull(block, "Block cannot be null");
     }
 
-    private String generateId() {
+    protected String generateId() {
         return UUID.randomUUID().toString();
     }
 
@@ -58,7 +55,7 @@ class SimpleBlockLoggerImpl implements SimpleBlockLogger {
      * 2. Pushes it to the buffer
      * 3. Sets it as the current log for establishing the log chain
      */
-    private void ensureBlockStarted() {
+    protected void ensureBlockStarted() {
         if (blockInitialized.compareAndSet(false, true)) {
             LogData blockStartLog = createLogData(generateId(), VflLogType.BLOCK_START, null, this.block.getId());
             buffer.pushLogToBuffer(blockStartLog);
@@ -80,7 +77,7 @@ class SimpleBlockLoggerImpl implements SimpleBlockLogger {
      * @param referenceBlock Optional reference to another block (used for BLOCK_START entries)
      * @return A new LogData instance ready to be pushed to the buffer
      */
-    private LogData createLogData(String id, VflLogType logType, String message, String referenceBlock) {
+    protected LogData createLogData(String id, VflLogType logType, String message, String referenceBlock) {
         String parentLogId = currentLog != null ? currentLog.getId() : null;
         return new LogData(id, this.block.getId(), parentLogId, logType, message, referenceBlock, Instant.now().toEpochMilli());
     }
@@ -98,7 +95,7 @@ class SimpleBlockLoggerImpl implements SimpleBlockLogger {
      * 3. Pushes to buffer
      * 4. Updates currentLog reference for future chaining
      */
-    private void logAndUpdateCurrent(VflLogType logType, String message) {
+    protected void logAndUpdateCurrent(VflLogType logType, String message) {
         ensureBlockStarted();
         LogData logData = createLogData(generateId(), logType, message, null);
         buffer.pushLogToBuffer(logData);
@@ -116,7 +113,7 @@ class SimpleBlockLoggerImpl implements SimpleBlockLogger {
      * Use case: Adding contextual information or parallel observations without
      * disrupting the main sequential flow of the log chain.
      */
-    private void logWithoutChaining(VflLogType logType, String message) {
+    protected void logWithoutChaining(VflLogType logType, String message) {
         ensureBlockStarted();
         LogData logData = createLogData(generateId(), logType, message, null);
         buffer.pushLogToBuffer(logData);

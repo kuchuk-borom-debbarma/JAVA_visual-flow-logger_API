@@ -1,14 +1,21 @@
 package dev.kuku;
 
-import dev.kuku.vfl.core.builder.BlockLoggerBuilder;
-import dev.kuku.vfl.core.logger.BlockLogger;
+import dev.kuku.vfl.core.ScopedBlockLogImpl;
 
 public class Main {
-    private static final ScopedValue<BlockLogger> vflScope = ScopedValue.newInstance();
+    private static final ScopedBlockLogImpl s = new ScopedBlockLogImpl();
 
     public static void main(String... args) {
-        var a = BlockLoggerBuilder.create().rootBlock("GGEZ").apiUrl("GGEZ").build();
-        System.out.println(a);
+        s.start(Main::root, "Kuku", "Debbarma");
+    }
+
+    static void root() {
+        s.text("Kuchuk");
+        s.start(Main::nested, "Lisa", "Jamatia");
+    }
+
+    static void nested() {
+        s.text("IDK");
     }
 }
 
