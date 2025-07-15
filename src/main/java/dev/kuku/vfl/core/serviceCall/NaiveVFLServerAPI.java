@@ -3,7 +3,7 @@ package dev.kuku.vfl.core.serviceCall;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VflResponse;
-import dev.kuku.vfl.util.ApiClient;
+import dev.kuku.vfl.core.util.ApiClient;
 
 import java.util.List;
 
