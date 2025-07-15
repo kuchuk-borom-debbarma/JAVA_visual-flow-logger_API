@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BlockLogger {
+public class BlockLogger implements AutoCloseable {
     protected final InternalCoreLogger internalCoreLogger;
 
     public BlockLogger(BlockData blockData, VFLBuffer buffer) {
@@ -73,6 +73,11 @@ public class BlockLogger {
 
     public SubBlockLogger createSubBlockLoggerAndStay(String blockName, String message) {
         return this.internalCoreLogger.createSubBlockLogger(blockName, message, false);
+    }
+
+    @Override
+    public void close() {
+       //TODO close. use a boolean to determine if it's already closed or not. Atomic boolean or synchnorised
     }
 
     protected static class InternalCoreLogger {
