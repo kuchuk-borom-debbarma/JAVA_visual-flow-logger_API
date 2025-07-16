@@ -16,9 +16,9 @@ public interface BlockLog {
 
     void errorHere(String message);
 
-    void run(Runnable runnable, String blockName, String message);
+    void run(String blockName, String message, Runnable runnable);
 
-    void runHere(Runnable runnable, String blockName, String message);
+    void runHere(String blockName, String message, Runnable runnable);
 
     //TODO callables
 

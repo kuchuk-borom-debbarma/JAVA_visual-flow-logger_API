@@ -6,6 +6,8 @@ import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VflLogType;
 
 import java.time.Instant;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
 import static dev.kuku.vfl.scopedValue.ScopedValueLoggerData.scopedBlockData;
@@ -45,6 +47,12 @@ public class ScopedLogger implements BlockLog {
         return ld;
     }
 
+    private BlockData createAndPushBlockData(String id, String blockName) {
+        var bd = new BlockData(id, scopedBlockData.get().blockInfo.getId(), blockName);
+        scopedBlockData.get().buffer.pushBlockToBuffer(bd);
+        return bd;
+    }
+
     @Override
     public void text(String message) {
         scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.MESSAGE, null);
@@ -76,25 +84,51 @@ public class ScopedLogger implements BlockLog {
         createAndPushLogData(message, VflLogType.EXCEPTION, null);
     }
 
-    @Override
-    public void run(Runnable runnable, String blockName, String message) {
+    private <R> R toBeCalledFn(Callable<R> callable, Function<R, String> endMessageFn) {
+        R result = null;
+        try {
+            result = callable.call();
+        } catch (Exception e) {
+            ScopedLogger.get().error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
+        } finally {
+            String endMessage = null;
+            if (endMessageFn != null) {
+                try {
+                    endMessage = endMessageFn.apply(result);
+                } catch (Exception e) {
+                    endMessage = "Error processing End Message : " + String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage());
+                }
+            }
+            ScopedLogger.get().closeBlock(endMessage);
+        }
+        return result;
+    }
+
+    private void run(String blockName, String message, Runnable runnable, boolean stay) {
+        //Create sub block and push it
         String subBlockId = generateUID();
-        var sbd = new BlockData(subBlockId, scopedBlockData.get().blockInfo.getId(), blockName);
-        scopedBlockData.get().buffer.pushBlockToBuffer(sbd);
-        scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.SUB_BLOCK_START, subBlockId);
-        //TODO
-        ScopedValue.where(scopedBlockData, new ScopedLoggerData(sbd, scopedBlockData.get().buffer))
-                .run(runnable);
+        var sbd = createAndPushBlockData(subBlockId, blockName);
+        //Create sub block start log and push it
+        var subBLockStartLog = createAndPushLogData(message, VflLogType.SUB_BLOCK_START, subBlockId);
+        //Create the sub block logger data for sub block
+        var subBlockLogger = new ScopedLoggerData(sbd, scopedBlockData.get().buffer);
+        //Stay or move
+        if (!stay) {
+            scopedBlockData.get().currentLog = subBLockStartLog;
+        }
+        //Run runnable within new bound. This runnable will get its scope bound data
+        ScopedValue.where(scopedBlockData, subBlockLogger)
+                .run(() -> toBeCalledFn(() -> runnable, null));
     }
 
     @Override
-    public void runHere(Runnable runnable, String blockName, String message) {
-        String subBlockId = generateUID();
-        var sbd = new BlockData(subBlockId, scopedBlockData.get().blockInfo.getId(), blockName);
-        scopedBlockData.get().buffer.pushBlockToBuffer(sbd);
-        createAndPushLogData(message, VflLogType.SUB_BLOCK_START, subBlockId);
-        ScopedValue.where(scopedBlockData, new ScopedLoggerData(sbd, scopedBlockData.get().buffer))
-                .run(runnable);
+    public void run(String blockName, String message, Runnable runnable) {
+        this.run(blockName, message, runnable, false);
+    }
+
+    @Override
+    public void runHere(String blockName, String message, Runnable runnable) {
+        this.run(blockName, message, runnable, true);
     }
 
     @Override
