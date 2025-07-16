@@ -64,7 +64,6 @@ public class ScopedLogger implements BlockLog {
     public void textHere(String message) {
         ensureBlockStarted();
         createAndPushLogData(message, VflLogType.MESSAGE, null);
-
     }
 
     @Override

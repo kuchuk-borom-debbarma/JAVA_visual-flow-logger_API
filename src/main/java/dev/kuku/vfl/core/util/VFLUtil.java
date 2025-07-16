@@ -12,8 +12,8 @@ public class VFLUtil {
     }
 
     /**
-     * Handles running the sub block function passed and closes it when complete.<br>
-     * If exception is thrown by the passed function, exception is logged, and exception is re-thrown.
+     * Executes the passed function and closes logger's block when complete.<br>
+     * If exception is thrown, it it first logged, then re-thrown
      *
      * @param callable          the function to be called that returns a value
      * @param endMessageFn      message to set for ending log
