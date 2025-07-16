@@ -29,12 +29,18 @@ public class ScopedLogger implements BlockLog {
 
     private void ensureBlockStarted() {
         if (scopedBlockData.get().blockStarted.compareAndSet(false, true)) {
-            scopedBlockData.get().buffer.pushBlockToBuffer(new LogData());
+            createAndPushLogData(null, VflLogType.BLOCK_START, null);
         }
     }
 
     private LogData createAndPushLogData(String message, VflLogType logType, String referencedBlockId) {
-        var ld = new LogData(generateUID(), scopedBlockData.get().blockInfo.getId(), scopedBlockData.get().currentLog.getId(), logType, message, referencedBlockId, Instant.now().toEpochMilli());
+        var ld = new LogData(generateUID(),
+                scopedBlockData.get().blockInfo.getId(),
+                scopedBlockData.get().currentLog == null ? null : scopedBlockData.get().currentLog.getId(),
+                logType,
+                message,
+                referencedBlockId,
+                Instant.now().toEpochMilli());
         scopedBlockData.get().buffer.pushLogToBuffer(ld);
         return ld;
     }
@@ -76,6 +82,7 @@ public class ScopedLogger implements BlockLog {
         var sbd = new BlockData(subBlockId, scopedBlockData.get().blockInfo.getId(), blockName);
         scopedBlockData.get().buffer.pushBlockToBuffer(sbd);
         scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.SUB_BLOCK_START, subBlockId);
+        //TODO
         ScopedValue.where(scopedBlockData, new ScopedLoggerData(sbd, scopedBlockData.get().buffer))
                 .run(runnable);
     }

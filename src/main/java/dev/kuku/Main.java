@@ -1,38 +1,38 @@
 package dev.kuku;
 
 
-import dev.kuku.vfl.core.BlockLog;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.serviceCall.InMemoryVFLApiImpl;
-import dev.kuku.vfl.scopedValue.ScopedLogger;
 import dev.kuku.vfl.scopedValue.ScopedLogStarter;
+import dev.kuku.vfl.scopedValue.ScopedLogger;
 
 public class Main {
     static final InMemoryVFLApiImpl inMemory = new InMemoryVFLApiImpl();
     static final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, inMemory);
-    BlockLog blockLog = new ScopedLogger(buffer, inMemory);
 
     public static void main(String... args) {
-        ScopedLogStarter.run(
-                "ROOT",buffer, () ->
-        );
-        logger.textHere("Starting main");
-        logger.run(Main::root, "Root", "Starting root");
-        buffer.shutdown();
-        System.out.println(inMemory.blocks);
-        System.out.println(inMemory.logs);
+        ScopedLogStarter.run("Main", buffer, () -> {
+            ScopedLogger logger = ScopedLogger.get();
+            logger.text("Starting main");
+            logger.run(Main::root, "Root", "Starting root call");
+            logger.text("Finished running main");
+        });
+        System.out.println(inMemory.blocks.toString());
+        System.out.println(inMemory.logs.toString());
     }
 
     static void root() {
-        logger.text("Root started");
-        logger.run(Main::nested, "Nested", "Starting Nested operation");
+        var logger = ScopedLogger.get();
+        logger.text("Starting root");
+        logger.text("Doing some stuff in root");
+        logger.run(Main::nested, "Nested", "Starting nested");
+        logger.text("Finished running root");
     }
 
     static void nested() {
-        logger.text("IDK");
+        var logger = ScopedLogger.get();
+        logger.text("Starting nested");
+        logger.text("Doing some stuff in nested");
     }
 }
-
-
-//TODO better safety using builder for everything
