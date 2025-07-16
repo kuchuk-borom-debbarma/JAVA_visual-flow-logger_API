@@ -33,3 +33,7 @@ public interface BlockLog {
 
     void closeBlock(String endMessage);
 }
+//TODO Execution logger
+//TODO Thread safe async logger using virtual threads
+//TODO local file flush handler
+//TODO annotation based flow logger
