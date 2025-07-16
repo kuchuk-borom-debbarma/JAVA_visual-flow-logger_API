@@ -15,4 +15,8 @@ public interface BlockLog {
     void error(String message);
 
     void errorHere(String message);
+
+    void run(Runnable runnable, String blockName, String message);
+
+    void runHere(Runnable runnable, String blockName, String message);
 }
