@@ -6,9 +6,11 @@ import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VflLogType;
 
 import java.time.Instant;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
 
-import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
 import static dev.kuku.vfl.core.util.VFLUtil.blockFnHandler;
+import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
 import static dev.kuku.vfl.scopedLogger.ScopedValueBlockContext.scopedBlockContext;
 
 public class ScopedLogger implements BlockLog {
@@ -89,7 +91,7 @@ public class ScopedLogger implements BlockLog {
         createAndPushLogData(message, VflLogType.EXCEPTION, null);
     }
 
-    private void run(String blockName, String message, Runnable runnable, boolean stay) {
+    private <T> T call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable, boolean stay) {
         ensureBlockStarted();
         //Create subblock and push it
         String subBlockId = generateUID();
@@ -102,29 +104,44 @@ public class ScopedLogger implements BlockLog {
         }
         //Create the subblock logger data for subblock
         ScopedBlockContext subBlockLoggerData = new ScopedBlockContext(sbd, scopedBlockContext.get().buffer);
-        //Run runnable within new bound. This runnable will get its scope bound data
-        ScopedValue.where(scopedBlockContext, subBlockLoggerData)
-                .run(() -> {
-                    try {
-                        var blockData = ScopedLogger.get();
-                        blockFnHandler(() -> {
-                            runnable.run();
-                            return null;
-                        }, null, ScopedLogger.get());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        return ScopedValue.where(scopedBlockContext, subBlockLoggerData)
+                .call(() -> blockFnHandler(callable, endMessageFn, ScopedLogger.get()));
     }
 
     @Override
     public void run(String blockName, String message, Runnable runnable) {
-        this.run(blockName, message, runnable, false);
+        this.call(blockName, message, () -> {
+            runnable.run();
+            return null;
+        });
     }
 
     @Override
     public void runHere(String blockName, String message, Runnable runnable) {
-        this.run(blockName, message, runnable, true);
+        this.call(blockName, message, null, () -> {
+            runnable.run();
+            return null;
+        }, true);
+    }
+
+    @Override
+    public <T> T call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
+        return this.call(blockName, message, endMessageFn, callable, false);
+    }
+
+    @Override
+    public <T> T call(String blockName, String message, Callable<T> callable) {
+        return this.call(blockName, message, null, callable, false);
+    }
+
+    @Override
+    public <T> T callHere(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
+        return this.call(blockName, message, endMessageFn, callable, true);
+    }
+
+    @Override
+    public <T> T callHere(String blockName, String message, Callable<T> callable) {
+        return this.call(blockName, message, null, callable, true);
     }
 
     @Override

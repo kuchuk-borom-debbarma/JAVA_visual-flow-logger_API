@@ -23,13 +23,13 @@ public interface BlockLog {
 
     void runHere(String blockName, String message, Runnable runnable);
 
-    <T> void call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
+    <T> T call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
 
-    <T> void call(String blockName, String message, Callable<T> callable);
+    <T> T call(String blockName, String message, Callable<T> callable);
 
-    <T> void callHere(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
+    <T> T callHere(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
 
-    <T> void callHere(String blockName, String message, Callable<T> callable);
+    <T> T callHere(String blockName, String message, Callable<T> callable);
 
     void closeBlock(String endMessage);
 }
