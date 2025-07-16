@@ -19,4 +19,6 @@ public interface BlockLog {
     void run(Runnable runnable, String blockName, String message);
 
     void runHere(Runnable runnable, String blockName, String message);
+
+    void closeBlock(String endMessage);
 }

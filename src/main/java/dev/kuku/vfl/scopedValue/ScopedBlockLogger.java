@@ -7,11 +7,14 @@ import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VflLogType;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
-//TODO this is good but we can make it much easier to understand by starting off with a start wrapper itself
-class ScopedBlockLogImpl implements BlockLog {
+import java.util.function.Function;
 
+//TODO this is good but we can make it much easier to understand by starting off with a start wrapper itself
+public class ScopedBlockLogger implements BlockLog {
     private static final ScopedValue<BlockLog> s = ScopedValue.newInstance();
     private final AtomicBoolean blockStarted = new AtomicBoolean(false);
     private final VFLBuffer buffer;
@@ -19,9 +22,58 @@ class ScopedBlockLogImpl implements BlockLog {
     private final BlockData blockInfo;
     private volatile LogData currentLog;
 
-    public ScopedBlockLogImpl(VFLBuffer buffer, BlockData blockInfo) {
+    public ScopedBlockLogger(VFLBuffer buffer, BlockData blockInfo) {
+       //x\todo One way we can make this idiomatic yet good to use his by having a rapper start function, and it requires a subblock logger instance to work and they both have to be ecstatic
         this.buffer = buffer;
         this.blockInfo = blockInfo;
+        //Push block info to buffer
+        buffer.pushBlockToBuffer(blockInfo);
+    }
+
+    public void run(String blockName, VFLBuffer buffer, Runnable runnable) {
+        Objects.requireNonNull(buffer);
+        Objects.requireNonNull(runnable);
+        Objects.requireNonNull(blockName);
+        var bl = new ScopedBlockLogger(buffer, new BlockData(UUID.randomUUID().toString(), null, blockName));
+        ScopedValue.where(s, bl)
+                .run(() -> {
+                    try {
+                        runnable.run();
+                    } catch (Exception e) {
+                        bl.error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
+                    } finally {
+                        bl.closeBlock();
+                    }
+                });
+    }
+
+    public <R> R call(String blockName, Function<R, String> endMessageFn, VFLBuffer buffer, Callable<R> callable) {
+        Objects.requireNonNull(buffer);
+        Objects.requireNonNull(callable);
+        Objects.requireNonNull(blockName);
+        var b = new ScopedBlockLogger(buffer, new BlockData(UUID.randomUUID().toString(), null, blockName));
+        return ScopedValue.where(s, b)
+                .call(() -> {
+                    R result = null;
+                    try {
+                        result = callable.call();
+                        return result;
+
+                    } catch (Exception e) {
+                        b.error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
+
+                    } finally {
+                        String endMessage = null;
+                        if (endMessageFn != null) {
+                            try {
+                                endMessage = endMessageFn.apply(result);
+                            } catch (Exception e) {
+                                endMessage = "Failed to process End Message : " + e.getClass() + " : " + e.getMessage();
+                            }
+                        }
+                        b.closeBlock(endMessage);
+                    }
+                });
     }
 
     private void ensureBlockStarted() {
@@ -46,11 +98,6 @@ class ScopedBlockLogImpl implements BlockLog {
     }
 
     //------------------------
-    private BlockData createAndPushBlock(String blockName) {
-        BlockData b = new BlockData(UUID.randomUUID().toString(), this.blockInfo.getId(), blockName);
-        buffer.pushBlockToBuffer(b);
-        return b;
-    }
 
     @Override
     public void text(String message) {
@@ -99,9 +146,9 @@ class ScopedBlockLogImpl implements BlockLog {
 
     @Override
     public void run(Runnable runnable, String blockName, String message) {
-        BlockData subBlock = createAndPushBlock(blockName);
+        BlockData subBlock = new BlockData(UUID.randomUUID().toString(), this.blockInfo.getId(), blockName);
+        var subBlockLogger = new ScopedBlockLogger(this.buffer, subBlock);
         currentLog = createAndPushLog(VflLogType.SUB_BLOCK_START, message, subBlock.getId());
-        var subBlockLogger = new ScopedBlockLogImpl(this.buffer, subBlock);
         ScopedValue.where(s, subBlockLogger)
                 .run(() -> {
                     try {
@@ -110,16 +157,16 @@ class ScopedBlockLogImpl implements BlockLog {
                         subBlockLogger.error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
                         throw e;
                     } finally {
-                        createAndPushLog(VflLogType.BLOCK_END, null, subBlock.getId());
+                        subBlockLogger.closeBlock();
                     }
                 });
     }
 
     @Override
     public void runHere(Runnable runnable, String blockName, String message) {
-        BlockData subBlock = createAndPushBlock(blockName);
+        BlockData subBlock = new BlockData(UUID.randomUUID().toString(), this.blockInfo.getId(), blockName);
+        var subBlockLogger = new ScopedBlockLogger(this.buffer, subBlock);
         createAndPushLog(VflLogType.SUB_BLOCK_START, message, subBlock.getId());
-        var subBlockLogger = new ScopedBlockLogImpl(this.buffer, subBlock);
         ScopedValue.where(s, subBlockLogger)
                 .run(() -> {
                     try {
@@ -128,8 +175,13 @@ class ScopedBlockLogImpl implements BlockLog {
                         subBlockLogger.error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
                         throw e;
                     } finally {
-                        createAndPushLog(VflLogType.BLOCK_END, null, subBlock.getId());
+                        subBlockLogger.closeBlock();
                     }
                 });
+    }
+
+    @Override
+    public void closeBlock(String endMessage) {
+        createAndPushLog(VflLogType.BLOCK_END, null, this.blockInfo.getId());
     }
 }
