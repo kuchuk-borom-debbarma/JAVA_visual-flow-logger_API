@@ -3,12 +3,12 @@ package dev.kuku;
 
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.buffer.flusher.InMemoryFlusherImpl;
+import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
 import dev.kuku.vfl.scopedLogger.ScopedLoggerRunner;
 import dev.kuku.vfl.scopedLogger.ScopedLogger;
 
 public class Main {
-    static final InMemoryFlusherImpl inMemory = new InMemoryFlusherImpl();
+    static final InMemoryFlushHandlerImpl inMemory = new InMemoryFlushHandlerImpl();
     static final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, inMemory);
 
     public static void main(String... args) {
