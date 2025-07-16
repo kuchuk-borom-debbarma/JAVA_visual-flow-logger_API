@@ -20,5 +20,7 @@ public interface BlockLog {
 
     void runHere(Runnable runnable, String blockName, String message);
 
+    //TODO callables
+
     void closeBlock(String endMessage);
 }

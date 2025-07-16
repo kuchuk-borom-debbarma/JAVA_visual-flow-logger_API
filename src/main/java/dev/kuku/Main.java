@@ -5,16 +5,16 @@ import dev.kuku.vfl.core.BlockLog;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.serviceCall.InMemoryVFLApiImpl;
-import dev.kuku.vfl.scopedValue.ScopedBlockLogger;
-import dev.kuku.vfl.scopedValue.ScopedBlockLoggerStarter;
+import dev.kuku.vfl.scopedValue.ScopedLogger;
+import dev.kuku.vfl.scopedValue.ScopedLogStarter;
 
 public class Main {
     static final InMemoryVFLApiImpl inMemory = new InMemoryVFLApiImpl();
     static final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, inMemory);
-    BlockLog blockLog = new ScopedBlockLogger(buffer, inMemory);
+    BlockLog blockLog = new ScopedLogger(buffer, inMemory);
 
     public static void main(String... args) {
-        ScopedBlockLoggerStarter.run(
+        ScopedLogStarter.run(
                 "ROOT",buffer, () ->
         );
         logger.textHere("Starting main");
