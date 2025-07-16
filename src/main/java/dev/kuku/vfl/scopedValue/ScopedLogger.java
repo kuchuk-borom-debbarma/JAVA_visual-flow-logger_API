@@ -9,7 +9,7 @@ import java.time.Instant;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
 import static dev.kuku.vfl.core.util.VFLUtil.blockFnHandler;
-import static dev.kuku.vfl.scopedValue.ScopedValueLoggerData.scopedBlockData;
+import static dev.kuku.vfl.scopedValue.ScopedValueBlockContext.scopedBlockContext;
 
 public class ScopedLogger implements BlockLog {
     private static ScopedLogger instance;
@@ -19,8 +19,8 @@ public class ScopedLogger implements BlockLog {
 
     //Not possible to make it static since we implement interface, so we use singleton instead.
     public static ScopedLogger get() {
-        if (!scopedBlockData.isBound()) {
-            throw new IllegalStateException("scopedBlockData is not bound. Please use " + ScopedLoggerRunner.class.getName() + " to start a new scope.");
+        if (!scopedBlockContext.isBound()) {
+            throw new IllegalStateException("scopedBlockData is not within ScopedValue bound. Please use " + ScopedLoggerRunner.class.getName() + " to start a new scope.");
         }
         if (instance == null) {
             instance = new ScopedLogger();
@@ -29,33 +29,33 @@ public class ScopedLogger implements BlockLog {
     }
 
     private void ensureBlockStarted() {
-        if (scopedBlockData.get().blockStarted.compareAndSet(false, true)) {
+        if (scopedBlockContext.get().blockStarted.compareAndSet(false, true)) {
             createAndPushLogData(null, VflLogType.BLOCK_START, null);
         }
     }
 
     private LogData createAndPushLogData(String message, VflLogType logType, String referencedBlockId) {
         var ld = new LogData(generateUID(),
-                scopedBlockData.get().blockInfo.getId(),
-                scopedBlockData.get().currentLog == null ? null : scopedBlockData.get().currentLog.getId(),
+                scopedBlockContext.get().blockInfo.getId(),
+                scopedBlockContext.get().currentLog == null ? null : scopedBlockContext.get().currentLog.getId(),
                 logType,
                 message,
                 referencedBlockId,
                 Instant.now().toEpochMilli());
-        scopedBlockData.get().buffer.pushLogToBuffer(ld);
+        scopedBlockContext.get().buffer.pushLogToBuffer(ld);
         return ld;
     }
 
     private BlockData createAndPushBlockData(String id, String blockName) {
-        var bd = new BlockData(id, scopedBlockData.get().blockInfo.getId(), blockName);
-        scopedBlockData.get().buffer.pushBlockToBuffer(bd);
+        var bd = new BlockData(id, scopedBlockContext.get().blockInfo.getId(), blockName);
+        scopedBlockContext.get().buffer.pushBlockToBuffer(bd);
         return bd;
     }
 
     @Override
     public void text(String message) {
         ensureBlockStarted();
-        scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.MESSAGE, null);
+        scopedBlockContext.get().currentLog = createAndPushLogData(message, VflLogType.MESSAGE, null);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ScopedLogger implements BlockLog {
     @Override
     public void warn(String message) {
         ensureBlockStarted();
-        scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.WARN, null);
+        scopedBlockContext.get().currentLog = createAndPushLogData(message, VflLogType.WARN, null);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ScopedLogger implements BlockLog {
     @Override
     public void error(String message) {
         ensureBlockStarted();
-        scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.EXCEPTION, null);
+        scopedBlockContext.get().currentLog = createAndPushLogData(message, VflLogType.EXCEPTION, null);
     }
 
     @Override
@@ -98,12 +98,12 @@ public class ScopedLogger implements BlockLog {
         var subBLockStartLog = createAndPushLogData(message, VflLogType.SUB_BLOCK_START, subBlockId);
         //Stay or move
         if (!stay) {
-            scopedBlockData.get().currentLog = subBLockStartLog;
+            scopedBlockContext.get().currentLog = subBLockStartLog;
         }
         //Create the subblock logger data for subblock
-        BoundedLogData subBlockLoggerData = new BoundedLogData(sbd, scopedBlockData.get().buffer);
+        ScopedBlockContext subBlockLoggerData = new ScopedBlockContext(sbd, scopedBlockContext.get().buffer);
         //Run runnable within new bound. This runnable will get its scope bound data
-        ScopedValue.where(scopedBlockData, subBlockLoggerData)
+        ScopedValue.where(scopedBlockContext, subBlockLoggerData)
                 .run(() -> {
                     try {
                         var blockData = ScopedLogger.get();

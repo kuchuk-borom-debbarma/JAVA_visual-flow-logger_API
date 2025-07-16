@@ -21,6 +21,7 @@ public class Main {
         });
         System.out.println(inMemory.blocks.toString());
         System.out.println(inMemory.logs.toString());
+        ScopedLogger.get();
     }
 
     static void root() {

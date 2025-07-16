@@ -11,13 +11,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  * Used by ScopedValue to create bounded data
  */
-class BoundedLogData {
+class ScopedBlockContext {
     public final BlockData blockInfo;
     public final VFLBuffer buffer;
     public final AtomicBoolean blockStarted = new AtomicBoolean(false);
     public LogData currentLog;
 
-    BoundedLogData(BlockData blockInfo, VFLBuffer buffer) {
+    ScopedBlockContext(BlockData blockInfo, VFLBuffer buffer) {
         this.blockInfo = blockInfo;
         this.buffer = buffer;
     }
