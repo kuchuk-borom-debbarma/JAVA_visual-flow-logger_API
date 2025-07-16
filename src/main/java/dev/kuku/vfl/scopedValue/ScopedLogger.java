@@ -8,7 +8,7 @@ import dev.kuku.vfl.core.models.VflLogType;
 import java.time.Instant;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
-import static dev.kuku.vfl.core.util.VFLUtil.toBeCalledFn;
+import static dev.kuku.vfl.core.util.VFLUtil.blockFnHandler;
 import static dev.kuku.vfl.scopedValue.ScopedValueLoggerData.scopedBlockData;
 
 public class ScopedLogger implements BlockLog {
@@ -20,7 +20,7 @@ public class ScopedLogger implements BlockLog {
     //Not possible to make it static since we implement interface, so we use singleton instead.
     public static ScopedLogger get() {
         if (!scopedBlockData.isBound()) {
-            throw new IllegalStateException("scopedBlockData is not bound. Please use " + ScopedLogStarter.class.getName() + " to start a new scope.");
+            throw new IllegalStateException("scopedBlockData is not bound. Please use " + ScopedLoggerRunner.class.getName() + " to start a new scope.");
         }
         if (instance == null) {
             instance = new ScopedLogger();
@@ -107,7 +107,7 @@ public class ScopedLogger implements BlockLog {
                 .run(() -> {
                     try {
                         var blockData = ScopedLogger.get();
-                        toBeCalledFn(() -> {
+                        blockFnHandler(() -> {
                             runnable.run();
                             return null;
                         }, null, ScopedLogger.get());

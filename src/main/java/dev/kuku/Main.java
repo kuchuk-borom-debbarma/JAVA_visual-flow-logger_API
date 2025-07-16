@@ -4,7 +4,7 @@ package dev.kuku;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.serviceCall.InMemoryVFLApiImpl;
-import dev.kuku.vfl.scopedValue.ScopedLogStarter;
+import dev.kuku.vfl.scopedValue.ScopedLoggerRunner;
 import dev.kuku.vfl.scopedValue.ScopedLogger;
 
 public class Main {
@@ -12,7 +12,7 @@ public class Main {
     static final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, inMemory);
 
     public static void main(String... args) {
-        ScopedLogStarter.run("Main", buffer, () -> {
+        ScopedLoggerRunner.run("Main", buffer, () -> {
             ScopedLogger logger = ScopedLogger.get();
             logger.text("Starting main");
             logger.text("Doing some stuff in main");

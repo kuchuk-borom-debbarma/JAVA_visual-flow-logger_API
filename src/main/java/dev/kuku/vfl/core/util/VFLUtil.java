@@ -11,14 +11,24 @@ public class VFLUtil {
         return UUID.randomUUID().toString();
     }
 
-    public static <R> R toBeCalledFn(Callable<R> callable, Function<R, String> endMessageFn, BlockLog logger) throws Exception {
+    /**
+     * Handles running the sub block function passed and closes it when complete.<br>
+     * If exception is thrown by the passed function, exception is logged, and exception is re-thrown.
+     *
+     * @param callable          the function to be called that returns a value
+     * @param endMessageFn      message to set for ending log
+     * @param subLoggerInstance subLoggerInstance instance which is being used by the sub block
+     */
+    public static <R> R blockFnHandler(Callable<R> callable, Function<R, String> endMessageFn, BlockLog subLoggerInstance) {
         R result = null;
         try {
             result = callable.call();
         } catch (Throwable e) {
-            logger.error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
-            throw e;
+            //Use sub logger instance to write down the error and rethrow it
+            subLoggerInstance.error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
+            throw new RuntimeException(e);
         } finally {
+            //Close the block with endMessage(if valid)
             String endMessage = null;
             if (endMessageFn != null) {
                 try {
@@ -27,8 +37,15 @@ public class VFLUtil {
                     endMessage = "Error processing End Message : " + String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage());
                 }
             }
-            logger.closeBlock(endMessage);
+            subLoggerInstance.closeBlock(endMessage);
         }
         return result;
+    }
+
+    public static <R> void blockFnHandler(Runnable runnable, Function<R, String> endMessageFn, BlockLog subLoggerInstance) {
+        VFLUtil.blockFnHandler(() -> {
+            runnable.run();
+            return null;
+        }, endMessageFn, subLoggerInstance);
     }
 }
