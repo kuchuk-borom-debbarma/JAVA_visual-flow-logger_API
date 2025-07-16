@@ -4,8 +4,8 @@ package dev.kuku;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flusher.InMemoryFlusherImpl;
-import dev.kuku.vfl.scopedValue.ScopedLoggerRunner;
-import dev.kuku.vfl.scopedValue.ScopedLogger;
+import dev.kuku.vfl.scopedLogger.ScopedLoggerRunner;
+import dev.kuku.vfl.scopedLogger.ScopedLogger;
 
 public class Main {
     static final InMemoryFlusherImpl inMemory = new InMemoryFlusherImpl();

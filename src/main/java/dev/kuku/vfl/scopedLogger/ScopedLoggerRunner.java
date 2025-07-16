@@ -1,4 +1,4 @@
-package dev.kuku.vfl.scopedValue;
+package dev.kuku.vfl.scopedLogger;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.VFLUtil.blockFnHandler;
-import static dev.kuku.vfl.scopedValue.ScopedValueBlockContext.scopedBlockContext;
+import static dev.kuku.vfl.scopedLogger.ScopedValueBlockContext.scopedBlockContext;
 
 public class ScopedLoggerRunner {
     private ScopedLoggerRunner() {
