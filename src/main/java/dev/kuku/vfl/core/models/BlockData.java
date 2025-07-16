@@ -38,4 +38,13 @@ public class BlockData {
     public void setBlockName(String blockName) {
         this.blockName = blockName;
     }
+
+    @Override
+    public String toString() {
+        return "BlockData{" +
+                "id='" + id + '\'' +
+                ", parentBlockId='" + parentBlockId + '\'' +
+                ", blockName='" + blockName + '\'' +
+                '}';
+    }
 }

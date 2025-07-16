@@ -1,5 +1,6 @@
-package dev.kuku.vfl.core;
+package dev.kuku.vfl.scopedValue;
 
+import dev.kuku.vfl.core.BlockLog;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
 

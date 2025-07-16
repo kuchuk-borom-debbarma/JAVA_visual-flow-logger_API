@@ -1,6 +1,6 @@
-package dev.kuku.vfl.core;
+package dev.kuku.vfl.scopedValue;
 
-
+import dev.kuku.vfl.core.BlockLog;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
@@ -9,10 +9,10 @@ import dev.kuku.vfl.core.models.VflLogType;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+//TODO this is good but we can make it much easier to understand by starting off with a start wrapper itself
 class ScopedBlockLogImpl implements BlockLog {
 
-    private final ScopedValue<BlockLog> s = ScopedValue.newInstance();
+    private static final ScopedValue<BlockLog> s = ScopedValue.newInstance();
     private final AtomicBoolean blockStarted = new AtomicBoolean(false);
     private final VFLBuffer buffer;
     /// Info about this block
@@ -54,7 +54,12 @@ class ScopedBlockLogImpl implements BlockLog {
 
     @Override
     public void text(String message) {
-        currentLog = createAndPushLog(VflLogType.MESSAGE, message);
+        BlockLog scopedLogger = s.get();
+        if (scopedLogger != null && scopedLogger != this) {
+            scopedLogger.textHere(message);
+        } else {
+            currentLog = createAndPushLog(VflLogType.MESSAGE, message);
+        }
     }
 
     @Override
@@ -64,7 +69,12 @@ class ScopedBlockLogImpl implements BlockLog {
 
     @Override
     public void warn(String message) {
-        currentLog = createAndPushLog(VflLogType.WARN, message);
+        BlockLog scopedLogger = s.get();
+        if (scopedLogger != null && scopedLogger != this) {
+            scopedLogger.warnHere(message);
+        } else {
+            currentLog = createAndPushLog(VflLogType.WARN, message);
+        }
     }
 
     @Override
@@ -74,7 +84,12 @@ class ScopedBlockLogImpl implements BlockLog {
 
     @Override
     public void error(String message) {
-        currentLog = createAndPushLog(VflLogType.EXCEPTION, message);
+        BlockLog scopedLogger = s.get();
+        if (scopedLogger != null && scopedLogger != this) {
+            scopedLogger.errorHere(message);
+        } else {
+            currentLog = createAndPushLog(VflLogType.EXCEPTION, message);
+        }
     }
 
     @Override

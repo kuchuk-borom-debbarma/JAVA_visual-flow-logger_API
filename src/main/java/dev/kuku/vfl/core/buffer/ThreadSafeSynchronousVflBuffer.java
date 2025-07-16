@@ -45,6 +45,7 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
 
     @Override
     public void shutdown() {
+        flush();
     }
 
     private void flushIfFull() {

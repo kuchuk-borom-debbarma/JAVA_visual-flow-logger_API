@@ -77,5 +77,18 @@ public class LogData {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public String toString() {
+        return "LogData{" +
+                "id='" + id + '\'' +
+                ", blockId='" + blockId + '\'' +
+                ", parentLogId='" + parentLogId + '\'' +
+                ", logType=" + logType +
+                ", message='" + message + '\'' +
+                ", referencedBlock='" + referencedBlock + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
 

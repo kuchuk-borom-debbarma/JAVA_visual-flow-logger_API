@@ -19,9 +19,4 @@ public class VflResponse<T> {
     public void setData(T data) {
         this.data = data;
     }
-
-    @Override
-    public String toString() {
-        return String.format("VflResponse [message=%s, data=%s]", message, data == null ? "null" : data.toString());
-    }
 }
