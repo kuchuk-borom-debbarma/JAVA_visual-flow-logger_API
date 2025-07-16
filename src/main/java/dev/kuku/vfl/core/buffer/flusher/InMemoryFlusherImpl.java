@@ -1,4 +1,4 @@
-package dev.kuku.vfl.core.serviceCall;
+package dev.kuku.vfl.core.buffer.flusher;
 
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
@@ -6,7 +6,7 @@ import dev.kuku.vfl.core.models.LogData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InMemoryVFLApiImpl implements VFLApi {
+public class InMemoryFlusherImpl implements VFLFlusher {
     public List<LogData> logs = new ArrayList<>();
     public List<BlockData> blocks = new ArrayList<>();
 

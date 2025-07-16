@@ -1,5 +1,8 @@
 package dev.kuku.vfl.core;
 
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+
 /**
  * Simple logger for logging strings.
  */
@@ -20,7 +23,13 @@ public interface BlockLog {
 
     void runHere(String blockName, String message, Runnable runnable);
 
-    //TODO callables
+    <T> void call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
+
+    <T> void call(String blockName, String message, Callable<T> callable);
+
+    <T> void callHere(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
+
+    <T> void callHere(String blockName, String message, Callable<T> callable);
 
     void closeBlock(String endMessage);
 }

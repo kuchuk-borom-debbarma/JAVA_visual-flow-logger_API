@@ -1,4 +1,4 @@
-package dev.kuku.vfl.core.serviceCall;
+package dev.kuku.vfl.core.buffer.flusher;
 
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * Meant to be used for communicating with simple VFL_Server.
  */
-public class NaiveVFLServerAPI implements VFLApi {
+public class NaiveServerFlusher implements VFLFlusher {
     private final String url;
     private final ApiClient apiClient;
 
-    public NaiveVFLServerAPI(String url) {
+    public NaiveServerFlusher(String url) {
         this.url = String.format("%s/api/v1", url);
         this.apiClient = new ApiClient();
     }

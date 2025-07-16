@@ -2,7 +2,7 @@ package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
-import dev.kuku.vfl.core.serviceCall.VFLApi;
+import dev.kuku.vfl.core.buffer.flusher.VFLFlusher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +11,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     private final int logBufferSize;
     private final int blockBufferSize;
-    private final VFLApi api;
+    private final VFLFlusher api;
     private final AtomicBoolean isFlushing = new AtomicBoolean(false);
     private final List<LogData> logsToFlush;
     private final List<BlockData> blocksToFlush;
     private final Object locker = new Object();
 
-    public ThreadSafeSynchronousVflBuffer(int blockBufferSize, int logBufferSize, VFLApi api) {
+    public ThreadSafeSynchronousVflBuffer(int blockBufferSize, int logBufferSize, VFLFlusher api) {
         this.blockBufferSize = blockBufferSize;
         this.logBufferSize = logBufferSize;
         logsToFlush = new ArrayList<>(logBufferSize);

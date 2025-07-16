@@ -2,7 +2,7 @@ package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
-import dev.kuku.vfl.core.serviceCall.VFLApi;
+import dev.kuku.vfl.core.buffer.flusher.VFLFlusher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,9 @@ public class AsynchronousBuffer implements VFLBuffer {
     private final int logBufferSize;
     //ExecutorService are non-daemon threads by default, so program does not terminate until all daemon threads are shut down
     private final ExecutorService workers;
-    private final VFLApi backendAPI;
+    private final VFLFlusher backendAPI;
 
-    public AsynchronousBuffer(int blockBufferSize, int logBufferSize, int threadPoolSize, VFLApi backend) {
+    public AsynchronousBuffer(int blockBufferSize, int logBufferSize, int threadPoolSize, VFLFlusher backend) {
         logsToFlush = new ArrayList<>();
         blocksToFlush = new ArrayList<>();
         this.blockBufferSize = blockBufferSize;
