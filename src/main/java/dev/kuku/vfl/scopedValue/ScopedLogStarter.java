@@ -7,14 +7,15 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.core.util.VFLUtil.*;
+import static dev.kuku.vfl.core.util.VFLUtil.toBeCalledFn;
+import static dev.kuku.vfl.scopedValue.ScopedValueLoggerData.scopedBlockData;
 
 public class ScopedLogStarter {
     private ScopedLogStarter() {
     }
 
-    private static ScopedLoggerData createScopedLoggerData(String blockName, VFLBuffer buffer) {
-        return new ScopedLoggerData(
+    private static BoundedLogData createScopedLoggerData(String blockName, VFLBuffer buffer) {
+        return new BoundedLogData(
                 new BlockData(UUID.randomUUID().toString(), null, blockName),
                 buffer
         );
@@ -23,33 +24,41 @@ public class ScopedLogStarter {
     public static void run(String blockName, VFLBuffer buffer, Runnable runnable) {
         var scopedLoggerData = createScopedLoggerData(blockName, buffer);
         buffer.pushBlockToBuffer(scopedLoggerData.blockInfo);
-        ScopedValue.where(ScopedValueLoggerData.scopedBlockData, scopedLoggerData)
+        //Important to wrap the function call OR else the function will not be within the scope
+        //.run(toBeCalledFn()) will not work
+        ScopedValue.where(scopedBlockData, scopedLoggerData)
                 .run(() -> {
                     try {
-                        runnable.run();
+                        toBeCalledFn(() -> {
+                            runnable.run();
+                            return null;
+                        }, null, ScopedLogger.get());
                     } catch (Exception e) {
-                        ScopedLogger.get().error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
+                        throw new RuntimeException(e);
                     } finally {
-                        ScopedLogger.get().closeBlock(null);
+                        //Flush everything
                         buffer.shutdown();
                     }
                 });
     }
 
     public static <V> V call(String blockName, Function<V, String> endMessageFn, VFLBuffer buffer, Callable<V> callable) {
-        return ScopedValue.where(ScopedValueLoggerData.scopedBlockData, createScopedLoggerData(blockName, buffer))
-                .call(() -> {
-                    V result = null;
-                    try {
-                        result = callable.call();
-                    } catch (Exception e) {
-                        //TODO log exception
-                    } finally {
-                        //TODO close block
-                        ScopedLogger.get().closeBlock(null);
-                        buffer.shutdown();
-                    }
-                    return result;
-                });
+        var scopedLoggerData = createScopedLoggerData(blockName, buffer);
+        buffer.pushBlockToBuffer(scopedLoggerData.blockInfo);
+        try {
+            return ScopedValue.where(scopedBlockData,
+                            scopedLoggerData)
+                    .call(() -> toBeCalledFn(() -> {
+                        try {
+                            return callable.call();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        } finally {
+                            buffer.shutdown();
+                        }
+                    }, endMessageFn, ScopedLogger.get()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

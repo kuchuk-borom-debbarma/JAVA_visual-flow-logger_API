@@ -15,7 +15,8 @@ public class Main {
         ScopedLogStarter.run("Main", buffer, () -> {
             ScopedLogger logger = ScopedLogger.get();
             logger.text("Starting main");
-            logger.run(Main::root, "Root", "Starting root call");
+            logger.text("Doing some stuff in main");
+            logger.run("Root", "Starting root call", Main::root);
             logger.text("Finished running main");
         });
         System.out.println(inMemory.blocks.toString());
@@ -26,7 +27,7 @@ public class Main {
         var logger = ScopedLogger.get();
         logger.text("Starting root");
         logger.text("Doing some stuff in root");
-        logger.run(Main::nested, "Nested", "Starting nested");
+        logger.run("Nested", "Starting nested", Main::nested);
         logger.text("Finished running root");
     }
 

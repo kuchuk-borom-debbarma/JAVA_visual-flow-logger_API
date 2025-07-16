@@ -3,9 +3,10 @@ package dev.kuku.vfl.executionLogger;
 import dev.kuku.vfl.core.BlockLog;
 
 public class ExecutionLoggerImpl implements BlockLog {
+
     @Override
     public void text(String message) {
-        
+
     }
 
     @Override
@@ -34,12 +35,12 @@ public class ExecutionLoggerImpl implements BlockLog {
     }
 
     @Override
-    public void run(Runnable runnable, String blockName, String message) {
+    public void run(String blockName, String message, Runnable runnable) {
 
     }
 
     @Override
-    public void runHere(Runnable runnable, String blockName, String message) {
+    public void runHere(String blockName, String message, Runnable runnable) {
 
     }
 

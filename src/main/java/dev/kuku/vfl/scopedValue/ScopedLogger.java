@@ -6,10 +6,9 @@ import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VflLogType;
 
 import java.time.Instant;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
+import static dev.kuku.vfl.core.util.VFLUtil.toBeCalledFn;
 import static dev.kuku.vfl.scopedValue.ScopedValueLoggerData.scopedBlockData;
 
 public class ScopedLogger implements BlockLog {
@@ -55,70 +54,67 @@ public class ScopedLogger implements BlockLog {
 
     @Override
     public void text(String message) {
+        ensureBlockStarted();
         scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.MESSAGE, null);
     }
 
     @Override
     public void textHere(String message) {
+        ensureBlockStarted();
         createAndPushLogData(message, VflLogType.MESSAGE, null);
 
     }
 
     @Override
     public void warn(String message) {
+        ensureBlockStarted();
         scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.WARN, null);
     }
 
     @Override
     public void warnHere(String message) {
+        ensureBlockStarted();
         createAndPushLogData(message, VflLogType.WARN, null);
     }
 
     @Override
     public void error(String message) {
+        ensureBlockStarted();
         scopedBlockData.get().currentLog = createAndPushLogData(message, VflLogType.EXCEPTION, null);
     }
 
     @Override
     public void errorHere(String message) {
+        ensureBlockStarted();
         createAndPushLogData(message, VflLogType.EXCEPTION, null);
     }
 
-    private <R> R toBeCalledFn(Callable<R> callable, Function<R, String> endMessageFn) {
-        R result = null;
-        try {
-            result = callable.call();
-        } catch (Exception e) {
-            ScopedLogger.get().error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
-        } finally {
-            String endMessage = null;
-            if (endMessageFn != null) {
-                try {
-                    endMessage = endMessageFn.apply(result);
-                } catch (Exception e) {
-                    endMessage = "Error processing End Message : " + String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage());
-                }
-            }
-            ScopedLogger.get().closeBlock(endMessage);
-        }
-        return result;
-    }
-
     private void run(String blockName, String message, Runnable runnable, boolean stay) {
-        //Create sub block and push it
+        ensureBlockStarted();
+        //Create subblock and push it
         String subBlockId = generateUID();
         var sbd = createAndPushBlockData(subBlockId, blockName);
-        //Create sub block start log and push it
+        //Create subblock start log and push it
         var subBLockStartLog = createAndPushLogData(message, VflLogType.SUB_BLOCK_START, subBlockId);
-        //Create the sub block logger data for sub block
-        var subBlockLogger = new ScopedLoggerData(sbd, scopedBlockData.get().buffer);
         //Stay or move
         if (!stay) {
             scopedBlockData.get().currentLog = subBLockStartLog;
         }
+        //Create the subblock logger data for subblock
+        BoundedLogData subBlockLoggerData = new BoundedLogData(sbd, scopedBlockData.get().buffer);
         //Run runnable within new bound. This runnable will get its scope bound data
-        ScopedValue.where(scopedBlockData, subBlockLogger)
-                .run(() -> toBeCalledFn(() -> runnable, null));
+        ScopedValue.where(scopedBlockData, subBlockLoggerData)
+                .run(() -> {
+                    try {
+                        var blockData = ScopedLogger.get();
+                        toBeCalledFn(() -> {
+                            runnable.run();
+                            return null;
+                        }, null, ScopedLogger.get());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Override
@@ -133,7 +129,7 @@ public class ScopedLogger implements BlockLog {
 
     @Override
     public void closeBlock(String endMessage) {
-        var endLog = createAndPushLogData(endMessage, VflLogType.BLOCK_END, null);
-        scopedBlockData.get().buffer.pushLogToBuffer(endLog);
+        ensureBlockStarted();
+        createAndPushLogData(endMessage, VflLogType.BLOCK_END, null);
     }
 }
