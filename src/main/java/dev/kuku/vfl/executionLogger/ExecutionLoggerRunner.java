@@ -23,7 +23,7 @@ public class ExecutionLoggerRunner {
         try {
             result = ExecutionLoggerUtil.blockFnHandler(blockName, null, null, fn, rootLogger);
         } finally {
-            buffer.shutdown();
+            buffer.flushAndClose();
         }
         return result;
     }

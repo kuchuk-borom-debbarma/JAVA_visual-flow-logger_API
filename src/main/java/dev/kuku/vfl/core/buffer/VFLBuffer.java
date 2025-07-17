@@ -17,5 +17,5 @@ public interface VFLBuffer {
     /**
      * Will flush all pending data and then shutdown
      */
-    void shutdown();
+    void flushAndClose();
 }

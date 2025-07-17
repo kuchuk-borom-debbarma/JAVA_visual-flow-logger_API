@@ -120,7 +120,7 @@ public class AsynchronousBuffer implements VFLBuffer {
     }
 
     @Override
-    public void shutdown() {
+    public void flushAndClose() {
         workers.close();
     }
 }
