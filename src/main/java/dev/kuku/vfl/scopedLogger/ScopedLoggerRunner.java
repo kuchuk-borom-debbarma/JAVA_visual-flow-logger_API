@@ -7,9 +7,6 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.core.util.VFLUtil.blockFnHandler;
-import static dev.kuku.vfl.scopedLogger.ScopedValueBlockContext.scopedBlockContext;
-
 public class ScopedLoggerRunner {
     private ScopedLoggerRunner() {
     }
@@ -24,15 +21,7 @@ public class ScopedLoggerRunner {
     public static <V> V call(String blockName, Function<V, String> endMessageFn, VFLBuffer buffer, Callable<V> callable) {
         var scopedLoggerData = createScopedLoggerData(blockName, buffer);
         buffer.pushBlockToBuffer(scopedLoggerData.blockInfo);
-        return ScopedValue.where(scopedBlockContext,
-                        scopedLoggerData)
-                .call(() -> {
-                    try {
-                        return blockFnHandler(callable, null, ScopedLogger.get());
-                    } finally {
-                        buffer.shutdown();
-                    }
-                });
+        return ScopedLoggerUtil.subBlockFnHandler(blockName, null, callable, scopedLoggerData);
     }
 
     public static void run(String blockName, VFLBuffer buffer, Runnable runnable) {

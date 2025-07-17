@@ -30,7 +30,7 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
         synchronized (locker) {
             logsToFlush.add(log);
         }
-        //Race condition but should be fine since we do size check inside a lock in the function
+        //Race condition but should be fine since we do size check inside a lock in the function so if's accessed somewhere else it will wait
         flushIfFull();
     }
 
