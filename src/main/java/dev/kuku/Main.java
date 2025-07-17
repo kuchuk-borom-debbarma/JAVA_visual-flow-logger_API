@@ -19,7 +19,7 @@ public class Main {
 
     public static void main(String... args) {
         new ScopedLoggerExample().run();
-        System.out.println(inMemory.toJsonString());
+        System.out.println(inMemory.toJsonNested());
     }
 
     static class ExecutionLoggerExample {
