@@ -16,7 +16,6 @@ public interface BaseLogger {
 
     void errorHere(String message);
 
-
     void closeBlock(String endMessage);
 }
 //TODO Execution logger
@@ -25,3 +24,4 @@ public interface BaseLogger {
 //TODO annotation based flow logger
 //TODO figure out how we can display forked block which joins back
 //TODO take in list of flushHandler and flush to all of them
+//TODO function that takes in lambda functions and logs, and returns the value

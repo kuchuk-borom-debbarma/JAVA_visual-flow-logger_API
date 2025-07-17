@@ -13,106 +13,55 @@ import java.util.function.Function;
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
 
 class ExecutionLoggerImpl implements ExecutionLogger {
+    private final AtomicBoolean blockStarted = new AtomicBoolean(false);
     private final BlockData blockInfo;
     private final VFLBuffer buffer;
-    private final AtomicBoolean blockStarted = new AtomicBoolean(false);
-    private volatile String currentLogId;
+    private LogData currentLogData;
 
-    public ExecutionLoggerImpl(BlockData blockInfo, VFLBuffer buffer) {
+    ExecutionLoggerImpl(BlockData blockInfo, VFLBuffer buffer) {
         this.blockInfo = blockInfo;
         this.buffer = buffer;
     }
 
-    private LogData createAndPushLogData(VflLogType logType, String message, String referencedBlockId) {
-        LogData ld = new LogData(generateUID(),
-                blockInfo.getId(),
-                currentLogId,
-                logType,
-                message,
-                referencedBlockId,
-                Instant.now().toEpochMilli());
-        this.buffer.pushLogToBuffer(ld);
+    /// Create log, push it to buffer and return it.
+    private LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId) {
+        LogData ld = new LogData(generateUID(), this.blockInfo.getId(),
+                this.currentLogData == null ? null : this.currentLogData.getId(), logType, message, referencedBlockId, Instant.now().toEpochMilli());
+        buffer.pushLogToBuffer(ld);
         return ld;
     }
 
-    private BlockData createAndPushBlockData(String id, String blockName) {
-        var bd = new BlockData(id, this.blockInfo.getId(), blockName);
-        this.buffer.pushBlockToBuffer(bd);
+    ///  Create block data, push it to buffer and return it.
+    private BlockData createBlockAndPush(String id, String blockName) {
+        BlockData bd = new BlockData(id, this.blockInfo.getId(), blockName);
+        buffer.pushBlockToBuffer(bd);
         return bd;
     }
 
+    /// Creates a new log of type block_start if it has not been created before. Uses atomic boolean to get and set in one instruction
     private void ensureBlockStarted() {
         if (blockStarted.compareAndSet(false, true)) {
-            createAndPushLogData(VflLogType.BLOCK_START, null, null);
+            createLogAndPush(VflLogType.BLOCK_START, null, null);
         }
     }
 
-    @Override
-    public void text(String message) {
-        ensureBlockStarted();
-        currentLogId = createAndPushLogData(VflLogType.MESSAGE, message, null).getId();
-    }
-
-    @Override
-    public void textHere(String message) {
-        ensureBlockStarted();
-        createAndPushLogData(VflLogType.MESSAGE, message, null);
-    }
-
-    @Override
-    public void warn(String message) {
-        ensureBlockStarted();
-        currentLogId = createAndPushLogData(VflLogType.WARN, message, null).getId();
-    }
-
-    @Override
-    public void warnHere(String message) {
-        ensureBlockStarted();
-        createAndPushLogData(VflLogType.WARN, message, null);
-    }
-
-    @Override
-    public void error(String message) {
-        ensureBlockStarted();
-        currentLogId = createAndPushLogData(VflLogType.EXCEPTION, message, null).getId();
-    }
-
-    @Override
-    public void errorHere(String message) {
-        ensureBlockStarted();
-        createAndPushLogData(VflLogType.EXCEPTION, message, null);
-    }
-
-    private <R> R subBlockFnHandler(String blockName, String msg, Function<R, String> endMsgFn, Function<ExecutionLogger, R> fn, boolean stay) {
+    ///  creates sub_block_start log, creates sub_block_log and it's logger and then executes the passed callable.<br>
+    /// Catches exception and adds an error log before re-throwing. <br>
+    /// Closes the sub block logger once callable has finished executing.
+    private <R> R subBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable, boolean stay) {
         String subBlockId = generateUID();
-        var subBlockStartLog = createAndPushLogData(VflLogType.SUB_BLOCK_START, msg, subBlockId);
-        var subBlockInfo = createAndPushBlockData(subBlockId, blockName);
+        BlockData bd = createBlockAndPush(subBlockId, blockName);
+        LogData ld = createLogAndPush(VflLogType.SUB_BLOCK_START, message, subBlockId);
         if (!stay) {
-            currentLogId = subBlockStartLog.getId();
+            currentLogData = ld;
         }
-        var subBlockLogger = new ExecutionLoggerImpl(subBlockInfo, this.buffer);
-        R result = null;
-        try {
-            result = fn.apply(subBlockLogger);
-        } catch (Exception e) {
-            subBlockLogger.error(String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage()));
-            throw new RuntimeException(e);
-        } finally {
-            String endMessage = null;
-            if (endMsgFn != null) {
-                try {
-                    endMessage = endMsgFn.apply(result);
-                } catch (Exception e) {
-                    endMessage = "Error processing End Message : " + String.format("%s : %s", e.getClass().getSimpleName(), e.getMessage());
-                }
-            }
-            subBlockLogger.closeBlock(endMessage);
-        }
-        return result;
+        ExecutionLogger subBlockLogger = new ExecutionLoggerImpl(bd, buffer);
+        return ExecutionLoggerUtil.blockFnHandler(blockName, message, endMessageFn, callable, subBlockLogger);
     }
 
     @Override
     public void run(String blockName, String message, Consumer<ExecutionLogger> runnable) {
+        ensureBlockStarted();
         this.subBlockFnHandler(blockName, message, null, (logger) -> {
             runnable.accept(logger);
             return null;
@@ -121,6 +70,7 @@ class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public void runHere(String blockName, String message, Consumer<ExecutionLogger> runnable) {
+        ensureBlockStarted();
         this.subBlockFnHandler(blockName, message, null, (logger) -> {
             runnable.accept(logger);
             return null;
@@ -129,26 +79,67 @@ class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public <R> R call(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable) {
+        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, false);
     }
 
     @Override
     public <R> R call(String blockName, String message, Function<ExecutionLogger, R> callable) {
+        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, null, callable, false);
     }
 
     @Override
     public <R> R callHere(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable) {
+        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, true);
     }
 
     @Override
     public <R> R callHere(String blockName, String message, Function<ExecutionLogger, R> callable) {
+        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, null, callable, true);
     }
 
     @Override
+    public void text(String message) {
+        ensureBlockStarted();
+        currentLogData = createLogAndPush(VflLogType.MESSAGE, message, null);
+    }
+
+    @Override
+    public void textHere(String message) {
+        ensureBlockStarted();
+        createLogAndPush(VflLogType.MESSAGE, message, null);
+    }
+
+    @Override
+    public void warn(String message) {
+        ensureBlockStarted();
+        currentLogData = createLogAndPush(VflLogType.WARN, message, null);
+    }
+
+    @Override
+    public void warnHere(String message) {
+        ensureBlockStarted();
+        createLogAndPush(VflLogType.WARN, message, null);
+    }
+
+    @Override
+    public void error(String message) {
+        ensureBlockStarted();
+        currentLogData = createLogAndPush(VflLogType.EXCEPTION, message, null);
+    }
+
+    @Override
+    public void errorHere(String message) {
+        ensureBlockStarted();
+        createLogAndPush(VflLogType.EXCEPTION, message, null);
+    }
+
+    @Override
     public void closeBlock(String endMessage) {
-        createAndPushLogData(VflLogType.BLOCK_END, endMessage, null);
+        ensureBlockStarted();
+        createLogAndPush(VflLogType.BLOCK_END, endMessage, null);
     }
 }

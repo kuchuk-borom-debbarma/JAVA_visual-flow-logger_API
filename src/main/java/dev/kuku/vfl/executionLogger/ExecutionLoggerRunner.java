@@ -21,12 +21,8 @@ public class ExecutionLoggerRunner {
         var rootLogger = new ExecutionLoggerImpl(new BlockData(generateUID(), null, blockName), buffer);
         R result;
         try {
-            result = fn.apply(rootLogger);
-        } catch (Exception e) {
-            rootLogger.error(String.format("Exception %s : %s", e.getClass().getName(), e.getMessage()));
-            throw new RuntimeException(e);
+            result = ExecutionLoggerUtil.blockFnHandler(blockName, null, null, fn, rootLogger);
         } finally {
-            rootLogger.closeBlock(null);
             buffer.shutdown();
         }
         return result;
