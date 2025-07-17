@@ -1,12 +1,24 @@
 package dev.kuku.vfl.core;
 
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+
 /**
  * Simple logger for logging strings.
  */
 public interface BaseLogger {
     void text(String message);
 
+
     void textHere(String message);
+
+    <R> R textFn(String message, Callable<R> fn);
+
+    <R> R textFnHere(String message, Callable<R> fn);
+
+    <R> R textFn(Callable<R> fn, Function<R, String> messageFn);
+
+    <R> R textFnHere(Callable<R> fn, Function<R, String> messageFn);
 
     void warn(String message);
 
@@ -18,11 +30,9 @@ public interface BaseLogger {
 
     void closeBlock(String endMessage);
 }
-//TODO Execution logger
 //TODO Thread safe async logger using virtual threads
 //TODO local file flush handler
 //TODO annotation based flow logger
 //TODO figure out how we can display forked block which joins back
 //TODO take in list of flushHandler and flush to all of them
-//TODO function that takes in lambda functions and logs, and returns the value
 //TODO different level for filtering

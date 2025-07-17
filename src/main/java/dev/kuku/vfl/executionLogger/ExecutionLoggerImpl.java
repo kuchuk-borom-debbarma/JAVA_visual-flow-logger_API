@@ -6,6 +6,7 @@ import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VflLogType;
 
 import java.time.Instant;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -45,9 +46,9 @@ class ExecutionLoggerImpl implements ExecutionLogger {
         }
     }
 
-    ///  creates sub_block_start log, creates sub_block_log and it's logger and then executes the passed callable.<br>
+    ///  creates sub_block_start log, creates sub_block_log, and it's logger and then executes the passed callable.<br>
     /// Catches exception and adds an error log before re-throwing. <br>
-    /// Closes the sub block logger once callable has finished executing.
+    /// Closes the subblock logger once callable has finished executing.
     private <R> R subBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable, boolean stay) {
         String subBlockId = generateUID();
         BlockData bd = createBlockAndPush(subBlockId, blockName);
@@ -70,7 +71,6 @@ class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public void runHere(String blockName, String message, Consumer<ExecutionLogger> runnable) {
-        ensureBlockStarted();
         this.subBlockFnHandler(blockName, message, null, (logger) -> {
             runnable.accept(logger);
             return null;
@@ -79,25 +79,21 @@ class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public <R> R call(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, false);
     }
 
     @Override
     public <R> R call(String blockName, String message, Function<ExecutionLogger, R> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, null, callable, false);
     }
 
     @Override
     public <R> R callHere(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, true);
     }
 
     @Override
     public <R> R callHere(String blockName, String message, Function<ExecutionLogger, R> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, null, callable, true);
     }
 
@@ -111,6 +107,47 @@ class ExecutionLoggerImpl implements ExecutionLogger {
     public void textHere(String message) {
         ensureBlockStarted();
         createLogAndPush(VflLogType.MESSAGE, message, null);
+    }
+
+
+    private <R> R textFnHandler(Callable<R> fn, Function<R, String> messageFn, boolean stay) {
+        ensureBlockStarted();
+        try {
+            var result = fn.call();
+            String message;
+            try {
+                message = messageFn.apply(result);
+            } catch (Exception e) {
+                message = "Failed to process message : " + e.getClass().getSimpleName() + " : " + e.getMessage();
+            }
+            var msgLog = createLogAndPush(VflLogType.MESSAGE, message, null);
+            if (!stay) {
+                currentLogData = msgLog;
+            }
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public <R> R textFn(String message, Callable<R> fn) {
+        return this.textFnHandler(fn, (_) -> message, false);
+    }
+
+    @Override
+    public <R> R textFnHere(String message, Callable<R> fn) {
+        return this.textFnHandler(fn, (_) -> message, true);
+    }
+
+    @Override
+    public <R> R textFn(Callable<R> fn, Function<R, String> messageFn) {
+        return this.textFnHandler(fn, messageFn, false);
+    }
+
+    @Override
+    public <R> R textFnHere(Callable<R> fn, Function<R, String> messageFn) {
+        return this.textFnHandler(fn, messageFn, true);
     }
 
     @Override
