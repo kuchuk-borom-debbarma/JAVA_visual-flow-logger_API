@@ -25,3 +25,4 @@ public interface BaseLogger {
 //TODO figure out how we can display forked block which joins back
 //TODO take in list of flushHandler and flush to all of them
 //TODO function that takes in lambda functions and logs, and returns the value
+//TODO different level for filtering
