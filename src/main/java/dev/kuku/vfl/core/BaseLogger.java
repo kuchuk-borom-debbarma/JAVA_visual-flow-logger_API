@@ -33,6 +33,6 @@ public interface BaseLogger {
 //TODO local file flush handler
 //TODO annotation based flow logger
 //TODO figure out how we can display forked block which joins back
-//TODO take in list of flushHandler and flush to all of them
+//TODO take in list of flushHandler and flush to all of them using new flush type
 //TODO different level for filtering
 //TODO common class for simple stuffs

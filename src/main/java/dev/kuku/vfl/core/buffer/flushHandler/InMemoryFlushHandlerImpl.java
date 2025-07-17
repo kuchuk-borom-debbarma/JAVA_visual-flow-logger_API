@@ -310,4 +310,9 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                 ",\n blocks=\n" + blocks.stream().map(Object::toString).collect(Collectors.joining("\n")) +
                 '}';
     }
+
+    public void cleanup() {
+        logs.clear();
+        blocks.clear();
+    }
 }

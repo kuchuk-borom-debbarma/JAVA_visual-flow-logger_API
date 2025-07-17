@@ -20,6 +20,10 @@ public class Main {
     public static void main(String... args) {
         new ExecutionLoggerExample().run();
         System.out.println(inMemory.toJsonNested());
+        inMemory.cleanup();
+        new ScopedLoggerExample().run();
+        System.out.println(inMemory.toJsonNested());
+        inMemory.cleanup();
     }
 
     static class ExecutionLoggerExample {
