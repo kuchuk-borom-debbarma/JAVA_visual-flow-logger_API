@@ -2,28 +2,47 @@ package dev.kuku;
 
 
 import dev.kuku.vfl.core.BaseLogger;
-import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
+import dev.kuku.vfl.core.buffer.ThreadSafeAsyncVirtualThreadVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
 import dev.kuku.vfl.executionLogger.ExecutionLogger;
 import dev.kuku.vfl.executionLogger.ExecutionLoggerRunner;
-import dev.kuku.vfl.scopedLogger.ScopedLogger;
-import dev.kuku.vfl.scopedLogger.ScopedLoggerImpl;
-import dev.kuku.vfl.scopedLogger.ScopedLoggerRunner;
+import dev.kuku.vfl.multiThreadedScopedLogger.ScopedLogger;
+import dev.kuku.vfl.multiThreadedScopedLogger.ScopedLoggerImpl;
+import dev.kuku.vfl.multiThreadedScopedLogger.ScopedLoggerRunner;
 
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 
 public class Main {
     static final InMemoryFlushHandlerImpl inMemory = new InMemoryFlushHandlerImpl();
-    static final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, inMemory);
+    static final VFLBuffer buffer = new ThreadSafeAsyncVirtualThreadVFLBuffer(1, 1, inMemory);
+    static final ScopedValue<String> test = ScopedValue.newInstance();
 
     public static void main(String... args) {
-        new ExecutionLoggerExample().run();
-        System.out.println(inMemory.toJsonNested());
-        inMemory.cleanup();
-        new ScopedLoggerExample().run();
-        System.out.println(inMemory.toJsonNested());
-        inMemory.cleanup();
+        System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
+        System.out.println("Common pool parallelism: " + ForkJoinPool.commonPool().getParallelism());
+        var a = CompletableFuture.runAsync(() -> {
+            System.out.println("Thread is " + Thread.currentThread().getName());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Thread complete " + Thread.currentThread().getName());
+        });
+
+        var b = CompletableFuture.runAsync(() -> {
+            System.out.println("Thread is " + Thread.currentThread().getName());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Thread complete " + Thread.currentThread().getName());
+        });
+        CompletableFuture.allOf(a, b).join();
     }
 
     static class ExecutionLoggerExample {

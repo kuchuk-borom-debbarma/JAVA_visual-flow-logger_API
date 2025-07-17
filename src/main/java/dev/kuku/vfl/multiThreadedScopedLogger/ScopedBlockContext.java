@@ -1,4 +1,4 @@
-package dev.kuku.vfl.scopedLogger;
+package dev.kuku.vfl.multiThreadedScopedLogger;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;

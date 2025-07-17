@@ -1,4 +1,4 @@
-package dev.kuku.vfl.scopedLogger;
+package dev.kuku.vfl.multiThreadedScopedLogger;
 
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
@@ -6,10 +6,13 @@ import dev.kuku.vfl.core.models.VflLogType;
 
 import java.time.Instant;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
-import static dev.kuku.vfl.scopedLogger.ScopedValueBlockContext.scopedBlockContext;
+import static dev.kuku.vfl.multiThreadedScopedLogger.ScopedValueBlockContext.scopedBlockContext;
 
 public class ScopedLoggerImpl implements ScopedLogger {
     private static ScopedLoggerImpl instance;
@@ -141,6 +144,19 @@ public class ScopedLoggerImpl implements ScopedLogger {
         //Create the subblock logger data for subblock
         ScopedBlockContext subBlockLoggerContext = new ScopedBlockContext(sbd, scopedBlockContext.get().buffer);
         return ScopedLoggerUtil.subBlockFnHandler(blockName, endMessageFn, callable, subBlockLoggerContext);
+    }
+
+    private <R> Future<R> asyncSubBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Callable<R> callable, Executor executor, boolean stay) {
+        ensureBlockStarted();
+        var currentContext = scopedBlockContext.get();
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return ScopedValue.where(scopedBlockContext, currentContext)
+                        .call(() -> this.subBlockFnHandler(blockName, message, endMessageFn, callable, stay));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }, executor);
     }
 
     @Override
