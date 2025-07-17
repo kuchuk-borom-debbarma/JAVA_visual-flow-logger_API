@@ -64,6 +64,45 @@ public class ScopedLoggerImpl implements ScopedLogger {
         createAndPushLogData(message, VflLogType.MESSAGE, null);
     }
 
+    private <R> R textFnHandler(Callable<R> callable, Function<R, String> messageFn, boolean stay) {
+        try {
+            R result = callable.call();
+            String message;
+            try {
+                message = messageFn.apply(result);
+            } catch (Exception e) {
+                message = String.format("Failed to invoke function  for textFn %s", messageFn.apply(result));
+            }
+            var textLog = createAndPushLogData(message, VflLogType.MESSAGE, null);
+            if (!stay) {
+                scopedBlockContext.get().currentLog = textLog;
+            }
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public <R> R textFn(String message, Callable<R> fn) {
+        return this.textFnHandler(fn, _ -> message, false);
+    }
+
+    @Override
+    public <R> R textFnHere(String message, Callable<R> fn) {
+        return this.textFnHandler(fn, _ -> message, true);
+    }
+
+    @Override
+    public <R> R textFn(Callable<R> fn, Function<R, String> messageFn) {
+        return this.textFnHandler(fn, messageFn, false);
+    }
+
+    @Override
+    public <R> R textFnHere(Callable<R> fn, Function<R, String> messageFn) {
+        return this.textFnHandler(fn, messageFn, true);
+    }
+
     @Override
     public void warn(String message) {
         ensureBlockStarted();
@@ -89,6 +128,7 @@ public class ScopedLoggerImpl implements ScopedLogger {
     }
 
     private <R> R subBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Callable<R> callable, boolean stay) {
+        ensureBlockStarted();
         //Create subblock and push it
         String subBlockId = generateUID();
         var sbd = createAndPushBlockData(subBlockId, blockName);
@@ -105,7 +145,6 @@ public class ScopedLoggerImpl implements ScopedLogger {
 
     @Override
     public void run(String blockName, String message, Runnable runnable) {
-        ensureBlockStarted();
         this.subBlockFnHandler(blockName, message, null, () -> {
             runnable.run();
             return null;
@@ -114,7 +153,6 @@ public class ScopedLoggerImpl implements ScopedLogger {
 
     @Override
     public void runHere(String blockName, String message, Runnable runnable) {
-        ensureBlockStarted();
         this.subBlockFnHandler(blockName, message, null, () -> {
             runnable.run();
             return null;
@@ -123,25 +161,21 @@ public class ScopedLoggerImpl implements ScopedLogger {
 
     @Override
     public <T> T call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, false);
     }
 
     @Override
     public <T> T call(String blockName, String message, Callable<T> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, null, callable, false);
     }
 
     @Override
     public <T> T callHere(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, true);
     }
 
     @Override
     public <T> T callHere(String blockName, String message, Callable<T> callable) {
-        ensureBlockStarted();
         return this.subBlockFnHandler(blockName, message, null, callable, true);
     }
 

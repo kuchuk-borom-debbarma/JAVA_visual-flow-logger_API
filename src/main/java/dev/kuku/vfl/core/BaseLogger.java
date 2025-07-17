@@ -9,7 +9,6 @@ import java.util.function.Function;
 public interface BaseLogger {
     void text(String message);
 
-
     void textHere(String message);
 
     <R> R textFn(String message, Callable<R> fn);
@@ -36,3 +35,4 @@ public interface BaseLogger {
 //TODO figure out how we can display forked block which joins back
 //TODO take in list of flushHandler and flush to all of them
 //TODO different level for filtering
+//TODO common class for simple stuffs
