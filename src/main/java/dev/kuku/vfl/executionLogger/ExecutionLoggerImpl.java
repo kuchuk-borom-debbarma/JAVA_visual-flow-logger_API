@@ -41,6 +41,7 @@ class ExecutionLoggerImpl implements ExecutionLogger {
     /// Creates a new log of type block_start if it has not been created before. Uses atomic boolean to get and set in one instruction
     private void ensureBlockStarted() {
         if (blockStarted.compareAndSet(false, true)) {
+            System.out.println("Starting block " + this.blockInfo.getId());
             createLogAndPush(VflLogType.BLOCK_START, null, null);
         }
     }
@@ -140,6 +141,7 @@ class ExecutionLoggerImpl implements ExecutionLogger {
     @Override
     public void closeBlock(String endMessage) {
         ensureBlockStarted();
+        System.out.println("Closing block " + this.blockInfo.getId());
         createLogAndPush(VflLogType.BLOCK_END, endMessage, null);
     }
 }

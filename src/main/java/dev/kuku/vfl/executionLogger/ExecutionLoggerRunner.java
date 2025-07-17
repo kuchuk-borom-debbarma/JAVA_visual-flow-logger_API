@@ -18,7 +18,9 @@ public class ExecutionLoggerRunner {
     }
 
     public static <R> R call(String blockName, VFLBuffer buffer, Function<ExecutionLogger, R> fn) {
-        var rootLogger = new ExecutionLoggerImpl(new BlockData(generateUID(), null, blockName), buffer);
+        var parentBlock = new BlockData(generateUID(), null, blockName);
+        var rootLogger = new ExecutionLoggerImpl(parentBlock, buffer);
+        buffer.pushBlockToBuffer(parentBlock);
         R result;
         try {
             result = ExecutionLoggerUtil.blockFnHandler(blockName, null, null, fn, rootLogger);

@@ -302,4 +302,12 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
             addLogAndChildren(child, logMap, result, visited);
         }
     }
+
+    @Override
+    public String toString() {
+        return "InMemoryFlushHandlerImpl{" +
+                "logs=\n" + logs.stream().map(Object::toString).collect(Collectors.joining("\n")) +
+                ",\n blocks=\n" + blocks.stream().map(Object::toString).collect(Collectors.joining("\n")) +
+                '}';
+    }
 }

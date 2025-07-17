@@ -18,7 +18,7 @@ public class Main {
     static final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, inMemory);
 
     public static void main(String... args) {
-        new ScopedLoggerExample().run();
+        new ExecutionLoggerExample().run();
         System.out.println(inMemory.toJsonNested());
     }
 
