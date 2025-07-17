@@ -25,7 +25,6 @@ class ScopedLoggerUtil {
                                         endMessage = String.format("Failed to process end message %s : %s", e.getClass().getSimpleName(), e.getMessage());
                                     }
                                 }
-                                System.out.println("Ending block " + scopedValueBlockContext.blockInfo.getId());
                                 ScopedLoggerImpl.get().closeBlock(endMessage);
                             }
                             return result;
