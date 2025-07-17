@@ -27,6 +27,7 @@ public class ExecutionLoggerRunner {
             throw new RuntimeException(e);
         } finally {
             rootLogger.closeBlock(null);
+            buffer.shutdown();
         }
         return result;
     }
