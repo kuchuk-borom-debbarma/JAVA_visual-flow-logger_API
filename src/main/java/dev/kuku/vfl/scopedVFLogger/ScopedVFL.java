@@ -14,7 +14,7 @@ public interface ScopedVFL extends VFL {
     void run(String blockName, String message, Runnable runnable);
 
     /**
-     * Run a task as completable future. Optinoally can take the executor. <br>
+     * Run a task as completable future. Optionally can take the executor. <br>
      * VFL creates sub logger context in the running thread. <br>
      * Please note that the log chain will NOT move forward as it is an async operation.
      */
@@ -43,5 +43,5 @@ public interface ScopedVFL extends VFL {
 }
 //TODO_OLD support for multi thread environment by explicitly passing context. DONE! we created async version of the methods and pass the conext to the thread where it will be running
 //TODO throw exceptions for fn calls but handle it gracefully within the logger too
-//TODO_OLD use synchoroinse? research and think properly before deciding this ANSWER = NO
+//TODO_OLD use synchronise? research and think properly before deciding this ANSWER = NO
 //TODO fluent api to reduce verbosity and to get rid of overloaded functions

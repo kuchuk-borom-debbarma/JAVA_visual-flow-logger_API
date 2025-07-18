@@ -6,7 +6,7 @@ import dev.kuku.vfl.core.models.BlockData;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
+import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public class ContextualVFLRunner {
 

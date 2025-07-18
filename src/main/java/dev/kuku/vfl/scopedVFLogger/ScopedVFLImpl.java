@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
+import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 import static dev.kuku.vfl.scopedVFLogger.ScopedValueVFLContext.scopedBlockContext;
 
 public class ScopedVFLImpl implements ScopedVFL {

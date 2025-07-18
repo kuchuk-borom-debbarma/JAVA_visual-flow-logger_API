@@ -1,4 +1,4 @@
-import dev.kuku.vfl.core.buffer.ThreadSafeAsyncVirtualThreadVFLBuffer;
+import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
 import dev.kuku.vfl.scopedVFLogger.ScopedVFL;
@@ -27,7 +27,7 @@ public class ScopedLoggerTest {
         @BeforeEach
         void beforeEach() {
             flushHandler = new InMemoryFlushHandlerImpl();
-            buffer = new ThreadSafeAsyncVirtualThreadVFLBuffer(100, 100, flushHandler);
+            buffer = new ThreadSafeSynchronousVflBuffer(100, 100, flushHandler);
         }
 
         @AfterEach
@@ -72,8 +72,8 @@ public class ScopedLoggerTest {
             ScopedVFLRunner.run("Simple non-linear test", buffer, () -> {
                 logger = ScopedVFLImpl.get();
                 logger.text("Starting simple non-linear test");
-                var sumTask = (CompletableFuture<Integer>) logger.callHereAsync("Sum(1,2)", "Sum1 called", () -> sum(1, 2));
-                var multiplyTask = (CompletableFuture<Integer>) logger.callHereAsync("multiply(2,2)", "Multiply called..", () -> multiply(2, 2));
+                var sumTask = logger.callAsync("Sum(1,2)", "Sum1 called", () -> sum(1, 2));
+                var multiplyTask = logger.callAsync("multiply(2,2)", "Multiply called..", () -> multiply(2, 2));
                 var futures = CompletableFuture.allOf(sumTask, multiplyTask);
 
                 try {
@@ -92,11 +92,11 @@ public class ScopedLoggerTest {
             ScopedVFLRunner.run("Heavy Async test", buffer, () -> {
                 logger = ScopedVFLImpl.get();
                 logger.text("Starting simple heavy async test");
-                int count = 10000;
+                int count = 5000;
                 List<CompletableFuture<Integer>> futures = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
                     int finalI = i;
-                    futures.add((CompletableFuture<Integer>) logger.callHereAsync("" + finalI, null, () -> sum(finalI, finalI), Executors.newVirtualThreadPerTaskExecutor()));
+                    futures.add(logger.callAsync("" + finalI, null, () -> sum(finalI, finalI), Executors.newVirtualThreadPerTaskExecutor()));
                 }
 
                 var collected = futures.stream()

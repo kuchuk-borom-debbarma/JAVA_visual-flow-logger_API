@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
+import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 class ContextualVFLImpl implements ContextualVFL {
     private final AtomicBoolean blockStarted = new AtomicBoolean(false);
