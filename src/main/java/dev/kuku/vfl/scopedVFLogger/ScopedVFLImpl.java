@@ -1,4 +1,4 @@
-package dev.kuku.vfl.scopedLogger;
+package dev.kuku.vfl.scopedVFLogger;
 
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
@@ -12,21 +12,21 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
-import static dev.kuku.vfl.scopedLogger.ScopedValueBlockContext.scopedBlockContext;
+import static dev.kuku.vfl.scopedVFLogger.ScopedValueVFLContext.scopedBlockContext;
 
-public class ScopedLoggerImpl implements ScopedLogger {
-    private static ScopedLoggerImpl instance;
+public class ScopedVFLImpl implements ScopedVFL {
+    private static ScopedVFLImpl instance;
 
-    private ScopedLoggerImpl() {
+    private ScopedVFLImpl() {
     }
 
     //Not possible to make it static since we implement interface, so we use singleton instead.
-    public static ScopedLogger get() {
+    public static ScopedVFL get() {
         if (!scopedBlockContext.isBound()) {
-            throw new IllegalStateException("scopedBlockData is not within ScopedValue bound. Please use " + ScopedLoggerRunner.class.getName() + " to start a new scope.");
+            throw new IllegalStateException("scopedBlockData is not within ScopedValue bound. Please use " + ScopedVFLRunner.class.getName() + " to start a new scope.");
         }
         if (instance == null) {
-            instance = new ScopedLoggerImpl();
+            instance = new ScopedVFLImpl();
         }
         return instance;
     }
@@ -142,8 +142,8 @@ public class ScopedLoggerImpl implements ScopedLogger {
             scopedBlockContext.get().currentLog = subBLockStartLog;
         }
         //Create the subblock logger data for subblock
-        ScopedBlockContext subBlockLoggerContext = new ScopedBlockContext(sbd, scopedBlockContext.get().buffer);
-        return ScopedLoggerUtil.subBlockFnHandler(blockName, endMessageFn, callable, subBlockLoggerContext);
+        ScopedVFLContext subBlockLoggerContext = new ScopedVFLContext(sbd, scopedBlockContext.get().buffer);
+        return Helper.subBlockFnHandler(blockName, endMessageFn, callable, subBlockLoggerContext);
     }
 
     /*

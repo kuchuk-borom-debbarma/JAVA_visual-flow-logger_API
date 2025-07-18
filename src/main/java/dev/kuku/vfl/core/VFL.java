@@ -6,7 +6,7 @@ import java.util.function.Function;
 /**
  * Simple logger for logging strings.
  */
-public interface BaseLogger {
+public interface VFL {
     void text(String message);
 
     void textHere(String message);

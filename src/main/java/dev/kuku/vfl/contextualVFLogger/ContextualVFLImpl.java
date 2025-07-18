@@ -1,4 +1,4 @@
-package dev.kuku.vfl.executionLogger;
+package dev.kuku.vfl.contextualVFLogger;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -13,13 +13,13 @@ import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
 
-class ExecutionLoggerImpl implements ExecutionLogger {
+class ContextualVFLImpl implements ContextualVFL {
     private final AtomicBoolean blockStarted = new AtomicBoolean(false);
     private final BlockData blockInfo;
     private final VFLBuffer buffer;
     private LogData currentLogData;
 
-    ExecutionLoggerImpl(BlockData blockInfo, VFLBuffer buffer) {
+    ContextualVFLImpl(BlockData blockInfo, VFLBuffer buffer) {
         this.blockInfo = blockInfo;
         this.buffer = buffer;
     }
@@ -49,19 +49,19 @@ class ExecutionLoggerImpl implements ExecutionLogger {
     ///  creates sub_block_start log, creates sub_block_log, and it's logger and then executes the passed callable.<br>
     /// Catches exception and adds an error log before re-throwing. <br>
     /// Closes the subblock logger once callable has finished executing.
-    private <R> R subBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable, boolean stay) {
+    private <R> R subBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<ContextualVFL, R> callable, boolean stay) {
         String subBlockId = generateUID();
         BlockData bd = createBlockAndPush(subBlockId, blockName);
         LogData ld = createLogAndPush(VflLogType.SUB_BLOCK_START, message, subBlockId);
         if (!stay) {
             currentLogData = ld;
         }
-        ExecutionLogger subBlockLogger = new ExecutionLoggerImpl(bd, buffer);
-        return ExecutionLoggerUtil.blockFnHandler(blockName, message, endMessageFn, callable, subBlockLogger);
+        ContextualVFL subBlockLogger = new ContextualVFLImpl(bd, buffer);
+        return Helper.blockFnHandler(blockName, message, endMessageFn, callable, subBlockLogger);
     }
 
     @Override
-    public void run(String blockName, String message, Consumer<ExecutionLogger> runnable) {
+    public void run(String blockName, String message, Consumer<ContextualVFL> runnable) {
         ensureBlockStarted();
         this.subBlockFnHandler(blockName, message, null, (logger) -> {
             runnable.accept(logger);
@@ -70,7 +70,7 @@ class ExecutionLoggerImpl implements ExecutionLogger {
     }
 
     @Override
-    public void runHere(String blockName, String message, Consumer<ExecutionLogger> runnable) {
+    public void runHere(String blockName, String message, Consumer<ContextualVFL> runnable) {
         this.subBlockFnHandler(blockName, message, null, (logger) -> {
             runnable.accept(logger);
             return null;
@@ -78,22 +78,22 @@ class ExecutionLoggerImpl implements ExecutionLogger {
     }
 
     @Override
-    public <R> R call(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable) {
+    public <R> R call(String blockName, String message, Function<R, String> endMessageFn, Function<ContextualVFL, R> callable) {
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, false);
     }
 
     @Override
-    public <R> R call(String blockName, String message, Function<ExecutionLogger, R> callable) {
+    public <R> R call(String blockName, String message, Function<ContextualVFL, R> callable) {
         return this.subBlockFnHandler(blockName, message, null, callable, false);
     }
 
     @Override
-    public <R> R callHere(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable) {
+    public <R> R callHere(String blockName, String message, Function<R, String> endMessageFn, Function<ContextualVFL, R> callable) {
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, true);
     }
 
     @Override
-    public <R> R callHere(String blockName, String message, Function<ExecutionLogger, R> callable) {
+    public <R> R callHere(String blockName, String message, Function<ContextualVFL, R> callable) {
         return this.subBlockFnHandler(blockName, message, null, callable, true);
     }
 

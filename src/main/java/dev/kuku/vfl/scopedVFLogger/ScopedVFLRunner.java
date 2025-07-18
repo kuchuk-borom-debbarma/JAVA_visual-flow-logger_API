@@ -1,4 +1,4 @@
-package dev.kuku.vfl.scopedLogger;
+package dev.kuku.vfl.scopedVFLogger;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -7,14 +7,14 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.scopedLogger.ScopedLoggerUtil.subBlockFnHandler;
+import static dev.kuku.vfl.scopedVFLogger.Helper.subBlockFnHandler;
 
-public class ScopedLoggerRunner {
-    private ScopedLoggerRunner() {
+public class ScopedVFLRunner {
+    private ScopedVFLRunner() {
     }
 
-    private static ScopedBlockContext createScopedLoggerData(String blockName, VFLBuffer buffer) {
-        return new ScopedBlockContext(
+    private static ScopedVFLContext createScopedLoggerData(String blockName, VFLBuffer buffer) {
+        return new ScopedVFLContext(
                 new BlockData(UUID.randomUUID().toString(), null, blockName),
                 buffer
         );
@@ -31,7 +31,7 @@ public class ScopedLoggerRunner {
     }
 
     public static void run(String blockName, VFLBuffer buffer, Runnable runnable) {
-        ScopedLoggerRunner.call(blockName, null, buffer, () -> {
+        ScopedVFLRunner.call(blockName, null, buffer, () -> {
             runnable.run();
             return null;
         });

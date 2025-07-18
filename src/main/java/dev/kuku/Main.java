@@ -1,19 +1,18 @@
 package dev.kuku;
 
 
-import dev.kuku.vfl.core.BaseLogger;
+import dev.kuku.vfl.contextualVFLogger.ContextualVFL;
+import dev.kuku.vfl.contextualVFLogger.ContextualVFLRunner;
+import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeAsyncVirtualThreadVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
-import dev.kuku.vfl.executionLogger.ExecutionLogger;
-import dev.kuku.vfl.executionLogger.ExecutionLoggerRunner;
-import dev.kuku.vfl.scopedLogger.ScopedLogger;
-import dev.kuku.vfl.scopedLogger.ScopedLoggerImpl;
-import dev.kuku.vfl.scopedLogger.ScopedLoggerRunner;
+import dev.kuku.vfl.scopedVFLogger.ScopedVFLRunner;
+import dev.kuku.vfl.scopedVFLogger.ScopedVFL;
+import dev.kuku.vfl.scopedVFLogger.ScopedVFLImpl;
 
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 public class Main {
     static final InMemoryFlushHandlerImpl inMemory = new InMemoryFlushHandlerImpl();
@@ -21,33 +20,31 @@ public class Main {
     static final ScopedValue<String> test = ScopedValue.newInstance();
 
     public static void main(String... args) {
-        System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
-        System.out.println("Common pool parallelism: " + ForkJoinPool.commonPool().getParallelism());
-        var a = CompletableFuture.runAsync(() -> {
-            System.out.println("Thread is " + Thread.currentThread().getName());
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("Thread complete " + Thread.currentThread().getName());
-        });
 
-        var b = CompletableFuture.runAsync(() -> {
-            System.out.println("Thread is " + Thread.currentThread().getName());
+    }
+
+    static class ContextualLoggerAsyncExample {
+        void run() {
+            ContextualVFLRunner.run("Async contextual logger example", buffer, logger -> {
+            });
+        }
+
+        Future<Void> task(VFL logger) {
+            logger.text("Starting task1 in thread " + Thread.currentThread().getName());
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                logger.error("Interrupted thread " + Thread.currentThread().getName());
+                Thread.currentThread().interrupt();
             }
-            System.out.println("Thread complete " + Thread.currentThread().getName());
-        });
-        CompletableFuture.allOf(a, b).join();
+            logger.text("Finished task1 in thread " + Thread.currentThread().getName());
+            return null;
+        }
     }
 
     static class ExecutionLoggerExample {
         void run() {
-            ExecutionLoggerRunner.run("ExecutionLoggerExample", buffer, logger -> {
+            ContextualVFLRunner.run("ExecutionLoggerExample", buffer, logger -> {
                 logger.text("Started ExecutionLoggerExample");
                 int input = new Scanner(System.in).nextInt();
                 logger.text("Input: " + input);
@@ -60,21 +57,21 @@ public class Main {
             });
         }
 
-        int split(int num, BaseLogger logger) {
+        int split(int num, VFL logger) {
             logger.text("Splitting " + num);
             int result = num / 2;
             logger.text("Result: " + result);
             return result;
         }
 
-        int square(int num, BaseLogger logger) {
+        int square(int num, VFL logger) {
             logger.text("Squaring " + num);
             int result = num * num;
             logger.text("Result: " + result);
             return result;
         }
 
-        int squareAndSplit(int num, ExecutionLogger logger) {
+        int squareAndSplit(int num, ContextualVFL logger) {
             logger.text("Squaring and then multiplying " + num);
             int result = logger.call("Square", "Summing", s -> String.format("calculated square = %s", s), (subLogger) -> square(num, subLogger));
 
@@ -86,11 +83,11 @@ public class Main {
     }
 
     static class ScopedLoggerExample {
-        ScopedLogger logger;
+        ScopedVFL logger;
 
         void run() {
-            ScopedLoggerRunner.run("ScopedLoggerExample", buffer, () -> {
-                logger = ScopedLoggerImpl.get();
+            ScopedVFLRunner.run("ScopedLoggerExample", buffer, () -> {
+                logger = ScopedVFLImpl.get();
                 logger.text("Started ExecutionLoggerExample");
                 int input = new Scanner(System.in).nextInt();
                 logger.text("Input: " + input);

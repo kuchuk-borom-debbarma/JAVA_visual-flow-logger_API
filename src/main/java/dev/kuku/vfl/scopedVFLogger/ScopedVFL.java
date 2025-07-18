@@ -1,6 +1,6 @@
-package dev.kuku.vfl.scopedLogger;
+package dev.kuku.vfl.scopedVFLogger;
 
-import dev.kuku.vfl.core.BaseLogger;
+import dev.kuku.vfl.core.VFL;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
@@ -10,7 +10,7 @@ import java.util.function.Function;
 /**
  * Scoped logger interface for use with ScopedValue.
  */
-public interface ScopedLogger extends BaseLogger {
+public interface ScopedVFL extends VFL {
     void run(String blockName, String message, Runnable runnable);
 
     Future<Void> runAsync(String blockName, String message, Runnable runnable);

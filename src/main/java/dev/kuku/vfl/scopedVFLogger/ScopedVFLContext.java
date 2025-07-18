@@ -1,4 +1,4 @@
-package dev.kuku.vfl.scopedLogger;
+package dev.kuku.vfl.scopedVFLogger;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -11,13 +11,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  * Used by ScopedValue to create bounded data
  */
-class ScopedBlockContext {
+class ScopedVFLContext {
     public final BlockData blockInfo;
     public final VFLBuffer buffer;
     public final AtomicBoolean blockStarted = new AtomicBoolean(false);
     public LogData currentLog;
 
-    ScopedBlockContext(BlockData blockInfo, VFLBuffer buffer) {
+    ScopedVFLContext(BlockData blockInfo, VFLBuffer buffer) {
         this.blockInfo = blockInfo;
         this.buffer = buffer;
     }

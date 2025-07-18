@@ -1,10 +1,10 @@
-package dev.kuku.vfl.executionLogger;
+package dev.kuku.vfl.contextualVFLogger;
 
 import java.util.function.Function;
 
-class ExecutionLoggerUtil {
+class Helper {
 
-    public static <R> R blockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<ExecutionLogger, R> callable, ExecutionLogger subLogger) {
+    public static <R> R blockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<ContextualVFL, R> callable, ContextualVFL subLogger) {
         R result = null;
         try {
             result = callable.apply(subLogger);
