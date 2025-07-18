@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Improved fluent api design">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Working on fluent API progress">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/util/LambdaMethodTracker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopedFluent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopedFluent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStepImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStepImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -21,8 +24,8 @@
         <option value="Kotlin Class" />
         <option value="Record" />
         <option value="package-info" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -223,15 +226,7 @@
       <workItem from="1752748053546" duration="24019000" />
       <workItem from="1752804543015" duration="15199000" />
       <workItem from="1752833842670" duration="2288000" />
-      <workItem from="1752838516300" duration="14684000" />
-    </task>
-    <task id="LOCAL-00069" summary="created ScopedLogger">
-      <option name="closed" value="true" />
-      <created>1752672261533</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1752672261533</updated>
+      <workItem from="1752838516300" duration="15492000" />
     </task>
     <task id="LOCAL-00070" summary="main logic and design works pretty well">
       <option name="closed" value="true" />
@@ -617,7 +612,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752865615948</updated>
     </task>
-    <option name="localTasksCounter" value="118" />
+    <task id="LOCAL-00118" summary="Working on fluent API progress">
+      <option name="closed" value="true" />
+      <created>1752866849019</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1752866849019</updated>
+    </task>
+    <option name="localTasksCounter" value="119" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -635,7 +638,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed bug when block end was not called for root function for scoped logger" />
     <MESSAGE value="toJsonNested function fixed" />
     <MESSAGE value="Fixed bug related to not pushing root block" />
     <MESSAGE value="Removed souts" />
@@ -660,7 +662,8 @@
     <MESSAGE value="going to add fluent api now" />
     <MESSAGE value="Fluent api demo works" />
     <MESSAGE value="Improved fluent api design" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved fluent api design" />
+    <MESSAGE value="Working on fluent API progress" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working on fluent API progress" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
