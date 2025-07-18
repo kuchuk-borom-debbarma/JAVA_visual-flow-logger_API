@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="updated scoped logger and made some design choice">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="ignored target">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,15 +221,7 @@
       <workItem from="1752748053546" duration="24019000" />
       <workItem from="1752804543015" duration="15199000" />
       <workItem from="1752833842670" duration="2288000" />
-      <workItem from="1752838516300" duration="29000" />
-    </task>
-    <task id="LOCAL-00062" summary="Simpler structure">
-      <option name="closed" value="true" />
-      <created>1752604549977</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1752604549977</updated>
+      <workItem from="1752838516300" duration="829000" />
     </task>
     <task id="LOCAL-00063" summary="defined core simple logs">
       <option name="closed" value="true" />
@@ -613,7 +607,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752835538465</updated>
     </task>
-    <option name="localTasksCounter" value="111" />
+    <task id="LOCAL-00111" summary="ignored target">
+      <option name="closed" value="true" />
+      <created>1752838562595</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1752838562596</updated>
+    </task>
+    <option name="localTasksCounter" value="112" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -631,7 +633,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added more important todos for future" />
     <MESSAGE value="created ExecutionLogger" />
     <MESSAGE value="bug fix required" />
     <MESSAGE value="Fixed bug" />
@@ -656,7 +657,8 @@
     <MESSAGE value="simple async showcase done" />
     <MESSAGE value="heavy async seems to work too" />
     <MESSAGE value="updated scoped logger and made some design choice" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated scoped logger and made some design choice" />
+    <MESSAGE value="ignored target" />
+    <option name="LAST_COMMIT_MESSAGE" value="ignored target" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
