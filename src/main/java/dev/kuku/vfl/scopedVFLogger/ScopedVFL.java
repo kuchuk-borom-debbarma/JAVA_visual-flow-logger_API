@@ -41,6 +41,7 @@ public interface ScopedVFL extends VFL {
     <T> T callHere(String blockName, String message, Callable<T> callable);
 
 }
-//TODO support for multi thread environment by explicitly passing context
+//TODO_OLD support for multi thread environment by explicitly passing context. DONE! we created async version of the methods and pass the conext to the thread where it will be running
 //TODO throw exceptions for fn calls but handle it gracefully within the logger too
-//TODO use synchoroinse? research and think properly before deciding this
+//TODO_OLD use synchoroinse? research and think properly before deciding this ANSWER = NO
+//TODO fluent api to reduce verbosity and to get rid of overloaded functions
