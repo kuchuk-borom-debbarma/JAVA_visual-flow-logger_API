@@ -146,9 +146,24 @@ public class ScopedLoggerImpl implements ScopedLogger {
         return ScopedLoggerUtil.subBlockFnHandler(blockName, endMessageFn, callable, subBlockLoggerContext);
     }
 
+    /**
+     * New threads both virtual and platform thread needs to be run as async. <br>
+     * Virtual threads get unmounted when blocking and mounted when blocking operation is complete.
+     * They may get mounted in a different thread than the thread which contains the scoped value or even in a thread that contains a different value for the same scoped value
+     */
     private <R> Future<R> asyncSubBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Callable<R> callable, Executor executor, boolean stay) {
         ensureBlockStarted();
         var currentContext = scopedBlockContext.get();
+        if (executor != null) {
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    return ScopedValue.where(scopedBlockContext, currentContext)
+                            .call(() -> this.subBlockFnHandler(blockName, message, endMessageFn, callable, stay));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }, executor);
+        }
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return ScopedValue.where(scopedBlockContext, currentContext)
@@ -156,7 +171,7 @@ public class ScopedLoggerImpl implements ScopedLogger {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }, executor);
+        });
     }
 
     @Override
@@ -168,6 +183,22 @@ public class ScopedLoggerImpl implements ScopedLogger {
     }
 
     @Override
+    public Future<Void> runAsync(String blockName, String message, Runnable runnable) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, () -> {
+            runnable.run();
+            return null;
+        }, null, false);
+    }
+
+    @Override
+    public Future<Void> runAsync(String blockName, String message, Runnable runnable, Executor executor) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, () -> {
+            runnable.run();
+            return null;
+        }, executor, false);
+    }
+
+    @Override
     public void runHere(String blockName, String message, Runnable runnable) {
         this.subBlockFnHandler(blockName, message, null, () -> {
             runnable.run();
@@ -176,8 +207,34 @@ public class ScopedLoggerImpl implements ScopedLogger {
     }
 
     @Override
+    public Future<Void> runHereAsync(String blockName, String message, Runnable runnable) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, () -> {
+            runnable.run();
+            return null;
+        }, null, true);
+    }
+
+    @Override
+    public Future<Void> runHereAsync(String blockName, String message, Runnable runnable, Executor executor) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, () -> {
+            runnable.run();
+            return null;
+        }, executor, true);
+    }
+
+    @Override
     public <T> T call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, false);
+    }
+
+    @Override
+    public <T> Future<T> callAsync(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
+        return this.asyncSubBlockFnHandler(blockName, message, endMessageFn, callable, null, false);
+    }
+
+    @Override
+    public <T> Future<T> callAsync(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable, Executor executor) {
+        return this.asyncSubBlockFnHandler(blockName, message, endMessageFn, callable, executor, false);
     }
 
     @Override
@@ -186,13 +243,43 @@ public class ScopedLoggerImpl implements ScopedLogger {
     }
 
     @Override
+    public <T> Future<T> callAsync(String blockName, String message, Callable<T> callable) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, callable, null, false);
+    }
+
+    @Override
+    public <T> Future<T> callAsync(String blockName, String message, Callable<T> callable, Executor executor) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, callable, executor, false);
+    }
+
+    @Override
     public <T> T callHere(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
         return this.subBlockFnHandler(blockName, message, endMessageFn, callable, true);
     }
 
     @Override
+    public <T> Future<T> callHereAsync(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable) {
+        return this.asyncSubBlockFnHandler(blockName, message, endMessageFn, callable, null, true);
+    }
+
+    @Override
+    public <T> Future<T> callHereAsync(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable, Executor executor) {
+        return this.asyncSubBlockFnHandler(blockName, message, endMessageFn, callable, executor, true);
+    }
+
+    @Override
     public <T> T callHere(String blockName, String message, Callable<T> callable) {
         return this.subBlockFnHandler(blockName, message, null, callable, true);
+    }
+
+    @Override
+    public <T> Future<T> callHereAsync(String blockName, String message, Callable<T> callable) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, callable, null, true);
+    }
+
+    @Override
+    public <T> Future<T> callHereAsync(String blockName, String message, Callable<T> callable, Executor executor) {
+        return this.asyncSubBlockFnHandler(blockName, message, null, callable, executor, true);
     }
 
     @Override
