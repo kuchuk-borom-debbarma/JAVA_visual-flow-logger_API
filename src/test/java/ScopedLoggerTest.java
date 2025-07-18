@@ -44,7 +44,7 @@ public class ScopedLoggerTest {
                 logger.msg("Starting simple linear test");
                 //Logging return value + sub block started at the same code
                 int sum =
-                        logger.textFn(
+                        logger.msgFn(
                                 () -> logger.call("Sum(1,2)", "Calculating sum..", () -> sum(1, 2)),
                                 integer -> "Calculated sum is " + integer
                         );
@@ -59,12 +59,12 @@ public class ScopedLoggerTest {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return logger.textFn(() -> a + b, integer -> "Sum is " + integer);
+            return logger.msgFn(() -> a + b, integer -> "Sum is " + integer);
         }
 
         int multiply(int a, int b) {
             logger.msg("Multiply " + a + " and " + b);
-            return logger.textFn(() -> a * b, integer -> "Multiply is " + integer);
+            return logger.msgFn(() -> a * b, integer -> "Multiply is " + integer);
         }
 
         @Test

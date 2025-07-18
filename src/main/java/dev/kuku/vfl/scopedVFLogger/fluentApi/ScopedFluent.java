@@ -47,7 +47,7 @@ public class ScopedFluent {
             }
 
             public R msg(Function<R, String> msgFn) {
-                return ScopedVFLImpl.get().textFn(callable, msgFn);
+                return ScopedVFLImpl.get().msgFn(callable, msgFn);
             }
         }
     }

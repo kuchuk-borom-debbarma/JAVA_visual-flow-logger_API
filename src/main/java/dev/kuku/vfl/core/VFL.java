@@ -9,23 +9,15 @@ import java.util.function.Function;
 public interface VFL {
     void msg(String message);
 
-    void textHere(String message);
-
-    <R> R textFn(String message, Callable<R> fn);
-
-    <R> R textFnHere(String message, Callable<R> fn);
-
-    <R> R textFn(Callable<R> fn, Function<R, String> messageFn);
-
-    <R> R textFnHere(Callable<R> fn, Function<R, String> messageFn);
+    <R> R msgFn(Callable<R> fn, Function<R, String> messageFn);
 
     void warn(String message);
 
-    void warnHere(String message);
+    <R> R warnFn(Callable<R> fn, Function<R, String> messageFn);
 
     void error(String message);
 
-    void errorHere(String message);
+    <R> R errorFn(Callable<R> fn, Function<R, String> messageFn);
 
     void closeBlock(String endMessage);
 }

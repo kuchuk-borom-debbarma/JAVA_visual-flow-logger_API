@@ -104,7 +104,7 @@ class ContextualVFLImpl implements ContextualVFL {
     }
 
     @Override
-    public void textHere(String message) {
+    public void msgHere(String message) {
         ensureBlockStarted();
         createLogAndPush(VflLogType.MESSAGE, message, null);
     }
@@ -131,22 +131,22 @@ class ContextualVFLImpl implements ContextualVFL {
     }
 
     @Override
-    public <R> R textFn(String message, Callable<R> fn) {
+    public <R> R msgFn(String message, Callable<R> fn) {
         return this.textFnHandler(fn, (_) -> message, false);
     }
 
     @Override
-    public <R> R textFnHere(String message, Callable<R> fn) {
+    public <R> R msgFnHere(String message, Callable<R> fn) {
         return this.textFnHandler(fn, (_) -> message, true);
     }
 
     @Override
-    public <R> R textFn(Callable<R> fn, Function<R, String> messageFn) {
+    public <R> R msgFn(Callable<R> fn, Function<R, String> messageFn) {
         return this.textFnHandler(fn, messageFn, false);
     }
 
     @Override
-    public <R> R textFnHere(Callable<R> fn, Function<R, String> messageFn) {
+    public <R> R msgFnHere(Callable<R> fn, Function<R, String> messageFn) {
         return this.textFnHandler(fn, messageFn, true);
     }
 

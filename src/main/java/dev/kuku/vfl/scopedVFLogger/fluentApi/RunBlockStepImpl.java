@@ -1,9 +1,7 @@
 package dev.kuku.vfl.scopedVFLogger.fluentApi;
 
-import dev.kuku.vfl.core.util.HelperUtil;
 import dev.kuku.vfl.scopedVFLogger.ScopedVFLImpl;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
