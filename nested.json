@@ -1,84 +1,89 @@
 [ {
-  "blockId" : "0fc50003-a2c0-4061-a6af-c3a457cb6ce2",
+  "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
   "blockName" : "Simple linear test",
   "parentBlockId" : null,
   "logs" : [ {
-    "id" : "c0049ef9-2bd1-41c0-b833-5307da9b5cdc",
-    "blockId" : "0fc50003-a2c0-4061-a6af-c3a457cb6ce2",
+    "id" : "9c85eec0-cb98-4cf0-9746-838790222fd9",
+    "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
     "parentLogId" : null,
     "logType" : "BLOCK_START",
     "message" : null,
     "referencedBlock" : null,
-    "timestamp" : 1752815642918
+    "timestamp" : 1752816086900
   }, {
-    "id" : "0c10964c-6d10-410f-8ec7-b5c6bd3dfd70",
-    "blockId" : "0fc50003-a2c0-4061-a6af-c3a457cb6ce2",
+    "id" : "145b177a-dcab-446f-920c-bc4d3b6bc58d",
+    "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
     "parentLogId" : null,
     "logType" : "MESSAGE",
     "message" : "Starting simple linear test",
     "referencedBlock" : null,
-    "timestamp" : 1752815642918
-  }, {
-    "id" : "796295de-a27d-45b2-8955-27ac3e8ac244",
-    "blockId" : "0fc50003-a2c0-4061-a6af-c3a457cb6ce2",
-    "parentLogId" : "0c10964c-6d10-410f-8ec7-b5c6bd3dfd70",
-    "logType" : "SUB_BLOCK_START",
-    "message" : "Calculating sum..",
-    "referencedBlock" : "cd6447ed-312a-467e-baad-676142170144",
-    "timestamp" : 1752815642918,
-    "nestedBlock" : {
-      "blockId" : "cd6447ed-312a-467e-baad-676142170144",
-      "blockName" : "Sum(1,2)",
-      "parentBlockId" : "0fc50003-a2c0-4061-a6af-c3a457cb6ce2",
-      "logs" : [ {
-        "id" : "01214683-3300-4545-8be1-1a684254c045",
-        "blockId" : "cd6447ed-312a-467e-baad-676142170144",
-        "parentLogId" : null,
-        "logType" : "BLOCK_START",
-        "message" : null,
-        "referencedBlock" : null,
-        "timestamp" : 1752815642919
-      }, {
-        "id" : "cc04f872-7614-4cf2-8012-89984be5123e",
-        "blockId" : "cd6447ed-312a-467e-baad-676142170144",
-        "parentLogId" : null,
+    "timestamp" : 1752816086900,
+    "children" : [ {
+      "id" : "18c59b35-f894-4dcb-b224-1c26d24099cd",
+      "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
+      "parentLogId" : "145b177a-dcab-446f-920c-bc4d3b6bc58d",
+      "logType" : "SUB_BLOCK_START",
+      "message" : "Calculating sum..",
+      "referencedBlock" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+      "timestamp" : 1752816086900,
+      "nestedBlock" : {
+        "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+        "blockName" : "Sum(1,2)",
+        "parentBlockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
+        "logs" : [ {
+          "id" : "a2e355ee-c4a0-49b8-bb6b-b3a45e08ec39",
+          "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+          "parentLogId" : null,
+          "logType" : "BLOCK_START",
+          "message" : null,
+          "referencedBlock" : null,
+          "timestamp" : 1752816086901
+        }, {
+          "id" : "d33f7cf0-c3be-4918-b9f0-029366fc4a14",
+          "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+          "parentLogId" : null,
+          "logType" : "MESSAGE",
+          "message" : "Sum 1 and 2",
+          "referencedBlock" : null,
+          "timestamp" : 1752816086901,
+          "children" : [ {
+            "id" : "5f85f3eb-abe2-42d0-9fb7-f9cbaee99a6e",
+            "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+            "parentLogId" : "d33f7cf0-c3be-4918-b9f0-029366fc4a14",
+            "logType" : "MESSAGE",
+            "message" : "Sum is 3",
+            "referencedBlock" : null,
+            "timestamp" : 1752816086901,
+            "children" : [ {
+              "id" : "616fdc94-b258-44b5-ae4f-e6389d2e2fcc",
+              "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+              "parentLogId" : "5f85f3eb-abe2-42d0-9fb7-f9cbaee99a6e",
+              "logType" : "BLOCK_END",
+              "message" : null,
+              "referencedBlock" : null,
+              "timestamp" : 1752816086901
+            } ]
+          } ]
+        } ]
+      },
+      "children" : [ {
+        "id" : "20d30a4e-4ff6-495f-b12a-782335a56b75",
+        "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
+        "parentLogId" : "18c59b35-f894-4dcb-b224-1c26d24099cd",
         "logType" : "MESSAGE",
-        "message" : "Sum 1 and 2",
+        "message" : "Calculated sum is 3",
         "referencedBlock" : null,
-        "timestamp" : 1752815642919
-      }, {
-        "id" : "b10ef404-f01d-4000-9c0c-30766bbae57d",
-        "blockId" : "cd6447ed-312a-467e-baad-676142170144",
-        "parentLogId" : "cc04f872-7614-4cf2-8012-89984be5123e",
-        "logType" : "MESSAGE",
-        "message" : "Sum is 3",
-        "referencedBlock" : null,
-        "timestamp" : 1752815642920
-      }, {
-        "id" : "e3d8c78f-3a65-48a6-96de-ffc10e15b8c0",
-        "blockId" : "cd6447ed-312a-467e-baad-676142170144",
-        "parentLogId" : "b10ef404-f01d-4000-9c0c-30766bbae57d",
-        "logType" : "BLOCK_END",
-        "message" : null,
-        "referencedBlock" : null,
-        "timestamp" : 1752815642920
+        "timestamp" : 1752816086901,
+        "children" : [ {
+          "id" : "dedc3a3e-8cc3-47c1-9254-c59eda22945c",
+          "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
+          "parentLogId" : "20d30a4e-4ff6-495f-b12a-782335a56b75",
+          "logType" : "BLOCK_END",
+          "message" : null,
+          "referencedBlock" : null,
+          "timestamp" : 1752816086902
+        } ]
       } ]
-    }
-  }, {
-    "id" : "ba15473a-f9f9-4686-8c66-836fc8f3ed8f",
-    "blockId" : "0fc50003-a2c0-4061-a6af-c3a457cb6ce2",
-    "parentLogId" : "796295de-a27d-45b2-8955-27ac3e8ac244",
-    "logType" : "MESSAGE",
-    "message" : "Calculated sum is 3",
-    "referencedBlock" : null,
-    "timestamp" : 1752815642920
-  }, {
-    "id" : "40e2bcfe-4c82-471f-a94f-81e2e14e5629",
-    "blockId" : "0fc50003-a2c0-4061-a6af-c3a457cb6ce2",
-    "parentLogId" : "ba15473a-f9f9-4686-8c66-836fc8f3ed8f",
-    "logType" : "BLOCK_END",
-    "message" : null,
-    "referencedBlock" : null,
-    "timestamp" : 1752815642920
+    } ]
   } ]
 } ]

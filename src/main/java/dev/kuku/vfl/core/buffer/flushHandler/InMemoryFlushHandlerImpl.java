@@ -30,7 +30,7 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
             ObjectMapper mapper = new ObjectMapper();
             ArrayNode resultArray = mapper.createArrayNode();
 
-            // Create set of valid block IDs for quick lookup
+            // Create a set of valid block IDs for quick lookup
             Set<String> validBlockIds = blocks.stream()
                     .map(BlockData::getId)
                     .collect(Collectors.toSet());
@@ -57,36 +57,21 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                 // Get logs for this block
                 List<LogData> blockLogs = validLogsByBlockId.getOrDefault(block.getId(), new ArrayList<>());
 
-                // Sort logs hierarchically based on parentLogId
-                List<LogData> sortedLogs = sortLogsHierarchically(blockLogs);
-
-                // Convert logs to JSON array
-                ArrayNode logsArray = mapper.createArrayNode();
-                for (LogData log : sortedLogs) {
-                    ObjectNode logNode = createLogNode(mapper, log);
-                    logsArray.add(logNode);
-                }
+                // Build hierarchical log structure with branches
+                ArrayNode logsArray = buildLogHierarchy(mapper, blockLogs);
 
                 blockNode.set("logs", logsArray);
                 resultArray.add(blockNode);
             }
 
-            // Add invalid logs section if there are any
+            // Add an invalid logs section if there are any
             if (!invalidLogs.isEmpty()) {
                 ObjectNode invalidSection = mapper.createObjectNode();
                 invalidSection.put("blockId", "INVALID_LOGS");
                 invalidSection.put("blockName", "Invalid Logs");
                 invalidSection.putNull("parentBlockId");
 
-                // Sort invalid logs hierarchically too
-                List<LogData> sortedInvalidLogs = sortLogsHierarchically(invalidLogs);
-
-                ArrayNode invalidLogsArray = mapper.createArrayNode();
-                for (LogData log : sortedInvalidLogs) {
-                    ObjectNode logNode = createLogNode(mapper, log);
-                    invalidLogsArray.add(logNode);
-                }
-
+                ArrayNode invalidLogsArray = buildLogHierarchy(mapper, invalidLogs);
                 invalidSection.set("logs", invalidLogsArray);
                 resultArray.add(invalidSection);
             }
@@ -138,22 +123,14 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                 }
             }
 
-            // Add invalid logs section if there are any
+            // Add an invalid logs section if there are any
             if (!invalidLogs.isEmpty()) {
                 ObjectNode invalidSection = mapper.createObjectNode();
                 invalidSection.put("blockId", "INVALID_LOGS");
                 invalidSection.put("blockName", "Invalid Logs");
                 invalidSection.putNull("parentBlockId");
 
-                // Sort invalid logs hierarchically too
-                List<LogData> sortedInvalidLogs = sortLogsHierarchically(invalidLogs);
-
-                ArrayNode invalidLogsArray = mapper.createArrayNode();
-                for (LogData log : sortedInvalidLogs) {
-                    ObjectNode logNode = createNestedLogNode(mapper, log, blockMap, validLogsByBlockId);
-                    invalidLogsArray.add(logNode);
-                }
-
+                ArrayNode invalidLogsArray = buildNestedLogHierarchy(mapper, invalidLogs, blockMap, validLogsByBlockId);
                 invalidSection.set("logs", invalidLogsArray);
                 resultArray.add(invalidSection);
             }
@@ -162,6 +139,112 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
 
         } catch (Exception e) {
             throw new RuntimeException("Error converting to nested JSON string", e);
+        }
+    }
+
+    private ArrayNode buildLogHierarchy(ObjectMapper mapper, List<LogData> logs) {
+        ArrayNode rootArray = mapper.createArrayNode();
+
+        if (logs.isEmpty()) {
+            return rootArray;
+        }
+
+        // Create maps for quick lookup
+        Map<String, LogData> logMap = logs.stream()
+                .collect(Collectors.toMap(LogData::getId, log -> log));
+
+        // Group logs by their parentLogId
+        Map<String, List<LogData>> logsByParentId = logs.stream()
+                .collect(Collectors.groupingBy(log ->
+                        log.getParentLogId() == null ? "ROOT" : log.getParentLogId()));
+
+        // Process root logs (those with null parentLogId)
+        List<LogData> rootLogs = logsByParentId.getOrDefault("ROOT", new ArrayList<>())
+                .stream()
+                .sorted(Comparator.comparing(LogData::getTimestamp))
+                .toList();
+
+        for (LogData rootLog : rootLogs) {
+            ObjectNode logNode = createLogNode(mapper, rootLog);
+            // Recursively add children
+            addChildrenToNode(mapper, logNode, rootLog.getId(), logsByParentId);
+            rootArray.add(logNode);
+        }
+
+        return rootArray;
+    }
+
+    private void addChildrenToNode(ObjectMapper mapper, ObjectNode parentNode, String parentId,
+                                   Map<String, List<LogData>> logsByParentId) {
+        List<LogData> children = logsByParentId.getOrDefault(parentId, new ArrayList<>())
+                .stream()
+                .sorted(Comparator.comparing(LogData::getTimestamp))
+                .toList();
+
+        if (!children.isEmpty()) {
+            ArrayNode childrenArray = mapper.createArrayNode();
+            for (LogData child : children) {
+                ObjectNode childNode = createLogNode(mapper, child);
+                // Recursively add children of this child
+                addChildrenToNode(mapper, childNode, child.getId(), logsByParentId);
+                childrenArray.add(childNode);
+            }
+            parentNode.set("children", childrenArray);
+        }
+    }
+
+    private ArrayNode buildNestedLogHierarchy(ObjectMapper mapper, List<LogData> logs,
+                                              Map<String, BlockData> blockMap,
+                                              Map<String, List<LogData>> validLogsByBlockId) {
+        ArrayNode rootArray = mapper.createArrayNode();
+
+        if (logs.isEmpty()) {
+            return rootArray;
+        }
+
+        // Create maps for quick lookup
+        Map<String, LogData> logMap = logs.stream()
+                .collect(Collectors.toMap(LogData::getId, log -> log));
+
+        // Group logs by their parentLogId
+        Map<String, List<LogData>> logsByParentId = logs.stream()
+                .collect(Collectors.groupingBy(log ->
+                        log.getParentLogId() == null ? "ROOT" : log.getParentLogId()));
+
+        // Process root logs (those with null parentLogId)
+        List<LogData> rootLogs = logsByParentId.getOrDefault("ROOT", new ArrayList<>())
+                .stream()
+                .sorted(Comparator.comparing(LogData::getTimestamp))
+                .toList();
+
+        for (LogData rootLog : rootLogs) {
+            ObjectNode logNode = createNestedLogNode(mapper, rootLog, blockMap, validLogsByBlockId);
+            // Recursively add children
+            addNestedChildrenToNode(mapper, logNode, rootLog.getId(), logsByParentId, blockMap, validLogsByBlockId);
+            rootArray.add(logNode);
+        }
+
+        return rootArray;
+    }
+
+    private void addNestedChildrenToNode(ObjectMapper mapper, ObjectNode parentNode, String parentId,
+                                         Map<String, List<LogData>> logsByParentId,
+                                         Map<String, BlockData> blockMap,
+                                         Map<String, List<LogData>> validLogsByBlockId) {
+        List<LogData> children = logsByParentId.getOrDefault(parentId, new ArrayList<>())
+                .stream()
+                .sorted(Comparator.comparing(LogData::getTimestamp))
+                .toList();
+
+        if (!children.isEmpty()) {
+            ArrayNode childrenArray = mapper.createArrayNode();
+            for (LogData child : children) {
+                ObjectNode childNode = createNestedLogNode(mapper, child, blockMap, validLogsByBlockId);
+                // Recursively add children of this child
+                addNestedChildrenToNode(mapper, childNode, child.getId(), logsByParentId, blockMap, validLogsByBlockId);
+                childrenArray.add(childNode);
+            }
+            parentNode.set("children", childrenArray);
         }
     }
 
@@ -176,21 +259,16 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
         // Get logs for this block
         List<LogData> blockLogs = validLogsByBlockId.getOrDefault(block.getId(), new ArrayList<>());
 
-        // Sort logs hierarchically based on parentLogId
-        List<LogData> sortedLogs = sortLogsHierarchically(blockLogs);
-
-        // Convert logs to JSON array with nested blocks
-        ArrayNode logsArray = mapper.createArrayNode();
-        for (LogData log : sortedLogs) {
-            ObjectNode logNode = createNestedLogNode(mapper, log, blockMap, validLogsByBlockId);
-            logsArray.add(logNode);
-        }
-
+        // Build hierarchical log structure with branches
+        ArrayNode logsArray = buildNestedLogHierarchy(mapper, blockLogs, blockMap, validLogsByBlockId);
         blockNode.set("logs", logsArray);
+
         return blockNode;
     }
 
-    private ObjectNode createNestedLogNode(ObjectMapper mapper, LogData log, Map<String, BlockData> blockMap, Map<String, List<LogData>> validLogsByBlockId) {
+    private ObjectNode createNestedLogNode(ObjectMapper mapper, LogData log,
+                                           Map<String, BlockData> blockMap,
+                                           Map<String, List<LogData>> validLogsByBlockId) {
         ObjectNode logNode = mapper.createObjectNode();
         logNode.put("id", log.getId());
         logNode.put("blockId", log.getBlockId());
@@ -216,16 +294,8 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                 // Get logs for the referenced block
                 List<LogData> referencedBlockLogs = validLogsByBlockId.getOrDefault(referencedBlock.getId(), new ArrayList<>());
 
-                // Sort logs hierarchically
-                List<LogData> sortedReferencedLogs = sortLogsHierarchically(referencedBlockLogs);
-
-                // Convert referenced block logs to JSON array (recursive nesting)
-                ArrayNode referencedLogsArray = mapper.createArrayNode();
-                for (LogData refLog : sortedReferencedLogs) {
-                    ObjectNode refLogNode = createNestedLogNode(mapper, refLog, blockMap, validLogsByBlockId);
-                    referencedLogsArray.add(refLogNode);
-                }
-
+                // Build hierarchical log structure for nested block
+                ArrayNode referencedLogsArray = buildNestedLogHierarchy(mapper, referencedBlockLogs, blockMap, validLogsByBlockId);
                 nestedBlockNode.set("logs", referencedLogsArray);
                 logNode.set("nestedBlock", nestedBlockNode);
             } else {
@@ -251,56 +321,6 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
         logNode.put("referencedBlock", log.getReferencedBlock());
         logNode.put("timestamp", log.getTimestamp());
         return logNode;
-    }
-
-    private List<LogData> sortLogsHierarchically(List<LogData> logs) {
-        if (logs.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // Create a map for quick lookup
-        Map<String, LogData> logMap = logs.stream()
-                .collect(Collectors.toMap(LogData::getId, log -> log));
-
-        // Find root logs (those with null or empty parentLogId)
-        List<LogData> rootLogs = logs.stream()
-                .filter(log -> log.getParentLogId() == null || log.getParentLogId().isEmpty())
-                .sorted(Comparator.comparing(LogData::getTimestamp))
-                .toList();
-
-        // Build the hierarchical structure
-        List<LogData> result = new ArrayList<>();
-        Set<String> visited = new HashSet<>();
-
-        for (LogData root : rootLogs) {
-            addLogAndChildren(root, logMap, result, visited);
-        }
-
-        // Add any remaining logs that weren't part of the hierarchy
-        for (LogData log : logs) {
-            if (!visited.contains(log.getId())) {
-                result.add(log);
-            }
-        }
-
-        return result;
-    }
-
-    private void addLogAndChildren(LogData log, Map<String, LogData> logMap, List<LogData> result, Set<String> visited) {
-        if (visited.contains(log.getId())) {
-            return;
-        }
-        visited.add(log.getId());
-        result.add(log);
-        // Find and add children
-        List<LogData> children = logMap.values().stream()
-                .filter(child -> log.getId().equals(child.getParentLogId()))
-                .sorted(Comparator.comparing(LogData::getTimestamp))
-                .toList();
-
-        for (LogData child : children) {
-            addLogAndChildren(child, logMap, result, visited);
-        }
     }
 
     @Override
