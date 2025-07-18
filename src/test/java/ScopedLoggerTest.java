@@ -8,8 +8,11 @@ import org.junit.jupiter.api.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 
 public class ScopedLoggerTest {
@@ -49,7 +52,13 @@ public class ScopedLoggerTest {
         }
 
         int sum(int a, int b) {
+            logger.text("Summing in thread ID : " + Thread.currentThread().threadId());
             logger.text("Sum " + a + " and " + b);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return logger.textFn(() -> a + b, integer -> "Sum is " + integer);
         }
 
@@ -59,7 +68,7 @@ public class ScopedLoggerTest {
         }
 
         @Test
-        void nonLinearFlow() throws InterruptedException, Exception {
+        void nonLinearFlow() {
             ScopedVFLRunner.run("Simple non-linear test", buffer, () -> {
                 logger = ScopedVFLImpl.get();
                 logger.text("Starting simple non-linear test");
@@ -75,6 +84,30 @@ public class ScopedLoggerTest {
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                 }
+            });
+        }
+
+        @Test
+        void heavyAsync() {
+            ScopedVFLRunner.run("Heavy Async test", buffer, () -> {
+                logger = ScopedVFLImpl.get();
+                logger.text("Starting simple heavy async test");
+                int count = 10000;
+                List<CompletableFuture<Integer>> futures = new ArrayList<>(count);
+                for (int i = 0; i < count; i++) {
+                    int finalI = i;
+                    futures.add((CompletableFuture<Integer>) logger.callHereAsync("" + finalI, null, () -> sum(finalI, finalI), Executors.newVirtualThreadPerTaskExecutor()));
+                }
+
+                var collected = futures.stream()
+                        .map(integerCompletableFuture -> {
+                            try {
+                                return integerCompletableFuture.get();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }).toList();
+                logger.text("Calculated product is " + collected);
             });
         }
 
