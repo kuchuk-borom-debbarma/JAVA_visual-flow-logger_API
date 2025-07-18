@@ -1,4 +1,4 @@
-package dev.kuku.vfl.multiThreadedScopedLogger;
+package dev.kuku.vfl.scopedLogger;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -7,7 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.multiThreadedScopedLogger.ScopedLoggerUtil.subBlockFnHandler;
+import static dev.kuku.vfl.scopedLogger.ScopedLoggerUtil.subBlockFnHandler;
 
 public class ScopedLoggerRunner {
     private ScopedLoggerRunner() {

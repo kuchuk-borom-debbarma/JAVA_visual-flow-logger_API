@@ -1,4 +1,4 @@
-package dev.kuku.vfl.multiThreadedScopedLogger;
+package dev.kuku.vfl.scopedLogger;
 
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.VFLUtil.generateUID;
-import static dev.kuku.vfl.multiThreadedScopedLogger.ScopedValueBlockContext.scopedBlockContext;
+import static dev.kuku.vfl.scopedLogger.ScopedValueBlockContext.scopedBlockContext;
 
 public class ScopedLoggerImpl implements ScopedLogger {
     private static ScopedLoggerImpl instance;
@@ -146,7 +146,7 @@ public class ScopedLoggerImpl implements ScopedLogger {
         return ScopedLoggerUtil.subBlockFnHandler(blockName, endMessageFn, callable, subBlockLoggerContext);
     }
 
-    /**
+    /*
      * New threads both virtual and platform thread needs to be run as async. <br>
      * Virtual threads get unmounted when blocking and mounted when blocking operation is complete.
      * They may get mounted in a different thread than the thread which contains the scoped value or even in a thread that contains a different value for the same scoped value
@@ -154,6 +154,7 @@ public class ScopedLoggerImpl implements ScopedLogger {
     private <R> Future<R> asyncSubBlockFnHandler(String blockName, String message, Function<R, String> endMessageFn, Callable<R> callable, Executor executor, boolean stay) {
         ensureBlockStarted();
         var currentContext = scopedBlockContext.get();
+        //Copy the current context to the new thread's scoped value which will then use it to create another nested scope when it calls subBlockFnHandler
         if (executor != null) {
             return CompletableFuture.supplyAsync(() -> {
                 try {

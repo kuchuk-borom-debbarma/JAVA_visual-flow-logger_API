@@ -7,9 +7,9 @@ import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
 import dev.kuku.vfl.executionLogger.ExecutionLogger;
 import dev.kuku.vfl.executionLogger.ExecutionLoggerRunner;
-import dev.kuku.vfl.multiThreadedScopedLogger.ScopedLogger;
-import dev.kuku.vfl.multiThreadedScopedLogger.ScopedLoggerImpl;
-import dev.kuku.vfl.multiThreadedScopedLogger.ScopedLoggerRunner;
+import dev.kuku.vfl.scopedLogger.ScopedLogger;
+import dev.kuku.vfl.scopedLogger.ScopedLoggerImpl;
+import dev.kuku.vfl.scopedLogger.ScopedLoggerRunner;
 
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;

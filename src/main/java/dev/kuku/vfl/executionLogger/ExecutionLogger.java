@@ -18,3 +18,4 @@ public interface ExecutionLogger extends BaseLogger {
 
     <R> R callHere(String blockName, String message, Function<ExecutionLogger, R> callable);
 }
+//TODO async variants

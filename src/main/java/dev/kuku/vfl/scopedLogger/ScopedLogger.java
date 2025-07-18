@@ -1,4 +1,4 @@
-package dev.kuku.vfl.multiThreadedScopedLogger;
+package dev.kuku.vfl.scopedLogger;
 
 import dev.kuku.vfl.core.BaseLogger;
 

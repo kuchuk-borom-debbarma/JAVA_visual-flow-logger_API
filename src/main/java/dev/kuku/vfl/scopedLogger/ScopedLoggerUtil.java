@@ -1,9 +1,9 @@
-package dev.kuku.vfl.multiThreadedScopedLogger;
+package dev.kuku.vfl.scopedLogger;
 
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.multiThreadedScopedLogger.ScopedValueBlockContext.scopedBlockContext;
+import static dev.kuku.vfl.scopedLogger.ScopedValueBlockContext.scopedBlockContext;
 
 class ScopedLoggerUtil {
     public static <R> R subBlockFnHandler(String blockName, Function<R, String> endMessageFn, Callable<R> callable, ScopedBlockContext scopedValueBlockContext) {
