@@ -49,3 +49,4 @@ public interface ScopedLogger extends BaseLogger {
 }
 //TODO support for multi thread environment by explicitly passing context
 //TODO throw exceptions for fn calls but handle it gracefully within the logger too
+//TODO use synchoroinse? research and think properly before deciding this
