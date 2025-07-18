@@ -1,21 +1,15 @@
-# Visual Flow Logger
-VFL is a visual logger that makes can be used to create systematic structured log, 
-making it easier to visualize the flow of the logs as the program goes on. <br>
-
-It aims to provide both local and distributed logging but will be starting off with local logging first.
-
-# VFL Design Philosophy
-## VFL Block
-VFL Block is a "container" or "section" whose purpose is to hold linked list of logs in order they appeared. <br>
-A block will have sequential logs which can then dive into nested blocks signifying the flow of the operation.
-## VFL Log
-VFL Log is the actual logging data stored in a block. They can be as simple as a message or can be starting of another sub-block and much more.
-
-# Implementation Design 
-## Goal
-On it's heart the ```VisFlowLogger``` class is what is going to act as a block. <br>
-It is meant to be used as the logger instance for logging that certain block. <br>
-When it's time to define a sub-block, it must be done by calling a method in the ```VisFlowLogger``` to create a sub-block.<br>
-## Implementation
-### VisFlowLogger
-This class acts as the block logger instance and this is what must be used to create sequential log for 
+{
+"blockId": "c8464751-1742-47e4-80c9-b56e32b59656",
+"blockName": "getStackTrace\nrun\nlambda$test$0\nlambda$run$0\nlambda$subBlockFnHandler$
+0\ncallWithoutScope\ncall\ncall\nsubBlockFnHandler\ncall\nrun\ntest\ninvoke\ninvoke\ninvokeMethod\nproceed\nproceed\nintercept\ninterceptTestableMethod\ninterceptTestMethod\nlambda$ofVoidMethod$
+0\nlambda$invoke$0\nproceed\nproceed\nchainAndInvoke\ninvoke\ninvoke\ninvoke\nlambda$invokeTestMethod$
+7\nexecute\ninvokeTestMethod\nexecute\nexecute\nlambda$executeRecursively$6\nexecute\nlambda$executeRecursively$
+8\naround\nlambda$executeRecursively$
+9\nexecute\nexecuteRecursively\nexecute\nforEach\ninvokeAll\nlambda$executeRecursively$
+6\nexecute\nlambda$executeRecursively$8\naround\nlambda$executeRecursively$
+9\nexecute\nexecuteRecursively\nexecute\nforEach\ninvokeAll\nlambda$executeRecursively$
+6\nexecute\nlambda$executeRecursively$8\naround\nlambda$executeRecursively$
+9\nexecute\nexecuteRecursively\nexecute\nsubmit\nexecute\nexecute\nexecute\nexecute\nexecute\nlambda$execute$
+0\nwithInterceptedStreams\nexecute\nexecute\nexecute\nexecute\nexecute\nstartRunnerWithArgs\nexecute\nrepeat\nstartRunnerWithArgs\nprepareStreamsAndStart\nmain\n",
+"parentBlockId": "dbbbd179-66e9-4c89-ba55-526b38f36c10"
+}

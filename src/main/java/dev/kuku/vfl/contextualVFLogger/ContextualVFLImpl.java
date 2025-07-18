@@ -98,7 +98,7 @@ class ContextualVFLImpl implements ContextualVFL {
     }
 
     @Override
-    public void text(String message) {
+    public void msg(String message) {
         ensureBlockStarted();
         currentLogData = createLogAndPush(VflLogType.MESSAGE, message, null);
     }

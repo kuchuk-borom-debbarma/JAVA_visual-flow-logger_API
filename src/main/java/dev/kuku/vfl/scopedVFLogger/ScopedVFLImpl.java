@@ -55,7 +55,7 @@ public class ScopedVFLImpl implements ScopedVFL {
     }
 
     @Override
-    public void text(String message) {
+    public void msg(String message) {
         ensureBlockStarted();
         scopedBlockContext.get().currentLog = createAndPushLogData(message, VflLogType.MESSAGE, null);
     }

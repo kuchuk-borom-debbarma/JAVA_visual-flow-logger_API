@@ -41,7 +41,7 @@ public class ScopedLoggerTest {
         void linearFlow() {
             ScopedVFLRunner.run("Simple linear test", buffer, () -> {
                 logger = ScopedVFLImpl.get();
-                logger.text("Starting simple linear test");
+                logger.msg("Starting simple linear test");
                 //Logging return value + sub block started at the same code
                 int sum =
                         logger.textFn(
@@ -52,8 +52,8 @@ public class ScopedLoggerTest {
         }
 
         int sum(int a, int b) {
-            logger.text("Summing in thread ID : " + Thread.currentThread().threadId());
-            logger.text("Sum " + a + " and " + b);
+            logger.msg("Summing in thread ID : " + Thread.currentThread().threadId());
+            logger.msg("Sum " + a + " and " + b);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -63,7 +63,7 @@ public class ScopedLoggerTest {
         }
 
         int multiply(int a, int b) {
-            logger.text("Multiply " + a + " and " + b);
+            logger.msg("Multiply " + a + " and " + b);
             return logger.textFn(() -> a * b, integer -> "Multiply is " + integer);
         }
 
@@ -71,7 +71,7 @@ public class ScopedLoggerTest {
         void nonLinearFlow() {
             ScopedVFLRunner.run("Simple non-linear test", buffer, () -> {
                 logger = ScopedVFLImpl.get();
-                logger.text("Starting simple non-linear test");
+                logger.msg("Starting simple non-linear test");
                 var sumTask = logger.callAsync("Sum(1,2)", "Sum1 called", () -> sum(1, 2));
                 var multiplyTask = logger.callAsync("multiply(2,2)", "Multiply called..", () -> multiply(2, 2));
                 var futures = CompletableFuture.allOf(sumTask, multiplyTask);
@@ -79,8 +79,8 @@ public class ScopedLoggerTest {
                 try {
                     futures.get(); //execute both futures async way
                     //Since both complete we can fetch result
-                    logger.text("Calculated sum is " + sumTask.get());
-                    logger.text("Calculated product is " + multiplyTask.get());
+                    logger.msg("Calculated sum is " + sumTask.get());
+                    logger.msg("Calculated product is " + multiplyTask.get());
                 } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                 }
@@ -91,7 +91,7 @@ public class ScopedLoggerTest {
         void heavyAsync() {
             ScopedVFLRunner.run("Heavy Async test", buffer, () -> {
                 logger = ScopedVFLImpl.get();
-                logger.text("Starting simple heavy async test");
+                logger.msg("Starting simple heavy async test");
                 int count = 5000;
                 List<CompletableFuture<Integer>> futures = new ArrayList<>(count);
                 for (int i = 0; i < count; i++) {
@@ -107,7 +107,7 @@ public class ScopedLoggerTest {
                                 throw new RuntimeException(e);
                             }
                         }).toList();
-                logger.text("Calculated product is " + collected);
+                logger.msg("Calculated product is " + collected);
             });
         }
 

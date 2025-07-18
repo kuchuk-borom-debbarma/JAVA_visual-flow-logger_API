@@ -4,15 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="going to add fluent api now">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopeFluentVFL.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopedFluentAPI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/subBlockStep/CallStep.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/subBlockStep/SubBlockStep.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fluent api demo works">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/CallBlockStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/CallBlockStepImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStepImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopedFluent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nested_json.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/util/HelperUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/util/HelperUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLIENT_DESIGN.MD" beforeDir="false" afterPath="$PROJECT_DIR$/CLIENT_DESIGN.MD" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFLImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopeFluentVFL.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopedFluentAPI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/subBlockStep/CallStep.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/subBlockStep/SubBlockStep.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ScopedLoggerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ScopedLoggerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,8 +34,8 @@
         <option value="Kotlin Class" />
         <option value="Record" />
         <option value="package-info" />
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -106,6 +114,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="dev.kuku.vfl.scopedVFLogger.fluentApi" />
       <recent name="dev.kuku.builder" />
     </key>
   </component>
@@ -227,15 +236,7 @@
       <workItem from="1752748053546" duration="24019000" />
       <workItem from="1752804543015" duration="15199000" />
       <workItem from="1752833842670" duration="2288000" />
-      <workItem from="1752838516300" duration="10047000" />
-    </task>
-    <task id="LOCAL-00067" summary="logger works now but can be better designed">
-      <option name="closed" value="true" />
-      <created>1752662253737</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1752662253737</updated>
+      <workItem from="1752838516300" duration="13468000" />
     </task>
     <task id="LOCAL-00068" summary="todo">
       <option name="closed" value="true" />
@@ -621,7 +622,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752854563461</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="Fluent api demo works">
+      <option name="closed" value="true" />
+      <created>1752860410233</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1752860410233</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -639,7 +648,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Util function. bug still not fixed" />
     <MESSAGE value="Fixed bug when block end was not called for root function" />
     <MESSAGE value="Fixed bug when block end was not called for root function for scoped logger" />
     <MESSAGE value="toJsonNested function fixed" />
@@ -664,7 +672,8 @@
     <MESSAGE value="refactored based on new design chooice i mad" />
     <MESSAGE value="updated todos" />
     <MESSAGE value="going to add fluent api now" />
-    <option name="LAST_COMMIT_MESSAGE" value="going to add fluent api now" />
+    <MESSAGE value="Fluent api demo works" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fluent api demo works" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
