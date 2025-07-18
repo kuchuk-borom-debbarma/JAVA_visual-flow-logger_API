@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="updated scoped logger and made some design choice" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Kotlin Class" />
+        <option value="Record" />
+        <option value="package-info" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="kuchukboramdebbarma &lt;kuchukboromd@gmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="features/scoped_context_access" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;kuchuk-borom-debbarma&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/kuchuk-borom-debbarma/vfl_java.git&quot;,
+    &quot;accountId&quot;: &quot;c5e8ebb7-42f0-41bc-96cf-550538c49123&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.19.1/jackson-databind-2.19.1.jar!/com/fasterxml/jackson/databind/ObjectMapper.class" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2yFiYzEKGG67NdDzHS1Ry8iszBT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.VFLTests.executor": "Run",
+    "JUnit.VFLTests.expected.executor": "Run",
+    "JUnit.VFLTests.simple.executor": "Debug",
+    "Maven.vfl_java [clean].executor": "Run",
+    "Maven.vfl_java [install].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "settings.sync",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "SQLite"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="dev.kuku.builder" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.ScopedLoggerTest$SimpleTest.heavyAsync">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="dev.kuku.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ScopedLoggerTest$SimpleTest.heavyAsync" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
+      <option name="MAIN_CLASS_NAME" value="ScopedLoggerTest$SimpleTest" />
+      <option name="METHOD_NAME" value="heavyAsync" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ScopedLoggerTest$SimpleTest.nonLinearFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
+      <option name="MAIN_CLASS_NAME" value="ScopedLoggerTest$SimpleTest" />
+      <option name="METHOD_NAME" value="nonLinearFlow" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ScopedLoggerTest$SimpleTest.run" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
+      <option name="MAIN_CLASS_NAME" value="ScopedLoggerTest$SimpleTest" />
+      <option name="METHOD_NAME" value="run" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VFLTests.simple" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="VFLTests" />
+      <option name="METHOD_NAME" value="simple" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.heavyAsync" />
+        <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow" />
+        <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.run" />
+        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.VFLTests.simple" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="" />
+      <created>1749436773550</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749436773550</updated>
+      <workItem from="1749436774542" duration="7245000" />
+      <workItem from="1749657105160" duration="32000" />
+      <workItem from="1749685098079" duration="4448000" />
+      <workItem from="1749696138474" duration="61000" />
+      <workItem from="1749697195020" duration="8654000" />
+      <workItem from="1749734601846" duration="51000" />
+      <workItem from="1749735158260" duration="14444000" />
+      <workItem from="1749794271956" duration="903000" />
+      <workItem from="1749876195958" duration="9929000" />
+      <workItem from="1750138293009" duration="22000" />
+      <workItem from="1750554956430" duration="1248000" />
+      <workItem from="1750556232273" duration="2138000" />
+      <workItem from="1750877786953" duration="1207000" />
+      <workItem from="1750879145472" duration="9000" />
+      <workItem from="1751336405947" duration="10059000" />
+      <workItem from="1751363163150" duration="4418000" />
+      <workItem from="1751369069171" duration="24000" />
+      <workItem from="1751425412929" duration="12131000" />
+      <workItem from="1751445781493" duration="6475000" />
+      <workItem from="1751462030478" duration="3032000" />
+      <workItem from="1751472602600" duration="982000" />
+      <workItem from="1751473600125" duration="6274000" />
+      <workItem from="1751549512457" duration="7124000" />
+      <workItem from="1751640023490" duration="1398000" />
+      <workItem from="1752312321240" duration="11038000" />
+      <workItem from="1752336720503" duration="805000" />
+      <workItem from="1752424796454" duration="4152000" />
+      <workItem from="1752440504926" duration="3640000" />
+      <workItem from="1752465173613" duration="234000" />
+      <workItem from="1752496231285" duration="26573000" />
+      <workItem from="1752576409621" duration="3494000" />
+      <workItem from="1752598552156" duration="105000" />
+      <workItem from="1752598692572" duration="8218000" />
+      <workItem from="1752610664696" duration="6370000" />
+      <workItem from="1752656834769" duration="29272000" />
+      <workItem from="1752709875382" duration="7299000" />
+      <workItem from="1752748053546" duration="24019000" />
+      <workItem from="1752804543015" duration="15199000" />
+      <workItem from="1752833842670" duration="2288000" />
+    </task>
+    <task id="LOCAL-00062" summary="Simpler structure">
+      <option name="closed" value="true" />
+      <created>1752604549977</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1752604549977</updated>
+    </task>
+    <task id="LOCAL-00063" summary="defined core simple logs">
+      <option name="closed" value="true" />
+      <created>1752611823602</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1752611823602</updated>
+    </task>
+    <task id="LOCAL-00064" summary="testing different designs">
+      <option name="closed" value="true" />
+      <created>1752617048223</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1752617048224</updated>
+    </task>
+    <task id="LOCAL-00065" summary="created scoped logger">
+      <option name="closed" value="true" />
+      <created>1752660210837</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1752660210837</updated>
+    </task>
+    <task id="LOCAL-00066" summary="deleted unused stuff">
+      <option name="closed" value="true" />
+      <created>1752660909678</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1752660909678</updated>
+    </task>
+    <task id="LOCAL-00067" summary="logger works now but can be better designed">
+      <option name="closed" value="true" />
+      <created>1752662253737</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1752662253737</updated>
+    </task>
+    <task id="LOCAL-00068" summary="todo">
+      <option name="closed" value="true" />
+      <created>1752665738049</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1752665738049</updated>
+    </task>
+    <task id="LOCAL-00069" summary="created ScopedLogger">
+      <option name="closed" value="true" />
+      <created>1752672261533</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1752672261533</updated>
+    </task>
+    <task id="LOCAL-00070" summary="main logic and design works pretty well">
+      <option name="closed" value="true" />
+      <created>1752674432342</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1752674432342</updated>
+    </task>
+    <task id="LOCAL-00071" summary="refactored code">
+      <option name="closed" value="true" />
+      <created>1752678780397</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1752678780397</updated>
+    </task>
+    <task id="LOCAL-00072" summary="Code works now properly. Just clean up stuff left">
+      <option name="closed" value="true" />
+      <created>1752685249488</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1752685249488</updated>
+    </task>
+    <task id="LOCAL-00073" summary="cleaned up ScopedLogStarter">
+      <option name="closed" value="true" />
+      <created>1752686906823</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1752686906823</updated>
+    </task>
+    <task id="LOCAL-00074" summary="Gave proper names to classes">
+      <option name="closed" value="true" />
+      <created>1752687053803</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1752687053803</updated>
+    </task>
+    <task id="LOCAL-00075" summary="Refactored structure and other stuff">
+      <option name="closed" value="true" />
+      <created>1752687528313</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1752687528313</updated>
+    </task>
+    <task id="LOCAL-00076" summary="Refactored structure and other stuff">
+      <option name="closed" value="true" />
+      <created>1752687611060</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1752687611060</updated>
+    </task>
+    <task id="LOCAL-00077" summary="Added call function">
+      <option name="closed" value="true" />
+      <created>1752688362272</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1752688362272</updated>
+    </task>
+    <task id="LOCAL-00078" summary="Added call function">
+      <option name="closed" value="true" />
+      <created>1752688384489</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1752688384489</updated>
+    </task>
+    <task id="LOCAL-00079" summary="Improved description">
+      <option name="closed" value="true" />
+      <created>1752688522623</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1752688522623</updated>
+    </task>
+    <task id="LOCAL-00080" summary="renamed flusher">
+      <option name="closed" value="true" />
+      <created>1752688670582</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1752688670582</updated>
+    </task>
+    <task id="LOCAL-00081" summary="Added more important todos for future">
+      <option name="closed" value="true" />
+      <created>1752688859326</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1752688859327</updated>
+    </task>
+    <task id="LOCAL-00082" summary="created ExecutionLogger">
+      <option name="closed" value="true" />
+      <created>1752715757405</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1752715757405</updated>
+    </task>
+    <task id="LOCAL-00083" summary="bug fix required">
+      <option name="closed" value="true" />
+      <created>1752717206365</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1752717206365</updated>
+    </task>
+    <task id="LOCAL-00084" summary="Fixed bug">
+      <option name="closed" value="true" />
+      <created>1752749466266</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1752749466267</updated>
+    </task>
+    <task id="LOCAL-00085" summary="Fixed bug">
+      <option name="closed" value="true" />
+      <created>1752749473620</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1752749473620</updated>
+    </task>
+    <task id="LOCAL-00086" summary="Util function. bug still not fixed">
+      <option name="closed" value="true" />
+      <created>1752752809037</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1752752809037</updated>
+    </task>
+    <task id="LOCAL-00087" summary="Fixed bug when block end was not called for root function">
+      <option name="closed" value="true" />
+      <created>1752760512835</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1752760512835</updated>
+    </task>
+    <task id="LOCAL-00088" summary="Fixed bug when block end was not called for root function for scoped logger">
+      <option name="closed" value="true" />
+      <created>1752760521146</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1752760521146</updated>
+    </task>
+    <task id="LOCAL-00089" summary="toJsonNested function fixed">
+      <option name="closed" value="true" />
+      <created>1752761212548</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1752761212548</updated>
+    </task>
+    <task id="LOCAL-00090" summary="Fixed bug related to not pushing root block">
+      <option name="closed" value="true" />
+      <created>1752763202187</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1752763202187</updated>
+    </task>
+    <task id="LOCAL-00091" summary="Removed souts">
+      <option name="closed" value="true" />
+      <created>1752763257257</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1752763257257</updated>
+    </task>
+    <task id="LOCAL-00092" summary="added important todos">
+      <option name="closed" value="true" />
+      <created>1752763301957</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1752763301957</updated>
+    </task>
+    <task id="LOCAL-00093" summary="completed few todos mainly related to adding new textFn for taking in lambda and showing it">
+      <option name="closed" value="true" />
+      <created>1752765894817</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1752765894817</updated>
+    </task>
+    <task id="LOCAL-00094" summary="updated ScopedLoggerImpl to support new changes to base logger">
+      <option name="closed" value="true" />
+      <created>1752767861325</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1752767861325</updated>
+    </task>
+    <task id="LOCAL-00095" summary="added clean up method for in memory flush handler for testing">
+      <option name="closed" value="true" />
+      <created>1752768566379</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1752768566379</updated>
+    </task>
+    <task id="LOCAL-00096" summary="added thread safe async virtual thread buffer">
+      <option name="closed" value="true" />
+      <created>1752779861173</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1752779861173</updated>
+    </task>
+    <task id="LOCAL-00097" summary="Added async sub block fn handler that will copy current context, create a new scope in that environment and return it">
+      <option name="closed" value="true" />
+      <created>1752807643885</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1752807643885</updated>
+    </task>
+    <task id="LOCAL-00098" summary="Added async versions">
+      <option name="closed" value="true" />
+      <created>1752808977657</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1752808977657</updated>
+    </task>
+    <task id="LOCAL-00099" summary="added important todo">
+      <option name="closed" value="true" />
+      <created>1752809512001</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1752809512001</updated>
+    </task>
+    <task id="LOCAL-00100" summary="added package-info.java for scoped logger">
+      <option name="closed" value="true" />
+      <created>1752810611812</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1752810611812</updated>
+    </task>
+    <task id="LOCAL-00101" summary="renaming changes and other stuff">
+      <option name="closed" value="true" />
+      <created>1752811515471</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1752811515471</updated>
+    </task>
+    <task id="LOCAL-00102" summary="creating tests to see how things work">
+      <option name="closed" value="true" />
+      <created>1752815689209</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1752815689209</updated>
+    </task>
+    <task id="LOCAL-00103" summary="updated in memory funciton to show nested logs with same parent">
+      <option name="closed" value="true" />
+      <created>1752816178196</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1752816178196</updated>
+    </task>
+    <task id="LOCAL-00104" summary="simple async showcase done">
+      <option name="closed" value="true" />
+      <created>1752817361581</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1752817361581</updated>
+    </task>
+    <task id="LOCAL-00105" summary="heavy async seems to work too">
+      <option name="closed" value="true" />
+      <created>1752818369603</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1752818369603</updated>
+    </task>
+    <task id="LOCAL-00106" summary="heavy async seems to work too">
+      <option name="closed" value="true" />
+      <created>1752819853358</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1752819853358</updated>
+    </task>
+    <task id="LOCAL-00107" summary="updated scoped logger and made some design choice">
+      <option name="closed" value="true" />
+      <created>1752835341124</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1752835341124</updated>
+    </task>
+    <task id="LOCAL-00108" summary="updated scoped logger and made some design choice">
+      <option name="closed" value="true" />
+      <created>1752835449628</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1752835449628</updated>
+    </task>
+    <task id="LOCAL-00109" summary="updated scoped logger and made some design choice">
+      <option name="closed" value="true" />
+      <created>1752835506596</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1752835506596</updated>
+    </task>
+    <task id="LOCAL-00110" summary="updated scoped logger and made some design choice">
+      <option name="closed" value="true" />
+      <created>1752835538465</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1752835538465</updated>
+    </task>
+    <option name="localTasksCounter" value="111" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added more important todos for future" />
+    <MESSAGE value="created ExecutionLogger" />
+    <MESSAGE value="bug fix required" />
+    <MESSAGE value="Fixed bug" />
+    <MESSAGE value="Util function. bug still not fixed" />
+    <MESSAGE value="Fixed bug when block end was not called for root function" />
+    <MESSAGE value="Fixed bug when block end was not called for root function for scoped logger" />
+    <MESSAGE value="toJsonNested function fixed" />
+    <MESSAGE value="Fixed bug related to not pushing root block" />
+    <MESSAGE value="Removed souts" />
+    <MESSAGE value="added important todos" />
+    <MESSAGE value="completed few todos mainly related to adding new textFn for taking in lambda and showing it" />
+    <MESSAGE value="updated ScopedLoggerImpl to support new changes to base logger" />
+    <MESSAGE value="added clean up method for in memory flush handler for testing" />
+    <MESSAGE value="added thread safe async virtual thread buffer" />
+    <MESSAGE value="Added async sub block fn handler that will copy current context, create a new scope in that environment and return it" />
+    <MESSAGE value="Added async versions" />
+    <MESSAGE value="added important todo" />
+    <MESSAGE value="added package-info.java for scoped logger" />
+    <MESSAGE value="renaming changes and other stuff" />
+    <MESSAGE value="creating tests to see how things work" />
+    <MESSAGE value="updated in memory funciton to show nested logs with same parent" />
+    <MESSAGE value="simple async showcase done" />
+    <MESSAGE value="heavy async seems to work too" />
+    <MESSAGE value="updated scoped logger and made some design choice" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated scoped logger and made some design choice" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFL.java</url>
+          <line>19</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFLRunner.java</url>
+          <line>25</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
