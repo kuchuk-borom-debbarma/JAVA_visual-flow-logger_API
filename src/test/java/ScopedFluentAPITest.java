@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static dev.kuku.vfl.scopedVFLogger.fluentApi.ScopedFluent.msg;
-import static dev.kuku.vfl.scopedVFLogger.fluentApi.ScopedFluent.subBlockRunner;
+import static dev.kuku.vfl.scopedVFLogger.fluentApi.ScopedFluent.text;
+import static dev.kuku.vfl.scopedVFLogger.fluentApi.ScopedFluent.subBlockRun;
 
 public class ScopedFluentAPITest {
     InMemoryFlushHandlerImpl inMemory = new InMemoryFlushHandlerImpl();
@@ -35,18 +35,18 @@ public class ScopedFluentAPITest {
     @Test
     void test() {
         ScopedVFLRunner.run("Scoped FluentAPI", this.buffer, () -> {
-            msg("This is a simple message");
-            subBlockRunner(() -> sum(1, 2))
+            text.msg("Starting test");
+            subBlockRun(() -> sum(1, 2))
                     .withMsg("Summing two numbers")
                     .run();
-            msg("Scoped fluent test complete");
+            text.msg("Scoped fluent test complete");
         });
     }
 
     void sum(int a, int b) {
-        msg("Sum of " + a + " and " + b);
+        text.msg("Sum of " + a + " and " + b);
         int sum = a + b;
-        msg("Summed = " + sum);
+        text.msg("Summed = " + sum);
     }
 
 }
