@@ -1,87 +1,143 @@
 [ {
-  "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
-  "blockName" : "Simple linear test",
+  "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
+  "blockName" : "Simple non-linear test",
   "parentBlockId" : null,
   "logs" : [ {
-    "id" : "9c85eec0-cb98-4cf0-9746-838790222fd9",
-    "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
+    "id" : "359bde86-874c-484b-9972-794e865c7345",
+    "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
     "parentLogId" : null,
     "logType" : "BLOCK_START",
     "message" : null,
     "referencedBlock" : null,
-    "timestamp" : 1752816086900
+    "timestamp" : 1752817279496
   }, {
-    "id" : "145b177a-dcab-446f-920c-bc4d3b6bc58d",
-    "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
+    "id" : "cf7f5249-258c-4510-8006-8cac405d49df",
+    "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
     "parentLogId" : null,
     "logType" : "MESSAGE",
-    "message" : "Starting simple linear test",
+    "message" : "Starting simple non-linear test",
     "referencedBlock" : null,
-    "timestamp" : 1752816086900,
+    "timestamp" : 1752817279497,
     "children" : [ {
-      "id" : "18c59b35-f894-4dcb-b224-1c26d24099cd",
-      "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
-      "parentLogId" : "145b177a-dcab-446f-920c-bc4d3b6bc58d",
+      "id" : "08be81eb-24bd-404b-a1f2-d3cf249008e4",
+      "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
+      "parentLogId" : "cf7f5249-258c-4510-8006-8cac405d49df",
       "logType" : "SUB_BLOCK_START",
-      "message" : "Calculating sum..",
-      "referencedBlock" : "e38c1fce-4d3b-4ef5-873d-594958131583",
-      "timestamp" : 1752816086900,
+      "message" : "Sum1 called",
+      "referencedBlock" : "a21b0590-abb2-4d73-b398-5ebdd8e374a9",
+      "timestamp" : 1752817279504,
       "nestedBlock" : {
-        "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+        "blockId" : "a21b0590-abb2-4d73-b398-5ebdd8e374a9",
         "blockName" : "Sum(1,2)",
-        "parentBlockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
+        "parentBlockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
         "logs" : [ {
-          "id" : "a2e355ee-c4a0-49b8-bb6b-b3a45e08ec39",
-          "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+          "id" : "004c6ea9-f0d4-4384-9e7e-92d6247f27b2",
+          "blockId" : "a21b0590-abb2-4d73-b398-5ebdd8e374a9",
           "parentLogId" : null,
           "logType" : "BLOCK_START",
           "message" : null,
           "referencedBlock" : null,
-          "timestamp" : 1752816086901
+          "timestamp" : 1752817279504
         }, {
-          "id" : "d33f7cf0-c3be-4918-b9f0-029366fc4a14",
-          "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
+          "id" : "4612de80-4591-42aa-af28-44a5f9c3a8d7",
+          "blockId" : "a21b0590-abb2-4d73-b398-5ebdd8e374a9",
           "parentLogId" : null,
           "logType" : "MESSAGE",
           "message" : "Sum 1 and 2",
           "referencedBlock" : null,
-          "timestamp" : 1752816086901,
+          "timestamp" : 1752817279504,
           "children" : [ {
-            "id" : "5f85f3eb-abe2-42d0-9fb7-f9cbaee99a6e",
-            "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
-            "parentLogId" : "d33f7cf0-c3be-4918-b9f0-029366fc4a14",
+            "id" : "bf5dc4c1-8eac-4733-ac35-4580a9d98827",
+            "blockId" : "a21b0590-abb2-4d73-b398-5ebdd8e374a9",
+            "parentLogId" : "4612de80-4591-42aa-af28-44a5f9c3a8d7",
             "logType" : "MESSAGE",
             "message" : "Sum is 3",
             "referencedBlock" : null,
-            "timestamp" : 1752816086901,
+            "timestamp" : 1752817279505,
             "children" : [ {
-              "id" : "616fdc94-b258-44b5-ae4f-e6389d2e2fcc",
-              "blockId" : "e38c1fce-4d3b-4ef5-873d-594958131583",
-              "parentLogId" : "5f85f3eb-abe2-42d0-9fb7-f9cbaee99a6e",
+              "id" : "e635d701-c378-4a83-ad0b-edeeba1dec47",
+              "blockId" : "a21b0590-abb2-4d73-b398-5ebdd8e374a9",
+              "parentLogId" : "bf5dc4c1-8eac-4733-ac35-4580a9d98827",
               "logType" : "BLOCK_END",
               "message" : null,
               "referencedBlock" : null,
-              "timestamp" : 1752816086901
+              "timestamp" : 1752817279505
             } ]
           } ]
         } ]
-      },
+      }
+    }, {
+      "id" : "3c5e93bb-5cfd-4073-89df-33861db2f9cc",
+      "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
+      "parentLogId" : "cf7f5249-258c-4510-8006-8cac405d49df",
+      "logType" : "SUB_BLOCK_START",
+      "message" : "Multiply called..",
+      "referencedBlock" : "6713fa6a-32be-432c-b160-8dd12e573a86",
+      "timestamp" : 1752817279504,
+      "nestedBlock" : {
+        "blockId" : "6713fa6a-32be-432c-b160-8dd12e573a86",
+        "blockName" : "multiply(2,2)",
+        "parentBlockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
+        "logs" : [ {
+          "id" : "2256cf5b-41f6-4fa6-be9b-d4df7eab4e26",
+          "blockId" : "6713fa6a-32be-432c-b160-8dd12e573a86",
+          "parentLogId" : null,
+          "logType" : "BLOCK_START",
+          "message" : null,
+          "referencedBlock" : null,
+          "timestamp" : 1752817279505
+        }, {
+          "id" : "dced06f9-3af4-413b-9cbb-e275c2f9e81c",
+          "blockId" : "6713fa6a-32be-432c-b160-8dd12e573a86",
+          "parentLogId" : null,
+          "logType" : "MESSAGE",
+          "message" : "Multiply 2 and 2",
+          "referencedBlock" : null,
+          "timestamp" : 1752817279505,
+          "children" : [ {
+            "id" : "1fca39d0-6e61-490c-a120-f81175f206dc",
+            "blockId" : "6713fa6a-32be-432c-b160-8dd12e573a86",
+            "parentLogId" : "dced06f9-3af4-413b-9cbb-e275c2f9e81c",
+            "logType" : "MESSAGE",
+            "message" : "Multiply is 4",
+            "referencedBlock" : null,
+            "timestamp" : 1752817279505,
+            "children" : [ {
+              "id" : "732b5874-fe6a-4029-a48d-273341321efa",
+              "blockId" : "6713fa6a-32be-432c-b160-8dd12e573a86",
+              "parentLogId" : "1fca39d0-6e61-490c-a120-f81175f206dc",
+              "logType" : "BLOCK_END",
+              "message" : null,
+              "referencedBlock" : null,
+              "timestamp" : 1752817279505
+            } ]
+          } ]
+        } ]
+      }
+    }, {
+      "id" : "89be17a1-6d89-43c0-a727-a0face981ea6",
+      "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
+      "parentLogId" : "cf7f5249-258c-4510-8006-8cac405d49df",
+      "logType" : "MESSAGE",
+      "message" : "Calculated sum is 3",
+      "referencedBlock" : null,
+      "timestamp" : 1752817279506,
       "children" : [ {
-        "id" : "20d30a4e-4ff6-495f-b12a-782335a56b75",
-        "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
-        "parentLogId" : "18c59b35-f894-4dcb-b224-1c26d24099cd",
+        "id" : "2a807c9b-cf0b-43bc-9a93-0981b69833c6",
+        "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
+        "parentLogId" : "89be17a1-6d89-43c0-a727-a0face981ea6",
         "logType" : "MESSAGE",
-        "message" : "Calculated sum is 3",
+        "message" : "Calculated product is 4",
         "referencedBlock" : null,
-        "timestamp" : 1752816086901,
+        "timestamp" : 1752817279506,
         "children" : [ {
-          "id" : "dedc3a3e-8cc3-47c1-9254-c59eda22945c",
-          "blockId" : "66de33de-e6c4-4ed3-921d-f093d4fdbfec",
-          "parentLogId" : "20d30a4e-4ff6-495f-b12a-782335a56b75",
+          "id" : "12b004c2-f3ba-4d83-ae7a-b3e9ddb80df1",
+          "blockId" : "41ef87a3-acd2-4ade-a191-6061089bb8b2",
+          "parentLogId" : "2a807c9b-cf0b-43bc-9a93-0981b69833c6",
           "logType" : "BLOCK_END",
           "message" : null,
           "referencedBlock" : null,
-          "timestamp" : 1752816086902
+          "timestamp" : 1752817279506
         } ]
       } ]
     } ]
