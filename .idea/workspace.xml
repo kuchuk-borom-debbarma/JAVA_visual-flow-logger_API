@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="refactored based on new design chooice i mad">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="updated todos">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,42 +61,42 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.run.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.expected.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.simple.executor&quot;: &quot;Debug&quot;,
-    &quot;Maven.vfl_java [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.VFLTests.executor": "Run",
+    "JUnit.VFLTests.expected.executor": "Run",
+    "JUnit.VFLTests.simple.executor": "Debug",
+    "Maven.vfl_java [clean].executor": "Run",
+    "Maven.vfl_java [install].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
-      &quot;SQLite&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "SQLite"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="dev.kuku.builder" />
@@ -220,15 +220,7 @@
       <workItem from="1752748053546" duration="24019000" />
       <workItem from="1752804543015" duration="15199000" />
       <workItem from="1752833842670" duration="2288000" />
-      <workItem from="1752838516300" duration="1267000" />
-    </task>
-    <task id="LOCAL-00064" summary="testing different designs">
-      <option name="closed" value="true" />
-      <created>1752617048223</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1752617048224</updated>
+      <workItem from="1752838516300" duration="1983000" />
     </task>
     <task id="LOCAL-00065" summary="created scoped logger">
       <option name="closed" value="true" />
@@ -614,7 +606,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752839377336</updated>
     </task>
-    <option name="localTasksCounter" value="113" />
+    <task id="LOCAL-00113" summary="updated todos">
+      <option name="closed" value="true" />
+      <created>1752839805519</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1752839805520</updated>
+    </task>
+    <option name="localTasksCounter" value="114" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -632,7 +632,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="bug fix required" />
     <MESSAGE value="Fixed bug" />
     <MESSAGE value="Util function. bug still not fixed" />
     <MESSAGE value="Fixed bug when block end was not called for root function" />
@@ -657,7 +656,8 @@
     <MESSAGE value="updated scoped logger and made some design choice" />
     <MESSAGE value="ignored target" />
     <MESSAGE value="refactored based on new design chooice i mad" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactored based on new design chooice i mad" />
+    <MESSAGE value="updated todos" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated todos" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

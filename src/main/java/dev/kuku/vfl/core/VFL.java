@@ -29,10 +29,11 @@ public interface VFL {
 
     void closeBlock(String endMessage);
 }
-//TODO Thread safe async logger using virtual threads
+//TODO Thread safe async logger using virtual threads. The one i amde rn is very buggy and needs to be redone
 //TODO local file flush handler
 //TODO annotation based flow logger
 //TODO figure out how we can display forked block which joins back
 //TODO take in list of flushHandler and flush to all of them using new flush type
 //TODO different level for filtering
 //TODO common class for simple stuffs
+//TODO compile time flow generation for flow chart
