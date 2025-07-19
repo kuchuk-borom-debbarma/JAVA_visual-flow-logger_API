@@ -1,8 +1,8 @@
 import dev.kuku.vfl.core.IVFL;
+import dev.kuku.vfl.core.VFLFluentAPI;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
-import dev.kuku.vfl.core.fluent.VFLFluentAPI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,18 +25,10 @@ public class VFLFluentAPITest {
     void test() {
         IVFL.Runner.call("TEST", buffer, ivfl -> {
             var fluent = new VFLFluentAPI(ivfl);
-            fluent.msg("Logging some stuff");
-            int sum = fluent.fn(() -> 1 + 2)
-                    .textFn(integer -> String.format("Result is %s", integer)).msg();
-            square(10, ivfl);
+            fluent.text("Hello world how is everyone").asMsg();
+            int sum = fluent.fn(() -> 1 + 2).asMsg(s -> "Sum = " + s);
             return null;
         });
 
-    }
-
-    int square(int num, IVFL logger) {
-        var fluent = new VFLFluentAPI(logger);
-        fluent.msg("Squaring " + num);
-        return fluent.fn(() -> num * num).textFn(integer -> String.format("Square of %s is %s", num, integer)).msg();
     }
 }

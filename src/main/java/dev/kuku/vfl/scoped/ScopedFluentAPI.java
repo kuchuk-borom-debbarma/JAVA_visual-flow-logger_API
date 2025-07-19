@@ -17,6 +17,8 @@ import java.util.function.Function;
  * - fluent.startBlock("myBlock").withMsg("Processing").asAsync().run(() -> {...})
  * - fluent.startBlock("myBlock").andCall(() -> processData()).withEndMsg(r -> "Result: " + r).call()
  */
+
+//TODO scoped instance of logger retrieve it. Figure out how.
 public class ScopedFluentAPI extends VFLFluentAPI {
     private final IScopedVFL scopedLogger;
 
