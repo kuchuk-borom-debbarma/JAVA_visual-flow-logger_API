@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
@@ -38,8 +39,7 @@ public class ScopedVFLImpl extends VFLogger implements ScopedVFL {
         return bd;
     }
 
-    private <R> R runHandler(String blockName, String blockMessage, Callable<R> callable, boolean move) {
-        ensureBlockStarted();
+    private <R> R fnHandler(String blockName, String blockMessage, Function<R, String> endMessageFn, Callable<R> callable, boolean move) {
         String subBlockId = generateUID();
         BlockData subBlockContext = createAndPushBlockData(subBlockId, blockName);
         LogData subBlockStartLog = createLogAndPush(VflLogType.SUB_BLOCK_START, blockMessage, subBlockId);
@@ -52,26 +52,50 @@ public class ScopedVFLImpl extends VFLogger implements ScopedVFL {
         return Helper.subBlockFnHandler(blockName, null, callable, subBlockLogger);
     }
 
+    private <R> CompletableFuture<R> asyncFnHandler(String blockName, String message, Function<R, String> endMessageFn, Callable<R> callable, Executor executor) {
+        //Create a copy of the current context so that we can pass it to the executing thread
+        var currentLogger = ScopedValueVFLContext.scopedInstance.get();
+        Supplier<R> l = () -> {
+            //Create a root scope in the executing thread with currentLog provided as the scope's instance.
+            return ScopedValue.where(ScopedValueVFLContext.scopedInstance, currentLogger)
+                    //fnHandler will attempt to access scopedInstance and will get currentLogger instance
+                    // without this it will throw unbounded exception as the executing thread will not have any scopedInstance since scopedValue do not propagate the value across threads.
+                    .call(() -> fnHandler(blockName, message, endMessageFn, callable, false));
+        };
+        if (executor != null) {
+            return CompletableFuture.supplyAsync(l, executor);
+        }
+        return CompletableFuture.supplyAsync(l);
+    }
+
     @Override
     public void run(String blockName, String blockMessage, Runnable runnable) {
-        runHandler(blockName, blockMessage, () -> {
+        ensureBlockStarted();
+        fnHandler(blockName, blockMessage, null, () -> {
             runnable.run();
             return null;
         }, true);
     }
 
+
     @Override
     public CompletableFuture<Void> runAsync(String blockName, String blockMessage, Runnable runnable, Executor executor) {
-        return null;
+        ensureBlockStarted();
+        return asyncFnHandler(blockName, blockMessage, null, () -> {
+            runnable.run();
+            return null;
+        }, executor);
     }
 
     @Override
-    public <R> R call(String blockName, String blockMessage, Callable<R> callable) {
-        return runHandler(blockName, blockMessage, callable, true);
+    public <R> R call(String blockName, String blockMessage, Function<R, String> endMessageFn, Callable<R> callable) {
+        ensureBlockStarted();
+        return fnHandler(blockName, blockMessage, endMessageFn, callable, true);
     }
 
     @Override
-    public <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Callable<R> callable, Executor executor) {
-        return null;
+    public <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Function<R, String> endMessageFn, Callable<R> callable, Executor executor) {
+        ensureBlockStarted();
+        return asyncFnHandler(blockName, blockMessage, endMessageFn, callable, executor);
     }
 }

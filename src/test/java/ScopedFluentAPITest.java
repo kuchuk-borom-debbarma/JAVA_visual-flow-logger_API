@@ -1,7 +1,7 @@
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
-import dev.kuku.vfl.scopedVFLogger.ScopedVFLRunner;
+import dev.kuku.vfl.scopedVFLogger.ScopedVFL;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static dev.kuku.vfl.scopedVFLogger.fluentApi.ScopedFluent.text;
 import static dev.kuku.vfl.scopedVFLogger.fluentApi.ScopedFluent.subBlockRun;
+import static dev.kuku.vfl.scopedVFLogger.fluentApi.ScopedFluent.text;
 
 public class ScopedFluentAPITest {
     InMemoryFlushHandlerImpl inMemory = new InMemoryFlushHandlerImpl();
@@ -34,7 +34,7 @@ public class ScopedFluentAPITest {
 
     @Test
     void test() {
-        ScopedVFLRunner.run("Scoped FluentAPI", this.buffer, () -> {
+        ScopedVFL.Runner.run("Scoped FluentAPI", this.buffer, () -> {
             text.msg("Starting test");
             subBlockRun(() -> sum(1, 2))
                     .withMsg("Summing two numbers")

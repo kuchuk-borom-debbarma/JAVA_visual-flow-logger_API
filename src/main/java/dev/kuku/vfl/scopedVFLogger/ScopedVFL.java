@@ -8,6 +8,7 @@ import dev.kuku.vfl.core.models.VFLBlockContext;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
@@ -16,9 +17,9 @@ public interface ScopedVFL extends VFL {
 
     CompletableFuture<Void> runAsync(String blockName, String blockMessage, Runnable runnable, Executor executor);
 
-    <R> R call(String blockName, String blockMessage, Callable<R> callable);
+    <R> R call(String blockName, String blockMessage, Function<R, String> endMessageFn, Callable<R> callable);
 
-    <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Callable<R> callable, Executor executor);
+    <R> CompletableFuture<R> callAsync(String blockName, String blockMessage,Function<R, String> endMessageFn, Callable<R> callable, Executor executor);
 
     class Runner {
         public static <R> R call(String blockName, VFLBuffer buffer, Callable<R> fn) {

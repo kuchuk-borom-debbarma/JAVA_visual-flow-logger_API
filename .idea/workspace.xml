@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Removed package info for now">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added comments">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/Helper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/Helper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLContextAndInstance.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLRunner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedValueVFLContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedValueVFLContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -234,15 +230,7 @@
       <workItem from="1752833842670" duration="2288000" />
       <workItem from="1752838516300" duration="15608000" />
       <workItem from="1752880498327" duration="4924000" />
-      <workItem from="1752885450746" duration="1493000" />
-    </task>
-    <task id="LOCAL-00076" summary="Refactored structure and other stuff">
-      <option name="closed" value="true" />
-      <created>1752687611060</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
-      <option name="project" value="LOCAL" />
-      <updated>1752687611060</updated>
+      <workItem from="1752885450746" duration="3058000" />
     </task>
     <task id="LOCAL-00077" summary="Added call function">
       <option name="closed" value="true" />
@@ -628,7 +616,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752885648144</updated>
     </task>
-    <option name="localTasksCounter" value="125" />
+    <task id="LOCAL-00125" summary="Added comments">
+      <option name="closed" value="true" />
+      <created>1752887093316</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1752887093316</updated>
+    </task>
+    <option name="localTasksCounter" value="126" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -646,7 +642,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated ScopedLoggerImpl to support new changes to base logger" />
     <MESSAGE value="added clean up method for in memory flush handler for testing" />
     <MESSAGE value="added thread safe async virtual thread buffer" />
     <MESSAGE value="Added async sub block fn handler that will copy current context, create a new scope in that environment and return it" />
@@ -671,7 +666,8 @@
     <MESSAGE value="PROGRESS" />
     <MESSAGE value="updated workscpace seting" />
     <MESSAGE value="Removed package info for now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed package info for now" />
+    <MESSAGE value="Added comments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added comments" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
