@@ -4,8 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="updated workscpace seting">
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/package-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/package-info.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Removed package info for now">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/Helper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/Helper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLContextAndInstance.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLRunner.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedValueVFLContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedValueVFLContext.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,9 +25,9 @@
         <option value="Enum" />
         <option value="Kotlin Class" />
         <option value="Record" />
-        <option value="package-info" />
         <option value="Interface" />
         <option value="Class" />
+        <option value="package-info" />
       </list>
     </option>
   </component>
@@ -227,15 +234,7 @@
       <workItem from="1752833842670" duration="2288000" />
       <workItem from="1752838516300" duration="15608000" />
       <workItem from="1752880498327" duration="4924000" />
-      <workItem from="1752885450746" duration="176000" />
-    </task>
-    <task id="LOCAL-00075" summary="Refactored structure and other stuff">
-      <option name="closed" value="true" />
-      <created>1752687528313</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
-      <option name="project" value="LOCAL" />
-      <updated>1752687528313</updated>
+      <workItem from="1752885450746" duration="1493000" />
     </task>
     <task id="LOCAL-00076" summary="Refactored structure and other stuff">
       <option name="closed" value="true" />
@@ -621,7 +620,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752885528938</updated>
     </task>
-    <option name="localTasksCounter" value="124" />
+    <task id="LOCAL-00124" summary="Removed package info for now">
+      <option name="closed" value="true" />
+      <created>1752885648144</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1752885648144</updated>
+    </task>
+    <option name="localTasksCounter" value="125" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -639,7 +646,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="completed few todos mainly related to adding new textFn for taking in lambda and showing it" />
     <MESSAGE value="updated ScopedLoggerImpl to support new changes to base logger" />
     <MESSAGE value="added clean up method for in memory flush handler for testing" />
     <MESSAGE value="added thread safe async virtual thread buffer" />
@@ -664,7 +670,8 @@
     <MESSAGE value="Refactoring to make complex loggers simpler" />
     <MESSAGE value="PROGRESS" />
     <MESSAGE value="updated workscpace seting" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated workscpace seting" />
+    <MESSAGE value="Removed package info for now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed package info for now" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

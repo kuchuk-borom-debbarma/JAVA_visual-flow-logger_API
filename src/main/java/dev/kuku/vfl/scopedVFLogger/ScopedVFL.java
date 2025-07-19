@@ -1,14 +1,16 @@
 package dev.kuku.vfl.scopedVFLogger;
 
 import dev.kuku.vfl.core.VFL;
+import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.models.BlockData;
+import dev.kuku.vfl.core.models.VFLBlockContext;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-/**
- * Scoped logger interface for use with ScopedValue.
- */
+import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
+
 public interface ScopedVFL extends VFL {
     void run(String blockName, String blockMessage, Runnable runnable);
 
@@ -17,6 +19,27 @@ public interface ScopedVFL extends VFL {
     <R> R call(String blockName, String blockMessage, Callable<R> callable);
 
     <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Callable<R> callable, Executor executor);
+
+    class Runner {
+        public static <R> R call(String blockName, VFLBuffer buffer, Callable<R> fn) {
+            var rootBlockContext = new BlockData(generateUID(), null, blockName);
+            buffer.pushBlockToBuffer(rootBlockContext);
+            var vflContext = new VFLBlockContext(rootBlockContext, buffer);
+            ScopedVFL scopedVFL = new ScopedVFLImpl(vflContext);
+            try {
+                return Helper.subBlockFnHandler(blockName, null, fn, scopedVFL);
+            } finally {
+                buffer.flushAndClose();
+            }
+        }
+
+        public static void run(String blockName, VFLBuffer buffer, Runnable runnable) {
+            Runner.call(blockName, buffer, () -> {
+                runnable.run();
+                return null;
+            });
+        }
+    }
 }
 //TODO_OLD support for multi thread environment by explicitly passing context. DONE! we created async version of the methods and pass the conext to the thread where it will be running
 //TODO throw exceptions for fn calls but handle it gracefully within the logger too
