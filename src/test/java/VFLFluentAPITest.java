@@ -27,8 +27,8 @@ public class VFLFluentAPITest {
             var fluent = new VFLFluentAPI(ivfl);
             fluent.text().msg("Logging some stuff");
             int sum = (int) fluent.text().fn(() -> 1 + 2)
-                //TODO generic type detection
-                .textFn(integer -> String.format("Result is %s", integer)).msg();
+                    //TODO generic type detection
+                    .textFn(integer -> String.format("Result is %s", integer)).msg();
             square(10, ivfl);
             return null;
         });

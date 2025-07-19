@@ -13,7 +13,7 @@ import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 public class VFL implements IVFL {
     protected final VFLBlockContext blockContext;
 
-    public VFL(VFLBlockContext blockContext) {
+    protected VFL(VFLBlockContext blockContext) {
         this.blockContext = blockContext;
     }
 
