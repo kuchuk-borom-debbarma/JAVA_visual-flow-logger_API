@@ -1,31 +1,95 @@
 package dev.kuku.vfl.core;
 
+import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.VFLBlockContext;
+import dev.kuku.vfl.core.models.VflLogType;
+
+import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-/**
- * Simple logger for logging strings.
- */
-public interface VFL {
-    void msg(String message);
+import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
-    <R> R msgFn(Callable<R> fn, Function<R, String> messageFn);
+public class VFL implements IVFL {
+    protected final VFLBlockContext blockContext;
 
-    void warn(String message);
+    public VFL(VFLBlockContext blockContext) {
+        this.blockContext = blockContext;
+    }
 
-    <R> R warnFn(Callable<R> fn, Function<R, String> messageFn);
+    protected LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId) {
+        var ld = new LogData(generateUID(),
+                this.blockContext.blockInfo.getId(),
+                this.blockContext.currentLogId,
+                logType,
+                message,
+                referencedBlockId,
+                Instant.now().toEpochMilli());
+        this.blockContext.buffer.pushLogToBuffer(ld);
+        return ld;
+    }
 
-    void error(String message);
+    protected void ensureBlockStarted() {
+        if (blockContext.blockStarted.compareAndSet(false, true)) {
+            createLogAndPush(VflLogType.BLOCK_START, null, null);
+        }
+    }
 
-    <R> R errorFn(Callable<R> fn, Function<R, String> messageFn);
+    @Override
+    public void msg(String message) {
+        ensureBlockStarted();
+        var ld = createLogAndPush(VflLogType.MESSAGE, message, null);
+        this.blockContext.currentLogId = ld.getId();
+    }
 
-    void closeBlock(String endMessage);
+    private <R> R fn(Callable<R> fn, Function<R, String> messageFn, VflLogType logType) {
+        R r;
+        String msg = null;
+        try {
+            r = fn.call();
+            msg = messageFn.apply(r);
+        } catch (Exception e) {
+            msg = "Failed to process message " + e.getClass().getSimpleName() + " - " + e.getMessage();
+            throw new RuntimeException(e);
+        } finally {
+            blockContext.currentLogId = createLogAndPush(logType, msg, null).getId();
+        }
+        return r;
+    }
+
+    @Override
+    public <R> R msgFn(Callable<R> fn, Function<R, String> messageFn) {
+        ensureBlockStarted();
+        return this.fn(fn, messageFn, VflLogType.MESSAGE);
+    }
+
+    @Override
+    public void warn(String message) {
+        ensureBlockStarted();
+        this.blockContext.currentLogId = createLogAndPush(VflLogType.WARN, message, null).getId();
+    }
+
+    @Override
+    public <R> R warnFn(Callable<R> fn, Function<R, String> messageFn) {
+        ensureBlockStarted();
+        return this.fn(fn, messageFn, VflLogType.WARN);
+    }
+
+    @Override
+    public void error(String message) {
+        ensureBlockStarted();
+        this.blockContext.currentLogId = createLogAndPush(VflLogType.EXCEPTION, message, null).getId();
+    }
+
+    @Override
+    public <R> R errorFn(Callable<R> fn, Function<R, String> messageFn) {
+        ensureBlockStarted();
+        return this.fn(fn, messageFn, VflLogType.EXCEPTION);
+    }
+
+    @Override
+    public void closeBlock(String endMessage) {
+        ensureBlockStarted();
+        createLogAndPush(VflLogType.BLOCK_END, endMessage, null);
+    }
 }
-//TODO Thread safe async logger using virtual threads. The one i amde rn is very buggy and needs to be redone
-//TODO local file flush handler
-//TODO annotation based flow logger
-//TODO figure out how we can display forked block which joins back
-//TODO take in list of flushHandler and flush to all of them using new flush type
-//TODO different level for filtering
-//TODO common class for simple stuffs
-//TODO compile time flow generation for flow chart

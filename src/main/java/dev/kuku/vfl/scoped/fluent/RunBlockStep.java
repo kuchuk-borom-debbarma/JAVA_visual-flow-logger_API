@@ -1,16 +1,16 @@
-package dev.kuku.vfl.scopedVFLogger.fluentApi;
+package dev.kuku.vfl.scoped.fluent;
 
-import dev.kuku.vfl.scopedVFLogger.ScopedVFLImpl;
+import dev.kuku.vfl.scoped.ScopedVFL;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-class RunBlockStepImpl implements RunBlockStep {
+class RunBlockStep implements IRunBlockStep {
     private final Runnable runnable;
     private String blockName;
     private String blockStartMsg = null;
 
-    public RunBlockStepImpl(Runnable runnable) {
+    public RunBlockStep(Runnable runnable) {
         this.runnable = runnable;
     }
 
@@ -20,19 +20,19 @@ class RunBlockStepImpl implements RunBlockStep {
         if (bn == null) {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
-            bn = Arrays.stream(stackTrace).map(s-> s.getMethodName()+"\n").collect(Collectors.joining());
+            bn = Arrays.stream(stackTrace).map(s -> s.getMethodName() + "\n").collect(Collectors.joining());
         }
-        ScopedVFLImpl.get().run(bn, blockStartMsg, runnable);
+        ScopedVFL.get().run(bn, blockStartMsg, runnable);
     }
 
     @Override
-    public RunBlockStep withBlockName(String blockName) {
+    public IRunBlockStep withBlockName(String blockName) {
         this.blockName = blockName;
         return this;
     }
 
     @Override
-    public RunBlockStep withMsg(String message) {
+    public IRunBlockStep withMsg(String message) {
         this.blockStartMsg = message;
         return this;
     }

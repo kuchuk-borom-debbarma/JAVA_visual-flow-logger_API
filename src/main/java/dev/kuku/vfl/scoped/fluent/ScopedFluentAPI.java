@@ -1,38 +1,38 @@
-package dev.kuku.vfl.scopedVFLogger.fluentApi;
+package dev.kuku.vfl.scoped.fluent;
 
-import dev.kuku.vfl.scopedVFLogger.ScopedVFL;
-import dev.kuku.vfl.scopedVFLogger.ScopedVFLImpl;
+import dev.kuku.vfl.scoped.IScopedVFL;
+import dev.kuku.vfl.scoped.ScopedVFL;
 
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-public class ScopedFluent {
-    private static final ScopedVFL logger = ScopedVFLImpl.get();
+public class ScopedFluentAPI {
+    private static final IScopedVFL logger = ScopedVFL.get();
     public static TxtStep text = new TxtStep();
 
-    private ScopedFluent() {
+    private ScopedFluentAPI() {
     }
 
-    public static RunBlockStep subBlockRun(Runnable runnable) {
-        return new RunBlockStepImpl(runnable);
+    public static IRunBlockStep subBlockRun(Runnable runnable) {
+        return new RunBlockStep(runnable);
     }
 
-    public static <R> CallBlockStep<R> subBlockCall(Callable<R> callable) {
-        return new CallBlockStepImpl<>(callable);
+    public static <R> ICallBlockStep<R> subBlockCall(Callable<R> callable) {
+        return new CallBlockStep<>(callable);
     }
 
     public static class TxtStep {
 
         public void error(String error) {
-            ScopedVFLImpl.get().error(error);
+            ScopedVFL.get().error(error);
         }
 
         public void warn(String warn) {
-            ScopedVFLImpl.get().warn(warn);
+            ScopedVFL.get().warn(warn);
         }
 
         public void msg(String msg) {
-            ScopedVFLImpl.get().msg(msg);
+            ScopedVFL.get().msg(msg);
         }
 
         public <R> FnMsg<R> fn(Callable<R> callable) {
@@ -47,7 +47,7 @@ public class ScopedFluent {
             }
 
             public R msg(Function<R, String> msgFn) {
-                return ScopedVFLImpl.get().msgFn(callable, msgFn);
+                return ScopedVFL.get().msgFn(callable, msgFn);
             }
         }
     }

@@ -4,15 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Code much more clean now">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Code clean, removed ContextualVFL.java">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/IVFL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFL.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFLImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFLRunner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/Helper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFLogger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/ScopedLoggerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFLogger.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/Helper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/Helper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/IScopedVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/ScopedVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedValueVFLContext.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/CallBlockStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/ICallBlockStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/CallBlockStepImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/CallBlockStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/IRunBlockStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStepImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/RunBlockStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopedFluent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/ScopedFluentAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ScopedFluentAPIAPITest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +120,7 @@
       <recent name="dev.kuku.builder" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ScopedFluentAPITest.test">
+  <component name="RunManager" selected="JUnit.ScopedFluentAPIAPITest.test">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -128,10 +134,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ScopedFluentAPITest.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ScopedFluentAPIAPITest.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ScopedFluentAPITest" />
+      <option name="MAIN_CLASS_NAME" value="ScopedFluentAPIAPITest" />
       <option name="METHOD_NAME" value="test" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
@@ -170,7 +176,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.ScopedFluentAPITest.test" />
+        <item itemvalue="JUnit.ScopedFluentAPIAPITest.test" />
         <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.heavyAsync" />
         <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow" />
         <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.run" />
@@ -234,15 +240,7 @@
       <workItem from="1752833842670" duration="2288000" />
       <workItem from="1752838516300" duration="15608000" />
       <workItem from="1752880498327" duration="4924000" />
-      <workItem from="1752885450746" duration="3564000" />
-    </task>
-    <task id="LOCAL-00078" summary="Added call function">
-      <option name="closed" value="true" />
-      <created>1752688384489</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
-      <option name="project" value="LOCAL" />
-      <updated>1752688384489</updated>
+      <workItem from="1752885450746" duration="4145000" />
     </task>
     <task id="LOCAL-00079" summary="Improved description">
       <option name="closed" value="true" />
@@ -628,7 +626,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752888885790</updated>
     </task>
-    <option name="localTasksCounter" value="127" />
+    <task id="LOCAL-00127" summary="Code clean, removed ContextualVFL.java">
+      <option name="closed" value="true" />
+      <created>1752889190013</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1752889190013</updated>
+    </task>
+    <option name="localTasksCounter" value="128" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -646,7 +652,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added thread safe async virtual thread buffer" />
     <MESSAGE value="Added async sub block fn handler that will copy current context, create a new scope in that environment and return it" />
     <MESSAGE value="Added async versions" />
     <MESSAGE value="added important todo" />
@@ -671,7 +676,8 @@
     <MESSAGE value="Removed package info for now" />
     <MESSAGE value="Added comments" />
     <MESSAGE value="Code much more clean now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Code much more clean now" />
+    <MESSAGE value="Code clean, removed ContextualVFL.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code clean, removed ContextualVFL.java" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -1,6 +1,6 @@
-package dev.kuku.vfl.scopedVFLogger;
+package dev.kuku.vfl.scoped;
 
-import dev.kuku.vfl.core.VFLogger;
+import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
@@ -14,23 +14,25 @@ import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
-public class ScopedVFLImpl extends VFLogger implements ScopedVFL {
+public class ScopedVFL extends VFL implements IScopedVFL {
+    /// Holds instance per scope that attempts to access it.
+    public static final ScopedValue<IScopedVFL> scopedInstance = ScopedValue.newInstance();
 
-    ScopedVFLImpl(VFLBlockContext context) {
+    ScopedVFL(VFLBlockContext context) {
         super(context);
     }
 
     /**
-     * Returns the current scope's {@link ScopedVFL}
-     * The method {@link Helper#subBlockFnHandler(String, Function, Callable, ScopedVFL)} Ensures that current scope's instance is always valid. <br> <br>
+     * Returns the current scope's {@link IScopedVFL}
+     * The method {@link Helper#subBlockFnHandler(String, Function, Callable, IScopedVFL)} Ensures that current scope's instance is always valid. <br> <br>
      *
-     * @return current scope's {@link ScopedVFL}
+     * @return current scope's {@link IScopedVFL}
      */
-    public static ScopedVFL get() {
-        if (!ScopedValueVFLContext.scopedInstance.isBound()) {
+    public static IScopedVFL get() {
+        if (!ScopedVFL.scopedInstance.isBound()) {
             throw new IllegalStateException("scopedBlockData is not within ScopedValue bound. Please use " + Runner.class.getName() + " to start a new scope.");
         }
-        return ScopedValueVFLContext.scopedInstance.get();
+        return ScopedVFL.scopedInstance.get();
     }
 
     private BlockData createAndPushBlockData(String id, String blockName) {
@@ -44,8 +46,8 @@ public class ScopedVFLImpl extends VFLogger implements ScopedVFL {
         BlockData subBlockContext = createAndPushBlockData(subBlockId, blockName);
         LogData subBlockStartLog = createLogAndPush(VflLogType.SUB_BLOCK_START, blockMessage, subBlockId);
         VFLBlockContext subBlockLoggerContext = new VFLBlockContext(subBlockContext, super.blockContext.buffer);
-        //Will set this as the nested scope's ScopedVFL value.
-        ScopedVFL subBlockLogger = new ScopedVFLImpl(subBlockLoggerContext);
+        //Will set this as the nested scope's IScopedVFL value.
+        IScopedVFL subBlockLogger = new ScopedVFL(subBlockLoggerContext);
         if (move) {
             super.blockContext.currentLogId = subBlockStartLog.getId();
         }
@@ -54,10 +56,10 @@ public class ScopedVFLImpl extends VFLogger implements ScopedVFL {
 
     private <R> CompletableFuture<R> asyncFnHandler(String blockName, String message, Function<R, String> endMessageFn, Callable<R> callable, Executor executor) {
         //Create a copy of the current context so that we can pass it to the executing thread
-        var currentLogger = ScopedValueVFLContext.scopedInstance.get();
+        var currentLogger = ScopedVFL.scopedInstance.get();
         Supplier<R> l = () -> {
             //Create a root scope in the executing thread with currentLog provided as the scope's instance.
-            return ScopedValue.where(ScopedValueVFLContext.scopedInstance, currentLogger)
+            return ScopedValue.where(ScopedVFL.scopedInstance, currentLogger)
                     //fnHandler will attempt to access scopedInstance and will get currentLogger instance
                     // without this it will throw unbounded exception as the executing thread will not have any scopedInstance since scopedValue do not propagate the value across threads.
                     .call(() -> fnHandler(blockName, message, endMessageFn, callable, false));
