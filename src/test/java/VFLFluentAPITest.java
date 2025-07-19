@@ -25,9 +25,8 @@ public class VFLFluentAPITest {
     void test() {
         IVFL.Runner.call("TEST", buffer, ivfl -> {
             var fluent = new VFLFluentAPI(ivfl);
-            fluent.text().msg("Logging some stuff");
-            int sum = (int) fluent.text().fn(() -> 1 + 2)
-                    //TODO generic type detection
+            fluent.msg("Logging some stuff");
+            int sum = fluent.fn(() -> 1 + 2)
                     .textFn(integer -> String.format("Result is %s", integer)).msg();
             square(10, ivfl);
             return null;
@@ -37,7 +36,7 @@ public class VFLFluentAPITest {
 
     int square(int num, IVFL logger) {
         var fluent = new VFLFluentAPI(logger);
-        fluent.text().msg("Squaring " + num);
-        return (int) fluent.text().fn(() -> num * num).textFn(integer -> String.format("Square of %s is %s", num, integer)).msg();
+        fluent.msg("Squaring " + num);
+        return fluent.fn(() -> num * num).textFn(integer -> String.format("Square of %s is %s", num, integer)).msg();
     }
 }
