@@ -18,7 +18,7 @@ class Helper {
      * @param IScopedVFL    instance that will be set as the new scope's instance
      * @param <R>          return value of callable method
      */
-    public static <R> R subBlockFnHandler(String blockName, Function<R, String> endMessageFn, Callable<R> callable, IScopedVFL IScopedVFL) {
+    public static <R> R blockFnLifeCycleHandler(String blockName, Function<R, String> endMessageFn, Callable<R> callable, IScopedVFL IScopedVFL) {
         Objects.requireNonNull(IScopedVFL);
         return ScopedValue.where(scopedInstance, IScopedVFL)
                 .call(

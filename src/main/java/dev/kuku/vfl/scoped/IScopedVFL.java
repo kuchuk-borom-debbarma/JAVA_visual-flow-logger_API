@@ -1,15 +1,14 @@
 package dev.kuku.vfl.scoped;
 
-import dev.kuku.vfl.core.IVFL;
-import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.VFLBlockContext;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import dev.kuku.vfl.core.IVFL;
+import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.models.BlockData;
+import dev.kuku.vfl.core.models.VFLBlockContext;
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public interface IScopedVFL extends IVFL {
@@ -28,7 +27,7 @@ public interface IScopedVFL extends IVFL {
             var vflContext = new VFLBlockContext(rootBlockContext, buffer);
             IScopedVFL IScopedVFL = new ScopedVFL(vflContext);
             try {
-                return Helper.subBlockFnHandler(blockName, null, fn, IScopedVFL);
+                return Helper.blockFnLifeCycleHandler(blockName, null, fn, IScopedVFL);
             } finally {
                 buffer.flushAndClose();
             }

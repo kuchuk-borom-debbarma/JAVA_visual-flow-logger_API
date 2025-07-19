@@ -1,17 +1,16 @@
 package dev.kuku.vfl.scoped;
 
-import dev.kuku.vfl.core.VFL;
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LogData;
-import dev.kuku.vfl.core.models.VFLBlockContext;
-import dev.kuku.vfl.core.models.VflLogType;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import dev.kuku.vfl.core.VFL;
+import dev.kuku.vfl.core.models.BlockData;
+import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.VFLBlockContext;
+import dev.kuku.vfl.core.models.VflLogType;
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public class ScopedVFL extends VFL implements IScopedVFL {
@@ -24,7 +23,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
 
     /**
      * Returns the current scope's {@link IScopedVFL}
-     * The method {@link Helper#subBlockFnHandler(String, Function, Callable, IScopedVFL)} Ensures that current scope's instance is always valid. <br> <br>
+     * The method {@link Helper#blockFnLifeCycleHandler(String, Function, Callable, IScopedVFL)} Ensures that current scope's instance is always valid. <br> <br>
      *
      * @return current scope's {@link IScopedVFL}
      */
@@ -51,7 +50,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
         if (move) {
             super.blockContext.currentLogId = subBlockStartLog.getId();
         }
-        return Helper.subBlockFnHandler(blockName, null, callable, subBlockLogger);
+        return Helper.blockFnLifeCycleHandler(blockName, null, callable, subBlockLogger);
     }
 
     private <R> CompletableFuture<R> asyncFnHandler(String blockName, String message, Function<R, String> endMessageFn, Callable<R> callable, Executor executor) {
