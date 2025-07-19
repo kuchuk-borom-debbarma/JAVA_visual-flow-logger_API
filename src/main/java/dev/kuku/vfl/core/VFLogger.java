@@ -52,7 +52,7 @@ public class VFLogger implements VFL {
             msg = "Failed to process message " + e.getClass().getSimpleName() + " - " + e.getMessage();
             throw new RuntimeException(e);
         } finally {
-            createLogAndPush(logType, msg, null);
+            blockContext.currentLogId = createLogAndPush(logType, msg, null).getId();
         }
         return r;
     }

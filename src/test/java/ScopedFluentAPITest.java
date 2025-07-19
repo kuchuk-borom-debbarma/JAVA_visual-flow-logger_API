@@ -45,8 +45,7 @@ public class ScopedFluentAPITest {
 
     void sum(int a, int b) {
         text.msg("Sum of " + a + " and " + b);
-        int sum = a + b;
-        text.msg("Summed = " + sum);
+        int sum = text.fn(() -> a + b).msg(integer -> "sum = " + integer);
     }
 
 }
