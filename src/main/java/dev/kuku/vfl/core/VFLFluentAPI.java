@@ -1,6 +1,5 @@
-package dev.kuku.vfl.core.fluent;
+package dev.kuku.vfl.core;
 
-import dev.kuku.vfl.core.IVFL;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
@@ -13,10 +12,10 @@ import java.util.function.Function;
  * - fluent.fn(() -> computeValue()).asMsg(result -> "Computed: " + result)
  * - fluent.fn(() -> riskyOperation()).asWarn(result -> "Warning: " + result)
  */
-public class VFLFluent {
+public class VFLFluentAPI {
     private final IVFL logger;
 
-    public VFLFluent(IVFL logger) {
+    public VFLFluentAPI(IVFL logger) {
         this.logger = logger;
     }
 

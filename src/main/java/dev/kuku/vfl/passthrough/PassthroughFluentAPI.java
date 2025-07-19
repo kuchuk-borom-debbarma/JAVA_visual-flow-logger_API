@@ -1,7 +1,6 @@
-package dev.kuku.vfl.passthrough.fluent;
+package dev.kuku.vfl.passthrough;
 
-import dev.kuku.vfl.core.fluent.VFLFluent;
-import dev.kuku.vfl.passthrough.IPassthroughVFL;
+import dev.kuku.vfl.core.VFLFluentAPI;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -18,7 +17,7 @@ import java.util.function.Function;
  * - fluent.startBlock("myBlock").withMsg("Processing").asAsync().run(logger -> {...})
  * - fluent.startBlock("myBlock").andCall(logger -> compute()).withEndMsg(r -> "Result: " + r).call()
  */
-public class PassthroughFluentAPI extends VFLFluent {
+public class PassthroughFluentAPI extends VFLFluentAPI {
     private final IPassthroughVFL passthroughLogger;
 
     public PassthroughFluentAPI(IPassthroughVFL logger) {

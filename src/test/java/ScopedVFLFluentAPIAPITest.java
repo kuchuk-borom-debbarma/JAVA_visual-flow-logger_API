@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static dev.kuku.vfl.scoped.fluent.ScopedFluentAPI.subBlockRun;
-import static dev.kuku.vfl.scoped.fluent.ScopedFluentAPI.text;
+import static dev.kuku.vfl.scoped.ScopedFluentAPI.subBlockRun;
+import static dev.kuku.vfl.scoped.ScopedFluentAPI.text;
 
 public class ScopedVFLFluentAPIAPITest {
 
