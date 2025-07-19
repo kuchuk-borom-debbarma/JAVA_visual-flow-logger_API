@@ -33,7 +33,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
         if (!ScopedVFL.scopedInstance.isBound()) {
             throw new IllegalStateException(
                 "scopedBlockData is not within ScopedValue bound. Please use " +
-                Runner.class.getName() +
+                IScopedVFL.Runner.class.getName() +
                 " to start a new scope."
             );
         }
