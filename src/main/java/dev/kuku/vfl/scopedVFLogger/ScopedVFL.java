@@ -5,41 +5,18 @@ import dev.kuku.vfl.core.VFL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
 
 /**
  * Scoped logger interface for use with ScopedValue.
  */
 public interface ScopedVFL extends VFL {
-    void run(String blockName, String message, Runnable runnable);
+    void run(String blockName, String blockMessage, Runnable runnable);
 
-    /**
-     * Run a task as completable future. Optionally can take the executor. <br>
-     * VFL creates sub logger context in the running thread. <br>
-     * Please note that the log chain will NOT move forward as it is an async operation.
-     */
-    CompletableFuture<Void> runAsync(String blockName, String message, Runnable runnable);
+    CompletableFuture<Void> runAsync(String blockName, String blockMessage, Runnable runnable, Executor executor);
 
-    CompletableFuture<Void> runAsync(String blockName, String message, Runnable runnable, Executor executor);
+    <R> R call(String blockName, String blockMessage, Callable<R> callable);
 
-    void runHere(String blockName, String message, Runnable runnable);
-
-    <T> T call(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
-
-    <T> CompletableFuture<T> callAsync(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
-
-    <T> CompletableFuture<T> callAsync(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable, Executor executor);
-
-    <T> T call(String blockName, String message, Callable<T> callable);
-
-    <T> CompletableFuture<T> callAsync(String blockName, String message, Callable<T> callable);
-
-    <T> CompletableFuture<T> callAsync(String blockName, String message, Callable<T> callable, Executor executor);
-
-    <T> T callHere(String blockName, String message, Function<T, String> endMessageFn, Callable<T> callable);
-
-    <T> T callHere(String blockName, String message, Callable<T> callable);
-
+    <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Callable<R> callable, Executor executor);
 }
 //TODO_OLD support for multi thread environment by explicitly passing context. DONE! we created async version of the methods and pass the conext to the thread where it will be running
 //TODO throw exceptions for fn calls but handle it gracefully within the logger too

@@ -3,11 +3,11 @@ package dev.kuku.vfl.scopedVFLogger;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.scopedVFLogger.ScopedValueVFLContext.scopedBlockContext;
+import static dev.kuku.vfl.scopedVFLogger.ScopedValueVFLContext.scopedBlockContextAndInstance;
 
 class Helper {
-    public static <R> R subBlockFnHandler(String blockName, Function<R, String> endMessageFn, Callable<R> callable, ScopedVFLContext scopedValueBlockContext) {
-        return ScopedValue.where(scopedBlockContext, scopedValueBlockContext)
+    public static <R> R subBlockFnHandler(String blockName, Function<R, String> endMessageFn, Callable<R> callable, ScopedVFLContextAndInstance scopedValueBlockContext) {
+        return ScopedValue.where(scopedBlockContextAndInstance, scopedValueBlockContext)
                 .call(
                         () -> {
                             R result = null;

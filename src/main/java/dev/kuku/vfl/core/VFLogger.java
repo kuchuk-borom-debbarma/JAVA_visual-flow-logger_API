@@ -1,6 +1,5 @@
 package dev.kuku.vfl.core;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.VflLogType;
@@ -12,15 +11,13 @@ import java.util.function.Function;
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public class VFLogger implements VFL {
-    private final VFLBlockContext blockContext;
-    private final VFLBuffer buffer;
+    protected final VFLBlockContext blockContext;
 
-    public VFLogger(VFLBlockContext blockContext, VFLBuffer buffer) {
+    public VFLogger(VFLBlockContext blockContext) {
         this.blockContext = blockContext;
-        this.buffer = buffer;
     }
 
-    private LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId) {
+    protected LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId) {
         var ld = new LogData(generateUID(),
                 this.blockContext.blockInfo.getId(),
                 this.blockContext.currentLogId,
@@ -28,11 +25,11 @@ public class VFLogger implements VFL {
                 message,
                 referencedBlockId,
                 Instant.now().toEpochMilli());
-        this.buffer.pushLogToBuffer(ld);
+        this.blockContext.buffer.pushLogToBuffer(ld);
         return ld;
     }
 
-    private void ensureBlockStarted() {
+    protected void ensureBlockStarted() {
         if (blockContext.blockStarted.compareAndSet(false, true)) {
             createLogAndPush(VflLogType.BLOCK_START, null, null);
         }
