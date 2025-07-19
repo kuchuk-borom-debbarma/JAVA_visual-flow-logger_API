@@ -1,18 +1,18 @@
+import static dev.kuku.vfl.scoped.fluent.ScopedFluentAPI.subBlockRun;
+import static dev.kuku.vfl.scoped.fluent.ScopedFluentAPI.text;
+
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
 import dev.kuku.vfl.scoped.IScopedVFL;
+import java.io.FileWriter;
+import java.io.IOException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
-import static dev.kuku.vfl.scoped.fluent.ScopedFluentAPI.subBlockRun;
-import static dev.kuku.vfl.scoped.fluent.ScopedFluentAPI.text;
-
 public class ScopedFluentAPIAPITest {
+
     InMemoryFlushHandlerImpl inMemory = new InMemoryFlushHandlerImpl();
     VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, inMemory);
 
@@ -37,8 +37,8 @@ public class ScopedFluentAPIAPITest {
         IScopedVFL.Runner.run("Scoped FluentAPI", this.buffer, () -> {
             text.msg("Starting test");
             subBlockRun(() -> sum(1, 2))
-                    .withMsg("Summing two numbers")
-                    .run();
+                .withMsg("Summing two numbers")
+                .run();
             text.msg("Scoped fluent test complete");
         });
     }
@@ -47,5 +47,4 @@ public class ScopedFluentAPIAPITest {
         text.msg("Sum of " + a + " and " + b);
         int sum = text.fn(() -> a + b).msg(integer -> "sum = " + integer);
     }
-
 }
