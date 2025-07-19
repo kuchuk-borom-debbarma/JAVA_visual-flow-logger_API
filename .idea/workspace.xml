@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="PROGRESS" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="updated workscpace seting">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -79,6 +82,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
+    "ignore.preview.features.used": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -86,10 +90,10 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -223,15 +227,8 @@
       <workItem from="1752804543015" duration="15199000" />
       <workItem from="1752833842670" duration="2288000" />
       <workItem from="1752838516300" duration="15608000" />
-      <workItem from="1752880498327" duration="4771000" />
-    </task>
-    <task id="LOCAL-00073" summary="cleaned up ScopedLogStarter">
-      <option name="closed" value="true" />
-      <created>1752686906823</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1752686906823</updated>
+      <workItem from="1752880498327" duration="4924000" />
+      <workItem from="1752885450746" duration="59000" />
     </task>
     <task id="LOCAL-00074" summary="Gave proper names to classes">
       <option name="closed" value="true" />
@@ -617,7 +614,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752885213020</updated>
     </task>
-    <option name="localTasksCounter" value="122" />
+    <task id="LOCAL-00122" summary="updated workscpace seting">
+      <option name="closed" value="true" />
+      <created>1752885297916</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1752885297916</updated>
+    </task>
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -635,7 +640,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added important todos" />
     <MESSAGE value="completed few todos mainly related to adding new textFn for taking in lambda and showing it" />
     <MESSAGE value="updated ScopedLoggerImpl to support new changes to base logger" />
     <MESSAGE value="added clean up method for in memory flush handler for testing" />
@@ -660,7 +664,8 @@
     <MESSAGE value="added byte buddy for future use" />
     <MESSAGE value="Refactoring to make complex loggers simpler" />
     <MESSAGE value="PROGRESS" />
-    <option name="LAST_COMMIT_MESSAGE" value="PROGRESS" />
+    <MESSAGE value="updated workscpace seting" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated workscpace seting" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
