@@ -1,15 +1,16 @@
 package dev.kuku.vfl.passthrough;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.VflLogType;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 class PassthroughVFL extends VFL implements IPassthroughVFL {
