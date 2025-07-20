@@ -27,7 +27,7 @@ public class VFLFluentAPI {
     /**
      * Start a text-based fluent chain
      */
-    public TextStep text(String message) {
+    public TextStep logText(String message) {
         return new TextStep(message);
     }
 

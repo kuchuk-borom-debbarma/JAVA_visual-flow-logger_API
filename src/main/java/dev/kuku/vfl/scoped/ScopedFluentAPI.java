@@ -9,32 +9,42 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 /**
- * Static fluent API for IScopedVFL providing block operations with scoped execution.
- * Automatically uses the current scope's logger instance via ScopedVFL.get().
+ * Fluent API for IScopedVFL providing block operations with scoped execution.
  * <p>
  * Usage examples:
- * - ScopedFluentAPI.startBlock("myBlock").run(() -> {...})
- * - ScopedFluentAPI.startBlock("myBlock").withMsg("Starting process").run(() -> {...})
- * - ScopedFluentAPI.startBlock("myBlock").andCall(() -> computeValue()).call()
- * - ScopedFluentAPI.startBlock("myBlock").withMsg("Processing").asAsync().run(() -> {...})
- * - ScopedFluentAPI.startBlock("myBlock").andCall(() -> processData()).withEndMsg(r -> "Result: " + r).call()
+ * - fluent.startBlock("myBlock").run(() -> {...})
+ * - fluent.startBlock("myBlock").withMsg("Starting process").run(() -> {...})
+ * - fluent.startBlock("myBlock").andCall(() -> computeValue()).call()
+ * - fluent.startBlock("myBlock").withMsg("Processing").asAsync().run(() -> {...})
+ * - fluent.startBlock("myBlock").andCall(() -> processData()).withEndMsg(r -> "Result: " + r).call()
  */
-public final class ScopedFluentAPI extends VFLFluentAPI {
+
+//TODO scoped instance of logger retrieve it. Figure out how.
+public class ScopedFluentAPI extends VFLFluentAPI {
+
+    private static ScopedFluentAPI instance;
+
+    private ScopedFluentAPI() {
+        //Passing no logger. instead we will override getLogger() to give it scoped VFL instance
+        super(null);
+    }
 
     @Override
     protected IVFL getLogger() {
-        return ScopedVFL.scopedInstance.get();
+        return ScopedVFL.get();
     }
 
-     // Private constructor - use static factory method
-    private ScopedFluentAPI() {
-        super(null); // We'll override getLogger() anyway
+    public static ScopedFluentAPI get() {
+        if (instance == null) {
+            instance = new ScopedFluentAPI();
+        }
+        return instance;
     }
 
     /**
      * Start a scoped block operation
      */
-    public static ScopedBlockStep startBlock(String blockName) {
+    public ScopedBlockStep startBlock(String blockName) {
         return new ScopedBlockStep(blockName);
     }
 
@@ -59,7 +69,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Run scoped block operation without message
          */
         public void run(Runnable runnable) {
-            getScopedLogger().run(blockName, null, runnable);
+            ScopedVFL.get().run(blockName, null, runnable);
         }
 
         /**
@@ -93,7 +103,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Run scoped block operation with message
          */
         public void run(Runnable runnable) {
-            getScopedLogger().run(blockName, message, runnable);
+            ScopedVFL.get().run(blockName, message, runnable);
         }
 
         /**
@@ -129,7 +139,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Execute scoped call without end message transformation
          */
         public R call() {
-            return getScopedLogger().call(blockName, message, Object::toString, callable);
+            return ScopedVFL.get().call(blockName, message, Object::toString, callable);
         }
 
         /**
@@ -160,7 +170,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Execute scoped call with end message transformation
          */
         public R call() {
-            return getScopedLogger().call(blockName, message, endMessageFn, callable);
+            return ScopedVFL.get().call(blockName, message, endMessageFn, callable);
         }
     }
 
@@ -187,7 +197,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Run async scoped block operation
          */
         public CompletableFuture<Void> run(Runnable runnable) {
-            return getScopedLogger().runAsync(blockName, null, runnable, executor);
+            return ScopedVFL.get().runAsync(blockName, null, runnable, executor);
         }
 
         /**
@@ -223,7 +233,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Run async scoped block operation with message
          */
         public CompletableFuture<Void> run(Runnable runnable) {
-            return getScopedLogger().runAsync(blockName, message, runnable, executor);
+            return ScopedVFL.get().runAsync(blockName, message, runnable, executor);
         }
 
         /**
@@ -254,7 +264,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Execute async scoped call without end message transformation
          */
         public CompletableFuture<R> call() {
-            return getScopedLogger().callAsync(blockName, message, Object::toString, callable, executor);
+            return ScopedVFL.get().callAsync(blockName, message, Object::toString, callable, executor);
         }
 
         /**
@@ -287,15 +297,7 @@ public final class ScopedFluentAPI extends VFLFluentAPI {
          * Execute async scoped call with end message transformation
          */
         public CompletableFuture<R> call() {
-            return getScopedLogger().callAsync(blockName, message, endMessageFn, callable, executor);
+            return ScopedVFL.get().callAsync(blockName, message, endMessageFn, callable, executor);
         }
-    }
-
-    /**
-     * Helper method to get the current scoped logger instance.
-     * This ensures we always use the current scope's logger, even if the scope changes.
-     */
-    private static IScopedVFL getScopedLogger() {
-        return ScopedVFL.get();
     }
 }
