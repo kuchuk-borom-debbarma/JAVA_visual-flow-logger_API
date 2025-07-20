@@ -15,6 +15,11 @@ import java.util.function.Function;
 public class VFLFluentAPI {
     private final IVFL logger;
 
+    //Used by children to override and provide custom logger instance.
+    protected IVFL getLogger() {
+        return this.logger;
+    }
+
     public VFLFluentAPI(IVFL logger) {
         this.logger = logger;
     }
@@ -44,15 +49,15 @@ public class VFLFluentAPI {
         }
 
         public void asMsg() {
-            logger.msg(message);
+            getLogger().msg(message);
         }
 
         public void asWarn() {
-            logger.warn(message);
+            getLogger().warn(message);
         }
 
         public void asError() {
-            logger.error(message);
+            getLogger().error(message);
         }
     }
 
@@ -70,21 +75,21 @@ public class VFLFluentAPI {
          * Execute function and log result as message
          */
         public R asMsg(Function<R, String> textFunction) {
-            return logger.msgFn(callable, textFunction);
+            return getLogger().msgFn(callable, textFunction);
         }
 
         /**
          * Execute function and log result as warning
          */
         public R asWarn(Function<R, String> textFunction) {
-            return logger.warnFn(callable, textFunction);
+            return getLogger().warnFn(callable, textFunction);
         }
 
         /**
          * Execute function and log result as error
          */
         public R asError(Function<R, String> textFunction) {
-            return logger.errorFn(callable, textFunction);
+            return getLogger().errorFn(callable, textFunction);
         }
     }
 }
