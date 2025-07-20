@@ -9,4 +9,6 @@ import java.util.function.Function;
 
 public interface IThreadLocal extends IVFL {
     <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor);
+
+    <R> R call(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor);
 }
