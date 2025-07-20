@@ -14,23 +14,30 @@ import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
-class ThreadLocaVFL extends VFL implements IThreadLocal {
-    private static final ThreadLocal<Stack<ThreadLocaVFL>> THREAD_VFL_STACK = new ThreadLocal<>();
+public class ThreadLocaVFL extends VFL implements IThreadLocal {
+    static final ThreadLocal<Stack<ThreadLocaVFL>> THREAD_VFL_STACK = new ThreadLocal<>();
 
-    /**
-     * Initialize a new root logger on current thread.
-     */
-    public static void init(String blockName, VFLBuffer buffer) {
-        //Throw exception if already initialized.
-        var currentThreadVFL = THREAD_VFL_STACK.get();
-        if (currentThreadVFL != null && !currentThreadVFL.empty()) {
-            throw new IllegalStateException("ThreadLocal VFL already initialised");
+    /// Used by runner to start a root logger
+    static <R> R start(String blockName, VFLBuffer buffer, Callable<R> callable) {
+        var current = THREAD_VFL_STACK.get();
+        if (current != null) {
+            throw new NullPointerException("Can't start root thread vfl logger. Already running an existing operation");
         }
-        //Create a stack, add root logger to it.
-        var ctx = new VFLBlockContext(new BlockData(generateUID(), null, blockName), buffer);
-        var stack = new Stack<ThreadLocaVFL>();
-        stack.push(new ThreadLocaVFL(ctx));
-        THREAD_VFL_STACK.set(stack);
+        VFLBlockContext rootCtx = new VFLBlockContext(new BlockData(generateUID(), null, blockName), buffer);
+        ThreadLocaVFL parentLogger = new ThreadLocaVFL(rootCtx);
+        var threadStack = new Stack<ThreadLocaVFL>();
+        threadStack.push(parentLogger);
+        THREAD_VFL_STACK.set(threadStack);
+        R r;
+        try {
+            r = parentLogger.fnHandler(callable, null);
+            if (!THREAD_VFL_STACK.get().isEmpty()) {
+                throw new IllegalStateException("Stack logger still not empty after root operation is complete");
+            }
+        } finally {
+            THREAD_VFL_STACK.remove();
+        }
+        return r;
     }
 
     public static ThreadLocaVFL get() {
@@ -71,15 +78,15 @@ class ThreadLocaVFL extends VFL implements IThreadLocal {
             subLogger.error(String.format("Exception : %s - %s", e.getClass().getSimpleName(), e.getMessage()));
             throw new RuntimeException(e);
         } finally {
-            String endMsg;
+            String endMsg = null;
             if (endMsgFn != null) {
                 try {
                     endMsg = endMsgFn.apply(result);
                 } catch (Exception e) {
                     endMsg = String.format("Failed to process end message " + e.getClass().getSimpleName() + " - " + e.getMessage());
                 }
-                subLogger.closeBlock(endMsg);
             }
+            subLogger.closeBlock(endMsg);
         }
         return result;
     }
@@ -101,15 +108,20 @@ class ThreadLocaVFL extends VFL implements IThreadLocal {
                 THREAD_VFL_STACK.set(threadLoggerStack);
 
                 //Run the provided fn
-                return this.fnHandler(callable, endMsgFn);
+                R r = this.fnHandler(callable, endMsgFn);
+                if (!THREAD_VFL_STACK.get().isEmpty()) {
+                    throw new IllegalStateException("Logger stack for new thread's block " + blockName + " is NOT empty");
+                }
+                return r;
             } finally {
+                //once callable is done processing. Remove the logger stack. It should be of size 1.
                 THREAD_VFL_STACK.remove();
             }
         }, executor);
     }
 
     @Override
-    public <R> R call(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor) {
+    public <R> R call(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn) {
         ensureBlockStarted();
         String subBlockId = generateUID();
         var b = createBlockDataAndPush(subBlockId, blockName);
@@ -117,6 +129,7 @@ class ThreadLocaVFL extends VFL implements IThreadLocal {
         var s = new VFLBlockContext(b, blockContext.buffer);
         var subLogger = new ThreadLocaVFL(s);
         THREAD_VFL_STACK.get().push(subLogger);
+        blockContext.currentLogId = l.getId();
         return this.fnHandler(callable, endMsgFn);
     }
 }
