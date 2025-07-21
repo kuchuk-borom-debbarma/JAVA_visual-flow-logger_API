@@ -1,5 +1,6 @@
 package dev.kuku.vfl.passthrough;
 
+import dev.kuku.vfl.StartBlockHelper;
 import dev.kuku.vfl.core.IVFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -18,10 +19,15 @@ public interface IPassthroughVFL extends IVFL {
 
     CompletableFuture<Void> runAsync(String blockName, String message, Consumer<IPassthroughVFL> fn, Executor executor);
 
+    CompletableFuture<Void> runAsync(String blockName, String message, Consumer<IPassthroughVFL> fn);
+
     <R> R call(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn);
 
     <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
                                        Function<IPassthroughVFL, R> fn, Executor executor);
+
+    <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
+                                       Function<IPassthroughVFL, R> fn);
 
     class Runner {
         public static <R> R call(String blockName, VFLBuffer buffer, Function<IPassthroughVFL, R> fn) {
@@ -30,7 +36,7 @@ public interface IPassthroughVFL extends IVFL {
             VFLBlockContext rootContext = new VFLBlockContext(rootBlockInfo, buffer);
             IPassthroughVFL rootLogger = new PassthroughVFL(rootContext);
             try {
-                return Helper.blockFnLifeCycleHandler(fn, null, rootLogger);
+                return StartBlockHelper.CallFnForLogger(() -> fn.apply(rootLogger), null, null, rootLogger);
             } finally {
                 buffer.flushAndClose();
             }

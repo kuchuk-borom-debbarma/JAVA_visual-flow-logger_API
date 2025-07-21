@@ -4,9 +4,7 @@ import dev.kuku.vfl.StartBlockHelper;
 import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LoggerAndBlockLogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
-import dev.kuku.vfl.core.models.VflLogType;
 
 import java.util.Stack;
 import java.util.concurrent.Callable;
@@ -14,7 +12,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.StartBlockHelper.CreateBlockDataAndPush;
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public class ThreadLocaVFL extends VFL implements IThreadLocal {
@@ -72,20 +69,10 @@ public class ThreadLocaVFL extends VFL implements IThreadLocal {
         THREAD_VFL_STACK.get().pop();
     }
 
-    private LoggerAndBlockLogData setupBlockStart(String blockName, String startMsg) {
-        ensureBlockStarted();
-        String subBlockId = generateUID();
-        var b = CreateBlockDataAndPush(subBlockId, blockName, blockContext);
-        var l = createLogAndPush(VflLogType.SUB_BLOCK_START, startMsg, subBlockId);
-        var s = new VFLBlockContext(b, blockContext.buffer);
-        var subLogger = new ThreadLocaVFL(s);
-        return new LoggerAndBlockLogData(subLogger, b, l);
-    }
-
     private static <R> R ProcessCallableInCurrentThreadLogger(Callable<R> callable, Function<R, String> endMsgFn) {
         //Get the latest pushed logger and pass it to block function handler
         ThreadLocaVFL subLogger = ThreadLocaVFL.Get();
-        return StartBlockHelper.ProcessCallableForLogger(callable, endMsgFn, null, subLogger);
+        return StartBlockHelper.CallFnForLogger(callable, endMsgFn, null, subLogger);
     }
 
     @Override
