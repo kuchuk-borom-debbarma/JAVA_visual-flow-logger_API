@@ -3,11 +3,11 @@ import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
 import dev.kuku.vfl.scoped.IScopedVFL;
 import dev.kuku.vfl.scoped.ScopedFluentAPI;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileWriter;
-import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
@@ -15,11 +15,18 @@ public class ScopedFluentAPITest {
     private final InMemoryFlushHandlerImpl flushHandler = new InMemoryFlushHandlerImpl();
     private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(10, 10, flushHandler);
 
-    @AfterEach
-    void end() throws IOException {
-        try (var f = new FileWriter("nested.json")) {
-            f.write(flushHandler.toJsonNested());
+    void write(String fileName) {
+        try {
+            String path = "test/ouput/scoped_fluent_api";
+            Files.createDirectories(Path.of(path));
+            try (var f = new FileWriter(path+"/"+fileName+".json")) {
+                f.write(flushHandler.toJsonNested());
+                flushHandler.cleanup();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     @Test
@@ -39,6 +46,7 @@ public class ScopedFluentAPITest {
                     .call();
             fluent.logText("Complete test").asMsg();
         });
+        write("nested_test");
     }
 
     int sum(int a, int b) {
