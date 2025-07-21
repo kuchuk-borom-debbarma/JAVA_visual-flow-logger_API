@@ -7,6 +7,6 @@ import java.util.function.Function;
 public class Helper {
 
     public static <R> R blockFnLifeCycleHandler(Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn, IPassthroughVFL subBlockLogger) {
-        return StartBlockHelper.callFnForLogger(() -> fn.apply(subBlockLogger), endMessageFn, null, subBlockLogger);
+        return StartBlockHelper.ProcessCallableForLogger(() -> fn.apply(subBlockLogger), endMessageFn, null, subBlockLogger);
     }
 }

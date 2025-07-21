@@ -24,7 +24,7 @@ class Helper {
         Objects.requireNonNull(logger);
         return ScopedValue.where(scopedInstance, logger)
                 .call(
-                        () -> StartBlockHelper.callFnForLogger(callable, endMessageFn, null, logger)
+                        () -> StartBlockHelper.ProcessCallableForLogger(callable, endMessageFn, null, logger)
                 );
     }
 }

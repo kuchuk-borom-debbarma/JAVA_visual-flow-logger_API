@@ -37,7 +37,7 @@ class PassthroughVFL extends VFL implements IPassthroughVFL {
 
     private <R> R fnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn, boolean move) {
         var result = setupStartBlock(blockName, message, move);
-        return StartBlockHelper.callFnForLogger(() -> fn.apply((IPassthroughVFL) result.logger()), endMessageFn, null, result.logger());
+        return StartBlockHelper.ProcessCallableForLogger(() -> fn.apply((IPassthroughVFL) result.logger()), endMessageFn, null, result.logger());
     }
 
     private <R> CompletableFuture<R> asyncFnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn, Executor executor) {

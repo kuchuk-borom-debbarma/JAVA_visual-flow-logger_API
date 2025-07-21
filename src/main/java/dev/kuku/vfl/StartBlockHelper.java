@@ -16,7 +16,7 @@ public class StartBlockHelper {
      * calls the provided function, on exception logs the error, runs the passed onError fn and re-throws exception. <br>
      * Upon completion closes the block after processing endMsgFn.
      */
-    public static <R> R callFnForLogger(Callable<R> callable, Function<R, String> endMsgFn, Consumer<Exception> onError, IVFL logger) {
+    public static <R> R ProcessCallableForLogger(Callable<R> callable, Function<R, String> endMsgFn, Consumer<Exception> onError, IVFL logger) {
         R result = null;
         try {
             result = callable.call();
@@ -41,16 +41,16 @@ public class StartBlockHelper {
     }
 
     /**
-     * Same as {@link StartBlockHelper#callFnForLogger(Callable, Function, Consumer, IVFL)} but doesn't return a valud and has no endMessage.
+     * Same as {@link StartBlockHelper#ProcessCallableForLogger(Callable, Function, Consumer, IVFL)} but doesn't return a valud and has no endMessage.
      */
-    public static <R> void runFnForLogger(Runnable runnable, Consumer<Exception> onError, IVFL logger) {
-        StartBlockHelper.callFnForLogger(() -> {
+    public static <R> void RunFnForLogger(Runnable runnable, Consumer<Exception> onError, IVFL logger) {
+        StartBlockHelper.ProcessCallableForLogger(() -> {
             runnable.run();
             return null;
         }, null, onError, logger);
     }
 
-    public static LoggerAndBlockLogData setupStartBlock(String blockName, String startMessage, boolean moveFwd, VFLBlockContext blockContext, Function<VFLBlockContext, VFL> createLoggerFn, Consumer<LoggerAndBlockLogData> afterSetupFn) {
+    public static LoggerAndBlockLogData SetupStartBlock(String blockName, String startMessage, boolean moveFwd, VFLBlockContext blockContext, Function<VFLBlockContext, VFL> createLoggerFn, Consumer<LoggerAndBlockLogData> afterSetupFn) {
         String subBlockId = generateUID();
         BlockData blockData = new BlockData(subBlockId, blockContext.blockInfo.getId(), blockName);
         LogData logData = new LogData(generateUID(), blockContext.blockInfo.getId(), blockContext.currentLogId, VflLogType.SUB_BLOCK_START, startMessage, subBlockId, Instant.now().toEpochMilli());
