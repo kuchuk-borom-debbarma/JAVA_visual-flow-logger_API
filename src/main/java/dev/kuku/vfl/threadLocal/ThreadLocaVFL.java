@@ -28,8 +28,10 @@ public class ThreadLocaVFL extends VFL implements IThreadLocal {
         var threadStack = new Stack<ThreadLocaVFL>();
         threadStack.push(parentLogger);
         THREAD_VFL_STACK.set(threadStack);
+        buffer.pushBlockToBuffer(rootCtx.blockInfo);
         R r;
         try {
+            parentLogger.ensureBlockStarted();
             r = parentLogger.fnHandler(callable, null);
             if (!THREAD_VFL_STACK.get().isEmpty()) {
                 throw new IllegalStateException("Stack logger still not empty after root operation is complete");
