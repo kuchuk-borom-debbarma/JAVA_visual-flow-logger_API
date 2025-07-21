@@ -1,8 +1,10 @@
 package dev.kuku.vfl.threadLocal;
 
+import dev.kuku.vfl.StartBlockHelper;
 import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
+import dev.kuku.vfl.core.models.LoggerAndBlockLogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.VflLogType;
 
@@ -71,44 +73,31 @@ public class ThreadLocaVFL extends VFL implements IThreadLocal {
         THREAD_VFL_STACK.get().pop();
     }
 
+    private LoggerAndBlockLogData setupBlockStart(String blockName, String startMsg) {
+        ensureBlockStarted();
+        String subBlockId = generateUID();
+        var b = createBlockDataAndPush(subBlockId, blockName);
+        var l = createLogAndPush(VflLogType.SUB_BLOCK_START, startMsg, subBlockId);
+        var s = new VFLBlockContext(b, blockContext.buffer);
+        var subLogger = new ThreadLocaVFL(s);
+        return new LoggerAndBlockLogData(subLogger, b, l);
+    }
+
     private <R> R fnHandler(Callable<R> callable, Function<R, String> endMsgFn) {
         R result = null;
         ThreadLocaVFL subLogger = ThreadLocaVFL.get();
-        try {
-            result = callable.call();
-        } catch (Exception e) {
-            subLogger.error(String.format("Exception : %s - %s", e.getClass().getSimpleName(), e.getMessage()));
-            throw new RuntimeException(e);
-        } finally {
-            String endMsg = null;
-            if (endMsgFn != null) {
-                try {
-                    endMsg = endMsgFn.apply(result);
-                } catch (Exception e) {
-                    endMsg = String.format("Failed to process end message " + e.getClass().getSimpleName() + " - " + e.getMessage());
-                }
-            }
-            subLogger.closeBlock(endMsg);
-        }
-        return result;
+        return StartBlockHelper.callFnForLogger(callable, endMsgFn, null, subLogger);
     }
 
     @Override
     public <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor) {
-        ensureBlockStarted();
-        String subBlockId = generateUID();
-        var subBlockData = createBlockDataAndPush(subBlockId, blockName);
-        var createdLog = createLogAndPush(VflLogType.SUB_BLOCK_START, message, subBlockId);
-        var current = ThreadLocaVFL.get();
+        var setupResult = setupBlockStart(blockName, message);
         return CompletableFuture.supplyAsync(() -> {
             //Create a stack with proper sub block lgoger on the executing thread.
             try {
-                var ctx = new VFLBlockContext(subBlockData, current.blockContext.buffer);
-                var subLogger = new ThreadLocaVFL(ctx);
                 var threadLoggerStack = new Stack<ThreadLocaVFL>();
-                threadLoggerStack.push(subLogger);
+                threadLoggerStack.push((ThreadLocaVFL) setupResult.logger());
                 THREAD_VFL_STACK.set(threadLoggerStack);
-
                 //Run the provided fn
                 R r = this.fnHandler(callable, endMsgFn);
                 if (!THREAD_VFL_STACK.get().isEmpty()) {
@@ -124,14 +113,9 @@ public class ThreadLocaVFL extends VFL implements IThreadLocal {
 
     @Override
     public <R> R call(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn) {
-        ensureBlockStarted();
-        String subBlockId = generateUID();
-        var b = createBlockDataAndPush(subBlockId, blockName);
-        var l = createLogAndPush(VflLogType.SUB_BLOCK_START, message, subBlockId);
-        var s = new VFLBlockContext(b, blockContext.buffer);
-        var subLogger = new ThreadLocaVFL(s);
-        THREAD_VFL_STACK.get().push(subLogger);
-        blockContext.currentLogId = l.getId();
+        var result = setupBlockStart(blockName, message);
+        THREAD_VFL_STACK.get().push((ThreadLocaVFL) result.logger());
+        blockContext.currentLogId = result.logData().getId();
         return this.fnHandler(callable, endMsgFn);
     }
 }

@@ -1,10 +1,7 @@
 package dev.kuku.vfl.scoped;
 
 import dev.kuku.vfl.core.VFL;
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LogData;
-import dev.kuku.vfl.core.models.VFLBlockContext;
-import dev.kuku.vfl.core.models.VflLogType;
+import dev.kuku.vfl.core.models.*;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -47,6 +44,19 @@ public class ScopedVFL extends VFL implements IScopedVFL {
         return bd;
     }
 
+    private LoggerAndBlockLogData initSubBlockFn(String blockName, String blockMessage) {
+        String subBlockId = generateUID();
+        BlockData subBlockData = createAndPushBlockData(subBlockId, blockName);
+        LogData subBlockStartLog = createLogAndPush(
+                VflLogType.SUB_BLOCK_START,
+                blockMessage,
+                subBlockId
+        );
+        VFLBlockContext subBlockLoggerCtx = new VFLBlockContext(subBlockData, blockContext.buffer);
+        var logger = new ScopedVFL(subBlockLoggerCtx);
+        return new LoggerAndBlockLogData(logger, subBlockData, subBlockStartLog);
+    }
+
     private <R> R fnHandler(
             String blockName,
             String blockMessage,
@@ -54,24 +64,10 @@ public class ScopedVFL extends VFL implements IScopedVFL {
             Callable<R> callable,
             boolean move
     ) {
-        String subBlockId = generateUID();
-        BlockData subBlockContext = createAndPushBlockData(
-                subBlockId,
-                blockName
-        );
-        LogData subBlockStartLog = createLogAndPush(
-                VflLogType.SUB_BLOCK_START,
-                blockMessage,
-                subBlockId
-        );
-        VFLBlockContext subBlockLoggerContext = new VFLBlockContext(
-                subBlockContext,
-                super.blockContext.buffer
-        );
-        //Will set this as the nested scope's IScopedVFL value.
-        IScopedVFL subBlockLogger = new ScopedVFL(subBlockLoggerContext);
+        LoggerAndBlockLogData initResult = initSubBlockFn(blockName, blockMessage);
+        IScopedVFL subBlockLogger = (IScopedVFL) initResult.logger();
         if (move) {
-            super.blockContext.currentLogId = subBlockStartLog.getId();
+            super.blockContext.currentLogId = initResult.blockData().getId();
         }
         return Helper.blockFnLifeCycleHandler(
                 blockName,
