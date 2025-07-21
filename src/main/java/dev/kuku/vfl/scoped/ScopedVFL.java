@@ -44,7 +44,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
         return bd;
     }
 
-    private LoggerAndBlockLogData initSubBlockFn(String blockName, String blockMessage) {
+    private LoggerAndBlockLogData setupBlockStart(String blockName, String blockMessage) {
         String subBlockId = generateUID();
         BlockData subBlockData = createAndPushBlockData(subBlockId, blockName);
         LogData subBlockStartLog = createLogAndPush(
@@ -64,7 +64,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
             Callable<R> callable,
             boolean move
     ) {
-        LoggerAndBlockLogData initResult = initSubBlockFn(blockName, blockMessage);
+        LoggerAndBlockLogData initResult = setupBlockStart(blockName, blockMessage);
         IScopedVFL subBlockLogger = (IScopedVFL) initResult.logger();
         if (move) {
             super.blockContext.currentLogId = initResult.blockData().getId();

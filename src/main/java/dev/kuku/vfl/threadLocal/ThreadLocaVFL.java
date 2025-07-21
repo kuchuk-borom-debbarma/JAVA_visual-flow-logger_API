@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import static dev.kuku.vfl.StartBlockHelper.CreateBlockDataAndPush;
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public class ThreadLocaVFL extends VFL implements IThreadLocal {
@@ -27,24 +28,24 @@ public class ThreadLocaVFL extends VFL implements IThreadLocal {
         }
         VFLBlockContext rootCtx = new VFLBlockContext(new BlockData(generateUID(), null, blockName), buffer);
         ThreadLocaVFL parentLogger = new ThreadLocaVFL(rootCtx);
-        var threadStack = new Stack<ThreadLocaVFL>();
-        threadStack.push(parentLogger);
-        THREAD_VFL_STACK.set(threadStack);
         buffer.pushBlockToBuffer(rootCtx.blockInfo);
-        R r;
+        return SetupNewThreadLoggerStackAndCall(parentLogger, callable);
+    }
+
+    private static <R> R SetupNewThreadLoggerStackAndCall(ThreadLocaVFL logger, Callable<R> callable) {
+        Stack<ThreadLocaVFL> loggerStack = new Stack<>();
+        loggerStack.push(logger);
+        THREAD_VFL_STACK.set(loggerStack);
         try {
-            parentLogger.ensureBlockStarted();
-            r = parentLogger.fnHandler(callable, null);
-            if (!THREAD_VFL_STACK.get().isEmpty()) {
-                throw new IllegalStateException("Stack logger still not empty after root operation is complete");
-            }
+            return callable.call();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             THREAD_VFL_STACK.remove();
         }
-        return r;
     }
 
-    public static ThreadLocaVFL get() {
+    public static ThreadLocaVFL Get() {
         var current = THREAD_VFL_STACK.get();
         if (current == null || current.empty()) {
             throw new NullPointerException("ThreadLocal VFL has not been initialized. Please run " + ThreadLocaVFL.class + ".init(a,b) to start a root logger");
@@ -57,16 +58,11 @@ public class ThreadLocaVFL extends VFL implements IThreadLocal {
         super(context);
     }
 
-    private BlockData createBlockDataAndPush(String id, String blockName) {
-        var b = new BlockData(id, this.blockContext.blockInfo.getId(), blockName);
-        blockContext.buffer.pushBlockToBuffer(b);
-        return b;
-    }
-
     @Override
     public void closeBlock(String endMessage) {
         super.closeBlock(endMessage);
-        var current = ThreadLocaVFL.get();
+        //Pop the logger from the thread stack.
+        var current = ThreadLocaVFL.Get();
         if (current != this) {
             throw new IllegalStateException("Current logger is not the latest logger in stack");
         }
@@ -76,46 +72,39 @@ public class ThreadLocaVFL extends VFL implements IThreadLocal {
     private LoggerAndBlockLogData setupBlockStart(String blockName, String startMsg) {
         ensureBlockStarted();
         String subBlockId = generateUID();
-        var b = createBlockDataAndPush(subBlockId, blockName);
+        var b = CreateBlockDataAndPush(subBlockId, blockName, blockContext);
         var l = createLogAndPush(VflLogType.SUB_BLOCK_START, startMsg, subBlockId);
         var s = new VFLBlockContext(b, blockContext.buffer);
         var subLogger = new ThreadLocaVFL(s);
         return new LoggerAndBlockLogData(subLogger, b, l);
     }
 
-    private <R> R fnHandler(Callable<R> callable, Function<R, String> endMsgFn) {
-        R result = null;
-        ThreadLocaVFL subLogger = ThreadLocaVFL.get();
+    private static <R> R ProcessCallableInCurrentThreadLogger(Callable<R> callable, Function<R, String> endMsgFn) {
+        //Get the latest pushed logger and pass it to block function handler
+        ThreadLocaVFL subLogger = ThreadLocaVFL.Get();
         return StartBlockHelper.callFnForLogger(callable, endMsgFn, null, subLogger);
     }
 
     @Override
-    public <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor) {
-        var setupResult = setupBlockStart(blockName, message);
-        return CompletableFuture.supplyAsync(() -> {
-            //Create a stack with proper sub block lgoger on the executing thread.
-            try {
-                var threadLoggerStack = new Stack<ThreadLocaVFL>();
-                threadLoggerStack.push((ThreadLocaVFL) setupResult.logger());
-                THREAD_VFL_STACK.set(threadLoggerStack);
-                //Run the provided fn
-                R r = this.fnHandler(callable, endMsgFn);
-                if (!THREAD_VFL_STACK.get().isEmpty()) {
-                    throw new IllegalStateException("Logger stack for new thread's block " + blockName + " is NOT empty");
-                }
-                return r;
-            } finally {
-                //once callable is done processing. Remove the logger stack. It should be of size 1.
-                THREAD_VFL_STACK.remove();
-            }
-        }, executor);
+    public <R> R call(String blockName, String startMessage, Callable<R> callable, Function<R, String> endMsgFn) {
+        //Ensure that the block has started
+        ensureBlockStarted();
+        //Create and push log&block data to buffer, move forward if desired and returns them.
+        StartBlockHelper.setupStartBlock(blockName, startMessage, true, blockContext, ThreadLocaVFL::new,
+                loggerAndBlockLogData -> THREAD_VFL_STACK.get().push((ThreadLocaVFL) loggerAndBlockLogData.logger()));
+        return ProcessCallableInCurrentThreadLogger(callable, endMsgFn);
     }
 
     @Override
-    public <R> R call(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn) {
-        var result = setupBlockStart(blockName, message);
-        THREAD_VFL_STACK.get().push((ThreadLocaVFL) result.logger());
-        blockContext.currentLogId = result.logData().getId();
-        return this.fnHandler(callable, endMsgFn);
+    public <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor) {
+        ensureBlockStarted();
+        //Setup start block
+        var startResult = StartBlockHelper.setupStartBlock(blockName, message, false, blockContext, ThreadLocaVFL::new, null);
+        //return a completable future within which we setup thread logger stack and then use ProcessCallableInCurrentThreadLogger to execute the callable.
+        return CompletableFuture.supplyAsync(() -> ThreadLocaVFL.SetupNewThreadLoggerStackAndCall(
+                (ThreadLocaVFL) startResult.logger(), () -> ProcessCallableInCurrentThreadLogger(callable, endMsgFn)
+        ), executor);
     }
+
+
 }

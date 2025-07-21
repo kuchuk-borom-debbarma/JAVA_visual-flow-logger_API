@@ -23,7 +23,7 @@ class PassthroughVFL extends VFL implements IPassthroughVFL {
         return bd;
     }
     //TODO create VFLWithBlock abstract class which will extend VFL and give block start related functions and moe StarBlokHelper too
-    private LoggerAndBlockLogData preSubBlockFn(String blockName, String blockMessage, boolean move) {
+    private LoggerAndBlockLogData setupStartBlock(String blockName, String blockMessage, boolean move) {
         ensureBlockStarted();
         String subBlockId = generateUID();
         BlockData subBlockData = createAndPushBlockData(subBlockId, blockName);
@@ -36,7 +36,7 @@ class PassthroughVFL extends VFL implements IPassthroughVFL {
     }
 
     private <R> R fnHandler(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn, boolean move) {
-        var result = preSubBlockFn(blockName, message, move);
+        var result = setupStartBlock(blockName, message, move);
         return StartBlockHelper.callFnForLogger(() -> fn.apply((IPassthroughVFL) result.logger()), endMessageFn, null, result.logger());
     }
 

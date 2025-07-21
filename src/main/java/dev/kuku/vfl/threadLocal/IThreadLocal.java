@@ -11,7 +11,7 @@ import java.util.function.Function;
 public interface IThreadLocal extends IVFL {
     <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor);
 
-    <R> R call(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn);
+    <R> R call(String blockName, String startMessage, Callable<R> callable, Function<R, String> endMsgFn);
 
     class Runner {
         public static <R> R call(String blockName, VFLBuffer buffer, Callable<R> call) {
