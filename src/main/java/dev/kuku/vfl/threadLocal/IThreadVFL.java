@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public interface IThreadLocal extends IVFL {
+public interface IThreadVFL extends IVFL {
 
     <R> void run(String blockName, String startMessage, Runnable runnable);
 
@@ -26,7 +26,7 @@ public interface IThreadLocal extends IVFL {
     class Runner {
         public static <R> R call(String blockName, VFLBuffer buffer, Callable<R> call) {
             try {
-                return ThreadLocaVFL.start(blockName, buffer, call);
+                return ThreadVFL.start(blockName, buffer, call);
             } finally {
                 buffer.flushAndClose();
             }

@@ -1,8 +1,8 @@
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
-import dev.kuku.vfl.threadLocal.IThreadLocal;
-import dev.kuku.vfl.threadLocal.ThreadLocaVFL;
+import dev.kuku.vfl.threadLocal.IThreadVFL;
+import dev.kuku.vfl.threadLocal.ThreadVFL;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,8 +52,8 @@ public class ThreadLocalVFLTest {
     @Test
     @DisplayName("Deep Nested Calls Test")
     void deepNestedCallsTest() {
-        IThreadLocal.Runner.call("Deep Nested Test", buffer, () -> {
-            var l = ThreadLocaVFL.Get();
+        IThreadVFL.Runner.call("Deep Nested Test", buffer, () -> {
+            var l = ThreadVFL.Get();
             l.msg("Starting deep nested test");
 
             int result = l.call("Level 1", "First level",
@@ -66,7 +66,7 @@ public class ThreadLocalVFLTest {
     }
 
     private int deepNestedOperation(int currentLevel, int maxLevel) {
-        var l = ThreadLocaVFL.Get();
+        var l = ThreadVFL.Get();
         l.msg("Entering level " + currentLevel);
 
         if (currentLevel >= maxLevel) {
@@ -88,8 +88,8 @@ public class ThreadLocalVFLTest {
     @Test
     @DisplayName("Complex Async Operations Test")
     void complexAsyncOperationsTest() {
-        IThreadLocal.Runner.call("Complex Async Test", buffer, () -> {
-            var l = ThreadLocaVFL.Get();
+        IThreadVFL.Runner.call("Complex Async Test", buffer, () -> {
+            var l = ThreadVFL.Get();
             l.msg("Starting complex async operations");
 
             // Create multiple async tasks with different durations
@@ -126,8 +126,8 @@ public class ThreadLocalVFLTest {
     @Test
     @DisplayName("Nested Async Within Sync Test")
     void nestedAsyncWithinSyncTest() {
-        IThreadLocal.Runner.call("Nested Async in Sync", buffer, () -> {
-            var l = ThreadLocaVFL.Get();
+        IThreadVFL.Runner.call("Nested Async in Sync", buffer, () -> {
+            var l = ThreadVFL.Get();
             l.msg("Starting nested async within sync test");
 
             return l.call("Outer Sync Block", "Processing outer sync", () -> {
@@ -165,8 +165,8 @@ public class ThreadLocalVFLTest {
     @Test
     @DisplayName("Exception Handling in Nested Calls")
     void exceptionHandlingTest() {
-        IThreadLocal.Runner.call("Exception Handling Test", buffer, () -> {
-            var l = ThreadLocaVFL.Get();
+        IThreadVFL.Runner.call("Exception Handling Test", buffer, () -> {
+            var l = ThreadVFL.Get();
             l.msg("Testing exception handling in nested calls");
 
             try {
@@ -191,8 +191,8 @@ public class ThreadLocalVFLTest {
     @Test
     @DisplayName("Async Exception Handling")
     void asyncExceptionHandlingTest() {
-        IThreadLocal.Runner.call("Async Exception Test", buffer, () -> {
-            var l = ThreadLocaVFL.Get();
+        IThreadVFL.Runner.call("Async Exception Test", buffer, () -> {
+            var l = ThreadVFL.Get();
             l.msg("Testing async exception handling");
 
             var successTask = l.callAsync("Success Task", "This should succeed",
@@ -231,8 +231,8 @@ public class ThreadLocalVFLTest {
             final int contextId = i;
             new Thread(() -> {
                 try {
-                    IThreadLocal.Runner.call("Context " + contextId, buffer, () -> {
-                        var l = ThreadLocaVFL.Get();
+                    IThreadVFL.Runner.call("Context " + contextId, buffer, () -> {
+                        var l = ThreadVFL.Get();
                         l.msg("Starting context " + contextId);
 
                         // Each context does nested and async work
@@ -267,8 +267,8 @@ public class ThreadLocalVFLTest {
     @Test
     @DisplayName("Resource Cleanup Test")
     void resourceCleanupTest() {
-        IThreadLocal.Runner.call("Resource Cleanup Test", buffer, () -> {
-            var l = ThreadLocaVFL.Get();
+        IThreadVFL.Runner.call("Resource Cleanup Test", buffer, () -> {
+            var l = ThreadVFL.Get();
             l.msg("Testing resource cleanup scenarios");
 
             // Test with try-with-resources pattern simulation
@@ -307,8 +307,8 @@ public class ThreadLocalVFLTest {
     @Test
     @DisplayName("Stress Test with Random Operations")
     void stressTestRandomOperations() {
-        IThreadLocal.Runner.call("Stress Test", buffer, () -> {
-            var l = ThreadLocaVFL.Get();
+        IThreadVFL.Runner.call("Stress Test", buffer, () -> {
+            var l = ThreadVFL.Get();
             l.msg("Starting stress test with random operations");
 
             Random random = new Random(12345); // Fixed seed for reproducibility
@@ -340,7 +340,7 @@ public class ThreadLocalVFLTest {
     // Helper methods
 
     private int simulateWork(int durationMs, String workId) {
-        var l = ThreadLocaVFL.Get();
+        var l = ThreadVFL.Get();
         l.msg("Starting work: " + workId + " (duration: " + durationMs + "ms)");
 
         try {
@@ -356,13 +356,13 @@ public class ThreadLocalVFLTest {
     }
 
     private int methodThatThrows() {
-        var l = ThreadLocaVFL.Get();
+        var l = ThreadVFL.Get();
         l.msg("This method is about to throw an exception");
         throw new RuntimeException("Intentional exception for testing");
     }
 
     private int randomOperation(int operationId, int depth, Random random) {
-        var l = ThreadLocaVFL.Get();
+        var l = ThreadVFL.Get();
         l.msg("Random operation " + operationId + " at depth " + depth);
 
         if (depth <= 0) {
