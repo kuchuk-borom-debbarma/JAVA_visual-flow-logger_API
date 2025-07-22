@@ -1,7 +1,5 @@
-package dev.kuku.vfl.scoped;
+package dev.kuku.vfl;
 
-import dev.kuku.vfl.BlockHelper;
-import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.models.LoggerAndBlockLogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 

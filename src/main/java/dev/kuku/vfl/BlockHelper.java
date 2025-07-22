@@ -1,7 +1,5 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.IVFL;
-import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.models.*;
 
 import java.time.Instant;
@@ -14,12 +12,15 @@ import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 /**
  * Helper class containing functions that are core common logic shared amongst all logger with block logging functionality. <br>
  * Used by :- <br>
- * {@link dev.kuku.vfl.passthrough.PassthroughVFL} <br>
- * {@link dev.kuku.vfl.threadLocal.ThreadVFL} <br>
- * {@link dev.kuku.vfl.scoped.ScopedVFL} <br>
+ * {@link dev.kuku.vfl.PassthroughVFL} <br>
+ * {@link dev.kuku.vfl.ThreadVFL} <br>
+ * {@link dev.kuku.vfl.ScopedVFL} <br>
  * <br>
  */
-public class BlockHelper {
+class BlockHelper {
+    private BlockHelper() {
+    }
+
     /**
      * Creates a block data and returns it after pushing it to buffer.
      *
@@ -43,14 +44,14 @@ public class BlockHelper {
      * Performs the steps required for setting up a Log of type SubBlockStart before the provided method is invoked. <br>
      * Should be used for starting a sub block call/run. <br> <br>
      * Example :- <br>
-     * used in {@link dev.kuku.vfl.passthrough.PassthroughVFL#run(String, String, Consumer)} to setup new block and log before executing the passed consumer.
+     * used in {@link dev.kuku.vfl.PassthroughVFL#run(String, String, Consumer)} to setup new block and log before executing the passed consumer.
      *
      * @param blockName      Name to give to the created sub block data
      * @param startMessage   Message to assign to the created log of type {@link VflLogType#SUB_BLOCK_START}
      * @param moveFwd        Whether to move forward the log chain or stay in current position
      * @param blockContext   Context of the logger that is starting the the sub block call/run
      * @param createLoggerFn Function that needs to take in the {@link VFLBlockContext} and return a {@link VFL} instance.
-     * @param afterSetupFn   Optional method to invoke after setup is complete before returning the setup result. One of it's use is in {@link dev.kuku.vfl.scoped.ScopedVFL#run(String, String, Runnable)} to run the passed runnable parameter after setup.
+     * @param afterSetupFn   Optional method to invoke after setup is complete before returning the setup result. One of it's use is in {@link dev.kuku.vfl.ScopedVFL#run(String, String, Runnable)} to run the passed runnable parameter after setup.
      * @return Created subLogger, block data, log data.
      */
     public static LoggerAndBlockLogData SetupSubBlockStart(String blockName, String startMessage, boolean moveFwd, VFLBlockContext blockContext, Function<VFLBlockContext, VFL> createLoggerFn, Consumer<LoggerAndBlockLogData> afterSetupFn) {
@@ -73,14 +74,13 @@ public class BlockHelper {
     /**
      * Calls the provided function and uses the provided logger to log exception(if any) and to close the logger once callable has finished invoking. <br>
      * It is meant to be used for invoking block functions with the block's logger provided as the logger. <br>
-     *
-     * One of it's use-case is in {@link dev.kuku.vfl.threadLocal.ThreadVFL#call(String, String, Callable, Function)}
+     * <p>
+     * One of it's use-case is in {@link dev.kuku.vfl.ThreadVFL#call(String, String, Callable, Function)}
      *
      * @param callable The method to call
      * @param endMsgFn A method that takes in the result of the callable's invokation return value and returns a string. This string will be set as the end message for the closing block log {@link VflLogType#BLOCK_END}.
-     * @param onError method to invoke upon error. Takes in the exception as input.
-     * @param logger The logger that needs to be closed and log exception(if thrown).
-     *
+     * @param onError  method to invoke upon error. Takes in the exception as input.
+     * @param logger   The logger that needs to be closed and log exception(if thrown).
      * @return value returned after invoking callable
      */
     public static <R> R CallFnForLogger(Callable<R> callable, Function<R, String> endMsgFn, Consumer<Exception> onError, IVFL logger) {

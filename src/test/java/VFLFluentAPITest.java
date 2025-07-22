@@ -23,7 +23,7 @@ public class VFLFluentAPITest {
 
     @Test
     void test() {
-        IVFL.Runner.call("TEST", buffer, ivfl -> {
+        IVFL.VFLRunner.call("TEST", buffer, ivfl -> {
             var fluent = new VFLFluentAPI(ivfl);
             fluent.logText("Hello world how is everyone").asMsg();
             int sum = fluent.fn(() -> 1 + 2).asMsg(s -> "Sum = " + s);

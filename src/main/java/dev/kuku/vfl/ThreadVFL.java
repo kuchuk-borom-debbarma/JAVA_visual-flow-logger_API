@@ -1,7 +1,5 @@
-package dev.kuku.vfl.threadLocal;
+package dev.kuku.vfl;
 
-import dev.kuku.vfl.BlockHelper;
-import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.VFLBlockContext;

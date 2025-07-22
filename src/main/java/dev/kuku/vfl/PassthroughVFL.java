@@ -1,7 +1,5 @@
-package dev.kuku.vfl.passthrough;
+package dev.kuku.vfl;
 
-import dev.kuku.vfl.BlockHelper;
-import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LoggerAndBlockLogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
@@ -11,7 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class PassthroughVFL extends VFL implements IPassthroughVFL {
+class PassthroughVFL extends VFL implements IPassthroughVFL {
 
     PassthroughVFL(VFLBlockContext context) {
         super(context);
@@ -66,4 +64,4 @@ public class PassthroughVFL extends VFL implements IPassthroughVFL {
         return CompletableFuture.supplyAsync(() -> BlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()));
     }
 
-}
+}//TODO Possible to make generalied runner class?

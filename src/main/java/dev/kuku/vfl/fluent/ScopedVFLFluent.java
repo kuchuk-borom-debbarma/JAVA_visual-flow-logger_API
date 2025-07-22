@@ -1,5 +1,6 @@
-package dev.kuku.vfl.scoped;
+package dev.kuku.vfl.fluent;
 
+import dev.kuku.vfl.ScopedVFL;
 import dev.kuku.vfl.core.IVFL;
 import dev.kuku.vfl.core.VFLFluentAPI;
 

@@ -1,4 +1,4 @@
-package dev.kuku.vfl.core;
+package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.models.LogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
-public class VFL implements IVFL {
+class VFL implements IVFL {
     protected final VFLBlockContext blockContext;
 
     protected VFL(VFLBlockContext blockContext) {
@@ -19,12 +19,12 @@ public class VFL implements IVFL {
 
     protected LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId) {
         var ld = new LogData(generateUID(),
-                this.blockContext.blockInfo.getId(),
-                this.blockContext.currentLogId,
-                logType,
-                message,
-                referencedBlockId,
-                Instant.now().toEpochMilli());
+            this.blockContext.blockInfo.getId(),
+            this.blockContext.currentLogId,
+            logType,
+            message,
+            referencedBlockId,
+            Instant.now().toEpochMilli());
         this.blockContext.buffer.pushLogToBuffer(ld);
         return ld;
     }

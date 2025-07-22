@@ -1,7 +1,5 @@
-package dev.kuku.vfl.scoped;
+package dev.kuku.vfl;
 
-import dev.kuku.vfl.BlockHelper;
-import dev.kuku.vfl.core.IVFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
@@ -11,8 +9,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import static dev.kuku.vfl.ScopedVFL.scopedInstance;
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
-import static dev.kuku.vfl.scoped.ScopedVFL.scopedInstance;
 
 public interface IScopedVFL extends IVFL {
     void run(String blockName, String blockMessage, Runnable runnable);

@@ -1,4 +1,4 @@
-package dev.kuku.vfl.core;
+package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -27,7 +27,7 @@ public interface IVFL {
 
     void closeBlock(String endMessage);
 
-    class Runner {
+    class VFLRunner {
         public static <R> R call(String blockName, VFLBuffer buffer, Function<IVFL, R> fn) {
             BlockData rootBlock = new BlockData(generateUID(), null, blockName);
             buffer.pushBlockToBuffer(rootBlock);
@@ -54,3 +54,59 @@ public interface IVFL {
 //TODO different level for filtering
 //TODO common class for simple stuffs
 //TODO compile time flow generation for flow chart
+
+/*
+ * // Even more generic approach using builder pattern
+public class VFLRunnerBuilder<T extends IVFL> {
+    private String blockName;
+    private VFLBuffer buffer;
+    private VFLFactory<T> factory;
+
+    public VFLRunnerBuilder(String blockName, VFLBuffer buffer) {
+        this.blockName = blockName;
+        this.buffer = buffer;
+    }
+
+    public VFLRunnerBuilder<T> withFactory(VFLFactory<T> factory) {
+        this.factory = factory;
+        return this;
+    }
+
+    public <R> R execute(VFLExecutor<T, R> executor) {
+        return BaseVFLRunner.call(blockName, buffer, factory, executor);
+    }
+
+    public <R> R execute(Function<T, R> function) {
+        return execute(function::apply);
+    }
+
+    public <R> R execute(Callable<R> callable) {
+        return execute(vfl -> callable.call());
+    }
+
+    public void run(Runnable runnable) {
+        execute(vfl -> {
+            runnable.run();
+            return null;
+        });
+    }
+}
+
+// Builder usage example
+class BuilderExample {
+    public static void example() {
+        VFLBuffer buffer = new VFLBuffer();
+
+        String result = new VFLRunnerBuilder<IVFL>("my-block", buffer)
+            .withFactory(VFLFactories.VFL_FACTORY)  // Use factory constant
+            .execute(vfl -> {
+                vfl.msg("Hello World");
+                return "completed";
+            });
+
+        new VFLRunnerBuilder<IPassthroughVFL>("another-block", buffer)
+            .withFactory(VFLFactories.PASSTHROUGH_VFL_FACTORY)  // Use factory constant
+            .run(() -> System.out.println("Running passthrough logic"));
+    }
+}
+ */

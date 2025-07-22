@@ -1,6 +1,5 @@
-package dev.kuku.vfl.threadLocal;
+package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.IVFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 
 import java.util.concurrent.Callable;
@@ -23,7 +22,7 @@ public interface IThreadVFL extends IVFL {
     <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn);
 
 
-    class Runner {
+    class ThreadVFLRunner {
         public static <R> R call(String blockName, VFLBuffer buffer, Callable<R> call) {
             try {
                 return ThreadVFL.start(blockName, buffer, call);
