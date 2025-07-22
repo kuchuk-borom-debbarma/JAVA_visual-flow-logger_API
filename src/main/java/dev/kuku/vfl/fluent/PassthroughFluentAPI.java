@@ -123,7 +123,7 @@ public class PassthroughFluentAPI extends VFLFluentAPI {
          * Execute call without end message transformation
          */
         public R call() {
-            return passthroughLogger.call(blockName, message, Object::toString, fn);
+            return passthroughLogger.call(blockName, message, fn, Object::toString);
         }
 
         /**
@@ -154,7 +154,7 @@ public class PassthroughFluentAPI extends VFLFluentAPI {
          * Execute call with end message transformation
          */
         public R call() {
-            return passthroughLogger.call(blockName, message, endMessageFn, fn);
+            return passthroughLogger.call(blockName, message, fn, endMessageFn);
         }
     }
 
@@ -248,7 +248,7 @@ public class PassthroughFluentAPI extends VFLFluentAPI {
          * Execute async call without end message transformation
          */
         public CompletableFuture<R> call() {
-            return passthroughLogger.callAsync(blockName, message, Object::toString, fn, executor);
+            return passthroughLogger.callAsync(blockName, message, fn, Object::toString, executor);
         }
 
         /**
@@ -281,7 +281,7 @@ public class PassthroughFluentAPI extends VFLFluentAPI {
          * Execute async call with end message transformation
          */
         public CompletableFuture<R> call() {
-            return passthroughLogger.callAsync(blockName, message, endMessageFn, fn, executor);
+            return passthroughLogger.callAsync(blockName, message, fn, endMessageFn, executor);
         }
     }
 }

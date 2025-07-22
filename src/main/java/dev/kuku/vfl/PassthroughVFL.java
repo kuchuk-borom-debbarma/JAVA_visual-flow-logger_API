@@ -42,23 +42,23 @@ class PassthroughVFL extends VFL implements IPassthroughVFL {
     }
 
     @Override
-    public <R> R call(String blockName, String message, Function<R, String> endMessageFn,
-                      Function<IPassthroughVFL, R> fn) {
+    public <R> R call(String blockName, String message,
+                      Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn) {
         ensureBlockStarted();
         LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, message, true, blockContext, PassthroughVFL::new, null);
         return BlockHelper.CallFnForLogger(() -> fn.apply((PassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger());
     }
 
     @Override
-    public <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
-                                              Function<IPassthroughVFL, R> fn, Executor executor) {
+    public <R> CompletableFuture<R> callAsync(String blockName, String message,
+                                              Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn, Executor executor) {
         ensureBlockStarted();
         LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, message, false, blockContext, PassthroughVFL::new, null);
         return CompletableFuture.supplyAsync(() -> BlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()), executor);
     }
 
     @Override
-    public <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn) {
+    public <R> CompletableFuture<R> callAsync(String blockName, String message, Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn) {
         ensureBlockStarted();
         LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, message, false, blockContext, PassthroughVFL::new, null);
         return CompletableFuture.supplyAsync(() -> BlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()));

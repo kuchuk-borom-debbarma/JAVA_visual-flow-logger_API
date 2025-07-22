@@ -19,13 +19,13 @@ public interface IPassthroughVFL extends IVFL {
 
     CompletableFuture<Void> runAsync(String blockName, String message, Consumer<IPassthroughVFL> fn);
 
-    <R> R call(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn);
+    <R> R call(String blockName, String message, Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn);
 
-    <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
-                                       Function<IPassthroughVFL, R> fn, Executor executor);
+    <R> CompletableFuture<R> callAsync(String blockName, String message,
+                                       Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn, Executor executor);
 
-    <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
-                                       Function<IPassthroughVFL, R> fn);
+    <R> CompletableFuture<R> callAsync(String blockName, String message,
+                                       Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn);
 
     class PassthroughVFLRunner {
         public static <R> R call(String blockName, VFLBuffer buffer, Function<IPassthroughVFL, R> fn) {
