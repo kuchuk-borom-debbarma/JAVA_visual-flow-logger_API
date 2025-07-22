@@ -1,16 +1,9 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.VFLBlockContext;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-
-import static dev.kuku.vfl.ScopedVFL.scopedInstance;
-import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public interface IScopedVFL extends IVFL {
     void run(String blockName, String blockMessage, Runnable runnable);
@@ -24,26 +17,4 @@ public interface IScopedVFL extends IVFL {
     <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Function<R, String> endMessageFn, Callable<R> callable, Executor executor);
 
     <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Function<R, String> endMessageFn, Callable<R> callable);
-
-    class ScopedVFLRunner {
-        public static <R> R call(String blockName, VFLBuffer buffer, Callable<R> fn) {
-            var rootBlockContext = new BlockData(generateUID(), null, blockName);
-            buffer.pushBlockToBuffer(rootBlockContext);
-            var vflContext = new VFLBlockContext(rootBlockContext, buffer);
-            IScopedVFL rootScope = new ScopedVFL(vflContext);
-            try {
-                return ScopedValue.where(scopedInstance, rootScope)
-                        .call(() -> BlockHelper.CallFnForLogger(fn, null, null, rootScope));
-            } finally {
-                buffer.flushAndClose();
-            }
-        }
-
-        public static void run(String blockName, VFLBuffer buffer, Runnable runnable) {
-            ScopedVFLRunner.call(blockName, buffer, () -> {
-                runnable.run();
-                return null;
-            });
-        }
-    }
 }
