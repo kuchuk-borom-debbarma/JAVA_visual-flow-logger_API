@@ -1,6 +1,6 @@
 package dev.kuku.vfl.passthrough;
 
-import dev.kuku.vfl.StartBlockHelper;
+import dev.kuku.vfl.BlockHelper;
 import dev.kuku.vfl.core.IVFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
@@ -36,7 +36,7 @@ public interface IPassthroughVFL extends IVFL {
             VFLBlockContext rootContext = new VFLBlockContext(rootBlockInfo, buffer);
             IPassthroughVFL rootLogger = new PassthroughVFL(rootContext);
             try {
-                return StartBlockHelper.CallFnForLogger(() -> fn.apply(rootLogger), null, null, rootLogger);
+                return BlockHelper.CallFnForLogger(() -> fn.apply(rootLogger), null, null, rootLogger);
             } finally {
                 buffer.flushAndClose();
             }

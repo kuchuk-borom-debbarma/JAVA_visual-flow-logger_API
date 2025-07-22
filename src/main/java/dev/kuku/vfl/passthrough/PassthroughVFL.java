@@ -1,6 +1,6 @@
 package dev.kuku.vfl.passthrough;
 
-import dev.kuku.vfl.StartBlockHelper;
+import dev.kuku.vfl.BlockHelper;
 import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.LoggerAndBlockLogData;
@@ -26,44 +26,44 @@ class PassthroughVFL extends VFL implements IPassthroughVFL {
     @Override
     public void run(String blockName, String message, Consumer<IPassthroughVFL> fn) {
         ensureBlockStarted();
-        StartBlockHelper.SetupStartBlock(blockName, message, true, blockContext, PassthroughVFL::new, loggerAndBlockLogData -> StartBlockHelper.RunFnForLogger(() -> fn.accept((IPassthroughVFL) loggerAndBlockLogData.logger()), null, loggerAndBlockLogData.logger()));
+        BlockHelper.SetupStartBlock(blockName, message, true, blockContext, PassthroughVFL::new, loggerAndBlockLogData -> BlockHelper.RunFnForLogger(() -> fn.accept((IPassthroughVFL) loggerAndBlockLogData.logger()), null, loggerAndBlockLogData.logger()));
     }
 
     @Override
     public CompletableFuture<Void> runAsync(String blockName, String message, Consumer<IPassthroughVFL> fn, Executor executor) {
         ensureBlockStarted();
-        LoggerAndBlockLogData setupResult = StartBlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
-        return CompletableFuture.runAsync(() -> StartBlockHelper.RunFnForLogger(() -> fn.accept((IPassthroughVFL) setupResult.logger()), null, setupResult.logger()), executor);
+        LoggerAndBlockLogData setupResult = BlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
+        return CompletableFuture.runAsync(() -> BlockHelper.RunFnForLogger(() -> fn.accept((IPassthroughVFL) setupResult.logger()), null, setupResult.logger()), executor);
     }
 
     @Override
     public CompletableFuture<Void> runAsync(String blockName, String message, Consumer<IPassthroughVFL> fn) {
         ensureBlockStarted();
-        LoggerAndBlockLogData setupResult = StartBlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
-        return CompletableFuture.runAsync(() -> StartBlockHelper.RunFnForLogger(() -> fn.accept((IPassthroughVFL) setupResult.logger()), null, setupResult.logger()));
+        LoggerAndBlockLogData setupResult = BlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
+        return CompletableFuture.runAsync(() -> BlockHelper.RunFnForLogger(() -> fn.accept((IPassthroughVFL) setupResult.logger()), null, setupResult.logger()));
     }
 
     @Override
     public <R> R call(String blockName, String message, Function<R, String> endMessageFn,
                       Function<IPassthroughVFL, R> fn) {
         ensureBlockStarted();
-        LoggerAndBlockLogData setupResult = StartBlockHelper.SetupStartBlock(blockName, message, true, blockContext, PassthroughVFL::new, null);
-        return StartBlockHelper.CallFnForLogger(() -> fn.apply((PassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger());
+        LoggerAndBlockLogData setupResult = BlockHelper.SetupStartBlock(blockName, message, true, blockContext, PassthroughVFL::new, null);
+        return BlockHelper.CallFnForLogger(() -> fn.apply((PassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger());
     }
 
     @Override
     public <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
                                               Function<IPassthroughVFL, R> fn, Executor executor) {
         ensureBlockStarted();
-        LoggerAndBlockLogData setupResult = StartBlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
-        return CompletableFuture.supplyAsync(() -> StartBlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()), executor);
+        LoggerAndBlockLogData setupResult = BlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
+        return CompletableFuture.supplyAsync(() -> BlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()), executor);
     }
 
     @Override
     public <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn) {
         ensureBlockStarted();
-        LoggerAndBlockLogData setupResult = StartBlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
-        return CompletableFuture.supplyAsync(() -> StartBlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()));
+        LoggerAndBlockLogData setupResult = BlockHelper.SetupStartBlock(blockName, message, false, blockContext, PassthroughVFL::new, null);
+        return CompletableFuture.supplyAsync(() -> BlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()));
     }
 
 }

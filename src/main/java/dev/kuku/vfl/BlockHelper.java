@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
-public class StartBlockHelper {
+public class BlockHelper {
     /**
      * calls the provided function, on exception logs the error, runs the passed onError fn and re-throws exception. <br>
      * Upon completion closes the block after processing endMsgFn.
@@ -41,10 +41,10 @@ public class StartBlockHelper {
     }
 
     /**
-     * Same as {@link StartBlockHelper#CallFnForLogger(Callable, Function, Consumer, IVFL)} but doesn't return a valud and has no endMessage.
+     * Same as {@link BlockHelper#CallFnForLogger(Callable, Function, Consumer, IVFL)} but doesn't return a valud and has no endMessage.
      */
     public static <R> void RunFnForLogger(Runnable runnable, Consumer<Exception> onError, IVFL logger) {
-        StartBlockHelper.CallFnForLogger(() -> {
+        BlockHelper.CallFnForLogger(() -> {
             runnable.run();
             return null;
         }, null, onError, logger);
