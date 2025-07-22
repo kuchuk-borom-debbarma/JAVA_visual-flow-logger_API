@@ -33,7 +33,7 @@ public class ThreadVFL extends VFL implements IThreadVFL {
     public static ThreadVFL Get() {
         var current = THREAD_VFL_STACK.get();
         if (current == null || current.empty()) {
-            throw new NullPointerException("ThreadLocal VFL has not been initialized. Please run " + ThreadVFL.class + ".init(a,b) to start a root logger");
+            throw new NullPointerException("ThreadLocal VFL has not been initialized. Please use " + ThreadVFLRunner.class.getSimpleName() + " to start a new root flow");
         }
         //Get the latest logger in the stack.
         return current.peek();

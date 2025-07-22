@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
 
 public class PassFluentTest {
     private final InMemoryFlushHandlerImpl inMemoryFlushHandler = new InMemoryFlushHandlerImpl();
@@ -60,5 +61,37 @@ public class PassFluentTest {
         f.logText("Summing " + a + " and " + b);
         return f.fn(() -> a + b)
                 .asMsg(integer -> "sum = " + integer);
+    }
+
+    @Test
+    void asyncTest() {
+        PassthroughVFLRunner.run("async test", buffer, iPassthroughVFL -> {
+            var f = new PassthroughFluent(iPassthroughVFL);
+            f.logText("starting async test").asMsg();
+            var t1 = f.startBlock("t1")
+                    .asAsync()
+                    .withExecutor(Executors.newSingleThreadExecutor())
+                    .run(this::task);
+            var t2 = f.startBlock("t2")
+                    .asAsync()
+                    .withExecutor(Executors.newSingleThreadExecutor())
+                    .run(this::task);
+
+            f.logText("Getting t1 and t2").asMsg();
+            t1.join();
+            t2.join();
+        });
+        write("asyncTest");
+    }
+
+    void task(IPassthroughVFL logger) {
+        var f = new PassthroughFluent(logger);
+        f.logText("Starting task").asMsg();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        f.logText("Done task").asMsg();
     }
 }
