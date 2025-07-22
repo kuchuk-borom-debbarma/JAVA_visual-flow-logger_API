@@ -1,6 +1,5 @@
-package dev.kuku.vfl.passthrough;
+package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.IVFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
@@ -18,30 +17,34 @@ public interface IPassthroughVFL extends IVFL {
 
     CompletableFuture<Void> runAsync(String blockName, String message, Consumer<IPassthroughVFL> fn, Executor executor);
 
+    CompletableFuture<Void> runAsync(String blockName, String message, Consumer<IPassthroughVFL> fn);
+
     <R> R call(String blockName, String message, Function<R, String> endMessageFn, Function<IPassthroughVFL, R> fn);
 
     <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
                                        Function<IPassthroughVFL, R> fn, Executor executor);
 
-    class Runner {
+    <R> CompletableFuture<R> callAsync(String blockName, String message, Function<R, String> endMessageFn,
+                                       Function<IPassthroughVFL, R> fn);
+
+    class PassthroughVFLRunner {
         public static <R> R call(String blockName, VFLBuffer buffer, Function<IPassthroughVFL, R> fn) {
             BlockData rootBlockInfo = new BlockData(generateUID(), null, blockName);
             buffer.pushBlockToBuffer(rootBlockInfo);
             VFLBlockContext rootContext = new VFLBlockContext(rootBlockInfo, buffer);
             IPassthroughVFL rootLogger = new PassthroughVFL(rootContext);
             try {
-                return Helper.blockFnLifeCycleHandler(fn, null, rootLogger);
+                return BlockHelper.CallFnForLogger(() -> fn.apply(rootLogger), null, null, rootLogger);
             } finally {
                 buffer.flushAndClose();
             }
         }
 
         public static <R> void run(String blockName, VFLBuffer buffer, Consumer<IPassthroughVFL> fn) {
-            Runner.call(blockName, buffer, (l) -> {
+            PassthroughVFLRunner.call(blockName, buffer, (l) -> {
                 fn.accept(l);
                 return null;
             });
         }
     }
 }
-//TODO flunt api

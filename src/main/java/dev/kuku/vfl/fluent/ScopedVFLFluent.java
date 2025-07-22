@@ -1,7 +1,7 @@
-package dev.kuku.vfl.scoped;
+package dev.kuku.vfl.fluent;
 
-import dev.kuku.vfl.core.IVFL;
-import dev.kuku.vfl.core.VFLFluentAPI;
+import dev.kuku.vfl.IVFL;
+import dev.kuku.vfl.ScopedVFL;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -19,24 +19,24 @@ import java.util.function.Function;
  * - fluent.startBlock("myBlock").andCall(() -> processData()).withEndMsg(r -> "Result: " + r).call()
  */
 
-//TODO scoped instance of logger retrieve it. Figure out how.
-public class ScopedFluentAPI extends VFLFluentAPI {
+public class ScopedVFLFluent extends VFLFluentAPI {
 
-    private static ScopedFluentAPI instance;
+    private static ScopedVFLFluent instance;
 
-    private ScopedFluentAPI() {
+    private ScopedVFLFluent() {
         //Passing no logger. instead we will override getLogger() to give it scoped VFL instance
         super(null);
     }
 
+    //Overriding get logger to pass current scope's logger. This function is used to get the logger before logging operations in parent class
     @Override
     protected IVFL getLogger() {
         return ScopedVFL.get();
     }
 
-    public static ScopedFluentAPI get() {
+    public static ScopedVFLFluent get() {
         if (instance == null) {
-            instance = new ScopedFluentAPI();
+            instance = new ScopedVFLFluent();
         }
         return instance;
     }

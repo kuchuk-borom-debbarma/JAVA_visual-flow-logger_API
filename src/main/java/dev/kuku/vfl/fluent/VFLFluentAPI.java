@@ -1,4 +1,6 @@
-package dev.kuku.vfl.core;
+package dev.kuku.vfl.fluent;
+
+import dev.kuku.vfl.IVFL;
 
 import java.util.concurrent.Callable;
 import java.util.function.Function;
