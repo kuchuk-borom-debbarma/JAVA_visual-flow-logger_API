@@ -1,8 +1,7 @@
 package dev.kuku.vfl.fluent;
 
+import dev.kuku.vfl.IVFL;
 import dev.kuku.vfl.ScopedVFL;
-import dev.kuku.vfl.core.IVFL;
-import dev.kuku.vfl.core.VFLFluentAPI;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;

@@ -1,7 +1,6 @@
 package dev.kuku.vfl.fluent;
 
 import dev.kuku.vfl.IPassthroughVFL;
-import dev.kuku.vfl.core.VFLFluentAPI;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;

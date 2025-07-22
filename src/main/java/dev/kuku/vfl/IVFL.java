@@ -1,10 +1,10 @@
 package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
@@ -28,21 +28,22 @@ public interface IVFL {
     void closeBlock(String endMessage);
 
     class VFLRunner {
-        public static <R> R call(String blockName, VFLBuffer buffer, Function<IVFL, R> fn) {
-            BlockData rootBlock = new BlockData(generateUID(), null, blockName);
-            buffer.pushBlockToBuffer(rootBlock);
+        public static <R> R call(String blockName, VFLBuffer buffer, Function<IVFL, R> fn, Function<R, String> endMsgFn) {
+            var rootBlock = BlockHelper.CreateBlockDataAndPush(generateUID(), blockName, null, buffer);
             var rootContext = new VFLBlockContext(rootBlock, buffer);
             var logger = new VFL(rootContext);
-            R result;
             try {
-                result = fn.apply(logger);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                return BlockHelper.CallFnForLogger(() -> fn.apply(logger), endMsgFn, null, logger);
             } finally {
-                logger.closeBlock(null);
                 buffer.flushAndClose();
             }
-            return result;
+        }
+
+        public static void run(String blockName, VFLBuffer buffer, Consumer<IVFL> fn) {
+            VFLRunner.call(blockName, buffer, ivfl -> {
+                fn.accept(ivfl);
+                return null;
+            }, null);
         }
     }
 }

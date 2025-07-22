@@ -1,5 +1,6 @@
 package dev.kuku.vfl;
 
+import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.*;
 
 import java.time.Instant;
@@ -24,19 +25,13 @@ class BlockHelper {
     /**
      * Creates a block data and returns it after pushing it to buffer.
      *
-     * @param id        ID to assign to the created block
-     * @param blockName name to assign to the block
-     * @param ctx       (Optional) context of current logger if intending to create a sub block data.
+     * @param id            ID to assign to the created block
+     * @param blockName     name to assign to the block
+     * @param parentBlockId (Optional) id of the block that is creating the block in case of sub block start log. Leave empty if root block.
      */
-    public static BlockData CreateBlockDataAndPush(String id, String blockName, VFLBlockContext ctx) {
-        String parentId = null;
-        try {
-            parentId = ctx.blockInfo.getId();
-        } catch (NullPointerException _) {
-
-        }
-        var b = new BlockData(id, parentId, blockName);
-        ctx.buffer.pushBlockToBuffer(b);
+    public static BlockData CreateBlockDataAndPush(String id, String blockName, String parentBlockId, VFLBuffer buffer) {
+        var b = new BlockData(id, parentBlockId, blockName);
+        buffer.pushBlockToBuffer(b);
         return b;
     }
 
