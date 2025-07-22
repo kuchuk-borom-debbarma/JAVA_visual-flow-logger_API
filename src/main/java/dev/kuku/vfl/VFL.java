@@ -50,6 +50,7 @@ class VFL implements IVFL {
             msg = messageFn.apply(r);
         } catch (Exception e) {
             msg = "Failed to process message " + e.getClass().getSimpleName() + " - " + e.getMessage();
+            //TODO: option to silently skip exception or keep it. For fluent too
             throw new RuntimeException(e);
         } finally {
             blockContext.currentLogId = createLogAndPush(logType, msg, null).getId();
