@@ -19,7 +19,7 @@ import java.util.function.Function;
  * - fluent.startBlock("myBlock").andCall(() -> processData()).withEndMsg(r -> "Result: " + r).call()
  */
 
-public class ScopedVFLFluent extends VFLFluentAPI {
+public class ScopedVFLFluent extends VFLFluent {
 
     private static ScopedVFLFluent instance;
 

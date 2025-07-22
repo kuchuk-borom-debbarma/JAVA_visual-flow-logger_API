@@ -4,7 +4,7 @@ import dev.kuku.vfl.IVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
-import dev.kuku.vfl.fluent.VFLFluentAPI;
+import dev.kuku.vfl.fluent.VFLFluent;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileWriter;
@@ -32,7 +32,7 @@ public class FluentTest {
     @Test
     void flat() {
         IVFL.VFLRunner.run("Fluent test", buffer, ivfl -> {
-            var fluent = new VFLFluentAPI(ivfl);
+            var fluent = new VFLFluent(ivfl);
             fluent.logText("What is up!!").asMsg();
             String name = fluent.fn(() -> "Kuku").asMsg(s -> "Hello " + s);
             fluent.logText("Name is " + name).asMsg();
@@ -44,7 +44,7 @@ public class FluentTest {
     void errTest() {
         try {
             IVFL.VFLRunner.run("Fluent test", buffer, ivfl -> {
-                var fluent = new VFLFluentAPI(ivfl);
+                var fluent = new VFLFluent(ivfl);
                 fluent.logText("What is up!!").asMsg();
                 String name = fluent.fn(() -> "Kuku").asMsg(s -> "Hello " + s);
                 fluent.logText("Name is " + name).asMsg();
@@ -59,7 +59,7 @@ public class FluentTest {
     void fluentException() {
         try {
             IVFL.VFLRunner.run("Fluent test", buffer, ivfl -> {
-                var fluent = new VFLFluentAPI(ivfl);
+                var fluent = new VFLFluent(ivfl);
                 fluent.logText("What is up!!").asMsg();
                 String name = fluent.fn(() -> {
                     throw new RuntimeException("GGEZ");

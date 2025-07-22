@@ -1,7 +1,5 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.models.BlockData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 
 import java.util.Stack;
@@ -10,24 +8,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
-
 public class ThreadVFL extends VFL implements IThreadVFL {
     static final ThreadLocal<Stack<ThreadVFL>> THREAD_VFL_STACK = new ThreadLocal<>();
 
-    /// Used by runner to start a root logger
-    static <R> R start(String blockName, VFLBuffer buffer, Callable<R> callable) {
-        var current = THREAD_VFL_STACK.get();
-        if (current != null) {
-            throw new NullPointerException("Can't start root thread vfl logger. Already running an existing operation");
-        }
-        VFLBlockContext rootCtx = new VFLBlockContext(new BlockData(generateUID(), null, blockName), buffer);
-        ThreadVFL parentLogger = new ThreadVFL(rootCtx);
-        buffer.pushBlockToBuffer(rootCtx.blockInfo);
-        return SetupNewThreadLoggerStackAndCall(parentLogger, callable);
-    }
-
-    private static <R> R SetupNewThreadLoggerStackAndCall(ThreadVFL logger, Callable<R> callable) {
+    static <R> R SetupNewThreadLoggerStackAndCall(ThreadVFL logger, Callable<R> callable) {
         if (THREAD_VFL_STACK.get() != null) {
             throw new IllegalStateException("Failed to setup logger stack in thread" + Thread.currentThread().getName() + ". Logger stack already available");
         }
@@ -52,7 +36,7 @@ public class ThreadVFL extends VFL implements IThreadVFL {
         return current.peek();
     }
 
-    private ThreadVFL(VFLBlockContext context) {
+    ThreadVFL(VFLBlockContext context) {
         super(context);
     }
 

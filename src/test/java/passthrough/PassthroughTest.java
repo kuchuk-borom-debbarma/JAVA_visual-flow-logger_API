@@ -48,6 +48,7 @@ public class PassthroughTest {
         });
         write("level1Nest");
     }
+
     @Test
     void multiNest() {
         IPassthroughVFL.PassthroughVFLRunner.run("level1Nest", buffer, l -> {
@@ -77,5 +78,9 @@ public class PassthroughTest {
             l.msg("finished");
         });
         write("multiNest");
+    }
+
+    void asyncTest() {
+        IPassthroughVFL.PassthroughVFLRunner.run("");
     }
 }

@@ -19,12 +19,12 @@ class VFL implements IVFL {
 
     protected LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId) {
         var ld = new LogData(generateUID(),
-            this.blockContext.blockInfo.getId(),
-            this.blockContext.currentLogId,
-            logType,
-            message,
-            referencedBlockId,
-            Instant.now().toEpochMilli());
+                this.blockContext.blockInfo.getId(),
+                this.blockContext.currentLogId,
+                logType,
+                message,
+                referencedBlockId,
+                Instant.now().toEpochMilli());
         this.blockContext.buffer.pushLogToBuffer(ld);
         return ld;
     }

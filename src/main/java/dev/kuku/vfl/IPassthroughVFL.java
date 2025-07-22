@@ -1,15 +1,9 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.VFLBlockContext;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static dev.kuku.vfl.core.util.HelperUtil.generateUID;
 
 public interface IPassthroughVFL extends IVFL {
 
@@ -26,25 +20,4 @@ public interface IPassthroughVFL extends IVFL {
 
     <R> CompletableFuture<R> callAsync(String blockName, String message,
                                        Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn);
-
-    class PassthroughVFLRunner {
-        public static <R> R call(String blockName, VFLBuffer buffer, Function<IPassthroughVFL, R> fn) {
-            BlockData rootBlockInfo = new BlockData(generateUID(), null, blockName);
-            buffer.pushBlockToBuffer(rootBlockInfo);
-            VFLBlockContext rootContext = new VFLBlockContext(rootBlockInfo, buffer);
-            IPassthroughVFL rootLogger = new PassthroughVFL(rootContext);
-            try {
-                return BlockHelper.CallFnForLogger(() -> fn.apply(rootLogger), null, null, rootLogger);
-            } finally {
-                buffer.flushAndClose();
-            }
-        }
-
-        public static <R> void run(String blockName, VFLBuffer buffer, Consumer<IPassthroughVFL> fn) {
-            PassthroughVFLRunner.call(blockName, buffer, (l) -> {
-                fn.accept(l);
-                return null;
-            });
-        }
-    }
 }

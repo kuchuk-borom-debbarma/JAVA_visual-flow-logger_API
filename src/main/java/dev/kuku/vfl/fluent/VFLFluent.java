@@ -14,7 +14,7 @@ import java.util.function.Function;
  * - fluent.fn(() -> computeValue()).asMsg(result -> "Computed: " + result)
  * - fluent.fn(() -> riskyOperation()).asWarn(result -> "Warning: " + result)
  */
-public class VFLFluentAPI {
+public class VFLFluent {
     private final IVFL logger;
 
     //Used by children to override and provide custom logger instance.
@@ -22,7 +22,7 @@ public class VFLFluentAPI {
         return this.logger;
     }
 
-    public VFLFluentAPI(IVFL logger) {
+    public VFLFluent(IVFL logger) {
         this.logger = logger;
     }
 

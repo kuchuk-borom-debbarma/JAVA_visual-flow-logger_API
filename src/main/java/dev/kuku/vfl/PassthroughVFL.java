@@ -63,5 +63,4 @@ class PassthroughVFL extends VFL implements IPassthroughVFL {
         LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, message, false, blockContext, PassthroughVFL::new, null);
         return CompletableFuture.supplyAsync(() -> BlockHelper.CallFnForLogger(() -> fn.apply((IPassthroughVFL) setupResult.logger()), endMessageFn, null, setupResult.logger()));
     }
-
-}//TODO Possible to make generalied runner class?
+}

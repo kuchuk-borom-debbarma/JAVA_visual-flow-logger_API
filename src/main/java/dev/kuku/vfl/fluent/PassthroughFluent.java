@@ -17,10 +17,10 @@ import java.util.function.Function;
  * - fluent.startBlock("myBlock").withMsg("Processing").asAsync().run(logger -> {...})
  * - fluent.startBlock("myBlock").andCall(logger -> compute()).withEndMsg(r -> "Result: " + r).call()
  */
-public class PassthroughFluentAPI extends VFLFluentAPI {
+public class PassthroughFluent extends VFLFluent {
     private final IPassthroughVFL passthroughLogger;
 
-    public PassthroughFluentAPI(IPassthroughVFL logger) {
+    public PassthroughFluent(IPassthroughVFL logger) {
         super(logger);
         this.passthroughLogger = logger;
     }
@@ -86,14 +86,14 @@ public class PassthroughFluentAPI extends VFLFluentAPI {
         /**
          * Run block operation with message
          */
-        public void run(Consumer<IPassthroughVFL> fn) {
+        public void toRun(Consumer<IPassthroughVFL> fn) {
             passthroughLogger.run(blockName, message, fn);
         }
 
         /**
          * Start a call operation with message
          */
-        public <R> CallStep<R> andCall(Function<IPassthroughVFL, R> fn) {
+        public <R> CallStep<R> toCall(Function<IPassthroughVFL, R> fn) {
             return new CallStep<>(blockName, message, fn);
         }
 
