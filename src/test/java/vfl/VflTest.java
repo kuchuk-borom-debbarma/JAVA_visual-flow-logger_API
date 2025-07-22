@@ -1,6 +1,6 @@
 package vfl;
 
-import dev.kuku.vfl.IVFL;
+import dev.kuku.vfl.VFLRunner;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
@@ -30,7 +30,7 @@ public class VflTest {
 
     @Test
     void FlatLogging() {
-        IVFL.VFLRunner.run("Flat logging test", buffer, logger -> {
+        VFLRunner.run("Flat logging test", buffer, logger -> {
             logger.msg("Testing a flat block right now");
             logger.error("What should i even write lol");
             logger.warn("What should i even write lol");
@@ -42,11 +42,11 @@ public class VflTest {
     @Test
     void exceptionThrowing() {
         try {
-            IVFL.VFLRunner.call("nested logging test", buffer, l -> {
+            VFLRunner.call("nested logging test", buffer, l -> {
                 int a = l.msgFn(() -> 1, integer -> "a = " + integer);
                 int b = l.msgFn(() -> 2, i -> "b = " + i);
                 throw new RuntimeException("Wahahah you got pranked!");
-            }, o -> String.format("Result of nested logging is %s", o));
+            });
 
         } catch (RuntimeException _) {
         }

@@ -1,6 +1,6 @@
 package vfl;
 
-import dev.kuku.vfl.IVFL;
+import dev.kuku.vfl.VFLRunner;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
@@ -31,7 +31,7 @@ public class FluentTest {
 
     @Test
     void flat() {
-        IVFL.VFLRunner.run("Fluent test", buffer, ivfl -> {
+        VFLRunner.run("Fluent test", buffer, ivfl -> {
             var fluent = new VFLFluent(ivfl);
             fluent.logText("What is up!!").asMsg();
             String name = fluent.fn(() -> "Kuku").asMsg(s -> "Hello " + s);
@@ -43,7 +43,7 @@ public class FluentTest {
     @Test
     void errTest() {
         try {
-            IVFL.VFLRunner.run("Fluent test", buffer, ivfl -> {
+            VFLRunner.run("Fluent test", buffer, ivfl -> {
                 var fluent = new VFLFluent(ivfl);
                 fluent.logText("What is up!!").asMsg();
                 String name = fluent.fn(() -> "Kuku").asMsg(s -> "Hello " + s);
@@ -58,7 +58,7 @@ public class FluentTest {
     @Test
     void fluentException() {
         try {
-            IVFL.VFLRunner.run("Fluent test", buffer, ivfl -> {
+            VFLRunner.run("Fluent test", buffer, ivfl -> {
                 var fluent = new VFLFluent(ivfl);
                 fluent.logText("What is up!!").asMsg();
                 String name = fluent.fn(() -> {
