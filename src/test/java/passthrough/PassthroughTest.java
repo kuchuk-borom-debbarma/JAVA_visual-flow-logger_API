@@ -1,5 +1,6 @@
 package passthrough;
 
+import dev.kuku.vfl.IVFL;
 import dev.kuku.vfl.PassthroughVFLRunner;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
@@ -10,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
 
 public class PassthroughTest {
     private final InMemoryFlushHandlerImpl inMemoryFlushHandler = new InMemoryFlushHandlerImpl();
@@ -80,6 +82,27 @@ public class PassthroughTest {
         write("multiNest");
     }
 
+    @Test
     void asyncTest() {
+        PassthroughVFLRunner.run("async test", buffer, iPassthroughVFL -> {
+            iPassthroughVFL.msg("Starting async test");
+            iPassthroughVFL.msg("Defining first task");
+            var t1 = iPassthroughVFL.runAsync("t1", "Starting t1", this::task, Executors.newVirtualThreadPerTaskExecutor());
+            var t2 = iPassthroughVFL.runAsync("t2", "Starting t2", this::task, Executors.newVirtualThreadPerTaskExecutor());
+            t1.join();
+            t2.join();
+            iPassthroughVFL.msg("Finished async test.");
+        });
+        write("asyncTest");
+    }
+
+    void task(IVFL logger) {
+        logger.msg("Starting task");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        logger.msg("Task complete");
     }
 }

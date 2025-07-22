@@ -11,6 +11,9 @@ import java.util.function.Function;
 public class ThreadVFL extends VFL implements IThreadVFL {
     static final ThreadLocal<Stack<ThreadVFL>> THREAD_VFL_STACK = new ThreadLocal<>();
 
+    /**
+     * Setup thread's logger stack and then call the callable. Cleans thread variable after operation is complete.
+     */
     static <R> R SetupNewThreadLoggerStackAndCall(ThreadVFL logger, Callable<R> callable) {
         if (THREAD_VFL_STACK.get() != null) {
             throw new IllegalStateException("Failed to setup logger stack in thread" + Thread.currentThread().getName() + ". Logger stack already available");
