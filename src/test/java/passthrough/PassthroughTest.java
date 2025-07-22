@@ -1,6 +1,6 @@
 package passthrough;
 
-import dev.kuku.vfl.IPassthroughVFL;
+import dev.kuku.vfl.PassthroughVFLRunner;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
@@ -30,7 +30,7 @@ public class PassthroughTest {
 
     @Test
     void level1Nest() {
-        IPassthroughVFL.PassthroughVFLRunner.run("level1Nest", buffer, l -> {
+        PassthroughVFLRunner.run("level1Nest", buffer, l -> {
             l.msg("Starting a level 1 nest test");
             l.msg("Currently at level 1");
             String name = l.call("Name generator", "Generating name in another block",
@@ -51,7 +51,7 @@ public class PassthroughTest {
 
     @Test
     void multiNest() {
-        IPassthroughVFL.PassthroughVFLRunner.run("level1Nest", buffer, l -> {
+        PassthroughVFLRunner.run("level1Nest", buffer, l -> {
             l.msg("Starting a level 1 nest test");
             l.msg("Currently at level 1");
             String name = l.call("Name generator", "Generating name in another block",
@@ -81,6 +81,5 @@ public class PassthroughTest {
     }
 
     void asyncTest() {
-        IPassthroughVFL.PassthroughVFLRunner.run("");
     }
 }

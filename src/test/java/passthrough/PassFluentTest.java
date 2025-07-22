@@ -1,6 +1,7 @@
 package passthrough;
 
 import dev.kuku.vfl.IPassthroughVFL;
+import dev.kuku.vfl.PassthroughVFLRunner;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
@@ -31,7 +32,7 @@ public class PassFluentTest {
 
     @Test
     void flat() {
-        IPassthroughVFL.PassthroughVFLRunner.run("flat test", buffer, (l) -> {
+        PassthroughVFLRunner.run("flat test", buffer, (l) -> {
             var f = new PassthroughFluent(l);
             f.logText("Starting flat test").asMsg();
             f.logText("So this is a flat").asError();
@@ -41,7 +42,7 @@ public class PassFluentTest {
 
     @Test
     void nested() {
-        IPassthroughVFL.PassthroughVFLRunner.run("flat test", buffer, (l) -> {
+        PassthroughVFLRunner.run("flat test", buffer, (l) -> {
             var f = new PassthroughFluent(l);
             f.logText("Starting flat test").asMsg();
             f.logText("Starting a nested call").asError();
