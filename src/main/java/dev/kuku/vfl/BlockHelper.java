@@ -2,6 +2,8 @@ package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.*;
+import dev.kuku.vfl.core.models.dtos.LoggerAndBlockLogData;
+import dev.kuku.vfl.core.models.logs.Log;
 
 import java.time.Instant;
 import java.util.concurrent.Callable;
@@ -29,8 +31,8 @@ class BlockHelper {
      * @param blockName     name to assign to the block
      * @param parentBlockId (Optional) id of the block that is creating the block in case of sub block start log. Leave empty if root block.
      */
-    public static BlockData CreateBlockDataAndPush(String id, String blockName, String parentBlockId, VFLBuffer buffer) {
-        var b = new BlockData(id, parentBlockId, blockName);
+    public static Block CreateBlockDataAndPush(String id, String blockName, String parentBlockId, VFLBuffer buffer) {
+        var b = new Block(id, parentBlockId, blockName);
         buffer.pushBlockToBuffer(b);
         return b;
     }
@@ -51,16 +53,16 @@ class BlockHelper {
      */
     public static LoggerAndBlockLogData SetupSubBlockStart(String blockName, String startMessage, boolean moveFwd, VFLBlockContext blockContext, Function<VFLBlockContext, VFL> createLoggerFn, Consumer<LoggerAndBlockLogData> afterSetupFn, boolean isSecondary) {
         String subBlockId = generateUID();
-        BlockData blockData = new BlockData(subBlockId, blockContext.blockInfo.getId(), blockName);
-        LogData logData = new LogData(generateUID(), blockContext.blockInfo.getId(), blockContext.currentLogId, VflLogType.SUB_BLOCK_START, startMessage, subBlockId, Instant.now().toEpochMilli(), isSecondary);
-        VFLBlockContext subBlockCtx = new VFLBlockContext(blockData, blockContext.buffer);
-        blockContext.buffer.pushBlockToBuffer(blockData);
-        blockContext.buffer.pushLogToBuffer(logData);
+        Block block = new Block(subBlockId, blockContext.blockInfo.getId(), blockName);
+        Log log = new Log(generateUID(), blockContext.blockInfo.getId(), blockContext.currentLogId, VflLogType.SUB_BLOCK_START, startMessage, subBlockId, Instant.now().toEpochMilli(), isSecondary);
+        VFLBlockContext subBlockCtx = new VFLBlockContext(block, blockContext.buffer);
+        blockContext.buffer.pushBlockToBuffer(block);
+        blockContext.buffer.pushLogToBuffer(log);
         if (moveFwd) {
-            blockContext.currentLogId = logData.getId();
+            blockContext.currentLogId = log.getId();
         }
         var logger = createLoggerFn.apply(subBlockCtx);
-        LoggerAndBlockLogData createdData = new LoggerAndBlockLogData(logger, blockData, logData);
+        LoggerAndBlockLogData createdData = new LoggerAndBlockLogData(logger, block, log);
         if (afterSetupFn != null)
             afterSetupFn.accept(createdData);
         return createdData;

@@ -3,24 +3,24 @@ package dev.kuku.vfl.core.buffer.flushHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.Log;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
-    public List<LogData> logs = new ArrayList<>();
-    public List<BlockData> blocks = new ArrayList<>();
+    public List<Log> logs = new ArrayList<>();
+    public List<Block> blocks = new ArrayList<>();
 
     @Override
-    public boolean pushLogsToServer(List<LogData> logs) {
+    public boolean pushLogsToServer(List<Log> logs) {
         this.logs.addAll(logs);
         return true;
     }
 
     @Override
-    public boolean pushBlocksToServer(List<BlockData> blocks) {
+    public boolean pushBlocksToServer(List<Block> blocks) {
         this.blocks.addAll(blocks);
         return true;
     }
@@ -31,23 +31,23 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
             ArrayNode resultArray = mapper.createArrayNode();
 
             // Create maps for quick lookup
-            Map<String, BlockData> blockMap = blocks.stream()
-                    .collect(Collectors.toMap(BlockData::getId, block -> block));
+            Map<String, Block> blockMap = blocks.stream()
+                    .collect(Collectors.toMap(Block::getId, block -> block));
 
             Set<String> validBlockIds = blocks.stream()
-                    .map(BlockData::getId)
+                    .map(Block::getId)
                     .collect(Collectors.toSet());
 
                         // Create a map for BLOCK_END logs by blockId
-                        Map<String, LogData> blockEndLogMap = logs.stream()
+                        Map<String, Log> blockEndLogMap = logs.stream()
                                 .filter(log -> log.getLogType() != null && "BLOCK_END".equals(log.getLogType().toString()))
-                                .collect(Collectors.toMap(LogData::getBlockId, log -> log, (existing, replacement) -> replacement));
+                                .collect(Collectors.toMap(Log::getBlockId, log -> log, (existing, replacement) -> replacement));
 
                         // Separate valid and invalid logs
-                        Map<String, List<LogData>> validLogsByBlockId = new HashMap<>();
-                        List<LogData> invalidLogs = new ArrayList<>();
+                        Map<String, List<Log>> validLogsByBlockId = new HashMap<>();
+                        List<Log> invalidLogs = new ArrayList<>();
 
-                        for (LogData log : logs) {
+                        for (Log log : logs) {
                             if (log.getBlockId() != null && validBlockIds.contains(log.getBlockId())) {
                                 validLogsByBlockId.computeIfAbsent(log.getBlockId(), k -> new ArrayList<>()).add(log);
                             } else {
@@ -58,12 +58,12 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                         // Find blocks that are referenced by SUB_BLOCK_START logs
                         Set<String> referencedBlockIds = logs.stream()
                                 .filter(log -> log.getLogType() != null && "SUB_BLOCK_START".equals(log.getLogType().toString()))
-                                .map(LogData::getReferencedBlockId)
+                                .map(Log::getReferencedBlockId)
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet());
 
                         // Process only root blocks (blocks that are not referenced by SUB_BLOCK_START logs)
-                        for (BlockData block : blocks) {
+                        for (Block block : blocks) {
                             if (!referencedBlockIds.contains(block.getId())) {
                                 ObjectNode blockNode = createNestedBlockNode(mapper, block, validLogsByBlockId, blockMap, blockEndLogMap);
                                 resultArray.add(blockNode);
@@ -89,7 +89,7 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     }
                 }
 
-                private ArrayNode buildLogHierarchy(ObjectMapper mapper, List<LogData> logs) {
+                private ArrayNode buildLogHierarchy(ObjectMapper mapper, List<Log> logs) {
                     ArrayNode rootArray = mapper.createArrayNode();
 
                     if (logs.isEmpty()) {
@@ -97,21 +97,21 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     }
 
                     // Create maps for quick lookup
-                    Map<String, LogData> logMap = logs.stream()
-                            .collect(Collectors.toMap(LogData::getId, log -> log));
+                    Map<String, Log> logMap = logs.stream()
+                            .collect(Collectors.toMap(Log::getId, log -> log));
 
                     // Group logs by their parentLogId
-                    Map<String, List<LogData>> logsByParentId = logs.stream()
+                    Map<String, List<Log>> logsByParentId = logs.stream()
                             .collect(Collectors.groupingBy(log ->
                                     log.getParentLogId() == null ? "ROOT" : log.getParentLogId()));
 
                     // Process root logs (those with null parentLogId)
-                    List<LogData> rootLogs = logsByParentId.getOrDefault("ROOT", new ArrayList<>())
+                    List<Log> rootLogs = logsByParentId.getOrDefault("ROOT", new ArrayList<>())
                             .stream()
-                            .sorted(Comparator.comparing(LogData::getTimestamp))
+                            .sorted(Comparator.comparing(Log::getTimestamp))
                             .toList();
 
-                    for (LogData rootLog : rootLogs) {
+                    for (Log rootLog : rootLogs) {
                         ObjectNode logNode = createLogNode(mapper, rootLog);
                         // Recursively add children
                         addChildrenToNode(mapper, logNode, rootLog.getId(), logsByParentId);
@@ -122,15 +122,15 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                 }
 
                 private void addChildrenToNode(ObjectMapper mapper, ObjectNode parentNode, String parentId,
-                                               Map<String, List<LogData>> logsByParentId) {
-                    List<LogData> children = logsByParentId.getOrDefault(parentId, new ArrayList<>())
+                                               Map<String, List<Log>> logsByParentId) {
+                    List<Log> children = logsByParentId.getOrDefault(parentId, new ArrayList<>())
                             .stream()
-                            .sorted(Comparator.comparing(LogData::getTimestamp))
+                            .sorted(Comparator.comparing(Log::getTimestamp))
                             .toList();
 
                     if (!children.isEmpty()) {
                         ArrayNode childrenArray = mapper.createArrayNode();
-                        for (LogData child : children) {
+                        for (Log child : children) {
                             ObjectNode childNode = createLogNode(mapper, child);
                             // Recursively add children of this child
                             addChildrenToNode(mapper, childNode, child.getId(), logsByParentId);
@@ -140,10 +140,10 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     }
                 }
 
-                private ArrayNode buildNestedLogHierarchy(ObjectMapper mapper, List<LogData> logs,
-                                                          Map<String, BlockData> blockMap,
-                                                          Map<String, List<LogData>> validLogsByBlockId,
-                                                          Map<String, LogData> blockEndLogMap) {
+                private ArrayNode buildNestedLogHierarchy(ObjectMapper mapper, List<Log> logs,
+                                                          Map<String, Block> blockMap,
+                                                          Map<String, List<Log>> validLogsByBlockId,
+                                                          Map<String, Log> blockEndLogMap) {
                     ArrayNode rootArray = mapper.createArrayNode();
 
                     if (logs.isEmpty()) {
@@ -151,21 +151,21 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     }
 
                     // Create maps for quick lookup
-                    Map<String, LogData> logMap = logs.stream()
-                            .collect(Collectors.toMap(LogData::getId, log -> log));
+                    Map<String, Log> logMap = logs.stream()
+                            .collect(Collectors.toMap(Log::getId, log -> log));
 
                     // Group logs by their parentLogId
-                    Map<String, List<LogData>> logsByParentId = logs.stream()
+                    Map<String, List<Log>> logsByParentId = logs.stream()
                             .collect(Collectors.groupingBy(log ->
                                     log.getParentLogId() == null ? "ROOT" : log.getParentLogId()));
 
                     // Process root logs (those with null parentLogId)
-                    List<LogData> rootLogs = logsByParentId.getOrDefault("ROOT", new ArrayList<>())
+                    List<Log> rootLogs = logsByParentId.getOrDefault("ROOT", new ArrayList<>())
                             .stream()
-                            .sorted(Comparator.comparing(LogData::getTimestamp))
+                            .sorted(Comparator.comparing(Log::getTimestamp))
                             .toList();
 
-                    for (LogData rootLog : rootLogs) {
+                    for (Log rootLog : rootLogs) {
                         ObjectNode logNode = createNestedLogNode(mapper, rootLog, blockMap, validLogsByBlockId, blockEndLogMap);
                         // Recursively add children
                         addNestedChildrenToNode(mapper, logNode, rootLog.getId(), logsByParentId, blockMap, validLogsByBlockId, blockEndLogMap);
@@ -176,18 +176,18 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                 }
 
                 private void addNestedChildrenToNode(ObjectMapper mapper, ObjectNode parentNode, String parentId,
-                                                     Map<String, List<LogData>> logsByParentId,
-                                                     Map<String, BlockData> blockMap,
-                                                     Map<String, List<LogData>> validLogsByBlockId,
-                                                     Map<String, LogData> blockEndLogMap) {
-                    List<LogData> children = logsByParentId.getOrDefault(parentId, new ArrayList<>())
+                                                     Map<String, List<Log>> logsByParentId,
+                                                     Map<String, Block> blockMap,
+                                                     Map<String, List<Log>> validLogsByBlockId,
+                                                     Map<String, Log> blockEndLogMap) {
+                    List<Log> children = logsByParentId.getOrDefault(parentId, new ArrayList<>())
                             .stream()
-                            .sorted(Comparator.comparing(LogData::getTimestamp))
+                            .sorted(Comparator.comparing(Log::getTimestamp))
                             .toList();
 
                     if (!children.isEmpty()) {
                         ArrayNode childrenArray = mapper.createArrayNode();
-                        for (LogData child : children) {
+                        for (Log child : children) {
                             ObjectNode childNode = createNestedLogNode(mapper, child, blockMap, validLogsByBlockId, blockEndLogMap);
                             // Recursively add children of this child
                             addNestedChildrenToNode(mapper, childNode, child.getId(), logsByParentId, blockMap, validLogsByBlockId, blockEndLogMap);
@@ -197,17 +197,17 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     }
                 }
 
-                private ObjectNode createNestedBlockNode(ObjectMapper mapper, BlockData block,
-                                                         Map<String, List<LogData>> validLogsByBlockId,
-                                                         Map<String, BlockData> blockMap,
-                                                         Map<String, LogData> blockEndLogMap) {
+                private ObjectNode createNestedBlockNode(ObjectMapper mapper, Block block,
+                                                         Map<String, List<Log>> validLogsByBlockId,
+                                                         Map<String, Block> blockMap,
+                                                         Map<String, Log> blockEndLogMap) {
                     ObjectNode blockNode = mapper.createObjectNode();
                     blockNode.put("blockId", block.getId());
                     blockNode.put("blockName", block.getBlockName());
                     blockNode.put("parentBlockId", block.getParentBlockId());
 
                     // Get logs for this block
-                    List<LogData> blockLogs = validLogsByBlockId.getOrDefault(block.getId(), new ArrayList<>());
+                    List<Log> blockLogs = validLogsByBlockId.getOrDefault(block.getId(), new ArrayList<>());
 
                     // Build hierarchical log structure with branches
                     ArrayNode logsArray = buildNestedLogHierarchy(mapper, blockLogs, blockMap, validLogsByBlockId, blockEndLogMap);
@@ -216,10 +216,10 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     return blockNode;
                 }
 
-                private ObjectNode createNestedLogNode(ObjectMapper mapper, LogData log,
-                                                       Map<String, BlockData> blockMap,
-                                                       Map<String, List<LogData>> validLogsByBlockId,
-                                                       Map<String, LogData> blockEndLogMap) {
+                private ObjectNode createNestedLogNode(ObjectMapper mapper, Log log,
+                                                       Map<String, Block> blockMap,
+                                                       Map<String, List<Log>> validLogsByBlockId,
+                                                       Map<String, Log> blockEndLogMap) {
                     ObjectNode logNode = mapper.createObjectNode();
                     logNode.put("id", log.getId());
                     logNode.put("blockId", log.getBlockId());
@@ -233,10 +233,10 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     if (log.getLogType() != null && "SUB_BLOCK_START".equals(log.getLogType().toString())
                             && log.getReferencedBlockId() != null) {
 
-                        BlockData referencedBlock = blockMap.get(log.getReferencedBlockId());
+                        Block referencedBlock = blockMap.get(log.getReferencedBlockId());
 
                         // Find the BLOCK_END log for the referenced block and add end message
-                        LogData blockEndLog = blockEndLogMap.get(log.getReferencedBlockId());
+                        Log blockEndLog = blockEndLogMap.get(log.getReferencedBlockId());
                         if (blockEndLog != null) {
                             logNode.put("endMessage", blockEndLog.getMessage());
                         }
@@ -249,7 +249,7 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                             nestedBlockNode.put("parentBlockId", referencedBlock.getParentBlockId());
 
                             // Get logs for the referenced block
-                            List<LogData> referencedBlockLogs = validLogsByBlockId.getOrDefault(referencedBlock.getId(), new ArrayList<>());
+                            List<Log> referencedBlockLogs = validLogsByBlockId.getOrDefault(referencedBlock.getId(), new ArrayList<>());
 
                             // Build hierarchical log structure for nested block
                             ArrayNode referencedLogsArray = buildNestedLogHierarchy(mapper, referencedBlockLogs, blockMap, validLogsByBlockId, blockEndLogMap);
@@ -268,7 +268,7 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     return logNode;
                 }
 
-                private ObjectNode createLogNode(ObjectMapper mapper, LogData log) {
+                private ObjectNode createLogNode(ObjectMapper mapper, Log log) {
                     ObjectNode logNode = mapper.createObjectNode();
                     logNode.put("id", log.getId());
                     logNode.put("blockId", log.getBlockId());

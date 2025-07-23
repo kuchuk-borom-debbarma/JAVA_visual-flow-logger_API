@@ -1,6 +1,6 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.VflLogType;
 
@@ -17,8 +17,8 @@ class VFL implements IVFL {
         this.blockContext = blockContext;
     }
 
-    protected LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId, boolean isSecondary) {
-        var ld = new LogData(generateUID(),
+    protected Log createLogAndPush(VflLogType logType, String message, String referencedBlockId, boolean isSecondary) {
+        var ld = new Log(generateUID(),
                 this.blockContext.blockInfo.getId(),
                 this.blockContext.currentLogId,
                 logType,

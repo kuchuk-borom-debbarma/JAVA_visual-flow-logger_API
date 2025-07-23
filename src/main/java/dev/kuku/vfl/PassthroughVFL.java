@@ -1,7 +1,7 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LoggerAndBlockLogData;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.dtos.LoggerAndBlockLogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 
 import java.util.concurrent.CompletableFuture;
@@ -15,8 +15,8 @@ class PassthroughVFL extends VFL implements IPassthroughVFL {
         super(context);
     }
 
-    private BlockData createAndPushBlockData(String id, String blockName) {
-        BlockData bd = new BlockData(id, blockContext.blockInfo.getId(), blockName);
+    private Block createAndPushBlockData(String id, String blockName) {
+        Block bd = new Block(id, blockContext.blockInfo.getId(), blockName);
         blockContext.buffer.pushBlockToBuffer(bd);
         return bd;
     }

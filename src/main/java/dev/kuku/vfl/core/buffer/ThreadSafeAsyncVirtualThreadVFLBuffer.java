@@ -1,8 +1,8 @@
 package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.concurrent.Executors;
 public class ThreadSafeAsyncVirtualThreadVFLBuffer implements VFLBuffer {
     private final int blockSize;
     private final int logSize;
-    private final List<LogData> logsToFlush;
-    private final List<BlockData> blocksToFlush;
+    private final List<Log> logsToFlush;
+    private final List<Block> blocksToFlush;
     private final VFLFlushHandler flushHandler;
     private final ExecutorService executor;
     private final Object lock = new Object();
@@ -28,7 +28,7 @@ public class ThreadSafeAsyncVirtualThreadVFLBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogToBuffer(LogData log) {
+    public void pushLogToBuffer(Log log) {
         synchronized (lock) {
             logsToFlush.add(log);
         }
@@ -37,7 +37,7 @@ public class ThreadSafeAsyncVirtualThreadVFLBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushBlockToBuffer(BlockData block) {
+    public void pushBlockToBuffer(Block block) {
         synchronized (lock) {
             blocksToFlush.add(block);
         }
@@ -59,8 +59,8 @@ public class ThreadSafeAsyncVirtualThreadVFLBuffer implements VFLBuffer {
     }
 
     private void flush() {
-        List<LogData> l;
-        List<BlockData> b;
+        List<Log> l;
+        List<Block> b;
         synchronized (lock) {
             l = new ArrayList<>(logsToFlush);
             logsToFlush.clear();
@@ -81,8 +81,8 @@ public class ThreadSafeAsyncVirtualThreadVFLBuffer implements VFLBuffer {
     }
 
     private void flushBlocking() {
-        List<LogData> l;
-        List<BlockData> b;
+        List<Log> l;
+        List<Block> b;
         synchronized (lock) {
             l = new ArrayList<>(logsToFlush);
             logsToFlush.clear();

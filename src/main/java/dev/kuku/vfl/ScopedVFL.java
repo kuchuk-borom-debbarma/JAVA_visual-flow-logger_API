@@ -1,6 +1,6 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.models.LoggerAndBlockLogData;
+import dev.kuku.vfl.core.models.dtos.LoggerAndBlockLogData;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 
 import java.util.concurrent.Callable;
