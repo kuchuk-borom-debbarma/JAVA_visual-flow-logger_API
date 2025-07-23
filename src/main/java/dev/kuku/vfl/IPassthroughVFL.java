@@ -21,12 +21,14 @@ public interface IPassthroughVFL extends IVFL {
     <R> CompletableFuture<R> callAsync(String blockName, String message,
                                        Function<IPassthroughVFL, R> fn, Function<R, String> endMessageFn);
 
+
     /*
      * TODO branch for fire and forget or event
-     * The idea is to add a branch log to the sequence
-     * Then we can pass the branch log context to the event publisher.
-     * The event listener will then use it to create a sub block with secondary = true
+     * The idea is to add a sub_block_start log to the sequence and return the logger
+     * Then we can pass the branch logger to the event publisher. Event listeners will create sub block starts * of its own without moving the chain with secondary = true.
      *
-     * For fire and forget within the caller itself we can pass function itself and it will create the branch and the sub block with secondary true automatically
+     * For scenario where its a fire and forget operation which takes in a function. Create a secondary non joining back sub block start.
+     *
+     * TODO :- Define complex log types clearly 
      */
 }
