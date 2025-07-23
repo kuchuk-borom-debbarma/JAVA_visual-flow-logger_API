@@ -58,7 +58,7 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                         // Find blocks that are referenced by SUB_BLOCK_START logs
                         Set<String> referencedBlockIds = logs.stream()
                                 .filter(log -> log.getLogType() != null && "SUB_BLOCK_START".equals(log.getLogType().toString()))
-                                .map(LogData::getReferencedBlock)
+                                .map(LogData::getReferencedBlockId)
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet());
 
@@ -226,17 +226,17 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     logNode.put("parentLogId", log.getParentLogId());
                     logNode.put("logType", log.getLogType() != null ? log.getLogType().toString() : null);
                     logNode.put("message", log.getMessage());
-                    logNode.put("referencedBlock", log.getReferencedBlock());
+                    logNode.put("referencedBlock", log.getReferencedBlockId());
                     logNode.put("timestamp", log.getTimestamp());
 
                     // Handle SUB_BLOCK_START logs by nesting the referenced block
                     if (log.getLogType() != null && "SUB_BLOCK_START".equals(log.getLogType().toString())
-                            && log.getReferencedBlock() != null) {
+                            && log.getReferencedBlockId() != null) {
 
-                        BlockData referencedBlock = blockMap.get(log.getReferencedBlock());
+                        BlockData referencedBlock = blockMap.get(log.getReferencedBlockId());
 
                         // Find the BLOCK_END log for the referenced block and add end message
-                        LogData blockEndLog = blockEndLogMap.get(log.getReferencedBlock());
+                        LogData blockEndLog = blockEndLogMap.get(log.getReferencedBlockId());
                         if (blockEndLog != null) {
                             logNode.put("endMessage", blockEndLog.getMessage());
                         }
@@ -258,7 +258,7 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                         } else {
                             // Referenced block doesn't exist
                             ObjectNode invalidBlockNode = mapper.createObjectNode();
-                            invalidBlockNode.put("blockId", log.getReferencedBlock());
+                            invalidBlockNode.put("blockId", log.getReferencedBlockId());
                             invalidBlockNode.put("blockName", "INVALID_BLOCK");
                             invalidBlockNode.put("error", "Referenced block not found");
                             logNode.set("nestedBlock", invalidBlockNode);
@@ -275,7 +275,7 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
                     logNode.put("parentLogId", log.getParentLogId());
                     logNode.put("logType", log.getLogType() != null ? log.getLogType().toString() : null);
                     logNode.put("message", log.getMessage());
-                    logNode.put("referencedBlock", log.getReferencedBlock());
+                    logNode.put("referencedBlock", log.getReferencedBlockId());
                     logNode.put("timestamp", log.getTimestamp());
                     return logNode;
                 }

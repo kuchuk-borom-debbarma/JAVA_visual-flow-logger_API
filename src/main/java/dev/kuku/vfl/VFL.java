@@ -17,28 +17,28 @@ class VFL implements IVFL {
         this.blockContext = blockContext;
     }
 
-    protected LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId) {
+    protected LogData createLogAndPush(VflLogType logType, String message, String referencedBlockId, boolean isSecondary) {
         var ld = new LogData(generateUID(),
                 this.blockContext.blockInfo.getId(),
                 this.blockContext.currentLogId,
                 logType,
                 message,
                 referencedBlockId,
-                Instant.now().toEpochMilli());
+                Instant.now().toEpochMilli(), isSecondary);
         this.blockContext.buffer.pushLogToBuffer(ld);
         return ld;
     }
 
     protected void ensureBlockStarted() {
         if (blockContext.blockStarted.compareAndSet(false, true)) {
-            createLogAndPush(VflLogType.BLOCK_START, null, null);
+            createLogAndPush(VflLogType.BLOCK_START, null, null, false);
         }
     }
 
     @Override
     public void msg(String message) {
         ensureBlockStarted();
-        var ld = createLogAndPush(VflLogType.MESSAGE, message, null);
+        var ld = createLogAndPush(VflLogType.MESSAGE, message, null, false);
         this.blockContext.currentLogId = ld.getId();
     }
 
@@ -53,7 +53,7 @@ class VFL implements IVFL {
             //TODO: option to silently skip exception or keep it. For fluent too
             throw new RuntimeException(e);
         } finally {
-            blockContext.currentLogId = createLogAndPush(logType, msg, null).getId();
+            blockContext.currentLogId = createLogAndPush(logType, msg, null, false).getId();
         }
         return r;
     }
@@ -67,7 +67,7 @@ class VFL implements IVFL {
     @Override
     public void warn(String message) {
         ensureBlockStarted();
-        this.blockContext.currentLogId = createLogAndPush(VflLogType.WARN, message, null).getId();
+        this.blockContext.currentLogId = createLogAndPush(VflLogType.WARN, message, null, false).getId();
     }
 
     @Override
@@ -79,7 +79,7 @@ class VFL implements IVFL {
     @Override
     public void error(String message) {
         ensureBlockStarted();
-        this.blockContext.currentLogId = createLogAndPush(VflLogType.EXCEPTION, message, null).getId();
+        this.blockContext.currentLogId = createLogAndPush(VflLogType.EXCEPTION, message, null, false).getId();
     }
 
     @Override
@@ -91,6 +91,6 @@ class VFL implements IVFL {
     @Override
     public void closeBlock(String endMessage) {
         ensureBlockStarted();
-        createLogAndPush(VflLogType.BLOCK_END, endMessage, null);
+        createLogAndPush(VflLogType.BLOCK_END, endMessage, null, false);
     }
 }

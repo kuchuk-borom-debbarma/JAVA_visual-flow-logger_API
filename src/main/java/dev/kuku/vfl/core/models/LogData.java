@@ -6,19 +6,21 @@ public class LogData {
     private String parentLogId;
     private VflLogType logType;
     private String message;
-    private String referencedBlock;
+    private String referencedBlockId;
+
+    private boolean isSecondary; //true if it's a sub block start and async call
     private long timestamp;
 
     public LogData() {
     }
 
-    public LogData(String id, String blockId, String parentLogId, VflLogType logType, String message, String referencedBlock, long timestamp) {
+    public LogData(String id, String blockId, String parentLogId, VflLogType logType, String message, String referencedBlockId, long timestamp, boolean isSecondary) {
         this.id = id;
         this.blockId = blockId;
         this.parentLogId = parentLogId;
         this.logType = logType;
         this.message = message;
-        this.referencedBlock = referencedBlock;
+        this.referencedBlockId = referencedBlockId;
         this.timestamp = timestamp;
     }
 
@@ -62,12 +64,12 @@ public class LogData {
         this.message = message;
     }
 
-    public String getReferencedBlock() {
-        return referencedBlock;
+    public String getReferencedBlockId() {
+        return referencedBlockId;
     }
 
-    public void setReferencedBlock(String referencedBlock) {
-        this.referencedBlock = referencedBlock;
+    public void setReferencedBlockId(String referencedBlockId) {
+        this.referencedBlockId = referencedBlockId;
     }
 
     public long getTimestamp() {
@@ -78,6 +80,10 @@ public class LogData {
         this.timestamp = timestamp;
     }
 
+    public void setIsSecondary(boolean val) {
+        this.isSecondary = val;
+    }
+
     @Override
     public String toString() {
         return "LogData{" +
@@ -86,7 +92,7 @@ public class LogData {
                 ", parentLogId='" + parentLogId + '\'' +
                 ", logType=" + logType +
                 ", message='" + message + '\'' +
-                ", referencedBlock='" + referencedBlock + '\'' +
+                ", referencedBlock='" + referencedBlockId + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
     }

@@ -49,10 +49,10 @@ class BlockHelper {
      * @param afterSetupFn   Optional method to invoke after setup is complete before returning the setup result. One of it's use is in {@link dev.kuku.vfl.ScopedVFL#run(String, String, Runnable)} to run the passed runnable parameter after setup.
      * @return Created subLogger, block data, log data.
      */
-    public static LoggerAndBlockLogData SetupSubBlockStart(String blockName, String startMessage, boolean moveFwd, VFLBlockContext blockContext, Function<VFLBlockContext, VFL> createLoggerFn, Consumer<LoggerAndBlockLogData> afterSetupFn) {
+    public static LoggerAndBlockLogData SetupSubBlockStart(String blockName, String startMessage, boolean moveFwd, VFLBlockContext blockContext, Function<VFLBlockContext, VFL> createLoggerFn, Consumer<LoggerAndBlockLogData> afterSetupFn, boolean isSecondary) {
         String subBlockId = generateUID();
         BlockData blockData = new BlockData(subBlockId, blockContext.blockInfo.getId(), blockName);
-        LogData logData = new LogData(generateUID(), blockContext.blockInfo.getId(), blockContext.currentLogId, VflLogType.SUB_BLOCK_START, startMessage, subBlockId, Instant.now().toEpochMilli());
+        LogData logData = new LogData(generateUID(), blockContext.blockInfo.getId(), blockContext.currentLogId, VflLogType.SUB_BLOCK_START, startMessage, subBlockId, Instant.now().toEpochMilli(), isSecondary);
         VFLBlockContext subBlockCtx = new VFLBlockContext(blockData, blockContext.buffer);
         blockContext.buffer.pushBlockToBuffer(blockData);
         blockContext.buffer.pushLogToBuffer(logData);

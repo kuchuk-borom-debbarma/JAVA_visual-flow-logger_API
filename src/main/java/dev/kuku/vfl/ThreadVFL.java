@@ -63,14 +63,14 @@ public class ThreadVFL extends VFL implements IThreadVFL {
     @Override
     public <R> void run(String blockName, String startMessage, Runnable runnable) {
         ensureBlockStarted();
-        BlockHelper.SetupSubBlockStart(blockName, startMessage, true, blockContext, ThreadVFL::new, loggerAndBlockLogData -> ProcessCallableInCurrentThreadLogger(() -> runnable, null));
+        BlockHelper.SetupSubBlockStart(blockName, startMessage, true, blockContext, ThreadVFL::new, loggerAndBlockLogData -> ProcessCallableInCurrentThreadLogger(() -> runnable, null), false);
     }
 
     @Override
     public <R> CompletableFuture<Void> runAsync(String blockName, String startMessage, Runnable runnable, Executor executor) {
         ensureBlockStarted();
         var startedResult = BlockHelper.SetupSubBlockStart(blockName, startMessage, false, blockContext
-                , ThreadVFL::new, null);
+                , ThreadVFL::new, null, true);
         return CompletableFuture.runAsync(() -> ProcessCallableInCurrentThreadLogger(() -> {
             runnable.run();
             return null;
@@ -81,7 +81,7 @@ public class ThreadVFL extends VFL implements IThreadVFL {
     public <R> CompletableFuture<Void> runAsync(String blockName, String startMessage, Runnable runnable) {
         ensureBlockStarted();
         var startedResult = BlockHelper.SetupSubBlockStart(blockName, startMessage, false, blockContext
-                , ThreadVFL::new, null);
+                , ThreadVFL::new, null, true);
         return CompletableFuture.runAsync(() -> ProcessCallableInCurrentThreadLogger(() -> {
             runnable.run();
             return null;
@@ -94,7 +94,7 @@ public class ThreadVFL extends VFL implements IThreadVFL {
         ensureBlockStarted();
         //Create and push log&block data to buffer, move forward if desired and returns them.
         BlockHelper.SetupSubBlockStart(blockName, startMessage, true, blockContext, ThreadVFL::new,
-                loggerAndBlockLogData -> THREAD_VFL_STACK.get().push((ThreadVFL) loggerAndBlockLogData.logger()));
+                loggerAndBlockLogData -> THREAD_VFL_STACK.get().push((ThreadVFL) loggerAndBlockLogData.logger()), false);
         return ProcessCallableInCurrentThreadLogger(callable, endMsgFn);
     }
 
@@ -102,7 +102,7 @@ public class ThreadVFL extends VFL implements IThreadVFL {
     public <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn, Executor executor) {
         ensureBlockStarted();
         //Setup start block
-        var startResult = BlockHelper.SetupSubBlockStart(blockName, message, false, blockContext, ThreadVFL::new, null);
+        var startResult = BlockHelper.SetupSubBlockStart(blockName, message, false, blockContext, ThreadVFL::new, null, true);
         //return a completable future within which we setup thread logger stack and then use ProcessCallableInCurrentThreadLogger to execute the callable.
         return CompletableFuture.supplyAsync(() -> ThreadVFL.SetupNewThreadLoggerStackAndCall(
                 (ThreadVFL) startResult.logger(), () -> ProcessCallableInCurrentThreadLogger(callable, endMsgFn)
@@ -111,6 +111,12 @@ public class ThreadVFL extends VFL implements IThreadVFL {
 
     @Override
     public <R> CompletableFuture<R> callAsync(String blockName, String message, Callable<R> callable, Function<R, String> endMsgFn) {
-        return null;
+        ensureBlockStarted();
+        //Setup start block
+        var startResult = BlockHelper.SetupSubBlockStart(blockName, message, false, blockContext, ThreadVFL::new, null, true);
+        //return a completable future within which we setup thread logger stack and then use ProcessCallableInCurrentThreadLogger to execute the callable.
+        return CompletableFuture.supplyAsync(() -> ThreadVFL.SetupNewThreadLoggerStackAndCall(
+                (ThreadVFL) startResult.logger(), () -> ProcessCallableInCurrentThreadLogger(callable, endMsgFn)
+        ));
     }
 }

@@ -37,7 +37,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
                     //Create a new scoped logger with the sub logger as value and run the passed runnable in that scope
                     ScopedValue.where(scopedInstance, (ScopedVFL) loggerAndBlockLogData.logger())
                             .run(() -> BlockHelper.RunFnForLogger(runnable, null, loggerAndBlockLogData.logger()));
-                });
+                }, false);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
             Executor executor
     ) {
         ensureBlockStarted();
-        LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null);
+        LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null, true);
         return CompletableFuture.runAsync(() -> ScopedValue.where(scopedInstance, (ScopedVFL) setupResult.logger())
                 .run(() -> BlockHelper.RunFnForLogger(runnable, null, setupResult.logger())), executor);
     }
@@ -56,7 +56,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
     @Override
     public CompletableFuture<Void> runAsync(String blockName, String blockMessage, Runnable runnable) {
         ensureBlockStarted();
-        LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null);
+        LoggerAndBlockLogData setupResult = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null, true);
         return CompletableFuture.runAsync(() -> ScopedValue.where(scopedInstance, (ScopedVFL) setupResult.logger())
                 .run(() -> BlockHelper.RunFnForLogger(runnable, null, setupResult.logger())));
     }
@@ -69,7 +69,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
             Callable<R> callable
     ) {
         ensureBlockStarted();
-        LoggerAndBlockLogData result = BlockHelper.SetupSubBlockStart(blockName, blockMessage, true, blockContext, ScopedVFL::new, null);
+        LoggerAndBlockLogData result = BlockHelper.SetupSubBlockStart(blockName, blockMessage, true, blockContext, ScopedVFL::new, null, false);
         //Create a new scope and set it's logger value to sub logger from result and call the passed callable in that scope
         return ScopedValue.where(scopedInstance, (ScopedVFL) result.logger())
                 .call(() -> BlockHelper.CallFnForLogger(callable, endMessageFn, null, result.logger()));
@@ -84,7 +84,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
             Executor executor
     ) {
         ensureBlockStarted();
-        LoggerAndBlockLogData result = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null);
+        LoggerAndBlockLogData result = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null, true);
         return CompletableFuture.supplyAsync(() ->
                 ScopedValue.where(scopedInstance, (ScopedVFL) result.logger())
                         .call(() -> BlockHelper.CallFnForLogger(callable, endMessageFn, null, result.logger())), executor);
@@ -93,7 +93,7 @@ public class ScopedVFL extends VFL implements IScopedVFL {
     @Override
     public <R> CompletableFuture<R> callAsync(String blockName, String blockMessage, Function<R, String> endMessageFn, Callable<R> callable) {
         ensureBlockStarted();
-        LoggerAndBlockLogData result = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null);
+        LoggerAndBlockLogData result = BlockHelper.SetupSubBlockStart(blockName, blockMessage, false, blockContext, ScopedVFL::new, null, true);
         return CompletableFuture.supplyAsync(() ->
                 ScopedValue.where(scopedInstance, (ScopedVFL) result.logger())
                         .call(() -> BlockHelper.CallFnForLogger(callable, endMessageFn, null, result.logger())));
