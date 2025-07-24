@@ -12,8 +12,8 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
 public abstract class VFLFn extends VFL {
     private <R> R fnHandler(String blockName, String startMessage, Function<VFLFn, R> fn, Function<R, String> endMessageSerializer, LogTypeBlcokStartEnum logType) {
         ensureBlockStarted();
-        Block subBlock = VFLHelper.CreateBlockAndPushT2Buffer(blockName, getParentLogId(), getBuffer());
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(getBlockId(), getParentLogId(), startMessage, subBlock.getId(), logType, getBuffer());
+        Block subBlock = VFLHelper.CreateBlockAndPushT2Buffer(blockName, getCurrentLogId(), getBuffer());
+        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(getBlockId(), getCurrentLogId(), startMessage, subBlock.getId(), logType, getBuffer());
         setCurrentLogId(log.getId());
         return VFLHelper.CallFnWithLogger(() -> fn.apply(getLogger()), getLogger(), endMessageSerializer);
     }

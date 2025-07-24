@@ -9,6 +9,9 @@ import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
@@ -53,5 +56,18 @@ public class VFLHelper {
             logger.close(endMsg);
         }
         return result;
+    }
+
+    public static Set<String> GetLogsAsStringSet(Set<LogTypeEnum> typeToRemove, Set<LogTypeBlcokStartEnum> startLogTypeToRemove) {
+        Set<String> set = new HashSet<>(LogTypeEnum.values().length + LogTypeBlcokStartEnum.values().length);
+        set.addAll(Arrays.stream(LogTypeEnum.values()).map(Object::toString).toList());
+        set.addAll(Arrays.stream(LogTypeBlcokStartEnum.values()).map(Object::toString).toList());
+        if (typeToRemove != null && !typeToRemove.isEmpty()) {
+            typeToRemove.stream().map(Object::toString).toList().forEach(set::remove);
+        }
+        if (startLogTypeToRemove != null && !startLogTypeToRemove.isEmpty()) {
+            startLogTypeToRemove.stream().map(Object::toString).toList().forEach(set::remove);
+        }
+        return set;
     }
 }
