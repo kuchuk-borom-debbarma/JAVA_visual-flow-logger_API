@@ -15,31 +15,84 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
  * It has a getCallableLogger() that needs to be overridden. This is to enable freedom of deciding for how to provide the logger. <br>
  */
 public abstract class VFLCallable extends VFL {
-    private <R> R callHandler(String blockName, String startMessage, Callable<R> callable, Function<R, String> endMessageSerializer, LogTypeBlcokStartEnum logType, boolean move) {
+    /**
+     * Processes a callable inside a sub-block.
+     *
+     * @param blockName            The name of the sub-block.
+     * @param startMessage         The log message to mark block start.
+     * @param callable             The operation to run inside the block.
+     * @param endMessageSerializer A function that converts the result into a log message when closing.
+     * @param logType              The enum defining which log type to use for the sub-block start.
+     * @param move                 Whether to update the current log id after creating the sub-block.
+     */
+    private <R> R callHandler(String blockName,
+                              String startMessage,
+                              Callable<R> callable,
+                              Function<R, String> endMessageSerializer,
+                              LogTypeBlcokStartEnum logType,
+                              boolean move) {
+        var context = getContext();
         ensureBlockStarted();
-        //Create and push block
-        Block subBlock = VFLHelper.CreateBlockAndPushT2Buffer(blockName, getCurrentLogId(), getBuffer());
-        //Create and push log of sub block start type
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(getBlockInfo(), getCurrentLogId(), startMessage, subBlock.getId(), logType, getBuffer());
+        Block subBlock = VFLHelper.CreateBlockAndPushT2Buffer(
+                blockName,
+                context.currentLogId,
+                context.buffer
+        );
+
+        // Create and push a log denoting sub-block start.
+        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(
+                context.blockInfo.getId(),
+                context.currentLogId,
+                startMessage,
+                subBlock.getId(),
+                logType,
+                context.buffer
+        );
+
         if (move) {
-            //Update the log flow chain
-            setCurrentLogId(log.getId());
+            context.currentLogId = log.getId();
         }
-        //Run the callable and incase of any error log it, once done close the logger
+
+        // subclasses will decide how to provide a logger.
         return VFLHelper.CallFnWithLogger(callable, getLogger(), endMessageSerializer);
     }
 
-    public final <R> R callPrimarySubBlock(String blockName, String startMessage, Callable<R> callable, Function<R, String> endMessageSerializer) {
-        return this.callHandler(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_PRIMARY, true);
+    public final <R> R callPrimarySubBlock(String blockName,
+                                           String startMessage,
+                                           Callable<R> callable,
+                                           Function<R, String> endMessageSerializer) {
+        return this.callHandler(blockName,
+                startMessage,
+                callable,
+                endMessageSerializer,
+                SUB_BLOCK_START_PRIMARY,
+                true);
     }
 
-    public final <R> R callSecondaryJoiningBlock(String blockName, String startMessage, Callable<R> callable, Function<R, String> endMessageSerializer) {
-        return this.callHandler(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_SECONDARY_JOIN, false);
+    public final <R> R callSecondaryJoiningBlock(String blockName,
+                                                 String startMessage,
+                                                 Callable<R> callable,
+                                                 Function<R, String> endMessageSerializer) {
+        return this.callHandler(blockName,
+                startMessage,
+                callable,
+                endMessageSerializer,
+                SUB_BLOCK_START_SECONDARY_JOIN,
+                false);
     }
 
-    public final <R> R callSecondaryNonJoiningBlock(String blockName, String startMessage, Callable<R> callable, Function<R, String> endMessageSerializer) {
-        return this.callHandler(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_SECONDARY_NO_JOIN, false);
+    public final <R> R callSecondaryNonJoiningBlock(String blockName,
+                                                    String startMessage,
+                                                    Callable<R> callable,
+                                                    Function<R, String> endMessageSerializer) {
+        return this.callHandler(blockName,
+                startMessage,
+                callable,
+                endMessageSerializer,
+                SUB_BLOCK_START_SECONDARY_NO_JOIN,
+                false);
     }
 
+    // Subclasses must provide a logger.
     abstract VFLCallable getLogger();
 }
