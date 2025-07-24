@@ -34,7 +34,7 @@ public abstract class VFL {
             return;
         }
         ensureBlockStarted();
-        var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, LogTypeEnum.MESSAGE, mesage, getContext().buffer);
+        var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, LogTypeEnum.WARN, mesage, getContext().buffer);
         getContext().currentLogId = createdLog.getId();
     }
 
@@ -43,7 +43,7 @@ public abstract class VFL {
             return;
         }
         ensureBlockStarted();
-        var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, LogTypeEnum.MESSAGE, mesage, getContext().buffer);
+        var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, LogTypeEnum.ERROR, mesage, getContext().buffer);
         getContext().currentLogId = createdLog.getId();
     }
 
