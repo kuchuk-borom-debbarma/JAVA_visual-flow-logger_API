@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="vfl_java" options="" />
+      <module name="vfl_java" options="--enable-preview" />
     </option>
   </component>
 </project>

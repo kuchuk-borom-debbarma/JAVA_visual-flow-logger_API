@@ -5,20 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Code clean, removed ContextualVFL.java">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/IVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFLogger.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/Helper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/Helper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/IScopedVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedVFLImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/ScopedVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/ScopedValueVFLContext.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/CallBlockStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/ICallBlockStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/CallBlockStepImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/CallBlockStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/IRunBlockStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/RunBlockStepImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/RunBlockStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scopedVFLogger/fluentApi/ScopedFluent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/scoped/fluent/ScopedFluentAPI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/ScopedFluentAPITest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ScopedFluentAPIAPITest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,44 +64,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "JUnit.ScopedFluentAPITest.test.executor": "Run",
-    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
-    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
-    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
-    "JUnit.VFLTests.executor": "Run",
-    "JUnit.VFLTests.expected.executor": "Run",
-    "JUnit.VFLTests.simple.executor": "Debug",
-    "Maven.vfl_java [clean].executor": "Run",
-    "Maven.vfl_java [install].executor": "Run",
-    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "ignore.preview.features.used": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
-    "project.structure.last.edited": "Problems",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedFluentAPITest.test.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedLoggerTest$SimpleTest.run.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.VFLTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.VFLTests.expected.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.VFLTests.simple.executor&quot;: &quot;Debug&quot;,
+    &quot;Maven.vfl_java [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.vfl_java [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/branch&quot;,
+    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
-      "SQLite"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;SQLite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="dev.kuku.vfl.scopedVFLogger.fluentApi" />
@@ -241,6 +229,10 @@
       <workItem from="1752838516300" duration="15608000" />
       <workItem from="1752880498327" duration="4924000" />
       <workItem from="1752885450746" duration="4145000" />
+      <workItem from="1753384478007" duration="244000" />
+      <workItem from="1753384731847" duration="433000" />
+      <workItem from="1753385183964" duration="1221000" />
+      <workItem from="1753386733517" duration="97000" />
     </task>
     <task id="LOCAL-00079" summary="Improved description">
       <option name="closed" value="true" />
