@@ -23,9 +23,7 @@ public abstract class VFL {
         setCurrentLogId(createdLog.getId());
     }
 
-    public void close(String endMessage) {
-        //TODO
-    }
+    abstract public void close(String endMessage);
 
     abstract protected void setCurrentLogId(String newLogId);
 

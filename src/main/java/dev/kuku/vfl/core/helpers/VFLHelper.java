@@ -1,11 +1,12 @@
 package dev.kuku.vfl.core.helpers;
 
-import dev.kuku.vfl.core.abstracts.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
+import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
 import java.time.Instant;
 import java.util.concurrent.Callable;
@@ -25,6 +26,12 @@ public class VFLHelper {
         SubBlockStartLog l = new SubBlockStartLog(UID(), blockId, parentLogId, startMessage, referencedBlockId, logType);
         buffer.pushLogToBuffer(l);
         return l;
+    }
+
+    public static Block CreateBlockAndPushT2Buffer(String blockName, String parentBlockId, VFLBuffer buffer) {
+        Block b = new Block(UID(), parentBlockId, blockName);
+        buffer.pushBlockToBuffer(b);
+        return b;
     }
 
     public static <R> R CallFnWithLogger(Callable<R> callable, VFL logger, Function<R, String> endMessageSerializer) {
