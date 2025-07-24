@@ -14,6 +14,7 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
  * Abstract class for VFL that can process callables. <br>
  * It has a getCallableLogger() that needs to be overridden. This is to enable freedom of deciding for how to provide the logger. <br>
  */
+//TODO modify to add a function to setup stuff before call and stuff
 public abstract class VFLCallable extends VFL {
     /**
      * Processes a callable inside a sub-block.
@@ -94,5 +95,5 @@ public abstract class VFLCallable extends VFL {
     }
 
     // Subclasses must provide a logger.
-    abstract VFLCallable getLogger();
+    public abstract VFLCallable getLogger();
 }
