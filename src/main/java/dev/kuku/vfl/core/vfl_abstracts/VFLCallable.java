@@ -6,94 +6,66 @@ import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
 
 /**
- * Abstract class for VFL that can process callables. <br>
- * It has a getCallableLogger() that needs to be overridden. This is to enable freedom of deciding for how to provide the logger. <br>
+ * Abstract class for VFL that can process callables.
  */
-//TODO modify to add a function to setup stuff before call and stuff
 public abstract class VFLCallable extends VFL {
-    /**
-     * Processes a callable inside a sub-block.
-     *
-     * @param blockName            The name of the sub-block.
-     * @param startMessage         The log message to mark block start.
-     * @param callable             The operation to run inside the block.
-     * @param endMessageSerializer A function that converts the result into a log message when closing.
-     * @param logType              The enum defining which log type to use for the sub-block start.
-     * @param move                 Whether to update the current log id after creating the sub-block.
-     */
-    private <R> R callHandler(String blockName,
-                              String startMessage,
-                              Callable<R> callable,
-                              Function<R, String> endMessageSerializer,
-                              LogTypeBlcokStartEnum logType,
-                              boolean move) {
+
+    private <R> R callHandler(String blockName, String startMessage, Callable<R> callable,
+                              Function<R, String> endMessageSerializer, LogTypeBlcokStartEnum logType) {
         var context = getContext();
         ensureBlockStarted();
-        Block subBlock = VFLHelper.CreateBlockAndPushT2Buffer(
-                blockName,
-                context.currentLogId,
-                context.buffer
-        );
 
-        // Create and push a log denoting sub-block start.
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(
-                context.blockInfo.getId(),
-                context.currentLogId,
-                startMessage,
-                subBlock.getId(),
-                logType,
-                context.buffer
-        );
+        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
+        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
+                startMessage, subBlock.getId(), logType, context.buffer);
 
-        if (move) {
-            context.currentLogId = log.getId();
-        }
-
-        // subclasses will decide how to provide a logger.
+        if (logType != SUB_BLOCK_START_PRIMARY) context.currentLogId = log.getId();
         return VFLHelper.CallFnWithLogger(callable, getLogger(), endMessageSerializer);
     }
 
-    public final <R> R callPrimarySubBlock(String blockName,
-                                           String startMessage,
-                                           Callable<R> callable,
+    private <R> Supplier<R> createBlockSupplier(String blockName, String startMessage, Callable<R> callable,
+                                                Function<R, String> endMessageSerializer, LogTypeBlcokStartEnum logType) {
+        return () -> {
+            onSubBlockStart(blockName, startMessage, logType);
+            return callHandler(blockName, startMessage, callable, endMessageSerializer, logType);
+        };
+    }
+
+    public final <R> R callPrimarySubBlock(String blockName, String startMessage, Callable<R> callable,
                                            Function<R, String> endMessageSerializer) {
-        return this.callHandler(blockName,
-                startMessage,
-                callable,
-                endMessageSerializer,
-                SUB_BLOCK_START_PRIMARY,
-                true);
+        return createBlockSupplier(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_PRIMARY).get();
     }
 
-    public final <R> R callSecondaryJoiningBlock(String blockName,
-                                                 String startMessage,
-                                                 Callable<R> callable,
-                                                 Function<R, String> endMessageSerializer) {
-        return this.callHandler(blockName,
-                startMessage,
-                callable,
-                endMessageSerializer,
-                SUB_BLOCK_START_SECONDARY_JOIN,
-                false);
+    public final <R> CompletableFuture<R> callSecondaryJoiningBlock(String blockName, String startMessage,
+                                                                    Callable<R> callable, Function<R, String> endMessageSerializer,
+                                                                    Executor executor) {
+        return CompletableFuture.supplyAsync(
+                createBlockSupplier(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_SECONDARY_JOIN),
+                executor);
     }
 
-    public final <R> R callSecondaryNonJoiningBlock(String blockName,
-                                                    String startMessage,
-                                                    Callable<R> callable,
-                                                    Function<R, String> endMessageSerializer) {
-        return this.callHandler(blockName,
-                startMessage,
-                callable,
-                endMessageSerializer,
-                SUB_BLOCK_START_SECONDARY_NO_JOIN,
-                false);
+    public final CompletableFuture<Void> callSecondaryNonJoiningBlock(String blockName, String startMessage,
+                                                                      Runnable runnable,
+                                                                      Executor executor) {
+        return CompletableFuture.runAsync(() -> {
+            onSubBlockStart(blockName, startMessage, SUB_BLOCK_START_SECONDARY_NO_JOIN);
+            callHandler(blockName, startMessage, () -> {
+                        runnable.run();
+                        return null;
+                    },
+                    null, SUB_BLOCK_START_SECONDARY_NO_JOIN);
+        }, executor);
     }
 
-    // Subclasses must provide a logger.
     public abstract VFLCallable getLogger();
+
+    protected abstract void onSubBlockStart(String blockName, String startMessage, LogTypeBlcokStartEnum startType);
 }

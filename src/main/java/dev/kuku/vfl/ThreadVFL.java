@@ -6,26 +6,20 @@ import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 
+import java.util.Stack;
 import java.util.concurrent.Callable;
 
 public class ThreadVFL extends VFLCallable {
-    private static final ThreadLocal<ThreadVFL> instance = new ThreadLocal<>();
+    private static final ThreadLocal<Stack<ThreadVFL>> loggerStack = new ThreadLocal<>();
     private final VFLBlockContext ctx;
 
     private ThreadVFL(VFLBlockContext context) {
         this.ctx = context;
     }
 
-    private static void SetThreadInstance(ThreadVFL value) {
-        if (instance.get() != null) {
-            throw new IllegalStateException("instance is already set!");
-        }
-        instance.set(value);
-    }
-
     @Override
     public ThreadVFL getLogger() {
-        return instance.get();
+        return loggerStack.get().peek();
     }
 
     @Override
@@ -33,11 +27,22 @@ public class ThreadVFL extends VFLCallable {
         return getLogger().ctx;
     }
 
+    @Override
+    public void close(String endMessage) {
+        super.close(endMessage);
+        ThreadVFL.loggerStack.get().pop();
+        if (ThreadVFL.loggerStack.get().isEmpty()) {
+            ThreadVFL.loggerStack.remove();
+        }
+    }
+
     static class Runner extends VFLRunner {
         public static <R> R call(String blockName, VFLBuffer buffer, Callable<R> callable) {
             var rootLogger = new ThreadVFL(initRootCtx(blockName, buffer));
-            //Set current thread's instance
-            ThreadVFL.SetThreadInstance(rootLogger);
+            //Create logger stack
+            Stack<ThreadVFL> stack = new Stack<>();
+            stack.push(rootLogger);
+            ThreadVFL.loggerStack.set(stack);
             try {
                 return VFLHelper.CallFnWithLogger(callable, rootLogger, null);
             } finally {

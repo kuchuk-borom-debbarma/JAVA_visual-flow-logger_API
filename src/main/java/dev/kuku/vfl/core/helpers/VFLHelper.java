@@ -31,7 +31,7 @@ public class VFLHelper {
         return l;
     }
 
-    public static Block CreateBlockAndPushT2Buffer(String blockName, String parentBlockId, VFLBuffer buffer) {
+    public static Block CreateBlockAndPush2Buffer(String blockName, String parentBlockId, VFLBuffer buffer) {
         Block b = new Block(UID(), parentBlockId, blockName);
         buffer.pushBlockToBuffer(b);
         return b;

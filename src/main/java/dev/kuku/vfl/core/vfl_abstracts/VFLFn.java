@@ -33,7 +33,7 @@ public abstract class VFLFn extends VFL {
                             boolean move) {
         var context = getContext();
         ensureBlockStarted();
-        Block subBlock = VFLHelper.CreateBlockAndPushT2Buffer(
+        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(
                 blockName,
                 context.currentLogId,
                 context.buffer
