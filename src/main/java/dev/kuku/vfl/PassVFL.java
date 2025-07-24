@@ -1,8 +1,12 @@
 package dev.kuku.vfl;
 
+import dev.kuku.vfl.core.VFLRunner;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
+
+import java.util.function.Function;
 
 public class PassVFL extends VFLFn {
     private final VFLBlockContext ctx;
@@ -17,32 +21,18 @@ public class PassVFL extends VFLFn {
     }
 
     @Override
-    public void close(String endMessage) {
-
+    protected VFLBlockContext getContext() {
+        return ctx;
     }
 
-    @Override
-    protected void setCurrentLogId(String newLogId) {
-
-    }
-
-    @Override
-    protected VFLBuffer getBuffer() {
-        return null;
-    }
-
-    @Override
-    protected String getCurrentLogId() {
-        return "";
-    }
-
-    @Override
-    protected String getBlockInfo() {
-        return "";
-    }
-
-    @Override
-    protected void ensureBlockStarted() {
-
+    static class Runner extends VFLRunner {
+        public static <R> R call(String operationName, VFLBuffer buffer, Function<PassVFL, R> fn) {
+            PassVFL logger = new PassVFL(initRootCtx(operationName, buffer));
+            try {
+                return VFLHelper.CallFnWithLogger(() -> fn.apply(logger), logger, null);
+            } finally {
+                buffer.flushAndClose();
+            }
+        }
     }
 }

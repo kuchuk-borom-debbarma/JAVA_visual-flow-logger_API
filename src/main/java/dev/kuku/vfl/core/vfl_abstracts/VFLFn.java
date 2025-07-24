@@ -91,5 +91,5 @@ public abstract class VFLFn extends VFL {
     }
 
     // Subclasses must provide a logger.
-    abstract VFLFn getLogger();
+    protected abstract VFLFn getLogger();
 }
