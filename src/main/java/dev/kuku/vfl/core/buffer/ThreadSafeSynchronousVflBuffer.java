@@ -42,6 +42,16 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
         flushIfFull();
     }
 
+    @Override
+    public void pushLogStartToBuffer(String blockId) {
+        //TODO
+    }
+
+    @Override
+    public void pushLogEndToBuffer(String blockId) {
+        //TODO
+    }
+
 
     @Override
     public void flushAndClose() {

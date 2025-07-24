@@ -15,6 +15,16 @@ public interface VFLBuffer {
     void pushBlockToBuffer(Block block);
 
     /**
+     * Log that has started needs to be pushed
+     */
+    void pushLogStartToBuffer(String blockId);
+
+    /**
+     * Log that has ended needs to be pushed
+     */
+    void pushLogEndToBuffer(String blockId);
+
+    /**
      * Will flush all pending data and then shutdown
      */
     void flushAndClose();
