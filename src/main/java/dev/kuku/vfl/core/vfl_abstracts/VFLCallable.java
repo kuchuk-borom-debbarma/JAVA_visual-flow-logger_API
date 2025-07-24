@@ -20,7 +20,7 @@ public abstract class VFLCallable extends VFL {
         //Create and push block
         Block subBlock = VFLHelper.CreateBlockAndPushT2Buffer(blockName, getCurrentLogId(), getBuffer());
         //Create and push log of sub block start type
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(getBlockId(), getCurrentLogId(), startMessage, subBlock.getId(), logType, getBuffer());
+        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(getBlockInfo(), getCurrentLogId(), startMessage, subBlock.getId(), logType, getBuffer());
         if (move) {
             //Update the log flow chain
             setCurrentLogId(log.getId());

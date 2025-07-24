@@ -1,4 +1,4 @@
-package dev.kuku.vfl.vfl_base;
+package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.VFLRunner;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
@@ -18,35 +18,8 @@ public class VFLBase extends VFL {
     }
 
     @Override
-    public void close(String endMessage) {
-        ctx.buffer.pushLogEndToBuffer(ctx.blockInfo.getId(), endMessage);
-    }
-
-    @Override
-    protected void setCurrentLogId(String newLogId) {
-        ctx.currentLogId = newLogId;
-    }
-
-    @Override
-    protected VFLBuffer getBuffer() {
-        return ctx.buffer;
-    }
-
-    @Override
-    protected String getCurrentLogId() {
-        return ctx.currentLogId;
-    }
-
-    @Override
-    protected String getBlockId() {
-        return ctx.blockInfo.getId();
-    }
-
-    @Override
-    protected void ensureBlockStarted() {
-        if (blockStarted.compareAndSet(false, true)) {
-            ctx.buffer.pushLogStartToBuffer(ctx.blockInfo.getId());
-        }
+    protected VFLBlockContext getContext() {
+        return ctx;
     }
 
     static class Runner extends VFLRunner {
