@@ -1,7 +1,6 @@
 package dev.kuku.vfl.core.models.logs;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.Instant;
 
