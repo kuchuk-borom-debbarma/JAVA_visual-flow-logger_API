@@ -2,7 +2,6 @@ package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.VFLRunner;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
@@ -10,8 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 public class VFLBase extends VFL {
-    VFLBlockContext ctx;
     private final AtomicBoolean blockStarted = new AtomicBoolean(false);
+    VFLBlockContext ctx;
 
     protected VFLBase(VFLBlockContext ctx) {
         this.ctx = ctx;

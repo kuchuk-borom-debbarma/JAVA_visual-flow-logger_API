@@ -2,7 +2,6 @@ package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.VFLRunner;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.core.models.VFLBlockContext;
@@ -21,9 +20,13 @@ public class ThreadVFL extends VFLCallable {
         this.ctx = context;
     }
 
-    @Override
-    public ThreadVFL getLogger() {
+    public static ThreadVFL get() {
         return loggerStack.get().peek();
+    }
+
+    @Override
+    protected ThreadVFL getLogger() {
+        return ThreadVFL.get();
     }
 
     @Override
@@ -43,7 +46,7 @@ public class ThreadVFL extends VFLCallable {
     }
 
     @Override
-    public void close(String endMessage) {
+    protected void close(String endMessage) {
         super.close(endMessage);
         ThreadVFL.loggerStack.get().pop();
         if (ThreadVFL.loggerStack.get().isEmpty()) {
@@ -51,7 +54,7 @@ public class ThreadVFL extends VFLCallable {
         }
     }
 
-    static class Runner extends VFLRunner {
+    public static class Runner extends VFLRunner {
         public static <R> R Call(String blockName, VFLBuffer buffer, Callable<R> callable) {
             var rootLogger = new ThreadVFL(initRootCtx(blockName, buffer));
             //Create logger stack
@@ -68,7 +71,7 @@ public class ThreadVFL extends VFLCallable {
         public static void RunEventListener(String eventListenerName, String eventListenerMessage, EventPublisherBlock eventPublisherBlock, VFLBuffer buffer, Runnable runnable) {
             //Create the event listener block
             var eventListenerBlock = VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventPublisherBlock.block().getId(), buffer);
-            //Create a log for event pusblisher block of type event listener
+            //Create a log for event publisher block of type event listener
             VFLHelper.CreateLogAndPush2Buffer(eventPublisherBlock.block().getId(), null, eventListenerMessage, eventListenerBlock.getId(), LogTypeBlockStartEnum.EVENT_LISTENER, buffer);
             ThreadVFL eventListenerBlockLogger = new ThreadVFL(new VFLBlockContext(eventListenerBlock, buffer));
 

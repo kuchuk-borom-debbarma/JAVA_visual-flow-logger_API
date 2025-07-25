@@ -1,6 +1,5 @@
 package dev.kuku.vfl.core.vfl_abstracts;
 
-import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
@@ -69,6 +68,7 @@ public abstract class VFLCallable extends VFL {
             return null;
         }, null, SUB_BLOCK_START_SECONDARY_NO_JOIN).get(), executor);
     }
+
     /**
      * Setup an event publisher and return it's data. It is added as part of the main flow. <br>
      * This event block data needs to be used by event listener for starting an event
@@ -90,7 +90,7 @@ public abstract class VFLCallable extends VFL {
         return new EventPublisherBlock(subBlock);
     }
 
-    public abstract VFLCallable getLogger();
+    protected abstract VFLCallable getLogger();
 
     protected abstract void afterSubBlockAndLogCreatedAndPushed2Buffer(Block createdSubBlock, SubBlockStartLog createdSubBlockStartLog, LogTypeBlockStartEnum startType);
 }
