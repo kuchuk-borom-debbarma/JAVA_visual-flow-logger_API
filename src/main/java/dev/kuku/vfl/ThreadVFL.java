@@ -70,8 +70,15 @@ public class ThreadVFL extends VFLCallable {
             var eventListenerBlock = VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventPublisherBlock.block().getId(), buffer);
             //Create a log for event pusblisher block of type event listener
             VFLHelper.CreateLogAndPush2Buffer(eventPublisherBlock.block().getId(), null, eventListenerMessage, eventListenerBlock.getId(), LogTypeBlockStartEnum.EVENT_LISTENER, buffer);
-
             ThreadVFL eventListenerBlockLogger = new ThreadVFL(new VFLBlockContext(eventListenerBlock, buffer));
+
+            /*
+             * Depending on the implementation of the event publisher and subscribe implementation this may or may not be running in a separate thread.
+             *
+             * If it's in the same thread as caller then it will be sequential in nature and thus can be added to the stack which pops once operation is complete.
+             *
+             * If it's running in a different thread the loggerStack should be null as secondaryBlockStart calls always clean up after they are done.
+             */
             if (ThreadVFL.loggerStack.get() == null) {
                 ThreadVFL.loggerStack.set(new Stack<>());
             }
