@@ -1,6 +1,6 @@
 package dev.kuku.vfl.core.models.logs;
 
-import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 
 public class LogType {
@@ -10,7 +10,7 @@ public class LogType {
         this.value = logType.toString();
     }
 
-    public LogType(LogTypeBlcokStartEnum logType) {
+    public LogType(LogTypeBlockStartEnum logType) {
         this.value = logType.toString();
     }
 }

@@ -1,6 +1,6 @@
 package dev.kuku.vfl.core.models.logs;
 
-import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -13,13 +13,13 @@ public class SubBlockStartLog extends Log {
     //The block that is being started
     private final String referencedBlockId;
 
-    public SubBlockStartLog(String id, String blockId, String parentLogId, String startMessage, String referencedBlockId, LogTypeBlcokStartEnum logType) {
+    public SubBlockStartLog(String id, String blockId, String parentLogId, String startMessage, String referencedBlockId, LogTypeBlockStartEnum logType) {
         super(id, blockId, parentLogId, new LogType(logType), startMessage, Instant.now().toEpochMilli());
         this.referencedBlockId = referencedBlockId;
     }
 
-    public SubBlockStartLog(Log log, String referencedBlockId, LogTypeBlcokStartEnum logTypeBlcokStartEnum) {
-        super(log.getId(), log.getBlockId(), log.getParentLogId(), new LogType(logTypeBlcokStartEnum), log.getMessage(), Instant.now().toEpochMilli());
+    public SubBlockStartLog(Log log, String referencedBlockId, LogTypeBlockStartEnum logTypeBlockStartEnum) {
+        super(log.getId(), log.getBlockId(), log.getParentLogId(), new LogType(logTypeBlockStartEnum), log.getMessage(), Instant.now().toEpochMilli());
         this.referencedBlockId = referencedBlockId;
     }
 }

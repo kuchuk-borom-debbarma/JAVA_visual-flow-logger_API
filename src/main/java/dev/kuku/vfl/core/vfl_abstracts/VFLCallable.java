@@ -2,8 +2,9 @@ package dev.kuku.vfl.core.vfl_abstracts;
 
 import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
-import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -11,7 +12,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
+import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
 
 /**
  * Abstract class for VFL that can process callables.
@@ -19,7 +20,7 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
 public abstract class VFLCallable extends VFL {
 
     private <R> R callHandler(String blockName, String startMessage, Callable<R> callable,
-                              Function<R, String> endMessageSerializer, LogTypeBlcokStartEnum logType) {
+                              Function<R, String> endMessageSerializer, LogTypeBlockStartEnum logType) {
         var context = getContext();
         ensureBlockStarted();
 
@@ -34,7 +35,7 @@ public abstract class VFLCallable extends VFL {
     }
 
     private <R> Supplier<R> createBlockSupplier(String blockName, String startMessage, Callable<R> callable,
-                                                Function<R, String> endMessageSerializer, LogTypeBlcokStartEnum logType) {
+                                                Function<R, String> endMessageSerializer, LogTypeBlockStartEnum logType) {
         return () -> callHandler(blockName, startMessage, callable, endMessageSerializer, logType);
     }
 
@@ -69,19 +70,27 @@ public abstract class VFLCallable extends VFL {
         }, null, SUB_BLOCK_START_SECONDARY_NO_JOIN).get(), executor);
     }
     /**
-     * Create a Primary Sub block and return it's block. This can be passed on to other service, methods which can then use it to continue the operation. The method/service receiving the block data SHOULD always start a secondary non joining sub block
+     * Setup an event publisher and return it's data. It is added as part of the main flow. <br>
+     * This event block data needs to be used by event listener for starting an event
      */
-    public final Block createBranchingSubBlockData(String branchName, String startMessage) {
-        //TODO create a new block data type specifically for branching sub block. Then create a new runner function that takes that in as a param. And then it will start a sub block respectively.
+    public final EventPublisherBlock createEventPublisherBlock(String branchName, String startMessage) {
         var context = getContext();
         ensureBlockStarted();
+        //Create event publisher block
         Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(branchName, context.currentLogId, context.buffer);
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
-                startMessage, subBlock.getId(), SUB_BLOCK_START_PRIMARY, context.buffer);
-        return subBlock;
+        //Create log in current logger about publishing event
+        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(
+                context.blockInfo.getId(),
+                context.currentLogId,
+                startMessage,
+                subBlock.getId(),
+                PUBLISH_EVENT,
+                context.buffer);
+        getContext().currentLogId = log.getId();
+        return new EventPublisherBlock(subBlock);
     }
 
     public abstract VFLCallable getLogger();
 
-    protected abstract void afterSubBlockAndLogCreatedAndPushed2Buffer(Block createdSubBlock, SubBlockStartLog createdSubBlockStartLog, LogTypeBlcokStartEnum startType);
+    protected abstract void afterSubBlockAndLogCreatedAndPushed2Buffer(Block createdSubBlock, SubBlockStartLog createdSubBlockStartLog, LogTypeBlockStartEnum startType);
 }

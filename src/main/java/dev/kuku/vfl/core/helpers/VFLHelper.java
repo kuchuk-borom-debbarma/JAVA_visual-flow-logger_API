@@ -4,7 +4,7 @@ import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
-import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
@@ -25,7 +25,7 @@ public class VFLHelper {
         return l;
     }
 
-    public static SubBlockStartLog CreateLogAndPush2Buffer(String blockId, String parentLogId, String startMessage, String referencedBlockId, LogTypeBlcokStartEnum logType, VFLBuffer buffer) {
+    public static SubBlockStartLog CreateLogAndPush2Buffer(String blockId, String parentLogId, String startMessage, String referencedBlockId, LogTypeBlockStartEnum logType, VFLBuffer buffer) {
         SubBlockStartLog l = new SubBlockStartLog(UID(), blockId, parentLogId, startMessage, referencedBlockId, logType);
         buffer.pushLogToBuffer(l);
         return l;
@@ -58,10 +58,10 @@ public class VFLHelper {
         return result;
     }
 
-    public static Set<String> GetLogsAsStringSet(Set<LogTypeEnum> typeToRemove, Set<LogTypeBlcokStartEnum> startLogTypeToRemove) {
-        Set<String> set = new HashSet<>(LogTypeEnum.values().length + LogTypeBlcokStartEnum.values().length);
+    public static Set<String> GetLogsAsStringSet(Set<LogTypeEnum> typeToRemove, Set<LogTypeBlockStartEnum> startLogTypeToRemove) {
+        Set<String> set = new HashSet<>(LogTypeEnum.values().length + LogTypeBlockStartEnum.values().length);
         set.addAll(Arrays.stream(LogTypeEnum.values()).map(Object::toString).toList());
-        set.addAll(Arrays.stream(LogTypeBlcokStartEnum.values()).map(Object::toString).toList());
+        set.addAll(Arrays.stream(LogTypeBlockStartEnum.values()).map(Object::toString).toList());
         if (typeToRemove != null && !typeToRemove.isEmpty()) {
             typeToRemove.stream().map(Object::toString).toList().forEach(set::remove);
         }

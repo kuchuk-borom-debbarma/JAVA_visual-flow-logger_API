@@ -3,11 +3,11 @@ package dev.kuku.vfl.core.vfl_abstracts;
 import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
-import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
 import java.util.function.Function;
 
-import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
+import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
 
 /**
  * Abstract class for VFL that can process functions. <br>
@@ -29,7 +29,7 @@ public abstract class VFLFn extends VFL {
                             String startMessage,
                             Function<VFLFn, R> fn,
                             Function<R, String> endMessageSerializer,
-                            LogTypeBlcokStartEnum logType,
+                            LogTypeBlockStartEnum logType,
                             boolean move) {
         var context = getContext();
         ensureBlockStarted();
