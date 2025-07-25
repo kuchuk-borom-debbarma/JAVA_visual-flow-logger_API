@@ -1,6 +1,6 @@
 package vfl;
 
-import dev.kuku.vfl.VFLRunner;
+import dev.kuku.vfl.core.VFLRunner;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;

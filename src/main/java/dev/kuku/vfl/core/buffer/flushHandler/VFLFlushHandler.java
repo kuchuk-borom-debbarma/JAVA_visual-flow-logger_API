@@ -1,12 +1,12 @@
 package dev.kuku.vfl.core.buffer.flushHandler;
 
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.Log;
 
 import java.util.List;
 
 public interface VFLFlushHandler {
-    boolean pushLogsToServer(List<LogData> logs);
+    boolean pushLogsToServer(List<Log> logs);
 
-    boolean pushBlocksToServer(List<BlockData> blocks);
+    boolean pushBlocksToServer(List<Block> blocks);
 }

@@ -1,7 +1,7 @@
 package dev.kuku.vfl.core.buffer;
 
-import dev.kuku.vfl.core.models.BlockData;
-import dev.kuku.vfl.core.models.LogData;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     private final int blockBufferSize;
     private final VFLFlushHandler api;
     private final AtomicBoolean isFlushing = new AtomicBoolean(false);
-    private final List<LogData> logsToFlush;
-    private final List<BlockData> blocksToFlush;
+    private final List<Log> logsToFlush;
+    private final List<Block> blocksToFlush;
     private final Object locker = new Object();
 
     public ThreadSafeSynchronousVflBuffer(int blockBufferSize, int logBufferSize, VFLFlushHandler api) {
@@ -26,7 +26,7 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogToBuffer(LogData log) {
+    public void pushLogToBuffer(Log log) {
         synchronized (locker) {
             logsToFlush.add(log);
         }
@@ -35,11 +35,21 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushBlockToBuffer(BlockData block) {
+    public void pushBlockToBuffer(Block block) {
         synchronized (locker) {
             blocksToFlush.add(block);
         }
         flushIfFull();
+    }
+
+    @Override
+    public void pushLogStartToBuffer(String blockId) {
+        //TODO
+    }
+
+    @Override
+    public void pushLogEndToBuffer(String blockId) {
+        //TODO
     }
 
 
@@ -64,8 +74,8 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     private void flush() {
         if (isFlushing.compareAndSet(false, true)) {
             try {
-                List<LogData> toFlushLogs;
-                List<BlockData> toFlushBlocks;
+                List<Log> toFlushLogs;
+                List<Block> toFlushBlocks;
                 synchronized (locker) {
                     toFlushLogs = new ArrayList<>(logsToFlush);
                     toFlushBlocks = new ArrayList<>(blocksToFlush);
