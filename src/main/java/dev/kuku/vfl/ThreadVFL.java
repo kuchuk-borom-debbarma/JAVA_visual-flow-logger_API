@@ -3,7 +3,10 @@ package dev.kuku.vfl;
 import dev.kuku.vfl.core.VFLRunner;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.helpers.VFLHelper;
+import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.VFLBlockContext;
+import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 
 import java.util.Stack;
@@ -20,6 +23,17 @@ public class ThreadVFL extends VFLCallable {
     @Override
     public ThreadVFL getLogger() {
         return loggerStack.get().peek();
+    }
+
+    @Override
+    protected void afterSubBlockAndLogCreatedAndPushed2Buffer(Block createdSubBlock, SubBlockStartLog createdSubBlockStartLog, LogTypeBlcokStartEnum startType) {
+        if (startType != LogTypeBlcokStartEnum.SUB_BLOCK_START_PRIMARY) {
+            //Starting a concurrent block so it will be a new thread
+            Stack<ThreadVFL> stack = new Stack<>();
+            ThreadVFL.loggerStack.set(stack);
+        }
+        var subBlockLogger = new ThreadVFL(new VFLBlockContext(createdSubBlock, ctx.buffer, ctx.allowedLogTypes));
+        ThreadVFL.loggerStack.get().push(subBlockLogger);
     }
 
     @Override
