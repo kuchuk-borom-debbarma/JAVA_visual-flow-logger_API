@@ -16,6 +16,7 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlcokStartEnum.*;
 /**
  * Abstract class for VFL that can process callables.
  */
+//TODO create a function that returns back a block context that can be passed to event publisher, Event listener can then use it to construct logger and use it. Using it will only allow creating sub block as secondary non joins. Eveery listener will be an secondary non join to it
 public abstract class VFLCallable extends VFL {
 
     private <R> R callHandler(String blockName, String startMessage, Callable<R> callable,
