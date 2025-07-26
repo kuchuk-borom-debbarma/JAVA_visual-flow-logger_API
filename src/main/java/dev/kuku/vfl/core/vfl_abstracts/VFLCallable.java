@@ -8,7 +8,6 @@ import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -49,45 +48,32 @@ public abstract class VFLCallable extends VFL {
 
     /**
      * Create a secondary sub block. This block will join back to main flow once operation is complete.
-     * If executor is null, uses ForkJoinPool.commonPool() as default.
      */
     public final <R> CompletableFuture<R> callSecondaryJoiningBlock(String blockName, String startMessage,
                                                                     Callable<R> callable, Function<R, String> endMessageSerializer,
                                                                     Executor executor) {
-        Executor actualExecutor = executor != null ? executor : ForkJoinPool.commonPool();
+        var c = createBlockSupplier(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_SECONDARY_JOIN);
+        if (executor != null)
+            return CompletableFuture.supplyAsync(
+                    c,
+                    executor);
         return CompletableFuture.supplyAsync(
-                createBlockSupplier(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_SECONDARY_JOIN),
-                actualExecutor);
+                c);
     }
 
     /**
      * Create a secondary sub block. This block will not join back to the main flow.
-     * If executor is null, uses ForkJoinPool.commonPool() as default.
      */
     public final CompletableFuture<Void> callSecondaryNonJoiningBlock(String blockName, String startMessage,
                                                                       Runnable runnable,
                                                                       Executor executor) {
-        Executor actualExecutor = executor != null ? executor : ForkJoinPool.commonPool();
-        return CompletableFuture.runAsync(() -> createBlockSupplier(blockName, startMessage, () -> {
+        Callable<Void> c = () -> {
             runnable.run();
             return null;
-        }, null, SUB_BLOCK_START_SECONDARY_NO_JOIN).get(), actualExecutor);
-    }
-
-    /**
-     * Overloaded method that uses default executor when none is provided
-     */
-    public final <R> CompletableFuture<R> callSecondaryJoiningBlock(String blockName, String startMessage,
-                                                                    Callable<R> callable, Function<R, String> endMessageSerializer) {
-        return callSecondaryJoiningBlock(blockName, startMessage, callable, endMessageSerializer, null);
-    }
-
-    /**
-     * Overloaded method that uses default executor when none is provided
-     */
-    public final CompletableFuture<Void> callSecondaryNonJoiningBlock(String blockName, String startMessage,
-                                                                      Runnable runnable) {
-        return callSecondaryNonJoiningBlock(blockName, startMessage, runnable, null);
+        };
+        if (executor != null)
+            return CompletableFuture.runAsync(() -> createBlockSupplier(blockName, startMessage, c, null, SUB_BLOCK_START_SECONDARY_NO_JOIN).get(), executor);
+        return CompletableFuture.runAsync(() -> createBlockSupplier(blockName, startMessage, c, null, SUB_BLOCK_START_SECONDARY_NO_JOIN).get());
     }
 
     /**

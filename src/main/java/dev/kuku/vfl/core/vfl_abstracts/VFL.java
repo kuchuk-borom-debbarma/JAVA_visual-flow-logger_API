@@ -3,6 +3,7 @@ package dev.kuku.vfl.core.vfl_abstracts;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.VFLBlockContext;
+import dev.kuku.vfl.core.models.VFLExecutionException;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -93,14 +94,14 @@ public abstract class VFL {
             R result = null;
             try {
                 result = callable.call();
-            } catch (RuntimeException e) {
-                // Log the exception but preserve the original runtime exception
-                logger.error("Exception occurred: " + e.getMessage());
-                throw e; // Re-throw the original RuntimeException
             } catch (Exception e) {
-                // For checked exceptions, wrap but preserve the cause
-                logger.error("Exception occurred: " + e.getMessage());
-                throw new RuntimeException("Exception in callable execution", e);
+                logger.error("Exception occurred: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                } else {
+                    throw new VFLExecutionException(e);
+                }
             } finally {
                 String endMsg = null;
                 if (endMessageSerializer != null) {
