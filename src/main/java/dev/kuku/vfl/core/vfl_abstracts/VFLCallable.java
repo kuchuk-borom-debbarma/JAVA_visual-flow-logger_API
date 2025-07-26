@@ -20,6 +20,7 @@ public abstract class VFLCallable extends VFL {
 
     private <R> R callHandler(String blockName, String startMessage, Callable<R> callable,
                               Function<R, String> endMessageSerializer, LogTypeBlockStartEnum logType) {
+        //TODO NEEDS TO BE CALLED AFTER Setting up vfl
         var context = getContext();
         ensureBlockStarted();
 
