@@ -93,16 +93,21 @@ public abstract class VFL {
             R result = null;
             try {
                 result = callable.call();
+            } catch (RuntimeException e) {
+                // Log the exception but preserve the original runtime exception
+                logger.error("Exception occurred: " + e.getMessage());
+                throw e; // Re-throw the original RuntimeException
             } catch (Exception e) {
-                logger.log(e.getMessage());
-                throw new RuntimeException(e);
+                // For checked exceptions, wrap but preserve the cause
+                logger.error("Exception occurred: " + e.getMessage());
+                throw new RuntimeException("Exception in callable execution", e);
             } finally {
                 String endMsg = null;
                 if (endMessageSerializer != null) {
                     try {
                         endMsg = endMessageSerializer.apply(result);
                     } catch (Exception e) {
-                        endMsg = "Failed to serialzie end message " + e.getMessage();
+                        endMsg = "Failed to serialize end message: " + e.getMessage();
                     }
                 }
                 logger.close(endMsg);

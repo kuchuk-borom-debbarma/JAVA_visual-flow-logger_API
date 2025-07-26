@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 public class ThreadVFLTest {
 
@@ -29,6 +30,25 @@ public class ThreadVFLTest {
         }
     }
 
+    int sum(int a, int b) {
+        var logger = ThreadVFL.get();
+        logger.log("Going to sum " + a + " " + b);
+        logger.log("Sum = " + a + b);
+        int r = a + b;
+        int finalR = r;
+        r = logger.callPrimarySubBlock("Multiplying block", "Multiplying " + r, () -> multiply(finalR, finalR), integer -> "Final value after multi " + integer);
+        return r;
+    }
+
+    int multiply(int a, int b) {
+        var logger = ThreadVFL.get();
+        logger.log("Multiplying " + a + " and " + b);
+        int result = a * b;
+        logger.log("Multiplying value = " + result);
+        return result;
+    }
+
+
     @Nested
     class LinearFlow {
         @Test
@@ -44,23 +64,46 @@ public class ThreadVFLTest {
             });
             write("linearFlow");
         }
+    }
 
-        int sum(int a, int b) {
-            var logger = ThreadVFL.get();
-            logger.log("Going to sum " + a + " " + b);
-            logger.log("Sum = " + a + b);
-            int r = a + b;
-            int finalR = r;
-            r = logger.callPrimarySubBlock("Multiplying block", "Multiplying " + r, () -> multiply(finalR, finalR), integer -> "Final value after multi " + integer);
-            return r;
-        }
+    @Nested
+    class AsyncFlow {
+        @Test
+        void asyncTest() {
+            ThreadVFL.Runner.Call("AsyncFlow Test", buffer, () -> {
+                var l = ThreadVFL.get();
+                l.log("Starting async test now...");
+                int r = l.callPrimarySubBlock("SumBlock", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is " + integer);
+                CompletableFuture<Integer> t1 = l.callSecondaryJoiningBlock("Sum async", "Squaring in async", () -> {
+                    var m = ThreadVFL.get();
+                    m.log("Sleeping now");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    m.log("Finished sleeping");
+                    return sum(1, 2);
+                }, integer -> "Result is " + integer, null);
+                CompletableFuture<Integer> t2 = l.callSecondaryJoiningBlock("Multiply async", "Multiply in async", () -> {
+                    var m = ThreadVFL.get();
+                    m.log("Sleeping now");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    m.log("Finished sleeping");
+                    return multiply(1, 2);
+                }, integer -> "Result is " + integer, null);
 
-        int multiply(int a, int b) {
-            var logger = ThreadVFL.get();
-            logger.log("Multiplying " + a + " and " + b);
-            int result = a * b;
-            logger.log("Multiplying value = " + result);
-            return result;
+                var a = t1.get();
+                var b = t2.get();
+
+                l.callPrimarySubBlock("Sum", "Doing sum of results", () -> sum(a, b), integer -> "Final result = " + integer);
+                return null;
+            });
+            write("AsyncFlow");
         }
     }
 }
