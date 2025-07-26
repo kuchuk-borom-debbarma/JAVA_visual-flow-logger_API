@@ -34,10 +34,7 @@ public class ThreadVFLTest {
         var logger = ThreadVFL.Get();
         logger.log("Going to sum " + a + " " + b);
         logger.log("Sum = " + a + b);
-        int r = a + b;
-        int finalR = r;
-        r = logger.callPrimarySubBlock("Multiplying block", "Multiplying " + r, () -> multiply(finalR, finalR), integer -> "Final value after multi " + integer);
-        return r;
+        return a + b;
     }
 
     int multiply(int a, int b) {
