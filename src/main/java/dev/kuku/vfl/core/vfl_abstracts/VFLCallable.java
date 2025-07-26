@@ -2,6 +2,7 @@ package dev.kuku.vfl.core.vfl_abstracts;
 
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
+import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
@@ -18,33 +19,19 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
  */
 public abstract class VFLCallable extends VFL {
 
-    private <R> R callHandler(String blockName, String startMessage, Callable<R> callable,
-                              Function<R, String> endMessageSerializer, LogTypeBlockStartEnum logType) {
-        //TODO NEEDS TO BE CALLED AFTER Setting up vfl
-        var context = getContext();
-        ensureBlockStarted();
-
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
-                startMessage, subBlock.getId(), logType, context.buffer);
-        afterSubBlockAndLogCreatedAndPushed2Buffer(subBlock, log, logType);
-        if (logType == SUB_BLOCK_START_PRIMARY) {
-            context.currentLogId = log.getId();
-        }
-        return VFLHelper.CallFnWithLogger(callable, getLogger(), endMessageSerializer);
-    }
-
-    private <R> Supplier<R> createBlockSupplier(String blockName, String startMessage, Callable<R> callable,
-                                                Function<R, String> endMessageSerializer, LogTypeBlockStartEnum logType) {
-        return () -> callHandler(blockName, startMessage, callable, endMessageSerializer, logType);
-    }
-
     /**
      * Start a primary sub block
      */
     public final <R> R callPrimarySubBlock(String blockName, String startMessage, Callable<R> callable,
                                            Function<R, String> endMessageSerializer) {
-        return createBlockSupplier(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_PRIMARY).get();
+        var context = getContext();
+        ensureBlockStarted();
+        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
+        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
+                startMessage, subBlock.getId(), SUB_BLOCK_START_PRIMARY, context.buffer);
+        context.currentLogId = log.getId();
+        prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_PRIMARY);
+        return VFLHelper.CallFnWithLogger(callable, getLogger(), endMessageSerializer);
     }
 
     /**
@@ -53,7 +40,16 @@ public abstract class VFLCallable extends VFL {
     public final <R> CompletableFuture<R> callSecondaryJoiningBlock(String blockName, String startMessage,
                                                                     Callable<R> callable, Function<R, String> endMessageSerializer,
                                                                     Executor executor) {
-        var c = createBlockSupplier(blockName, startMessage, callable, endMessageSerializer, SUB_BLOCK_START_SECONDARY_JOIN);
+        var context = getContext();
+        ensureBlockStarted();
+        //This will be called in the executor thread
+        Supplier<R> c = () -> {
+            Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
+            SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
+                    startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_JOIN, context.buffer);
+            prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_SECONDARY_JOIN);
+            return VFLHelper.CallFnWithLogger(callable, getLogger(), endMessageSerializer);
+        };
         if (executor != null)
             return CompletableFuture.supplyAsync(
                     c,
@@ -68,19 +64,29 @@ public abstract class VFLCallable extends VFL {
     public final CompletableFuture<Void> callSecondaryNonJoiningBlock(String blockName, String startMessage,
                                                                       Runnable runnable,
                                                                       Executor executor) {
-        Callable<Void> c = () -> {
-            runnable.run();
-            return null;
+        var context = getContext();
+        ensureBlockStarted();
+        //This will be called in the executor thread
+        Runnable r = () -> {
+            Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
+            SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
+                    startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_JOIN, context.buffer);
+            prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_SECONDARY_NO_JOIN);
+            VFLHelper.CallFnWithLogger(() -> {
+                runnable.run();
+                return null;
+            }, getLogger(), null);
         };
         if (executor != null)
-            return CompletableFuture.runAsync(() -> createBlockSupplier(blockName, startMessage, c, null, SUB_BLOCK_START_SECONDARY_NO_JOIN).get(), executor);
-        return CompletableFuture.runAsync(() -> createBlockSupplier(blockName, startMessage, c, null, SUB_BLOCK_START_SECONDARY_NO_JOIN).get());
+            return CompletableFuture.runAsync(r, executor);
+        return CompletableFuture.runAsync(r);
     }
 
     /**
      * Setup an event publisher and return it's data. It is added as part of the main flow. <br>
      * This event block data needs to be used by event listener for starting an event
      */
+    //TODO this has not been handled yet
     public final EventPublisherBlock createEventPublisherBlock(String branchName, String startMessage) {
         var context = getContext();
         ensureBlockStarted();
@@ -100,5 +106,17 @@ public abstract class VFLCallable extends VFL {
 
     protected abstract VFLCallable getLogger();
 
-    protected abstract void afterSubBlockAndLogCreatedAndPushed2Buffer(Block createdSubBlock, SubBlockStartLog createdSubBlockStartLog, LogTypeBlockStartEnum startType);
+    /**
+     * This method is invoked after pushing the sub block start log & sub block data to the buffer. <br>
+     * It's main purpose is to setup the logger to handle the sub block start.
+     * <br>
+     * {@link dev.kuku.vfl.ThreadVFL}
+     * In the Child class above, It is used to add a new logger instance to the ThreadLocal logger stack.
+     *
+     * @param parentBlockCtx   context under which the sub block start operation was invoked
+     * @param subBlock         The subblock data that was created and pushed to buffer
+     * @param subBlockStartLog The subblock start log that was created and pushed to buffer
+     * @param logType          The type of subblock start.
+     */
+    protected abstract void prepareLoggerAfterSubBlockStartDataInitializedAndPushed(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum logType);
 }

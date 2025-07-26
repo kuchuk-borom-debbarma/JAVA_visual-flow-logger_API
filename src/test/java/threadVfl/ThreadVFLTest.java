@@ -31,7 +31,7 @@ public class ThreadVFLTest {
     }
 
     int sum(int a, int b) {
-        var logger = ThreadVFL.get();
+        var logger = ThreadVFL.Get();
         logger.log("Going to sum " + a + " " + b);
         logger.log("Sum = " + a + b);
         int r = a + b;
@@ -41,7 +41,7 @@ public class ThreadVFLTest {
     }
 
     int multiply(int a, int b) {
-        var logger = ThreadVFL.get();
+        var logger = ThreadVFL.Get();
         logger.log("Multiplying " + a + " and " + b);
         int result = a * b;
         logger.log("Multiplying value = " + result);
@@ -54,10 +54,9 @@ public class ThreadVFLTest {
         @Test
         void linearFlow() {
             ThreadVFL.Runner.Call("Simple Linear test", buffer, () -> {
-                var logger = ThreadVFL.get();
+                var logger = ThreadVFL.Get();
                 logger.log("This is a log #1");
                 logger.log("Now going to start another block");
-                //TODO fix
                 int result = logger.callPrimarySubBlock("Sum block", "Doing sum of 1, 2", () -> sum(1, 2), integer -> "Calculated sum is " + integer);
                 logger.log("So now the result is " + result);
                 return null;
@@ -71,11 +70,11 @@ public class ThreadVFLTest {
         @Test
         void asyncTest() {
             ThreadVFL.Runner.Call("AsyncFlow Test", buffer, () -> {
-                var l = ThreadVFL.get();
+                var l = ThreadVFL.Get();
                 l.log("Starting async test now...");
-                int r = l.callPrimarySubBlock("SumBlock", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is " + integer);
+                int r = l.callPrimarySubBlock("Sum primary", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is " + integer);
                 CompletableFuture<Integer> t1 = l.callSecondaryJoiningBlock("Sum async", "Squaring in async", () -> {
-                    var m = ThreadVFL.get();
+                    var m = ThreadVFL.Get();
                     m.log("Sleeping now");
                     try {
                         Thread.sleep(2000);
@@ -86,7 +85,7 @@ public class ThreadVFLTest {
                     return sum(1, 2);
                 }, integer -> "Result is " + integer, null);
                 CompletableFuture<Integer> t2 = l.callSecondaryJoiningBlock("Multiply async", "Multiply in async", () -> {
-                    var m = ThreadVFL.get();
+                    var m = ThreadVFL.Get();
                     m.log("Sleeping now");
                     try {
                         Thread.sleep(2000);
@@ -100,7 +99,8 @@ public class ThreadVFLTest {
                 var a = t1.get();
                 var b = t2.get();
 
-                l.callPrimarySubBlock("Sum", "Doing sum of results", () -> sum(a, b), integer -> "Final result = " + integer);
+                l.callPrimarySubBlock("Sum primary 2", "Doing sum of results", () -> sum(a, b), integer -> "Final result = " + integer);
+                l.log("Everything is DONE and dusted!!!");
                 return null;
             });
             write("AsyncFlow");

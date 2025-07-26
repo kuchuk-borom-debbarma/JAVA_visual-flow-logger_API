@@ -20,24 +20,33 @@ public class ThreadVFL extends VFLCallable {
         this.ctx = context;
     }
 
-    public static ThreadVFL get() {
+    public static ThreadVFL Get() {
         return loggerStack.get().peek();
     }
 
     @Override
-    protected ThreadVFL getLogger() {
-        return ThreadVFL.get();
+    protected void prepareLoggerAfterSubBlockStartDataInitializedAndPushed(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum startType) {
+        var subLoggerCtx = new VFLBlockContext(subBlock, parentBlockCtx.buffer);
+        // If sub logger data has been pushed to buffer, we must now create the respective logger and add it to stack
+        if (startType == LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY) {
+            //if primary operation was started then it's in main thread and a stack with proper parent will already exist
+            ThreadVFL.loggerStack.get().push(new ThreadVFL(subLoggerCtx));
+            return;
+        }
+        //If its completable futures start then it will be in a new thread, the thread may or may not have existing stack(if thread pool fails to remove thread properly although it should)
+        //Then we need to create a new stack and push it
+        if (ThreadVFL.loggerStack.get() == null) {
+            Stack<ThreadVFL> stack = new Stack<>();
+            stack.push(new ThreadVFL(subLoggerCtx));
+            ThreadVFL.loggerStack.set(stack);
+        } else {
+            ThreadVFL.loggerStack.get().push(new ThreadVFL(subLoggerCtx));
+        }
     }
 
     @Override
-    protected void afterSubBlockAndLogCreatedAndPushed2Buffer(Block createdSubBlock, SubBlockStartLog createdSubBlockStartLog, LogTypeBlockStartEnum startType) {
-        if (startType != LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY) {
-            //Starting a concurrent block so it will be a new thread
-            Stack<ThreadVFL> stack = new Stack<>();
-            ThreadVFL.loggerStack.set(stack);
-        }
-        var subBlockLogger = new ThreadVFL(new VFLBlockContext(createdSubBlock, ctx.buffer));
-        ThreadVFL.loggerStack.get().push(subBlockLogger);
+    protected ThreadVFL getLogger() {
+        return ThreadVFL.Get();
     }
 
     @Override
