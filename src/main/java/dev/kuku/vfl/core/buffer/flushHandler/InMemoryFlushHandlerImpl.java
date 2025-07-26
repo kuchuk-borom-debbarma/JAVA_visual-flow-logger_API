@@ -1,21 +1,20 @@
 package dev.kuku.vfl.core.buffer.flushHandler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
     public List<Log> logs = new ArrayList<>();
     public List<Block> blocks = new ArrayList<>();
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public boolean pushLogsToServer(List<Log> logs) {
@@ -34,88 +33,170 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
         blocks.clear();
     }
 
-    public String toNestedJson() throws JsonProcessingException {
-        List<Map<String, Object>> nestedBlocks = buildNestedStructure();
+    /**
+     * Generates nested JSON structure with blocks containing their logs in hierarchical format
+     *
+     * @return JSON string representation of the nested structure
+     */
+    public String generateNestedJsonStructure() {
+        try {
+            ArrayNode rootArray = objectMapper.createArrayNode();
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            // Create a map of block ID to block for quick lookup
+            Map<String, Block> blockMap = blocks.stream()
+                    .collect(Collectors.toMap(Block::getId, block -> block));
 
-        return mapper.writeValueAsString(nestedBlocks);
+            // Group logs by block ID
+            Map<String, List<Log>> logsByBlock = logs.stream()
+                    .collect(Collectors.groupingBy(Log::getBlockId));
+
+            // Create a set of all valid block IDs
+            Set<String> validBlockIds = new HashSet<>(blockMap.keySet());
+
+            // Process each block
+            for (Block block : blocks) {
+                ObjectNode blockNode = createBlockNode(block, logsByBlock.get(block.getId()), blockMap);
+                rootArray.add(blockNode);
+            }
+
+            // Handle logs with invalid block IDs
+            List<Log> invalidLogs = logs.stream()
+                    .filter(log -> !validBlockIds.contains(log.getBlockId()))
+                    .collect(Collectors.toList());
+
+            if (!invalidLogs.isEmpty()) {
+                ObjectNode invalidBlockNode = createInvalidLogsBlock(invalidLogs, blockMap);
+                rootArray.add(invalidBlockNode);
+            }
+
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootArray);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating nested JSON structure", e);
+        }
     }
 
-    private List<Map<String, Object>> buildNestedStructure() {
-        // Create a map of blocks by ID for quick lookup
-        Map<String, Block> blocksById = blocks.stream()
-                .collect(Collectors.toMap(Block::getId, block -> block));
-
-        // Group logs by block ID
-        Map<String, List<Log>> logsByBlockId = logs.stream()
-                .collect(Collectors.groupingBy(Log::getBlockId));
-
-        // Create a map of logs by their parent log ID for efficient lookup
-        Map<String, List<Log>> logsByParentId = logs.stream()
-                .filter(log -> log.getParentLogId() != null && !log.getParentLogId().isEmpty())
-                .collect(Collectors.groupingBy(Log::getParentLogId));
-
-        // Process root blocks (blocks with no parent)
-        return blocks.stream()
-                .filter(block -> block.getParentBlockId() == null || block.getParentBlockId().isEmpty())
-                .map(block -> buildBlockNode(block, blocksById, logsByBlockId, logsByParentId))
-                .collect(Collectors.toList());
-    }
-
-    private Map<String, Object> buildBlockNode(Block block,
-                                               Map<String, Block> blocksById,
-                                               Map<String, List<Log>> logsByBlockId,
-                                               Map<String, List<Log>> logsByParentId) {
-        Map<String, Object> blockNode = new HashMap<>();
+    private ObjectNode createBlockNode(Block block, List<Log> blockLogs, Map<String, Block> blockMap) {
+        ObjectNode blockNode = objectMapper.createObjectNode();
         blockNode.put("id", block.getId());
         blockNode.put("name", block.getBlockName());
 
-        // Get root logs for this block (logs with no parentLogId or parentLogId matches blockId)
-        List<Log> blockLogs = logsByBlockId.getOrDefault(block.getId(), new ArrayList<>());
-        List<Log> rootLogs = blockLogs.stream()
-                .filter(log -> log.getParentLogId() == null || log.getParentLogId().isEmpty() || log.getParentLogId().equals(block.getId()))
-                .toList();
+        if (blockLogs != null && !blockLogs.isEmpty()) {
+            ArrayNode logsArray = objectMapper.createArrayNode();
 
-        // Build log tree for this block
-        List<Map<String, Object>> logNodes = rootLogs.stream()
-                .map(log -> buildLogNode(log, blocksById, logsByParentId))
-                .collect(Collectors.toList());
+            // Get root logs (logs without parent)
+            List<Log> rootLogs = blockLogs.stream()
+                    .filter(log -> log.getParentLogId() == null || log.getParentLogId().isEmpty())
+                    .sorted(Comparator.comparingLong(Log::getTimestamp))
+                    .toList();
 
-        blockNode.put("logs", logNodes);
+            // Create a map for quick lookup of child logs
+            Map<String, List<Log>> childLogMap = blockLogs.stream()
+                    .filter(log -> log.getParentLogId() != null && !log.getParentLogId().isEmpty())
+                    .collect(Collectors.groupingBy(Log::getParentLogId));
+
+            for (Log rootLog : rootLogs) {
+                ObjectNode logNode = createLogNode(rootLog, childLogMap, blockMap);
+                logsArray.add(logNode);
+            }
+
+            blockNode.set("logs", logsArray);
+        } else {
+            blockNode.set("logs", objectMapper.createArrayNode());
+        }
+
         return blockNode;
     }
 
-    private Map<String, Object> buildLogNode(Log log,
-                                             Map<String, Block> blocksById,
-                                             Map<String, List<Log>> logsByParentId) {
-        Map<String, Object> logNode = new HashMap<>();
+    private ObjectNode createLogNode(Log log, Map<String, List<Log>> childLogMap, Map<String, Block> blockMap) {
+        ObjectNode logNode = objectMapper.createObjectNode();
         logNode.put("id", log.getId());
-        logNode.put("type", log.getLogType()); // Simple string value
+        logNode.put("type", log.getLogType().toString());
         logNode.put("message", log.getMessage());
 
-        // Handle referenced blocks for specific log types
-        if (log instanceof SubBlockStartLog) {
-            String referencedBlockId = ((SubBlockStartLog) log).getReferencedBlockId();
-            Block referencedBlock = blocksById.get(referencedBlockId);
+        // Check if this is a SubBlockStartLog and add referenced block
+        if (log instanceof SubBlockStartLog subBlockLog) {
+            String referencedBlockId = subBlockLog.getReferencedBlockId();
+
+            Block referencedBlock = blockMap.get(referencedBlockId);
             if (referencedBlock != null) {
-                Map<String, Object> referencedBlockNode = new HashMap<>();
+                ObjectNode referencedBlockNode = objectMapper.createObjectNode();
                 referencedBlockNode.put("id", referencedBlock.getId());
                 referencedBlockNode.put("name", referencedBlock.getBlockName());
-                logNode.put("referencedBlock", referencedBlockNode);
+                logNode.set("referencedBlock", referencedBlockNode);
             }
         }
 
-        // Recursively build child logs
-        List<Log> childLogs = logsByParentId.getOrDefault(log.getId(), new ArrayList<>());
-        if (!childLogs.isEmpty()) {
-            List<Map<String, Object>> childNodes = childLogs.stream()
-                    .map(childLog -> buildLogNode(childLog, blocksById, logsByParentId))
-                    .collect(Collectors.toList());
-            logNode.put("children", childNodes);
+        // Add child logs
+        List<Log> childLogs = childLogMap.get(log.getId());
+        if (childLogs != null && !childLogs.isEmpty()) {
+            ArrayNode childrenArray = objectMapper.createArrayNode();
+
+            // Sort child logs by timestamp
+            childLogs.sort(Comparator.comparingLong(Log::getTimestamp));
+
+            for (Log childLog : childLogs) {
+                ObjectNode childLogNode = createLogNode(childLog, childLogMap, blockMap);
+                childrenArray.add(childLogNode);
+            }
+
+            logNode.set("children", childrenArray);
+        } else {
+            logNode.set("children", objectMapper.createArrayNode());
         }
 
         return logNode;
+    }
+
+    private ObjectNode createInvalidLogsBlock(List<Log> invalidLogs, Map<String, Block> blockMap) {
+        ObjectNode invalidBlockNode = objectMapper.createObjectNode();
+        invalidBlockNode.put("id", "invalid-logs-block");
+        invalidBlockNode.put("name", "Invalid Logs");
+
+        ArrayNode logsArray = objectMapper.createArrayNode();
+
+        // Group invalid logs by block ID for better organization
+        Map<String, List<Log>> invalidLogsByBlockId = invalidLogs.stream()
+                .collect(Collectors.groupingBy(Log::getBlockId));
+
+        // Create a map for child log lookup among invalid logs
+        Map<String, List<Log>> childLogMap = invalidLogs.stream()
+                .filter(log -> log.getParentLogId() != null && !log.getParentLogId().isEmpty())
+                .collect(Collectors.groupingBy(Log::getParentLogId));
+
+        for (Map.Entry<String, List<Log>> entry : invalidLogsByBlockId.entrySet()) {
+            String invalidBlockId = entry.getKey();
+            List<Log> logsForInvalidBlock = entry.getValue();
+
+            // Get root logs for this invalid block ID
+            List<Log> rootLogs = logsForInvalidBlock.stream()
+                    .filter(log -> log.getParentLogId() == null || log.getParentLogId().isEmpty())
+                    .sorted(Comparator.comparingLong(Log::getTimestamp))
+                    .toList();
+
+            for (Log rootLog : rootLogs) {
+                ObjectNode logNode = createLogNode(rootLog, childLogMap, blockMap);
+                // Add additional info about the invalid block ID
+                logNode.put("originalBlockId", invalidBlockId);
+                logsArray.add(logNode);
+            }
+        }
+
+        invalidBlockNode.set("logs", logsArray);
+        return invalidBlockNode;
+    }
+
+    /**
+     * Alternative method that returns the structure as a Map for programmatic access
+     *
+     * @return Map representation of the nested structure
+     */
+    public Map<String, Object> generateNestedStructureAsMap() {
+        try {
+            String jsonString = generateNestedJsonStructure();
+            return objectMapper.readValue(jsonString, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting JSON to Map", e);
+        }
     }
 }

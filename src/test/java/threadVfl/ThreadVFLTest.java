@@ -21,7 +21,7 @@ public class ThreadVFLTest {
             String path = "test/output/threadVFL/logger";
             Files.createDirectories(Path.of(path));
             try (FileWriter f = new FileWriter(path + "/" + fileName + ".json")) {
-                f.write(flush.toNestedJson());
+                f.write(flush.generateNestedJsonStructure());
                 flush.cleanup();
             }
         } catch (Exception e) {

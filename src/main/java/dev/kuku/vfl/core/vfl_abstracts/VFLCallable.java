@@ -27,7 +27,7 @@ public abstract class VFLCallable extends VFL {
         SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
                 startMessage, subBlock.getId(), logType, context.buffer);
         afterSubBlockAndLogCreatedAndPushed2Buffer(subBlock, log, logType);
-        if (logType != SUB_BLOCK_START_PRIMARY) {
+        if (logType == SUB_BLOCK_START_PRIMARY) {
             context.currentLogId = log.getId();
         }
         return VFLHelper.CallFnWithLogger(callable, getLogger(), endMessageSerializer);
