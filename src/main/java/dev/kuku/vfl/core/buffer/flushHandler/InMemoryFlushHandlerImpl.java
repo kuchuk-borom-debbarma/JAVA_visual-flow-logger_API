@@ -11,10 +11,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
+    private final ObjectMapper objectMapper = new ObjectMapper();
     public List<Log> logs = new ArrayList<>();
     public List<Block> blocks = new ArrayList<>();
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public boolean pushLogsToServer(List<Log> logs) {

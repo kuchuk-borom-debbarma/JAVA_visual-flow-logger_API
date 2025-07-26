@@ -49,7 +49,18 @@ public class ThreadVFLTest {
             var logger = ThreadVFL.get();
             logger.log("Going to sum " + a + " " + b);
             logger.log("Sum = " + a + b);
-            return a + b;
+            int r = a + b;
+            int finalR = r;
+            r = logger.callPrimarySubBlock("Multiplying block", "Multiplying " + r, () -> multiply(finalR, finalR), integer -> "Final value after multi " + integer);
+            return r;
+        }
+
+        int multiply(int a, int b) {
+            var logger = ThreadVFL.get();
+            logger.log("Multiplying " + a + " and " + b);
+            int result = a * b;
+            logger.log("Multiplying value = " + result);
+            return result;
         }
     }
 }

@@ -13,4 +13,9 @@ public class LogType {
     public LogType(LogTypeBlockStartEnum logType) {
         this.value = logType.toString();
     }
+
+    @Override
+    public String toString() {
+        return this.value;
+    }
 }
