@@ -34,7 +34,7 @@ public class FluentVFLFn extends FluentVFL {
             return new FnStep<>(fn);
         }
 
-        public <R> FnStepVoid forFunction(Consumer<VFLFn> fn) {
+        public FnStepVoid forFunction(Consumer<VFLFn> fn) {
             return new FnStepVoid(fn);
         }
 
