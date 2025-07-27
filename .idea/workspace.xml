@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created">
-      <change beforePath="$PROJECT_DIR$/.idea/discord.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/discord.xml" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Never mind it seems to be working lol">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/ThreadVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +77,8 @@
     "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
-    "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Debug",
+    "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
+    "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
     "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
     "JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor": "Run",
     "JUnit.VFLTests.executor": "Run",
@@ -101,7 +103,7 @@
     "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "discord-application",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -116,17 +118,7 @@
       <recent name="dev.kuku.builder" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ThreadVFLTest$AsyncFlow.asyncTest">
-    <configuration name="ScopedLoggerTest$SimpleTest.nonLinearFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
-      <option name="MAIN_CLASS_NAME" value="ScopedLoggerTest$SimpleTest" />
-      <option name="METHOD_NAME" value="nonLinearFlow" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.ThreadVFLTest$EventFlow.linearEventFlow">
     <configuration name="ScopedLoggerTest$SimpleTest.run" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
@@ -148,6 +140,22 @@
       <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
       <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$AsyncFlow" />
       <option name="METHOD_NAME" value="asyncTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ThreadVFLTest$EventFlow.linearEventFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadVfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$EventFlow" />
+      <option name="METHOD_NAME" value="linearEventFlow" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -186,19 +194,19 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.ThreadVFLTest$EventFlow.linearEventFlow" />
         <item itemvalue="JUnit.ThreadVFLTest$AsyncFlow.asyncTest" />
         <item itemvalue="JUnit.ThreadVFLTest$LinearFlow.linearFlow" />
         <item itemvalue="JUnit.ThreadVFLTest$LinearFlow" />
         <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.run" />
-        <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
       </set>
     </attachedChunks>
   </component>
@@ -265,15 +273,8 @@
       <workItem from="1753459793033" duration="475000" />
       <workItem from="1753460276470" duration="4576000" />
       <workItem from="1753512911622" duration="570000" />
-      <workItem from="1753539553548" duration="3712000" />
-    </task>
-    <task id="LOCAL-00081" summary="Added more important todos for future">
-      <option name="closed" value="true" />
-      <created>1752688859326</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1752688859327</updated>
+      <workItem from="1753539553548" duration="8286000" />
+      <workItem from="1753621987852" duration="676000" />
     </task>
     <task id="LOCAL-00082" summary="created ExecutionLogger">
       <option name="closed" value="true" />
@@ -659,7 +660,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753541922487</updated>
     </task>
-    <option name="localTasksCounter" value="130" />
+    <task id="LOCAL-00130" summary="Never mind it seems to be working lol">
+      <option name="closed" value="true" />
+      <created>1753544822849</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1753544822849</updated>
+    </task>
+    <option name="localTasksCounter" value="131" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -677,7 +686,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added important todo" />
     <MESSAGE value="added package-info.java for scoped logger" />
     <MESSAGE value="renaming changes and other stuff" />
     <MESSAGE value="creating tests to see how things work" />
@@ -702,7 +710,8 @@
     <MESSAGE value="Code clean, removed ContextualVFL.java" />
     <MESSAGE value="testing and noticed a bug" />
     <MESSAGE value="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created" />
-    <option name="LAST_COMMIT_MESSAGE" value="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created" />
+    <MESSAGE value="Never mind it seems to be working lol" />
+    <option name="LAST_COMMIT_MESSAGE" value="Never mind it seems to be working lol" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -719,12 +728,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
-          <line>55</line>
+          <line>56</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
-          <line>72</line>
+          <line>73</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>

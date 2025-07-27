@@ -77,6 +77,7 @@ public class ThreadVFL extends VFLCallable {
             }
         }
 
+        //TODO make this generalised similar to other functions of VFL
         public static void RunEventListener(String eventListenerName, String eventListenerMessage, EventPublisherBlock eventPublisherBlock, VFLBuffer buffer, Runnable runnable) {
             //Create the event listener block
             var eventListenerBlock = VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventPublisherBlock.block().getId(), buffer);

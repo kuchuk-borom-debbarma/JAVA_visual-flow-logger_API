@@ -86,7 +86,6 @@ public abstract class VFLCallable extends VFL {
      * Setup an event publisher and return it's data. It is added as part of the main flow. <br>
      * This event block data needs to be used by event listener for starting an event
      */
-    //TODO this has not been handled yet
     public final EventPublisherBlock createEventPublisherBlock(String branchName, String startMessage) {
         var context = getContext();
         ensureBlockStarted();

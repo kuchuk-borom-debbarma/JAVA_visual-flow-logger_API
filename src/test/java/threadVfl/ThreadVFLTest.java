@@ -4,6 +4,7 @@ import dev.kuku.vfl.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
+import dev.kuku.vfl.core.models.EventPublisherBlock;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -101,6 +102,42 @@ public class ThreadVFLTest {
                 return null;
             });
             write("AsyncFlow");
+        }
+    }
+
+    @Nested
+    class EventFlow {
+
+        void sum(int a, int b, EventPublisherBlock eventPublisherBlock) {
+            ThreadVFL.Runner.RunEventListener("Sum listener", "Calculating sum of " + a + " " + b, eventPublisherBlock, buffer, () -> {
+                var l = ThreadVFL.Get();
+                l.log("Starting event listener of sum");
+                int r = a + b;
+                l.log("Sum = " + r);
+            });
+        }
+
+        void multiply(int a, int b, EventPublisherBlock eventPublisherBlock) {
+            ThreadVFL.Runner.RunEventListener("Multiply listener", "Multiplying " + a + " and " + b, eventPublisherBlock, buffer, () -> {
+                var l = ThreadVFL.Get();
+                l.log("Starting event listener of multiply");
+                int r = a * b;
+                l.log("Multiply = " + r);
+            });
+        }
+
+        @Test
+        void linearEventFlow() {
+            ThreadVFL.Runner.Call("Linear event publisher and listener test", buffer, () -> {
+                var logger = ThreadVFL.Get();
+                logger.log("Starting event publisher and listener test");
+                var publisherBlock = logger.createEventPublisherBlock("On Publish number", "Publishing 2 numbers");
+                sum(1, 2, publisherBlock);
+                multiply(1, 2, publisherBlock);
+                logger.log("Published event now closing");
+                return null;
+            });
+            write("linearEventFlow");
         }
     }
 }
