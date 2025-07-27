@@ -1,16 +1,14 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.VFLRunner;
-import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.VFLCallableRunner;
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
+import dev.kuku.vfl.core.vfl_abstracts.VFL;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 
 import java.util.Stack;
-import java.util.concurrent.Callable;
 
 public class ThreadVFL extends VFLCallable {
     private static final ThreadLocal<Stack<ThreadVFL>> loggerStack = new ThreadLocal<>();
@@ -63,27 +61,22 @@ public class ThreadVFL extends VFLCallable {
         }
     }
 
-    public static class Runner extends VFLRunner {
-        public static <R> R Call(String blockName, VFLBuffer buffer, Callable<R> callable) {
-            var rootLogger = new ThreadVFL(initRootCtx(blockName, buffer));
+    public static class CallableRunner extends VFLCallableRunner {
+        private final static CallableRunner Instance = new CallableRunner();
+
+        @Override
+        protected VFL createRootLogger(VFLBlockContext rootCtx) {
+            var rootLogger = new ThreadVFL(rootCtx);
             //Create logger stack
             Stack<ThreadVFL> stack = new Stack<>();
             stack.push(rootLogger);
             ThreadVFL.loggerStack.set(stack);
-            try {
-                return VFLHelper.CallFnWithLogger(callable, rootLogger, null);
-            } finally {
-                buffer.flushAndClose();
-            }
+            return rootLogger;
         }
 
-        //TODO make this generalised similar to other functions of VFL
-        public static void RunEventListener(String eventListenerName, String eventListenerMessage, EventPublisherBlock eventPublisherBlock, VFLBuffer buffer, Runnable runnable) {
-            //Create the event listener block
-            var eventListenerBlock = VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventPublisherBlock.block().getId(), buffer);
-            //Create a log for event publisher block of type event listener
-            VFLHelper.CreateLogAndPush2Buffer(eventPublisherBlock.block().getId(), null, eventListenerMessage, eventListenerBlock.getId(), LogTypeBlockStartEnum.EVENT_LISTENER, buffer);
-            ThreadVFL eventListenerBlockLogger = new ThreadVFL(new VFLBlockContext(eventListenerBlock, buffer));
+        @Override
+        protected VFL createEventListenerLogger(VFLBlockContext eventListenerCtx) {
+            ThreadVFL eventListenerBlockLogger = new ThreadVFL(eventListenerCtx);
 
             /*
              * Depending on the implementation of the event publisher and subscribe implementation this may or may not be running in a separate thread.
@@ -96,14 +89,12 @@ public class ThreadVFL extends VFLCallable {
                 ThreadVFL.loggerStack.set(new Stack<>());
             }
             ThreadVFL.loggerStack.get().push(eventListenerBlockLogger);
-            try {
-                VFLHelper.CallFnWithLogger(() -> {
-                    runnable.run();
-                    return null;
-                }, eventListenerBlockLogger, null);
-            } finally {
-                buffer.flushAndClose();
-            }
+            return ThreadVFL.loggerStack.get().peek();
+        }
+
+        @Override
+        public VFLCallableRunner getRunner() {
+            return Instance;
         }
     }
 }
