@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.helpers.Util.UID;
 
@@ -35,7 +36,7 @@ public abstract class VFL {
     /**
      * Internal logging method that encapsulates the common logic.
      *
-     * @param type   The log type (e.g. MESSAGE, WARN, or ERROR).
+     * @param type    The log type (e.g. MESSAGE, WARN, or ERROR).
      * @param message The message to log.
      */
     private void logInternal(LogTypeEnum type, String message) {
@@ -50,17 +51,36 @@ public abstract class VFL {
         getContext().currentLogId = createdLog.getId();
     }
 
+    private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer) {
+        var r = fn.get();
+        String msg = messageSerializer.apply(r);
+        logInternal(type, msg);
+        return r;
+    }
+
     // Public logging methods that simply forward to the internal method.
     public final void log(String message) {
         logInternal(LogTypeEnum.MESSAGE, message);
+    }
+
+    public final <R> R logFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+        return logFnInternal(LogTypeEnum.MESSAGE, fn, messageSerializer);
     }
 
     public final void warn(String message) {
         logInternal(LogTypeEnum.WARN, message);
     }
 
+    public final <R> R warnFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+        return logFnInternal(LogTypeEnum.WARN, fn, messageSerializer);
+    }
+
     public final void error(String message) {
         logInternal(LogTypeEnum.ERROR, message);
+    }
+
+    public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+        return logFnInternal(LogTypeEnum.ERROR, fn, messageSerializer);
     }
 
     // Abstract method that subclasses must implement to provide context.
