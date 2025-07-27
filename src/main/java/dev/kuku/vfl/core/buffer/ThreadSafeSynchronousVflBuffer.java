@@ -1,8 +1,8 @@
 package dev.kuku.vfl.core.buffer;
 
+import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
-import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogEndToBuffer(String blockId) {
+    public void pushLogEndToBuffer(String blockId, String endMessage) {
         //TODO
     }
 

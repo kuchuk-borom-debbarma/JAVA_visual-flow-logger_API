@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Refactor VFLRunner and VFLCallable to streamline logging functionality">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/ThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLFn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLFn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +20,8 @@
         <option value="Kotlin Class" />
         <option value="Record" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="package-info" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -58,6 +55,10 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.19.1/jackson-databind-2.19.1.jar!/com/fasterxml/jackson/databind/ObjectMapper.class" root0="SKIP_INSPECTION" />
+    <setting file="jar:///opt/homebrew/Cellar/openjdk/24.0.1/libexec/openjdk.jdk/Contents/Home/lib/src.zip!/java.base/java/util/Stack.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -67,119 +68,148 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedFluentAPITest.test.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.run.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.expected.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.simple.executor&quot;: &quot;Debug&quot;,
-    &quot;Maven.vfl_java [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/branch&quot;,
-    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.continuedev.continueintellijextension.services.ContinueExtensionConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "JUnit.ScopedFluentAPITest.test.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
+    "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
+    "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
+    "JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor": "Run",
+    "JUnit.VFLTests.executor": "Run",
+    "JUnit.VFLTests.expected.executor": "Run",
+    "JUnit.VFLTests.simple.executor": "Debug",
+    "Maven.vfl_java [clean].executor": "Run",
+    "Maven.vfl_java [install].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "feature/branch",
+    "ignore.preview.features.used": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
+    "project.structure.last.edited": "Problems",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "settings.sync",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
-      &quot;SQLite&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "SQLite"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="dev.kuku.vfl.scopedVFLogger.fluentApi" />
       <recent name="dev.kuku.builder" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ScopedFluentAPIAPITest.test">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
+  <component name="RunManager" selected="JUnit.ThreadVFLTest">
+    <configuration name="ThreadVFLTest$AsyncFlow.asyncTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="dev.kuku.*" />
+          <option name="PATTERN" value="threadVfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ScopedFluentAPIAPITest.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="ScopedFluentAPIAPITest" />
-      <option name="METHOD_NAME" value="test" />
+      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$AsyncFlow" />
+      <option name="METHOD_NAME" value="asyncTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ScopedLoggerTest$SimpleTest.heavyAsync" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ThreadVFLTest$EventFlow.linearEventFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
-      <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
-      <option name="MAIN_CLASS_NAME" value="ScopedLoggerTest$SimpleTest" />
-      <option name="METHOD_NAME" value="heavyAsync" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadVfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$EventFlow" />
+      <option name="METHOD_NAME" value="linearEventFlow" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ScopedLoggerTest$SimpleTest.nonLinearFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ThreadVFLTest$LinearFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
-      <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
-      <option name="MAIN_CLASS_NAME" value="ScopedLoggerTest$SimpleTest" />
-      <option name="METHOD_NAME" value="nonLinearFlow" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadVfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$LinearFlow" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ThreadVFLTest$LinearFlow.linearFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadVfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$LinearFlow" />
+      <option name="METHOD_NAME" value="linearFlow" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ScopedLoggerTest$SimpleTest.run" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ThreadVFLTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
-      <option name="PACKAGE_NAME" value="ScopedLoggerTest" />
-      <option name="MAIN_CLASS_NAME" value="ScopedLoggerTest$SimpleTest" />
-      <option name="METHOD_NAME" value="run" />
-      <option name="TEST_OBJECT" value="method" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadVfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadVfl" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.ScopedFluentAPIAPITest.test" />
-        <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.heavyAsync" />
-        <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow" />
-        <item itemvalue="JUnit.ScopedLoggerTest$SimpleTest.run" />
-        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.ThreadVFLTest" />
+        <item itemvalue="JUnit.ThreadVFLTest$EventFlow.linearEventFlow" />
+        <item itemvalue="JUnit.ThreadVFLTest$AsyncFlow.asyncTest" />
+        <item itemvalue="JUnit.ThreadVFLTest$LinearFlow.linearFlow" />
+        <item itemvalue="JUnit.ThreadVFLTest$LinearFlow" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
       </set>
     </attachedChunks>
   </component>
@@ -240,46 +270,15 @@
       <workItem from="1753387335802" duration="887000" />
       <workItem from="1753392698235" duration="1649000" />
       <workItem from="1753394360985" duration="518000" />
-    </task>
-    <task id="LOCAL-00079" summary="Improved description">
-      <option name="closed" value="true" />
-      <created>1752688522623</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
-      <option name="project" value="LOCAL" />
-      <updated>1752688522623</updated>
-    </task>
-    <task id="LOCAL-00080" summary="renamed flusher">
-      <option name="closed" value="true" />
-      <created>1752688670582</created>
-      <option name="number" value="00080" />
-      <option name="presentableId" value="LOCAL-00080" />
-      <option name="project" value="LOCAL" />
-      <updated>1752688670582</updated>
-    </task>
-    <task id="LOCAL-00081" summary="Added more important todos for future">
-      <option name="closed" value="true" />
-      <created>1752688859326</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1752688859327</updated>
-    </task>
-    <task id="LOCAL-00082" summary="created ExecutionLogger">
-      <option name="closed" value="true" />
-      <created>1752715757405</created>
-      <option name="number" value="00082" />
-      <option name="presentableId" value="LOCAL-00082" />
-      <option name="project" value="LOCAL" />
-      <updated>1752715757405</updated>
-    </task>
-    <task id="LOCAL-00083" summary="bug fix required">
-      <option name="closed" value="true" />
-      <created>1752717206365</created>
-      <option name="number" value="00083" />
-      <option name="presentableId" value="LOCAL-00083" />
-      <option name="project" value="LOCAL" />
-      <updated>1752717206365</updated>
+      <workItem from="1753458854483" duration="763000" />
+      <workItem from="1753459631740" duration="133000" />
+      <workItem from="1753459773384" duration="12000" />
+      <workItem from="1753459793033" duration="475000" />
+      <workItem from="1753460276470" duration="4576000" />
+      <workItem from="1753512911622" duration="570000" />
+      <workItem from="1753539553548" duration="8286000" />
+      <workItem from="1753621987852" duration="3376000" />
+      <workItem from="1753625390767" duration="3397000" />
     </task>
     <task id="LOCAL-00084" summary="Fixed bug">
       <option name="closed" value="true" />
@@ -633,7 +632,47 @@
       <option name="project" value="LOCAL" />
       <updated>1752889190013</updated>
     </task>
-    <option name="localTasksCounter" value="128" />
+    <task id="LOCAL-00128" summary="testing and noticed a bug">
+      <option name="closed" value="true" />
+      <created>1753464001426</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1753464001426</updated>
+    </task>
+    <task id="LOCAL-00129" summary="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created">
+      <option name="closed" value="true" />
+      <created>1753541922487</created>
+      <option name="number" value="00129" />
+      <option name="presentableId" value="LOCAL-00129" />
+      <option name="project" value="LOCAL" />
+      <updated>1753541922487</updated>
+    </task>
+    <task id="LOCAL-00130" summary="Never mind it seems to be working lol">
+      <option name="closed" value="true" />
+      <created>1753544822849</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1753544822849</updated>
+    </task>
+    <task id="LOCAL-00131" summary="Refactor VFLRunner to VFLCallableRunner and update related classes">
+      <option name="closed" value="true" />
+      <created>1753625499056</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1753625499056</updated>
+    </task>
+    <task id="LOCAL-00132" summary="Refactor VFLRunner and VFLCallable to streamline logging functionality">
+      <option name="closed" value="true" />
+      <created>1753627599306</created>
+      <option name="number" value="00132" />
+      <option name="presentableId" value="LOCAL-00132" />
+      <option name="project" value="LOCAL" />
+      <updated>1753627599306</updated>
+    </task>
+    <option name="localTasksCounter" value="133" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -651,11 +690,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added async sub block fn handler that will copy current context, create a new scope in that environment and return it" />
-    <MESSAGE value="Added async versions" />
-    <MESSAGE value="added important todo" />
-    <MESSAGE value="added package-info.java for scoped logger" />
-    <MESSAGE value="renaming changes and other stuff" />
     <MESSAGE value="creating tests to see how things work" />
     <MESSAGE value="updated in memory funciton to show nested logs with same parent" />
     <MESSAGE value="simple async showcase done" />
@@ -676,7 +710,12 @@
     <MESSAGE value="Added comments" />
     <MESSAGE value="Code much more clean now" />
     <MESSAGE value="Code clean, removed ContextualVFL.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="Code clean, removed ContextualVFL.java" />
+    <MESSAGE value="testing and noticed a bug" />
+    <MESSAGE value="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created" />
+    <MESSAGE value="Never mind it seems to be working lol" />
+    <MESSAGE value="Refactor VFLRunner to VFLCallableRunner and update related classes" />
+    <MESSAGE value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -691,8 +730,24 @@
           <line>25</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
+          <line>56</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
+          <line>73</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="JUnit">
+        <watch expression="((ThreadSafeSynchronousVflBuffer)buffer).logsToFlush" custom="dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer" />
+        <watch expression="((ThreadSafeSynchronousVflBuffer)buffer).blocksToFlush" custom="dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

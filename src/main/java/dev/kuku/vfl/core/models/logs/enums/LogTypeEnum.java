@@ -1,7 +1,13 @@
 package dev.kuku.vfl.core.models.logs.enums;
 
 public enum LogTypeEnum {
-    MESSAGE,
-    WARN,
-    ERROR
+    MESSAGE("MESSAGE"),
+    WARN("WARN"),
+    ERROR("ERROR");
+
+    private final String DisplayName;
+
+    LogTypeEnum(String displayName) {
+        DisplayName = displayName;
+    }
 }
