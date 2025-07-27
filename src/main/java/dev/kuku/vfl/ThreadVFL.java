@@ -1,12 +1,12 @@
 package dev.kuku.vfl;
 
-import dev.kuku.vfl.core.VFLCallableRunner;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
+import dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner;
 
 import java.util.Stack;
 
@@ -61,8 +61,8 @@ public class ThreadVFL extends VFLCallable {
         }
     }
 
-    public static class CallableRunner extends VFLCallableRunner {
-        private final static CallableRunner Instance = new CallableRunner();
+    public static class Runner extends VFLCallableRunner {
+        public final static Runner Instance = new Runner();
 
         @Override
         protected VFL createRootLogger(VFLBlockContext rootCtx) {
@@ -77,7 +77,6 @@ public class ThreadVFL extends VFLCallable {
         @Override
         protected VFL createEventListenerLogger(VFLBlockContext eventListenerCtx) {
             ThreadVFL eventListenerBlockLogger = new ThreadVFL(eventListenerCtx);
-
             /*
              * Depending on the implementation of the event publisher and subscribe implementation this may or may not be running in a separate thread.
              *
@@ -90,11 +89,6 @@ public class ThreadVFL extends VFLCallable {
             }
             ThreadVFL.loggerStack.get().push(eventListenerBlockLogger);
             return ThreadVFL.loggerStack.get().peek();
-        }
-
-        @Override
-        public VFLCallableRunner getRunner() {
-            return Instance;
         }
     }
 }

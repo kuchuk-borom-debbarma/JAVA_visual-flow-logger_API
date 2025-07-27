@@ -9,6 +9,7 @@ public class VFLBase extends VFL {
     private final AtomicBoolean blockStarted = new AtomicBoolean(false);
     VFLBlockContext ctx;
 
+    //Not allowed to create VFLBase directly, use VFLRunners
     protected VFLBase(VFLBlockContext ctx) {
         this.ctx = ctx;
     }

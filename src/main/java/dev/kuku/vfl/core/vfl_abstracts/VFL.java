@@ -10,9 +10,6 @@ import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -39,31 +36,31 @@ public abstract class VFL {
      * Internal logging method that encapsulates the common logic.
      *
      * @param type   The log type (e.g. MESSAGE, WARN, or ERROR).
-     * @param mesage The message to log.
+     * @param message The message to log.
      */
-    private void logInternal(LogTypeEnum type, String mesage) {
+    private void logInternal(LogTypeEnum type, String message) {
         // Ensure the log block is started.
         ensureBlockStarted();
 
         // Create and push the new log entry using the provided type.
         var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, type,           // LogTypeEnum value (MESSAGE, WARN, or ERROR)
-                mesage, getContext().buffer);
+                message, getContext().buffer);
 
         // Update the current log id.
         getContext().currentLogId = createdLog.getId();
     }
 
     // Public logging methods that simply forward to the internal method.
-    public final void log(String mesage) {
-        logInternal(LogTypeEnum.MESSAGE, mesage);
+    public final void log(String message) {
+        logInternal(LogTypeEnum.MESSAGE, message);
     }
 
-    public final void warn(String mesage) {
-        logInternal(LogTypeEnum.WARN, mesage);
+    public final void warn(String message) {
+        logInternal(LogTypeEnum.WARN, message);
     }
 
-    public final void error(String mesage) {
-        logInternal(LogTypeEnum.ERROR, mesage);
+    public final void error(String message) {
+        logInternal(LogTypeEnum.ERROR, message);
     }
 
     // Abstract method that subclasses must implement to provide context.
@@ -114,19 +111,6 @@ public abstract class VFL {
                 logger.close(endMsg);
             }
             return result;
-        }
-
-        public static Set<String> GetLogsAsStringSet(Set<LogTypeEnum> typeToRemove, Set<LogTypeBlockStartEnum> startLogTypeToRemove) {
-            Set<String> set = new HashSet<>(LogTypeEnum.values().length + LogTypeBlockStartEnum.values().length);
-            set.addAll(Arrays.stream(LogTypeEnum.values()).map(Object::toString).toList());
-            set.addAll(Arrays.stream(LogTypeBlockStartEnum.values()).map(Object::toString).toList());
-            if (typeToRemove != null && !typeToRemove.isEmpty()) {
-                typeToRemove.stream().map(Object::toString).toList().forEach(set::remove);
-            }
-            if (startLogTypeToRemove != null && !startLogTypeToRemove.isEmpty()) {
-                startLogTypeToRemove.stream().map(Object::toString).toList().forEach(set::remove);
-            }
-            return set;
         }
     }
 }

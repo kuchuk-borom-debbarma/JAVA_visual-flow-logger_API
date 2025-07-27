@@ -51,7 +51,7 @@ public class ThreadVFLTest {
     class LinearFlow {
         @Test
         void linearFlow() {
-            ThreadVFL.CallableRunner.Call("Simple Linear test", buffer, () -> {
+            ThreadVFL.Runner.Call("Simple Linear test", buffer, () -> {
                 var logger = ThreadVFL.Get();
                 logger.log("This is a log #1");
                 logger.log("Now going to start another block");
@@ -67,7 +67,7 @@ public class ThreadVFLTest {
     class AsyncFlow {
         @Test
         void asyncTest() {
-            ThreadVFL.CallableRunner.Call("AsyncFlow Test", buffer, () -> {
+            ThreadVFL.Runner.Call("AsyncFlow Test", buffer, () -> {
                 var l = ThreadVFL.Get();
                 l.log("Starting async test now...");
                 int r = l.callPrimarySubBlock("Sum primary", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is " + integer);
@@ -109,7 +109,7 @@ public class ThreadVFLTest {
     class EventFlow {
 
         void sum(int a, int b, EventPublisherBlock eventPublisherBlock) {
-            ThreadVFL.CallableRunner.RunEventListener("Sum listener", "Calculating sum of " + a + " " + b, eventPublisherBlock, buffer, () -> {
+            ThreadVFL.Runner.RunEventListener("Sum listener", "Calculating sum of " + a + " " + b, eventPublisherBlock, buffer, () -> {
                 var l = ThreadVFL.Get();
                 l.log("Starting event listener of sum");
                 int r = a + b;
@@ -118,7 +118,7 @@ public class ThreadVFLTest {
         }
 
         void multiply(int a, int b, EventPublisherBlock eventPublisherBlock) {
-            ThreadVFL.CallableRunner.RunEventListener("Multiply listener", "Multiplying " + a + " and " + b, eventPublisherBlock, buffer, () -> {
+            ThreadVFL.Runner.RunEventListener("Multiply listener", "Multiplying " + a + " and " + b, eventPublisherBlock, buffer, () -> {
                 var l = ThreadVFL.Get();
                 l.log("Starting event listener of multiply");
                 int r = a * b;
@@ -128,7 +128,7 @@ public class ThreadVFLTest {
 
         @Test
         void linearEventFlow() {
-            ThreadVFL.CallableRunner.Call("Linear event publisher and listener test", buffer, () -> {
+            ThreadVFL.Runner.Call("Linear event publisher and listener test", buffer, () -> {
                 var logger = ThreadVFL.Get();
                 logger.log("Starting event publisher and listener test");
                 var publisherBlock = logger.createEventPublisherBlock("On Publish number", "Publishing 2 numbers");
