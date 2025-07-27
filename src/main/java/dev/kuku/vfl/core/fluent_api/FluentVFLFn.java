@@ -5,10 +5,11 @@ import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class FluentVFLFn {
+public class FluentVFLFn extends FluentVFL {
     private final VFLFn vfl;
 
     public FluentVFLFn(VFLFn vfl) {
+        super(vfl);
         this.vfl = vfl;
     }
 
