@@ -4,7 +4,7 @@ import dev.kuku.vfl.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
-import dev.kuku.vfl.core.fluent_api.FluentVFLCallable;
+import dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
