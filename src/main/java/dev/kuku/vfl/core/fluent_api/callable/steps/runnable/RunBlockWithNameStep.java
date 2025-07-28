@@ -1,7 +1,8 @@
 package dev.kuku.vfl.core.fluent_api.callable.steps.runnable;
 
+import dev.kuku.vfl.core.fluent_api.subBlockCommons.AsyncBlockExecutor;
+import dev.kuku.vfl.core.fluent_api.subBlockCommons.BlockExecutor;
 import dev.kuku.vfl.core.fluent_api.subBlockCommons.BlockStartMsg;
-import dev.kuku.vfl.core.fluent_api.subBlockCommons.StartSubBlockStep;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 import lombok.RequiredArgsConstructor;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @RequiredArgsConstructor
-public class RunBlockWithNameStep implements BlockStartMsg, StartSubBlockStep<Void> {
+public class RunBlockWithNameStep implements BlockStartMsg, BlockExecutor<Void>, AsyncBlockExecutor<Void> {
 
     private final String blockName;
     private final VFLCallable vflCallable;
@@ -17,7 +18,7 @@ public class RunBlockWithNameStep implements BlockStartMsg, StartSubBlockStep<Vo
     private String startMessage = null;
 
     @Override
-    public BlockStartMsg withStartMessage(String startMessage) {
+    public RunBlockWithNameStep withStartMessage(String startMessage) {
         this.startMessage = startMessage;
         return this;
     }

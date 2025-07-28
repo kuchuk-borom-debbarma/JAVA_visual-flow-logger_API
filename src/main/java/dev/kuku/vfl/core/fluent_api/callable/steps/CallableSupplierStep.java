@@ -8,12 +8,12 @@ import java.util.function.Supplier;
 public class CallableSupplierStep<R> extends SupplierStep<R> {
     private final VFLCallable vfl;
 
-    public CallableSupplierStep(VFLCallable vfl, Supplier supplier) {
+    public CallableSupplierStep(VFLCallable vfl, Supplier<R> supplier) {
         super(vfl, supplier);
         this.vfl = vfl;
     }
 
-    public AsSubBlockStep asSubBlock(String blockName) {
-        return new AsSubBlockStep(blockName, vfl, supplier);
+    public AsSubBlockStep<R> asSubBlock(String blockName) {
+        return new AsSubBlockStep<>(blockName, vfl, supplier);
     }
 }

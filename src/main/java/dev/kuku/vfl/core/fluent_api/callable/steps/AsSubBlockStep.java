@@ -1,8 +1,9 @@
 package dev.kuku.vfl.core.fluent_api.callable.steps;
 
+import dev.kuku.vfl.core.fluent_api.subBlockCommons.AsyncBlockExecutor;
 import dev.kuku.vfl.core.fluent_api.subBlockCommons.BlockCallableEndMessage;
+import dev.kuku.vfl.core.fluent_api.subBlockCommons.BlockExecutor;
 import dev.kuku.vfl.core.fluent_api.subBlockCommons.BlockStartMsg;
-import dev.kuku.vfl.core.fluent_api.subBlockCommons.StartSubBlockStep;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @RequiredArgsConstructor
-public class AsSubBlockStep<R> implements BlockStartMsg, BlockCallableEndMessage, StartSubBlockStep<R> {
+public class AsSubBlockStep<R> implements BlockStartMsg, BlockCallableEndMessage<R>, BlockExecutor<R>, AsyncBlockExecutor<R> {
     private final String blockName;
     private final VFLCallable vfl;
     private final Supplier<R> supplier;
@@ -20,13 +21,13 @@ public class AsSubBlockStep<R> implements BlockStartMsg, BlockCallableEndMessage
     private String startMessage = null;
 
     @Override
-    public BlockCallableEndMessage withEndMessageMapper(Function endMessageSerializer) {
+    public AsSubBlockStep<R> withEndMessageMapper(Function<R, String> endMessageSerializer) {
         this.endMessage = endMessageSerializer;
         return this;
     }
 
     @Override
-    public BlockStartMsg withStartMessage(String startMessage) {
+    public AsSubBlockStep<R> withStartMessage(String startMessage) {
         this.startMessage = startMessage;
         return this;
     }

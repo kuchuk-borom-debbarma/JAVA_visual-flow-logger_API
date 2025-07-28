@@ -6,10 +6,10 @@ import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
-import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 public abstract class VFLCallableRunner extends VFLRunner {
-    public <R> R StartVFL(String blockName, VFLBuffer buffer, Callable<R> fn) {
+    public <R> R StartVFL(String blockName, VFLBuffer buffer, Supplier<R> fn) {
         var context = initRootCtx(blockName, buffer);
         var logger = createRootLogger(context);
         try {
