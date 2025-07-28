@@ -7,9 +7,11 @@ import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 import dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Stack;
 
+@Slf4j
 public class ThreadVFL extends VFLCallable {
     private static final ThreadLocal<Stack<ThreadVFL>> loggerStack = new ThreadLocal<>();
     private final VFLBlockContext ctx;
@@ -22,23 +24,52 @@ public class ThreadVFL extends VFLCallable {
         return loggerStack.get().peek();
     }
 
+    private static String getThreadInfo() {
+        Thread currentThread = Thread.currentThread();
+        return String.format("[Thread: %s (ID: %d)]", currentThread.getName(), currentThread.threadId());
+    }
+
+    private static String trimId(String fullId) {
+        if (fullId == null) return "null";
+        String[] parts = fullId.split("-");
+        return parts.length > 0 ? parts[parts.length - 1] : fullId;
+    }
+
     @Override
     protected void prepareLoggerAfterSubBlockStartDataInitializedAndPushed(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum startType) {
         var subLoggerCtx = new VFLBlockContext(subBlock, parentBlockCtx.buffer);
+        String threadInfo = getThreadInfo();
+
         // If sub logger data has been pushed to buffer, we must now create the respective logger and add it to stack
         if (startType == LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY) {
             //if primary operation was started then it's in main thread and a stack with proper parent will already exist
-            ThreadVFL.loggerStack.get().push(new ThreadVFL(subLoggerCtx));
+            ThreadVFL newLogger = new ThreadVFL(subLoggerCtx);
+            ThreadVFL.loggerStack.get().push(newLogger);
+            log.info("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
+                    trimId(subLoggerCtx.blockInfo.getId()),
+                    threadInfo,
+                    ThreadVFL.loggerStack.get().size());
             return;
         }
+
         //If its completable futures start then it will be in a new thread, the thread may or may not have existing stack(if thread pool fails to remove thread properly although it should)
         //Then we need to create a new stack and push it
         if (ThreadVFL.loggerStack.get() == null) {
             Stack<ThreadVFL> stack = new Stack<>();
-            stack.push(new ThreadVFL(subLoggerCtx));
+            ThreadVFL newLogger = new ThreadVFL(subLoggerCtx);
+            stack.push(newLogger);
             ThreadVFL.loggerStack.set(stack);
+            log.info("CREATE & PUSH: Created new stack and added logger '{}' {} - Stack size: {}",
+                    trimId(subLoggerCtx.blockInfo.getId()),
+                    threadInfo,
+                    stack.size());
         } else {
-            ThreadVFL.loggerStack.get().push(new ThreadVFL(subLoggerCtx));
+            ThreadVFL newLogger = new ThreadVFL(subLoggerCtx);
+            ThreadVFL.loggerStack.get().push(newLogger);
+            log.info("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
+                    trimId(subLoggerCtx.blockInfo.getId()),
+                    threadInfo,
+                    ThreadVFL.loggerStack.get().size());
         }
     }
 
@@ -55,9 +86,17 @@ public class ThreadVFL extends VFLCallable {
     @Override
     protected void close(String endMessage) {
         super.close(endMessage);
-        ThreadVFL.loggerStack.get().pop();
+        String threadInfo = getThreadInfo();
+
+        var poppedLogger = ThreadVFL.loggerStack.get().pop();
+        log.info("POP: Removed logger '{}' from stack {} - Remaining stack size: {}",
+                trimId(poppedLogger.ctx.blockInfo.getId()),
+                threadInfo,
+                ThreadVFL.loggerStack.get().size());
+
         if (ThreadVFL.loggerStack.get().isEmpty()) {
             ThreadVFL.loggerStack.remove();
+            log.info("REMOVE: Completely removed logger stack from {} - Stack cleaned up", threadInfo);
         }
     }
 
@@ -67,16 +106,24 @@ public class ThreadVFL extends VFLCallable {
         @Override
         protected VFL createRootLogger(VFLBlockContext rootCtx) {
             var rootLogger = new ThreadVFL(rootCtx);
+            String threadInfo = getThreadInfo();
+
             //Create logger stack
             Stack<ThreadVFL> stack = new Stack<>();
             stack.push(rootLogger);
             ThreadVFL.loggerStack.set(stack);
+            log.info("CREATE ROOT: Created root logger '{}' and initialized stack {} - Stack size: {}",
+                    trimId(rootLogger.ctx.blockInfo.getId()),
+                    threadInfo,
+                    stack.size());
             return rootLogger;
         }
 
         @Override
         protected VFL createEventListenerLogger(VFLBlockContext eventListenerCtx) {
             ThreadVFL eventListenerBlockLogger = new ThreadVFL(eventListenerCtx);
+            String threadInfo = getThreadInfo();
+
             /*
              * Depending on the implementation of the event publisher and subscribe implementation this may or may not be running in a separate thread.
              *
@@ -85,9 +132,21 @@ public class ThreadVFL extends VFLCallable {
              * If it's running in a different thread the loggerStack should be null as secondaryBlockStart calls always clean up after they are done.
              */
             if (ThreadVFL.loggerStack.get() == null) {
-                ThreadVFL.loggerStack.set(new Stack<>());
+                Stack<ThreadVFL> newStack = new Stack<>();
+                ThreadVFL.loggerStack.set(newStack);
+                newStack.push(eventListenerBlockLogger);
+                log.info("CREATE EVENT: Created new stack for event listener '{}' {} - Stack size: {}",
+                        trimId(eventListenerBlockLogger.ctx.blockInfo.getId()),
+                        threadInfo,
+                        newStack.size());
+            } else {
+                ThreadVFL.loggerStack.get().push(eventListenerBlockLogger);
+                log.info("PUSH EVENT: Added event listener '{}' to existing stack {} - Stack size: {}",
+                        trimId(eventListenerBlockLogger.ctx.blockInfo.getId()),
+                        threadInfo,
+                        ThreadVFL.loggerStack.get().size());
             }
-            ThreadVFL.loggerStack.get().push(eventListenerBlockLogger);
+
             return ThreadVFL.loggerStack.get().peek();
         }
     }
