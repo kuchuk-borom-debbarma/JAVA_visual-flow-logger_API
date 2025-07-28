@@ -13,7 +13,7 @@ import java.util.Stack;
 
 @Slf4j
 public class ThreadVFL extends VFLCallable {
-    private static final ThreadLocal<Stack<ThreadVFL>> loggerStack = new ThreadLocal<>();
+    private static final ThreadLocal<Stack<ThreadVFL>> loggerStack = ThreadLocal.withInitial(Stack::new);
     private final VFLBlockContext ctx;
 
     private ThreadVFL(VFLBlockContext context) {
