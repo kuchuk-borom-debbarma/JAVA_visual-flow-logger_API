@@ -1,5 +1,6 @@
-package dev.kuku.vfl.core.fluent_api;
+package dev.kuku.vfl.core.fluent_api.base;
 
+import dev.kuku.vfl.core.fluent_api.base.steps.SupplierStep;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
 import java.util.function.Function;
@@ -12,36 +13,24 @@ public class FluentVFL {
         vfl = logger;
     }
 
-    public LogTextStep logText(String text) {
-        return new LogTextStep(text);
+    public void log(String message) {
+        vfl.log(message);
     }
 
-    public <R> FnStep logFn(Supplier<R> fn) {
-        return new FnStep<>(fn);
+    public void warn(String message) {
+        vfl.warn(message);
     }
 
-    public class LogTextStep {
-        private final String text;
+    public void error(String message) {
+        vfl.error(message);
+    }
 
-        public LogTextStep(String text) {
-            this.text = text;
-        }
-
-        public void asMessage() {
-            vfl.log(text);
-        }
-
-        public void asError() {
-            vfl.error(text);
-        }
-
-        public void asWarning() {
-            vfl.warn(text);
-        }
+    public <R> SupplierStep<R> call(Supplier<R> fn) {
+        return new SupplierStep<>(vfl, fn);
     }
 
     public class FnStep<R> {
-        private final Supplier<R> fn;
+        protected final Supplier<R> fn;
 
         public FnStep(Supplier<R> fn) {
             this.fn = fn;

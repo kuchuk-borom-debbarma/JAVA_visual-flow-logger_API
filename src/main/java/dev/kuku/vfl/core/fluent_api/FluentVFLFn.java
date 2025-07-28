@@ -1,5 +1,6 @@
 package dev.kuku.vfl.core.fluent_api;
 
+import dev.kuku.vfl.core.fluent_api.base.FluentVFL;
 import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
 
 import java.util.function.Consumer;

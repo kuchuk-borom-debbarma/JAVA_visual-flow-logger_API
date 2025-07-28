@@ -1,12 +1,13 @@
 package dev.kuku.vfl.core.fluent_api;
 
-import dev.kuku.vfl.core.models.VFLExecutionException;
+import dev.kuku.vfl.core.fluent_api.base.FluentVFL;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class FluentVFLCallable extends FluentVFL {
     private final VFLCallable vfl;
@@ -16,87 +17,99 @@ public class FluentVFLCallable extends FluentVFL {
         this.vfl = logger;
     }
 
-    public StartBlockStep startSubBlock(String blockName) {
-        return new StartBlockStep(blockName);
+    @Override
+    public <R> FnStepCallable<R> call(Supplier<R> fn) {
+        return new FnStepCallable<>(fn);
     }
 
-    public class StartBlockStep {
-        private final String blockName;
-        private String startMessage = null;
+    public RunnableStep run(Runnable r) {
+        return new RunnableStep(r);
+    }
 
-        public StartBlockStep(String blockName) {
-            this.blockName = blockName;
+    public class FnStepCallable<R> extends FnStep<R> {
+        public FnStepCallable(Supplier<R> fn) {
+            super(fn);
         }
 
-        public StartBlockStep withStartMessage(String startMessage) {
-            this.startMessage = startMessage;
-            return this;
+        public SubBlockStep asSubBlock(String blockName) {
+            return new SubBlockStep(blockName);
         }
 
-        public <R> FnStep<R> forCallable(Callable<R> callable) {
-            return new FnStep<>(callable);
-        }
-
-        public FnVoidStep forRunnable(Runnable runnable) {
-            return new FnVoidStep(runnable);
-        }
-
-        public class FnStep<R> {
-            private final Callable<R> callable;
+        public class SubBlockStep {
+            private final String blockName;
+            private String startMessage = null;
             private Function<R, String> endMessageSerializer = null;
 
-            public FnStep(Callable<R> callable) {
-                this.callable = callable;
+            public SubBlockStep(String blockName) {
+                this.blockName = blockName;
             }
 
-            public FnStep<R> withEndMessageSerializer(Function<R, String> endMessageSerializer) {
-                this.endMessageSerializer = endMessageSerializer;
+            public SubBlockStep withStartMessage(String message) {
+                this.startMessage = message;
                 return this;
             }
 
-            public R executeAsPrimary() {
-                return vfl.callPrimarySubBlock(blockName, startMessage, callable, endMessageSerializer);
+            public SubBlockStep withEndMessageSerializer(Function<R, String> f) {
+                this.endMessageSerializer = f;
+                return null;
             }
 
-            public CompletableFuture<R> executeAsJoiningSecondary(Executor executor) {
-                return vfl.callSecondaryJoiningBlock(blockName, startMessage, callable, endMessageSerializer, executor);
+            public R startPrimary() {
+                return vfl.callPrimarySubBlock(blockName, startMessage, fn::get, endMessageSerializer);
             }
 
-            public CompletableFuture<Void> executeAsNonJoiningSecondary(Executor executor) {
-                return vfl.callSecondaryNonJoiningBlock(blockName, startMessage, () -> {
-                    try {
-                        callable.call();
-                    } catch (Exception e) {
-                        throw new VFLExecutionException(e);
-                    }
-                }, executor);
+            public CompletableFuture<R> startJoiningSecondary(Executor executor) {
+                return vfl.callSecondaryJoiningBlock(blockName, startMessage, fn::get, endMessageSerializer, executor);
+            }
+
+            public CompletableFuture<Void> startNonJoiningSecondary(Executor executor) {
+                return vfl.callSecondaryNonJoiningBlock(blockName, startMessage, fn::get, executor);
             }
         }
+    }
 
-        public class FnVoidStep {
-            private final Runnable runnable;
+    public class RunnableStep {
+        private final Runnable fn;
 
-            public FnVoidStep(Runnable runnable) {
-                this.runnable = runnable;
+        public RunnableStep(Runnable fn) {
+            this.fn = fn;
+        }
+
+        public BlockNameStep asSubBlock(String blockName) {
+            return new BlockNameStep(blockName);
+        }
+
+        public class BlockNameStep {
+
+            private final String blockName;
+            private String startMessage = null;
+
+            public BlockNameStep(String blockName) {
+                this.blockName = blockName;
+            }
+
+            public BlockNameStep withStartMessage(String startMessage) {
+                this.startMessage = startMessage;
+                return this;
             }
 
             private Callable<Void> toCallable() {
                 return () -> {
-                    runnable.run();
+                    fn.run();
                     return null;
                 };
             }
 
-            public void executeAsPrimary() {
+            public void startPrimary() {
                 vfl.callPrimarySubBlock(blockName, startMessage, toCallable(), null);
             }
 
-            public CompletableFuture<Void> executeAsJoiningSecondary(Executor executor) {
+            public CompletableFuture<Void> startSecondaryJoining(Executor executor) {
                 return vfl.callSecondaryJoiningBlock(blockName, startMessage, toCallable(), null, executor);
             }
 
-            public CompletableFuture<Void> executeAsNonJoiningSecondary(Executor executor) {
-                return vfl.callSecondaryNonJoiningBlock(blockName, startMessage, runnable, executor);
+            public CompletableFuture<Void> startNonJoiningSecondary(Executor executor) {
+                return vfl.callSecondaryJoiningBlock(blockName, startMessage, toCallable(), null, executor);
             }
         }
     }
