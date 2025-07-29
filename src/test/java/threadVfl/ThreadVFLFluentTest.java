@@ -1,5 +1,6 @@
 package threadVfl;
 
+import dev.kuku.vfl.FluentThreadVFL;
 import dev.kuku.vfl.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
@@ -13,11 +14,14 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
-public class ThreadVFLFluent {
+public class ThreadVFLFluentTest {
 
     private final InMemoryFlushHandlerImpl flush = new InMemoryFlushHandlerImpl();
     private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, 99999, flush);
+    private FluentVFLCallable f;
 
     void write(String fileName) {
         try {
@@ -33,18 +37,17 @@ public class ThreadVFLFluent {
     }
 
     int sum(int a, int b) {
-        var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-        fluentLogger.log("Going to sum " + a + " " + b);
-        fluentLogger.log("Sum = " + (a + b));
-        return a + b;
+        var f = FluentThreadVFL.Get();
+        f.log("Going to sum " + a + " " + b);
+        return f.call(() -> a + b)
+                .asLog(integer -> "Sum = " + integer);
     }
 
     int multiply(int a, int b) {
-        var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-        fluentLogger.log("Multiplying " + a + " and " + b);
-        int result = a * b;
-        fluentLogger.log("Multiplying value = " + result);
-        return result;
+        var f = FluentThreadVFL.Get();
+        f.log("Multiplying " + a + " and " + b);
+        return f.call(() -> a * b)
+                .asLog(i -> "Multiplied value = " + i);
     }
 
     @Nested
@@ -52,16 +55,16 @@ public class ThreadVFLFluent {
         @Test
         void linearFlow() {
             ThreadVFL.Runner.Instance.StartVFL("Simple Linear test", buffer, () -> {
-                var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.log("This is a log #1");
-                fluentLogger.log("Now going to start another block");
+                f = FluentThreadVFL.Get();
+                f.log("This is a log #1");
+                f.log("Now going to start another block");
 
-                int result = fluentLogger.call(() -> sum(1, 2))
+                int result = f.call(() -> sum(1, 2))
                         .asSubBlock("Multiply block")
                         .withStartMessage("Doing sum of 1, 2")
                         .withEndMessageMapper(o -> "Result is " + o)
                         .startPrimary();
-                fluentLogger.log("So now the result is " + result);
+                f.log("So now the result is " + result);
                 return null;
             });
             write("linearFlow");
@@ -73,55 +76,63 @@ public class ThreadVFLFluent {
         @Test
         void asyncTest() {
             ThreadVFL.Runner.Instance.StartVFL("AsyncFlow Test", buffer, () -> {
-                var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.log("Starting async test now...");
+                f = FluentThreadVFL.Get();
+                f.log("Starting async test now...");
 
-                fluentLogger.runSubBlock(() -> sum(1, 2))
-                        .withBlockName("Sum runner")
+                f.runSubBlock(() -> sum(1, 2))
+                        .withBlockName("Sum Primary 1")
                         .startPrimary();
 
-                CompletableFuture<Integer> t1 = fluentLogger.startSubBlock("Sum async")
-                        .withStartMessage("Squaring in async")
-                        .forCallable(() -> {
-                            var fluentInnerLogger = new FluentVFLCallable(ThreadVFL.Get());
-                            fluentInnerLogger.logText("Sleeping now").asMessage();
+                CompletableFuture<Integer> t1 = f.call(() -> {
                             try {
+                                var f = FluentThreadVFL.Get();
+                                f.log("Sleeping sum now");
                                 Thread.sleep(2000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            fluentInnerLogger.logText("Finished sleeping").asMessage();
+                            f.log("Sleeping sum finished now calculating actual sum...");
                             return sum(1, 2);
                         })
-                        .withEndMessageSerializer(integer -> "Result is " + integer)
-                        .executeAsJoiningSecondary(null);
+                        .asSubBlock("Sum async")
+                        .withStartMessage("Starting sum async block")
+                        .withEndMessageMapper(integer -> "After sleeping sum is " + integer)
+                        .startSecondaryJoining(null);
 
-                CompletableFuture<Integer> t2 = fluentLogger.startSubBlock("Multiply async")
-                        .withStartMessage("Multiply in async")
-                        .forCallable(() -> {
-                            var fluentInnerLogger = new FluentVFLCallable(ThreadVFL.Get());
-                            fluentInnerLogger.logText("Sleeping now").asMessage();
+                CompletableFuture<Integer> t2 = f.call(() -> {
                             try {
+                                var f = FluentThreadVFL.Get();
+                                f.log("Sleeping multiply now");
                                 Thread.sleep(2000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            fluentInnerLogger.logText("Finished sleeping").asMessage();
+                            f.log("Sleeping multiply finished now calculating actual sum...");
                             return multiply(1, 2);
                         })
-                        .withEndMessageSerializer(integer -> "Result is " + integer)
-                        .executeAsJoiningSecondary(null);
+                        .asSubBlock("Multiply async")
+                        .withStartMessage("Starting Multiply async block")
+                        .withEndMessageMapper(integer -> "After sleeping multiply is " + integer)
+                        .startSecondaryJoining(Executors.newVirtualThreadPerTaskExecutor());
 
-                var a = t1.get();
-                var b = t2.get();
+                try {
+                    var a = t1.get();
+                    var b = t2.get();
+                    f.log("Final a and b after async operation is " + a + " and " + b);
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
 
-                fluentLogger.startSubBlock("Sum primary 2")
-                        .withStartMessage("Doing sum of results")
-                        .forCallable(() -> sum(a, b))
-                        .withEndMessageSerializer(integer -> "Final result = " + integer)
-                        .executeAsPrimary();
-
-                fluentLogger.logText("Everything is DONE and dusted!!!").asMessage();
+                try {
+                    f.log("Running async non joining SUM now");
+                    f.runSubBlock(() -> sum(1, 2))
+                            .withBlockName("Non Joining secondary")
+                            .startSecondaryNonJoining(null).get();
+                    f.log("Async non joining SUM complete");
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+                f.log("Everything is DONE and dusted!!!");
                 return null;
             });
             write("AsyncFlow");
@@ -133,33 +144,32 @@ public class ThreadVFLFluent {
 
         void sum(int a, int b, EventPublisherBlock eventPublisherBlock) {
             ThreadVFL.Runner.Instance.StartEventListenerLogger("Sum listener", "Calculating sum of " + a + " " + b, buffer, eventPublisherBlock, () -> {
-                var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.logText("Starting event listener of sum").asMessage();
+                f.log("Starting event listener of sum");
                 int r = a + b;
-                fluentLogger.logText("Sum = " + r).asMessage();
+                f.log("Sum = " + r);
             });
         }
 
         void multiply(int a, int b, EventPublisherBlock eventPublisherBlock) {
             ThreadVFL.Runner.Instance.StartEventListenerLogger("Multiply listener", "Multiplying " + a + " and " + b, buffer, eventPublisherBlock, () -> {
                 var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.logText("Starting event listener of multiply").asMessage();
+                fluentLogger.log("Starting event listener of multiply");
                 int r = a * b;
-                fluentLogger.logText("Multiply = " + r).asMessage();
+                fluentLogger.log("Multiply = " + r);
             });
         }
 
         @Test
         void linearEventFlow() {
             ThreadVFL.Runner.Instance.StartVFL("Linear event publisher and listener test", buffer, () -> {
-                var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.logText("Starting event publisher and listener test").asMessage();
+                f = FluentThreadVFL.Get();
+                f.log("Starting event publisher and listener test");
 
                 var publisherBlock = ThreadVFL.Get().createEventPublisherBlock("On Publish number", "Publishing 2 numbers");
                 sum(1, 2, publisherBlock);
                 multiply(1, 2, publisherBlock);
 
-                fluentLogger.logText("Published event now closing").asMessage();
+                f.log("Published event now closing");
                 return null;
             });
             write("linearEventFlow");
