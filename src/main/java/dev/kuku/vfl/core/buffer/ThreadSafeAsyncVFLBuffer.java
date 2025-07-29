@@ -3,6 +3,7 @@ package dev.kuku.vfl.core.buffer;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     private final int bufferSize;
+    private final int flushTimeout;
     private final VFLFlushHandler flushHandler;
     private final List<Block> blocks = new ArrayList<>();
     private final List<Log> logs = new ArrayList<>();
@@ -21,10 +24,11 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     private final Object lock = new Object();
     private final ExecutorService executor;
 
-    public ThreadSafeAsyncVFLBuffer(int bufferSize, VFLFlushHandler flushHandler, ExecutorService executor) {
+    public ThreadSafeAsyncVFLBuffer(int bufferSize, int flushTimeoutMillisecond, VFLFlushHandler flushHandler, ExecutorService executor) {
         this.bufferSize = bufferSize;
         this.flushHandler = flushHandler;
         this.executor = executor;
+        this.flushTimeout = flushTimeoutMillisecond;
     }
 
     private void flushIfFull() {
@@ -65,19 +69,19 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     }
 
     private void flushBlocks(List<Block> blocks) {
-
+        flushHandler.pushBlocksToServer(blocks);
     }
 
     private void flushLogs(List<Log> logs) {
-
+        flushHandler.pushLogsToServer(logs);
     }
 
     private void flushBlockStarts(Map<String, Long> starts) {
-
+        //TODO
     }
 
     private void flushBlockEnds(Map<String, String> ends) {
-
+        //TODO
     }
 
     @Override
@@ -112,10 +116,22 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
 
     @Override
     public void flushAndClose() {
+        // First, flush any remaining data
+        flushAll();
+
+        // Then shutdown the executor and wait for completion
+        executor.shutdown();
         try {
-            executor.awaitTermination(999, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            //Wait for 100 ms and recheck until we reach flushTimeout
+            int current = 0;
+            while (current < flushTimeout) {
+                current += 100;
+                if (executor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to close flush and close {}", e);
         }
     }
 }
