@@ -18,6 +18,11 @@ public class SetBlockNameWithEndMsg<R> extends BaseSetBlockName implements Block
         this.fn = fn;
     }
 
+    @Override
+    public SetBlockNameWithEndMsg<R> withEndMessageMapper(Function<R, String> endMessageSerializer) {
+        this.endMessage = endMessageSerializer;
+        return this;
+    }
 
     @Override
     public SetBlockNameWithEndMsg<R> withStartMessage(String startMessage) {
@@ -42,9 +47,4 @@ public class SetBlockNameWithEndMsg<R> extends BaseSetBlockName implements Block
                 vfl.callSecondaryNonJoiningBlock(blockName, startMessage, fn::apply), executor);
     }
 
-    @Override
-    public BlockCallableEndMessage<R> withEndMessageMapper(Function<R, String> endMessageSerializer) {
-        this.endMessage = endMessageSerializer;
-        return this;
-    }
 }
