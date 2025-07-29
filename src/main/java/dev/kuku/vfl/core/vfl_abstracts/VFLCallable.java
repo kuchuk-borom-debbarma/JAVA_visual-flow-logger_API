@@ -69,7 +69,7 @@ public abstract class VFLCallable extends VFL {
         Runnable r = () -> {
             Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
             SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
-                    startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_JOIN, context.buffer);
+                    startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_NO_JOIN, context.buffer);
             prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_SECONDARY_NO_JOIN);
             VFLHelper.CallFnWithLogger(() -> {
                 runnable.run();

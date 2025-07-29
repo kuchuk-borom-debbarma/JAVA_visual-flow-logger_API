@@ -4,7 +4,7 @@ import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
+//TODO string {} support
 public class VFLBase extends VFL {
     private final AtomicBoolean blockStarted = new AtomicBoolean(false);
     VFLBlockContext ctx;

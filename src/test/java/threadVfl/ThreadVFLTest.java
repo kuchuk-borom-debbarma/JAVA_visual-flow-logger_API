@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 public class ThreadVFLTest {
 
@@ -93,22 +94,14 @@ public class ThreadVFLTest {
                     }
                     m.log("Finished sleeping");
                     return multiply(1, 2);
-                }, integer -> "Result is " + integer, null);
+                }, integer -> "Result is " + integer, Executors.newVirtualThreadPerTaskExecutor());
 
-                Integer a = null;
+                Integer a;
+                Integer b;
                 try {
                     a = t1.get();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-                Integer b = null;
-                try {
                     b = t2.get();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                 }
 
