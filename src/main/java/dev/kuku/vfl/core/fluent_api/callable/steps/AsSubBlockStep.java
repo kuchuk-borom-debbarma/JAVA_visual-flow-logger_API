@@ -44,6 +44,6 @@ public class AsSubBlockStep<R> implements BlockStartMsg, BlockCallableEndMessage
 
     @Override
     public CompletableFuture<Void> startSecondaryNonJoining(Executor executor) {
-        return vfl.callSecondaryNonJoiningBlock(blockName, startMessage, () -> supplier.get(), executor);
+        return vfl.callSecondaryNonJoiningBlock(blockName, startMessage, supplier::get, executor);
     }
 }
