@@ -43,7 +43,7 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogStartToBuffer(String blockId) {
+    public void pushLogStartToBuffer(String blockId, long timestamp) {
         //TODO
     }
 

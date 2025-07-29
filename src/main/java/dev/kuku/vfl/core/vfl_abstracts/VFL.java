@@ -21,7 +21,7 @@ public abstract class VFL {
     // Called to ensure that the logging block is started.
     public final void ensureBlockStarted() {
         if (blockStarted.compareAndSet(false, true)) {
-            getContext().buffer.pushLogStartToBuffer(getContext().blockInfo.getId());
+            getContext().buffer.pushLogStartToBuffer(getContext().blockInfo.getId(), Instant.now().toEpochMilli());
         }
     }
 

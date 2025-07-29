@@ -97,16 +97,16 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogStartToBuffer(String blockId) {
+    public void pushLogStartToBuffer(String blockId, long timestamp) {
         synchronized (lock) {
-
+            blockStarts.put(blockId, timestamp);
         }
     }
 
     @Override
     public void pushLogEndToBuffer(String blockId, String endMessage) {
         synchronized (lock) {
-
+            blockEnds.put(blockId, endMessage);
         }
     }
 
