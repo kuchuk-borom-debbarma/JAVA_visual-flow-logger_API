@@ -3,7 +3,7 @@ package threadVfl;
 import dev.kuku.vfl.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
+import dev.kuku.vfl.core.buffer.flushHandler.ThreadSafeInMemoryFlushHandlerImpl;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 public class ThreadVFLTest {
 
-    private final InMemoryFlushHandlerImpl flush = new InMemoryFlushHandlerImpl();
+    private final ThreadSafeInMemoryFlushHandlerImpl flush = new ThreadSafeInMemoryFlushHandlerImpl();
     private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, 99999, flush);
 
     void write(String fileName) {

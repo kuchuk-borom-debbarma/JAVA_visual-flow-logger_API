@@ -8,22 +8,27 @@ import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
-public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
+public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
+    // Use thread-safe collections because if used in async buffer, it will cause race conditions when multiple flush happens
+    public final ConcurrentLinkedQueue<Log> logs = new ConcurrentLinkedQueue<>();
+    public final ConcurrentLinkedQueue<Block> blocks = new ConcurrentLinkedQueue<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    public List<Log> logs = new ArrayList<>();
-    public List<Block> blocks = new ArrayList<>();
 
     @Override
     public boolean pushLogsToServer(List<Log> logs) {
+        // addAll() on ConcurrentLinkedQueue is thread-safe
         this.logs.addAll(logs);
+        System.out.println("Added " + logs.size() + " logs. Total logs now: " + this.logs.size());
         return true;
     }
 
     @Override
     public boolean pushBlocksToServer(List<Block> blocks) {
         this.blocks.addAll(blocks);
+        System.out.println("Added " + blocks.size() + " blocks. Total blocks now: " + this.blocks.size());
         return true;
     }
 
@@ -41,25 +46,29 @@ public class InMemoryFlushHandlerImpl implements VFLFlushHandler {
         try {
             ArrayNode rootArray = objectMapper.createArrayNode();
 
+            // Convert concurrent collections to lists for processing
+            List<Block> blockList = new ArrayList<>(blocks);
+            List<Log> logList = new ArrayList<>(logs);
+
             // Create a map of block ID to block for quick lookup
-            Map<String, Block> blockMap = blocks.stream()
+            Map<String, Block> blockMap = blockList.stream()
                     .collect(Collectors.toMap(Block::getId, block -> block));
 
             // Group logs by block ID
-            Map<String, List<Log>> logsByBlock = logs.stream()
+            Map<String, List<Log>> logsByBlock = logList.stream()
                     .collect(Collectors.groupingBy(Log::getBlockId));
 
             // Create a set of all valid block IDs
             Set<String> validBlockIds = new HashSet<>(blockMap.keySet());
 
             // Process each block
-            for (Block block : blocks) {
+            for (Block block : blockList) {
                 ObjectNode blockNode = createBlockNode(block, logsByBlock.get(block.getId()), blockMap);
                 rootArray.add(blockNode);
             }
 
             // Handle logs with invalid block IDs
-            List<Log> invalidLogs = logs.stream()
+            List<Log> invalidLogs = logList.stream()
                     .filter(log -> !validBlockIds.contains(log.getBlockId()))
                     .collect(Collectors.toList());
 

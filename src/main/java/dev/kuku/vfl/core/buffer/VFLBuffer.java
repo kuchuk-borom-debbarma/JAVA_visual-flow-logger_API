@@ -4,28 +4,28 @@ import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 
 public interface VFLBuffer {
- /**
-  * Add a log entry to the buffer (fire-and-forget).
-  */
- void pushLogToBuffer(Log log);
+    /**
+     * Add a log entry to the buffer (fire-and-forget).
+     */
+    void pushLogToBuffer(Log log);
 
- /**
-  * Add a block entry to the buffer (fire-and-forget).
-  */
- void pushBlockToBuffer(Block block);
+    /**
+     * Add a block entry to the buffer (fire-and-forget).
+     */
+    void pushBlockToBuffer(Block block);
 
- /**
-  * Log that has started needs to be pushed
-  */
- void pushLogStartToBuffer(String blockId);
+    /**
+     * Log that has started needs to be pushed
+     */
+    void pushLogStartToBuffer(String blockId, long timestamp);
 
- /**
-  * Log that has ended needs to be pushed
-  */
- void pushLogEndToBuffer(String blockId, String endMessage);
+    /**
+     * Log that has ended needs to be pushed
+     */
+    void pushLogEndToBuffer(String blockId, String endMessage);
 
- /**
-  * Will flush all pending data and then shutdown
-  */
- void flushAndClose();
+    /**
+     * Will flush all pending data and then shutdown
+     */
+    void flushAndClose();
 }
