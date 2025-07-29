@@ -5,8 +5,8 @@ import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
 
 import java.util.function.Function;
 
-public class CompletableFutureSubBlockStartStep<R> extends BaseFnSubBlockStartStep<R> {
-    public CompletableFutureSubBlockStartStep(Function<VFLFn, R> fn, VFLFn vfl) {
+public class AsyncFnSubBlockStartStep<R> extends BaseSubBlockStartStep<R> {
+    public AsyncFnSubBlockStartStep(Function<VFLFn, R> fn, VFLFn vfl) {
         super(fn, vfl);
     }
 

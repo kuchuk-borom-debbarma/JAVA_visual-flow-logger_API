@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-public abstract class BaseFnSubBlockStartStep<R> {
+public abstract class BaseSubBlockStartStep<R> {
     protected final Function<VFLFn, R> fn;
     protected final VFLFn vfl;
 }

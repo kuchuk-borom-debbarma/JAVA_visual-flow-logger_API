@@ -5,7 +5,7 @@ import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
 
 import java.util.function.Consumer;
 
-public class ConsumerSubBlockStartStep extends BaseFnSubBlockStartStep<Void> {
+public class ConsumerSubBlockStartStep extends BaseSubBlockStartStep<Void> {
     private final Consumer<VFLFn> originalConsumer;
 
     public ConsumerSubBlockStartStep(Consumer<VFLFn> consumer, VFLFn vfl) {

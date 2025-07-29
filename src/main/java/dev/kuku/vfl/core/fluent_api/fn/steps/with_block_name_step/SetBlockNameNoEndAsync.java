@@ -5,12 +5,13 @@ import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
-public class SetBlockNameNoEndAsync extends BaseSetBlockName implements AsyncBlockExecutor<Void> {
-    protected final Consumer<VFLFn> fn;
+public class SetBlockNameNoEndAsync<R> extends BaseSetBlockName implements AsyncBlockExecutor<R> {
 
-    public SetBlockNameNoEndAsync(String blockName, VFLFn vfl, Consumer<VFLFn> fn) {
+    private final Function<VFLFn, R> fn;
+
+    public SetBlockNameNoEndAsync(String blockName, VFLFn vfl, Function<VFLFn, R> fn) {
         super(blockName, vfl);
         this.fn = fn;
     }
@@ -22,17 +23,14 @@ public class SetBlockNameNoEndAsync extends BaseSetBlockName implements AsyncBlo
     }
 
     @Override
-    public CompletableFuture<Void> startSecondaryJoining(Executor executor) {
+    public CompletableFuture<R> startSecondaryJoining(Executor executor) {
         return CompletableFuture.supplyAsync(() ->
-                vfl.callSecondaryJoiningBlock(blockName, startMessage, l -> {
-                    fn.accept(l);
-                    return null;
-                }, null), executor);
+                vfl.callSecondaryJoiningBlock(blockName, startMessage, fn, null), executor);
     }
 
     @Override
     public CompletableFuture<Void> startSecondaryNonJoining(Executor executor) {
         return CompletableFuture.runAsync(() ->
-                vfl.callSecondaryNonJoiningBlock(blockName, startMessage, fn::accept), executor);
+                vfl.callSecondaryNonJoiningBlock(blockName, startMessage, fn::apply), executor);
     }
 }

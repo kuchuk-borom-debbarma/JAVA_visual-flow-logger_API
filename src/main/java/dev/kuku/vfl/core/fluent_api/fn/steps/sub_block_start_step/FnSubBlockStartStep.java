@@ -5,8 +5,8 @@ import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
 
 import java.util.function.Function;
 
-public class CallSubBlockStartStep<R> extends BaseFnSubBlockStartStep<R> {
-    public CallSubBlockStartStep(Function<VFLFn, R> fn, VFLFn vfl) {
+public class FnSubBlockStartStep<R> extends BaseSubBlockStartStep<R> {
+    public FnSubBlockStartStep(Function<VFLFn, R> fn, VFLFn vfl) {
         super(fn, vfl);
     }
 
