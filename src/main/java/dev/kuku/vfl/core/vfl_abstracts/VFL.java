@@ -3,14 +3,12 @@ package dev.kuku.vfl.core.vfl_abstracts;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.VFLBlockContext;
-import dev.kuku.vfl.core.models.VFLExecutionException;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 
 import java.time.Instant;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -107,18 +105,13 @@ public abstract class VFL {
             return b;
         }
 
-        public static <R> R CallFnWithLogger(Callable<R> callable, VFL logger, Function<R, String> endMessageSerializer) {
+        public static <R> R CallFnWithLogger(Supplier<R> callable, VFL logger, Function<R, String> endMessageSerializer) {
             R result = null;
             try {
-                result = callable.call();
+                result = callable.get();
             } catch (Exception e) {
                 logger.error("Exception occurred: " + e.getClass().getSimpleName() + ": " + e.getMessage());
-
-                if (e instanceof RuntimeException) {
-                    throw (RuntimeException) e;
-                } else {
-                    throw new VFLExecutionException(e);
-                }
+                throw e;
             } finally {
                 String endMsg = null;
                 if (endMessageSerializer != null) {

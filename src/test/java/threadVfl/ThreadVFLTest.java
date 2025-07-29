@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class ThreadVFLTest {
 
@@ -94,10 +95,26 @@ public class ThreadVFLTest {
                     return multiply(1, 2);
                 }, integer -> "Result is " + integer, null);
 
-                var a = t1.get();
-                var b = t2.get();
+                Integer a = null;
+                try {
+                    a = t1.get();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+                Integer b = null;
+                try {
+                    b = t2.get();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
 
-                l.callPrimarySubBlock("Sum primary 2", "Doing sum of results", () -> sum(a, b), integer -> "Final result = " + integer);
+                Integer finalA = a;
+                Integer finalB = b;
+                l.callPrimarySubBlock("Sum primary 2", "Doing sum of results", () -> sum(finalA, finalB), integer -> "Final result = " + integer);
                 l.log("Everything is DONE and dusted!!!");
                 return null;
             });

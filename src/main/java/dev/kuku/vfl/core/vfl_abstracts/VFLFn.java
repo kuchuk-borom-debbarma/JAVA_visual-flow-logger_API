@@ -4,6 +4,7 @@ import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
@@ -77,14 +78,16 @@ public abstract class VFLFn extends VFL {
                 false);
     }
 
-    public final <R> R callSecondaryNonJoiningBlock(String blockName,
-                                                    String startMessage,
-                                                    Function<VFLFn, R> fn,
-                                                    Function<R, String> endMessageSerializer) {
-        return this.fnHandler(blockName,
+    public final <R> void callSecondaryNonJoiningBlock(String blockName,
+                                                       String startMessage,
+                                                       Consumer<VFLFn> fn) {
+        this.fnHandler(blockName,
                 startMessage,
-                fn,
-                endMessageSerializer,
+                vflFn -> {
+                    fn.accept(vflFn);
+                    return null;
+                },
+                null,
                 SUB_BLOCK_START_SECONDARY_NO_JOIN,
                 false);
     }

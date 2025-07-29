@@ -4,7 +4,7 @@ import dev.kuku.vfl.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.InMemoryFlushHandlerImpl;
-import dev.kuku.vfl.core.fluent_api.FluentVFLCallable;
+import dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,16 +34,16 @@ public class ThreadVFLFluent {
 
     int sum(int a, int b) {
         var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-        fluentLogger.logText("Going to sum " + a + " " + b).asMessage();
-        fluentLogger.logText("Sum = " + (a + b)).asMessage();
+        fluentLogger.log("Going to sum " + a + " " + b);
+        fluentLogger.log("Sum = " + (a + b));
         return a + b;
     }
 
     int multiply(int a, int b) {
         var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-        fluentLogger.logText("Multiplying " + a + " and " + b).asMessage();
+        fluentLogger.log("Multiplying " + a + " and " + b);
         int result = a * b;
-        fluentLogger.logText("Multiplying value = " + result).asMessage();
+        fluentLogger.log("Multiplying value = " + result);
         return result;
     }
 
@@ -53,16 +53,15 @@ public class ThreadVFLFluent {
         void linearFlow() {
             ThreadVFL.Runner.Instance.StartVFL("Simple Linear test", buffer, () -> {
                 var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.logText("This is a log #1").asMessage();
-                fluentLogger.logText("Now going to start another block").asMessage();
+                fluentLogger.log("This is a log #1");
+                fluentLogger.log("Now going to start another block");
 
-                int result = fluentLogger.startSubBlock("Sum block")
+                int result = fluentLogger.call(() -> sum(1, 2))
+                        .asSubBlock("Multiply block")
                         .withStartMessage("Doing sum of 1, 2")
-                        .forCallable(() -> sum(1, 2))
-                        .withEndMessageSerializer(integer -> "Calculated sum is " + integer)
-                        .executeAsPrimary();
-
-                fluentLogger.logText("So now the result is " + result).asMessage();
+                        .withEndMessageMapper(o -> "Result is " + o)
+                        .startPrimary();
+                fluentLogger.log("So now the result is " + result);
                 return null;
             });
             write("linearFlow");
@@ -75,13 +74,11 @@ public class ThreadVFLFluent {
         void asyncTest() {
             ThreadVFL.Runner.Instance.StartVFL("AsyncFlow Test", buffer, () -> {
                 var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.logText("Starting async test now...").asMessage();
+                fluentLogger.log("Starting async test now...");
 
-                int r = fluentLogger.startSubBlock("Sum primary")
-                        .withStartMessage("Starting primary sum block first")
-                        .forCallable(() -> sum(1, 2))
-                        .withEndMessageSerializer(integer -> "Result of sum block is " + integer)
-                        .executeAsPrimary();
+                fluentLogger.runSubBlock(() -> sum(1, 2))
+                        .withBlockName("Sum runner")
+                        .startPrimary();
 
                 CompletableFuture<Integer> t1 = fluentLogger.startSubBlock("Sum async")
                         .withStartMessage("Squaring in async")
