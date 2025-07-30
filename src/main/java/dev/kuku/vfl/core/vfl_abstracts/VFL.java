@@ -51,37 +51,37 @@ public abstract class VFL {
         getContext().currentLogId = createdLog.getId();
     }
 
-    private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer) {
+    private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
         var r = fn.get();
         String msg = messageSerializer.apply(r);
-        String formattedMsg = FormatMessage(msg, r);
+        String formattedMsg = FormatMessage(msg, r, args);
         logInternal(type, formattedMsg);
         return r;
     }
 
     // Public logging methods that simply forward to the internal method.
-    public final void log(String message) {
-        logInternal(LogTypeEnum.MESSAGE, message);
+    public final void log(String message, Object... args) {
+        logInternal(LogTypeEnum.MESSAGE, message, args);
     }
 
-    public final <R> R logFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return logFnInternal(LogTypeEnum.MESSAGE, fn, messageSerializer);
+    public final <R> R logFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return logFnInternal(LogTypeEnum.MESSAGE, fn, messageSerializer, args);
     }
 
-    public final void warn(String message) {
-        logInternal(LogTypeEnum.WARN, message);
+    public final void warn(String message, Object... args) {
+        logInternal(LogTypeEnum.WARN, message, args);
     }
 
-    public final <R> R warnFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return logFnInternal(LogTypeEnum.WARN, fn, messageSerializer);
+    public final <R> R warnFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return logFnInternal(LogTypeEnum.WARN, fn, messageSerializer, args);
     }
 
-    public final void error(String message) {
-        logInternal(LogTypeEnum.ERROR, message);
+    public final void error(String message, Object... args) {
+        logInternal(LogTypeEnum.ERROR, message, args);
     }
 
-    public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return logFnInternal(LogTypeEnum.ERROR, fn, messageSerializer);
+    public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return logFnInternal(LogTypeEnum.ERROR, fn, messageSerializer, args);
     }
 
     // Abstract method that subclasses must implement to provide context.
