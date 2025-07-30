@@ -47,9 +47,10 @@ public class ThreadVFL extends VFLCallable {
 
     /**
      * Get instance of ThreadVFL. Needs to be called inside a runner wrapper.
+     *
      * @return latest ThreadVFL instance in thread's logger stack.
      */
-    public static ThreadVFL Get() {
+    static ThreadVFL Get() {
         return getCurrentLogger();
     }
 
@@ -178,6 +179,7 @@ public class ThreadVFL extends VFLCallable {
             log.info("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
         }
     }
+
     /*
     this method is used by super classes to get logger's instance.
     We are overriding it to give it the thread local's logger stack's latest instance.
@@ -206,6 +208,7 @@ public class ThreadVFL extends VFLCallable {
             log.info("REMOVE: Completely removed logger stack from {} - Stack cleaned up", threadInfo);
         }
     }
+
 
     public static class Runner extends VFLCallableRunner {
         public final static Runner Instance = new Runner();

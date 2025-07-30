@@ -34,17 +34,15 @@ public class ThreadVFLTest {
     }
 
     int sum(int a, int b) {
-        var logger = ThreadVFL.Get();
-        logger.log("Going to sum " + a + " " + b);
-        logger.log("Sum = " + a + b);
+        ThreadVFL.Log("Going to sum " + a + " " + b);
+        ThreadVFL.Log("Sum = " + a + b);
         return a + b;
     }
 
     int multiply(int a, int b) {
-        var logger = ThreadVFL.Get();
-        logger.log("Multiplying " + a + " and " + b);
+        ThreadVFL.Log("Multiplying " + a + " and " + b);
         int result = a * b;
-        logger.log("Multiplying value = " + result);
+        ThreadVFL.Log("Multiplying value = " + result);
         return result;
     }
 
@@ -81,14 +79,13 @@ public class ThreadVFLTest {
                     return sum(1, 2);
                 }, integer -> "Result is " + integer, null);
                 CompletableFuture<Integer> t2 = ThreadVFL.CallSecondaryJoiningBlock("Multiply async", "Multiply in async", () -> {
-                    var m = ThreadVFL.Get();
-                    m.log("Sleeping now");
+                    ThreadVFL.Log("Sleeping now");
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    m.log("Finished sleeping");
+                    ThreadVFL.Log("Finished sleeping");
                     return multiply(1, 2);
                 }, integer -> "Result is " + integer, Executors.newVirtualThreadPerTaskExecutor());
 

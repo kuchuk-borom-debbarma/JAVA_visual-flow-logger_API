@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 public class ThreadsafeAsyncBufferTest {
     ThreadSafeInMemoryFlushHandlerImpl flush = new ThreadSafeInMemoryFlushHandlerImpl();
     VFLBuffer buffer = new ThreadSafeAsyncVFLBuffer(1, 5000, flush, Executors.newFixedThreadPool(10));
-    VFLBuffer b = new ThreadSafeSynchronousVflBuffer(1, 1, flush);
+    VFLBuffer b = new ThreadSafeSynchronousVflBuffer(1, flush);
     FluentVFLCallable f;
 
     void write(String fileName) {

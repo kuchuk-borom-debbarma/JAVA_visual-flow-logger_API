@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 public class ThreadVFLFluentTest {
 
     private final ThreadSafeInMemoryFlushHandlerImpl flush = new ThreadSafeInMemoryFlushHandlerImpl();
-    private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, 99999, flush);
+    private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, flush);
     private FluentVFLCallable f;
 
     void write(String fileName) {
@@ -152,10 +152,9 @@ public class ThreadVFLFluentTest {
 
         void multiply(int a, int b, EventPublisherBlock eventPublisherBlock) {
             ThreadVFL.Runner.Instance.StartEventListenerLogger("Multiply listener", "Multiplying " + a + " and " + b, buffer, eventPublisherBlock, () -> {
-                var fluentLogger = new FluentVFLCallable(ThreadVFL.Get());
-                fluentLogger.log("Starting event listener of multiply");
+                f.log("Starting event listener of multiply");
                 int r = a * b;
-                fluentLogger.log("Multiply = " + r);
+                f.log("Multiply = " + r);
             });
         }
 
@@ -165,7 +164,7 @@ public class ThreadVFLFluentTest {
                 f = FluentThreadVFL.Get();
                 f.log("Starting event publisher and listener test");
 
-                var publisherBlock = ThreadVFL.Get().createEventPublisherBlock("On Publish number", "Publishing 2 numbers");
+                var publisherBlock = ThreadVFL.CreateEventPublisherBlock("On Publish number", "Publishing 2 numbers");
                 sum(1, 2, publisherBlock);
                 multiply(1, 2, publisherBlock);
 
