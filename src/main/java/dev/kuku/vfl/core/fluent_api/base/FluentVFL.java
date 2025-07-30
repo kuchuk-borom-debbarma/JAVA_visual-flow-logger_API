@@ -5,6 +5,8 @@ import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
 import java.util.function.Supplier;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
+
 public class FluentVFL {
     protected final VFL vfl;
 
@@ -12,16 +14,17 @@ public class FluentVFL {
         vfl = logger;
     }
 
-    public void log(String message) {
-        vfl.log(message);
+    public void log(String message, Object... args) {
+        String finalMsg = FormatMessage(message, args);
+        vfl.log(finalMsg);
     }
 
-    public void warn(String message) {
-        vfl.warn(message);
+    public void warn(String message, Object... args) {
+        vfl.warn(FormatMessage(message, args));
     }
 
-    public void error(String message) {
-        vfl.error(message);
+    public void error(String message, Object... args) {
+        vfl.error(FormatMessage(message, args));
     }
 
     public <R> SupplierStep<R> call(Supplier<R> fn) {

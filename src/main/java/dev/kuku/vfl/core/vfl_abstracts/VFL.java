@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
 import static dev.kuku.vfl.core.helpers.Util.UID;
 
 public abstract class VFL {
@@ -52,7 +53,7 @@ public abstract class VFL {
     private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
         var r = fn.get();
         String msg = messageSerializer.apply(r);
-        logInternal(type, msg);
+        logInternal(type, FormatMessage(msg, r, args));
         return r;
     }
 
