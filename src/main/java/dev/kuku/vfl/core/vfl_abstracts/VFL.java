@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
 import static dev.kuku.vfl.core.helpers.Util.UID;
 
 public abstract class VFL {
@@ -38,14 +37,13 @@ public abstract class VFL {
      * @param type    The log type (e.g. MESSAGE, WARN, or ERROR).
      * @param message The message to log.
      */
-    private void logInternal(LogTypeEnum type, String message, Object... args) {
+    private void logInternal(LogTypeEnum type, String message) {
         // Ensure the log block is started.
-        String formattedMsg = FormatMessage(message, args);
         ensureBlockStarted();
 
         // Create and push the new log entry using the provided type.
         var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, type,           // LogTypeEnum value (MESSAGE, WARN, or ERROR)
-                formattedMsg, getContext().buffer);
+                message, getContext().buffer);
 
         // Update the current log id.
         getContext().currentLogId = createdLog.getId();
@@ -54,30 +52,29 @@ public abstract class VFL {
     private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
         var r = fn.get();
         String msg = messageSerializer.apply(r);
-        String formattedMsg = FormatMessage(msg, r, args);
-        logInternal(type, formattedMsg);
+        logInternal(type, msg);
         return r;
     }
 
     // Public logging methods that simply forward to the internal method.
-    public final void log(String message, Object... args) {
-        logInternal(LogTypeEnum.MESSAGE, message, args);
+    public final void log(String message) {
+        logInternal(LogTypeEnum.MESSAGE, message);
     }
 
     public final <R> R logFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
         return logFnInternal(LogTypeEnum.MESSAGE, fn, messageSerializer, args);
     }
 
-    public final void warn(String message, Object... args) {
-        logInternal(LogTypeEnum.WARN, message, args);
+    public final void warn(String message) {
+        logInternal(LogTypeEnum.WARN, message);
     }
 
     public final <R> R warnFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
         return logFnInternal(LogTypeEnum.WARN, fn, messageSerializer, args);
     }
 
-    public final void error(String message, Object... args) {
-        logInternal(LogTypeEnum.ERROR, message, args);
+    public final void error(String message) {
+        logInternal(LogTypeEnum.ERROR, message);
     }
 
     public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
