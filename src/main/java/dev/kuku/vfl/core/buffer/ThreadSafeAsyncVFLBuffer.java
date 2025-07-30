@@ -20,7 +20,7 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     private final VFLFlushHandler flushHandler;
     private final List<Block> blocks = new ArrayList<>();
     private final List<Log> logs = new ArrayList<>();
-    private final Map<String, Long> blockStarts = new HashMap<>(); //TODO make block start take timestamp
+    private final Map<String, Long> blockStarts = new HashMap<>();
     private final Map<String, String> blockEnds = new HashMap<>();
     private final Object lock = new Object();
     private final ExecutorService executor;
