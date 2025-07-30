@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
 import static dev.kuku.vfl.core.helpers.Util.UID;
 
 public abstract class VFL {
@@ -37,13 +38,14 @@ public abstract class VFL {
      * @param type    The log type (e.g. MESSAGE, WARN, or ERROR).
      * @param message The message to log.
      */
-    private void logInternal(LogTypeEnum type, String message) {
+    private void logInternal(LogTypeEnum type, String message, Object... args) {
         // Ensure the log block is started.
+        String formattedMsg = FormatMessage(message, args);
         ensureBlockStarted();
 
         // Create and push the new log entry using the provided type.
         var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, type,           // LogTypeEnum value (MESSAGE, WARN, or ERROR)
-                message, getContext().buffer);
+                formattedMsg, getContext().buffer);
 
         // Update the current log id.
         getContext().currentLogId = createdLog.getId();
@@ -52,7 +54,8 @@ public abstract class VFL {
     private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer) {
         var r = fn.get();
         String msg = messageSerializer.apply(r);
-        logInternal(type, msg);
+        String formattedMsg = FormatMessage(msg, r);
+        logInternal(type, formattedMsg);
         return r;
     }
 

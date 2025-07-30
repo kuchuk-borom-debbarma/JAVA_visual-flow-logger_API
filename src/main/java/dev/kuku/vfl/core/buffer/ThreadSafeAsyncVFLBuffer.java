@@ -134,7 +134,7 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
             while (current < flushTimeout) {
                 current += 100;
                 if (executor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
-                    break;
+                    return;
                 }
             }
             throw new TimeoutException("Waiting time for flushing exceeded configured flush timeout " + flushTimeout);
