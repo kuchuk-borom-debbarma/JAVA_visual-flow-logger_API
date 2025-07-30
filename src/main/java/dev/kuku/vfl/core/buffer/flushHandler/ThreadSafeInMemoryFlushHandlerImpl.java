@@ -50,7 +50,56 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
     }
 
     /**
-     * Generates nested JSON structure with blocks containing their logs in hierarchical format
+     * Generates flat JSON structure with blocks as separate top-level array elements
+     * and logs containing references to other blocks
+     *
+     * @return JSON string representation of the flat structure
+     */
+    public String generateFlatJsonStructure() {
+        try {
+            ArrayNode rootArray = objectMapper.createArrayNode();
+
+            // Convert concurrent collections to lists for processing
+            List<Block> blockList = new ArrayList<>(blocks);
+            List<Log> logList = new ArrayList<>(logs);
+
+            // Create a map of block ID to block for quick lookup
+            Map<String, Block> blockMap = blockList.stream()
+                    .collect(Collectors.toMap(Block::getId, block -> block));
+
+            // Group logs by block ID
+            Map<String, List<Log>> logsByBlock = logList.stream()
+                    .collect(Collectors.groupingBy(Log::getBlockId));
+
+            // Create a set of all valid block IDs
+            Set<String> validBlockIds = new HashSet<>(blockMap.keySet());
+
+            // Process each block
+            for (Block block : blockList) {
+                ObjectNode blockNode = createFlatBlockNode(block, logsByBlock.get(block.getId()), blockMap);
+                rootArray.add(blockNode);
+            }
+
+            // Handle logs with invalid block IDs
+            List<Log> invalidLogs = logList.stream()
+                    .filter(log -> !validBlockIds.contains(log.getBlockId()))
+                    .collect(Collectors.toList());
+
+            if (!invalidLogs.isEmpty()) {
+                ObjectNode invalidBlockNode = createInvalidLogsBlock(invalidLogs, blockMap);
+                rootArray.add(invalidBlockNode);
+            }
+
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootArray);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating flat JSON structure", e);
+        }
+    }
+
+    /**
+     * Generates nested JSON structure with referenced blocks embedded directly under
+     * the logs that reference them, creating a true hierarchical structure
      *
      * @return JSON string representation of the nested structure
      */
@@ -73,10 +122,17 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
             // Create a set of all valid block IDs
             Set<String> validBlockIds = new HashSet<>(blockMap.keySet());
 
+            // Track which blocks have been processed as nested blocks to avoid duplication
+            Set<String> processedAsNestedBlocks = new HashSet<>();
+
             // Process each block
             for (Block block : blockList) {
-                ObjectNode blockNode = createBlockNode(block, logsByBlock.get(block.getId()), blockMap);
-                rootArray.add(blockNode);
+                // Only add blocks that haven't been processed as nested blocks
+                if (!processedAsNestedBlocks.contains(block.getId())) {
+                    ObjectNode blockNode = createNestedBlockNode(block, logsByBlock.get(block.getId()),
+                            blockMap, logsByBlock, processedAsNestedBlocks);
+                    rootArray.add(blockNode);
+                }
             }
 
             // Handle logs with invalid block IDs
@@ -96,7 +152,7 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
         }
     }
 
-    private ObjectNode createBlockNode(Block block, List<Log> blockLogs, Map<String, Block> blockMap) {
+    private ObjectNode createFlatBlockNode(Block block, List<Log> blockLogs, Map<String, Block> blockMap) {
         ObjectNode blockNode = objectMapper.createObjectNode();
         blockNode.put("id", block.getId());
         blockNode.put("name", block.getBlockName());
@@ -116,7 +172,7 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
                     .collect(Collectors.groupingBy(Log::getParentLogId));
 
             for (Log rootLog : rootLogs) {
-                ObjectNode logNode = createLogNode(rootLog, childLogMap, blockMap);
+                ObjectNode logNode = createFlatLogNode(rootLog, childLogMap, blockMap);
                 logsArray.add(logNode);
             }
 
@@ -128,13 +184,47 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
         return blockNode;
     }
 
-    private ObjectNode createLogNode(Log log, Map<String, List<Log>> childLogMap, Map<String, Block> blockMap) {
+    private ObjectNode createNestedBlockNode(Block block, List<Log> blockLogs, Map<String, Block> blockMap,
+                                             Map<String, List<Log>> allLogsByBlock, Set<String> processedAsNestedBlocks) {
+        ObjectNode blockNode = objectMapper.createObjectNode();
+        blockNode.put("id", block.getId());
+        blockNode.put("name", block.getBlockName());
+
+        if (blockLogs != null && !blockLogs.isEmpty()) {
+            ArrayNode logsArray = objectMapper.createArrayNode();
+
+            // Get root logs (logs without parent)
+            List<Log> rootLogs = blockLogs.stream()
+                    .filter(log -> log.getParentLogId() == null || log.getParentLogId().isEmpty())
+                    .sorted(Comparator.comparingLong(Log::getTimestamp))
+                    .toList();
+
+            // Create a map for quick lookup of child logs
+            Map<String, List<Log>> childLogMap = blockLogs.stream()
+                    .filter(log -> log.getParentLogId() != null && !log.getParentLogId().isEmpty())
+                    .collect(Collectors.groupingBy(Log::getParentLogId));
+
+            for (Log rootLog : rootLogs) {
+                ObjectNode logNode = createNestedLogNode(rootLog, childLogMap, blockMap,
+                        allLogsByBlock, processedAsNestedBlocks);
+                logsArray.add(logNode);
+            }
+
+            blockNode.set("logs", logsArray);
+        } else {
+            blockNode.set("logs", objectMapper.createArrayNode());
+        }
+
+        return blockNode;
+    }
+
+    private ObjectNode createFlatLogNode(Log log, Map<String, List<Log>> childLogMap, Map<String, Block> blockMap) {
         ObjectNode logNode = objectMapper.createObjectNode();
         logNode.put("id", log.getId());
         logNode.put("type", log.getLogType().toString());
         logNode.put("message", log.getMessage());
 
-        // Check if this is a SubBlockStartLog and add referenced block
+        // Check if this is a SubBlockStartLog and add referenced block info
         if (log instanceof SubBlockStartLog subBlockLog) {
             String referencedBlockId = subBlockLog.getReferencedBlockId();
 
@@ -156,7 +246,53 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
             childLogs.sort(Comparator.comparingLong(Log::getTimestamp));
 
             for (Log childLog : childLogs) {
-                ObjectNode childLogNode = createLogNode(childLog, childLogMap, blockMap);
+                ObjectNode childLogNode = createFlatLogNode(childLog, childLogMap, blockMap);
+                childrenArray.add(childLogNode);
+            }
+
+            logNode.set("children", childrenArray);
+        } else {
+            logNode.set("children", objectMapper.createArrayNode());
+        }
+
+        return logNode;
+    }
+
+    private ObjectNode createNestedLogNode(Log log, Map<String, List<Log>> childLogMap, Map<String, Block> blockMap,
+                                           Map<String, List<Log>> allLogsByBlock, Set<String> processedAsNestedBlocks) {
+        ObjectNode logNode = objectMapper.createObjectNode();
+        logNode.put("id", log.getId());
+        logNode.put("type", log.getLogType().toString());
+        logNode.put("message", log.getMessage());
+
+        // Check if this is a SubBlockStartLog and embed the referenced block directly
+        if (log instanceof SubBlockStartLog subBlockLog) {
+            String referencedBlockId = subBlockLog.getReferencedBlockId();
+
+            Block referencedBlock = blockMap.get(referencedBlockId);
+            if (referencedBlock != null) {
+                // Mark this block as processed so it won't appear at the top level
+                processedAsNestedBlocks.add(referencedBlockId);
+
+                // Create the full nested block structure
+                ObjectNode referencedBlockNode = createNestedBlockNode(referencedBlock,
+                        allLogsByBlock.get(referencedBlockId),
+                        blockMap, allLogsByBlock, processedAsNestedBlocks);
+                logNode.set("referencedBlock", referencedBlockNode);
+            }
+        }
+
+        // Add child logs
+        List<Log> childLogs = childLogMap.get(log.getId());
+        if (childLogs != null && !childLogs.isEmpty()) {
+            ArrayNode childrenArray = objectMapper.createArrayNode();
+
+            // Sort child logs by timestamp
+            childLogs.sort(Comparator.comparingLong(Log::getTimestamp));
+
+            for (Log childLog : childLogs) {
+                ObjectNode childLogNode = createNestedLogNode(childLog, childLogMap, blockMap,
+                        allLogsByBlock, processedAsNestedBlocks);
                 childrenArray.add(childLogNode);
             }
 
@@ -195,7 +331,7 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
                     .toList();
 
             for (Log rootLog : rootLogs) {
-                ObjectNode logNode = createLogNode(rootLog, childLogMap, blockMap);
+                ObjectNode logNode = createFlatLogNode(rootLog, childLogMap, blockMap);
                 // Add additional info about the invalid block ID
                 logNode.put("originalBlockId", invalidBlockId);
                 logsArray.add(logNode);
@@ -207,7 +343,21 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
     }
 
     /**
-     * Alternative method that returns the structure as a Map for programmatic access
+     * Alternative method that returns the flat structure as a Map for programmatic access
+     *
+     * @return Map representation of the flat structure
+     */
+    public Map<String, Object> generateFlatStructureAsMap() {
+        try {
+            String jsonString = generateFlatJsonStructure();
+            return objectMapper.readValue(jsonString, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting flat JSON to Map", e);
+        }
+    }
+
+    /**
+     * Alternative method that returns the nested structure as a Map for programmatic access
      *
      * @return Map representation of the nested structure
      */
@@ -216,7 +366,7 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
             String jsonString = generateNestedJsonStructure();
             return objectMapper.readValue(jsonString, Map.class);
         } catch (Exception e) {
-            throw new RuntimeException("Error converting JSON to Map", e);
+            throw new RuntimeException("Error converting nested JSON to Map", e);
         }
     }
 }
