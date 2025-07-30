@@ -11,16 +11,15 @@ public class SupplierStep<R> {
     protected final VFL vfl;
     protected final Supplier<R> supplier;
 
-    public R asLog(Function<R, String> messageSerializer) {
-        return vfl.logFn(supplier, messageSerializer);
-
+    public R asLog(Function<R, String> messageSerializer, Object... args) {
+        return vfl.logFn(supplier, messageSerializer, args);
     }
 
-    public R asError(Function<R, String> errorMessageSerializer) {
-        return vfl.errorFn(supplier, errorMessageSerializer);
+    public R asError(Function<R, String> errorMessageSerializer, Object... args) {
+        return vfl.errorFn(supplier, errorMessageSerializer, args);
     }
 
-    public R asWarning(Function<R, String> warningMessageSerializer) {
-        return vfl.warnFn(supplier, warningMessageSerializer);
+    public R asWarning(Function<R, String> warningMessageSerializer, Object... args) {
+        return vfl.warnFn(supplier, warningMessageSerializer, args);
     }
 }

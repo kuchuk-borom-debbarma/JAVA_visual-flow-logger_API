@@ -9,9 +9,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
+
 public class SetBlockNameWithEndMsg<R> extends BaseSetBlockName implements BlockCallableEndMessage<R>, BlockExecutor<R>, AsyncBlockExecutor<R> {
     protected final Function<VFLFn, R> fn;
     protected Function<R, String> endMessage;
+    private Object[] endArgs;
 
     public SetBlockNameWithEndMsg(String blockName, VFLFn vfl, Function<VFLFn, R> fn) {
         super(blockName, vfl);
@@ -19,26 +22,27 @@ public class SetBlockNameWithEndMsg<R> extends BaseSetBlockName implements Block
     }
 
     @Override
-    public SetBlockNameWithEndMsg<R> withEndMessageMapper(Function<R, String> endMessageSerializer) {
+    public SetBlockNameWithEndMsg<R> withEndMessageMapper(Function<R, String> endMessageSerializer, Object... args) {
         this.endMessage = endMessageSerializer;
+        this.endArgs = args;
         return this;
     }
 
     @Override
-    public SetBlockNameWithEndMsg<R> withStartMessage(String startMessage) {
-        super.startMessage = startMessage;
+    public SetBlockNameWithEndMsg<R> withStartMessage(String startMessage, Object... args) {
+        super.startMessage = FormatMessage(startMessage, args);
         return this;
     }
 
     @Override
     public R startPrimary() {
-        return vfl.callPrimarySubBlock(blockName, startMessage, fn, endMessage);
+        return vfl.callPrimarySubBlock(blockName, startMessage, fn, endMessage, endArgs);
     }
 
     @Override
     public CompletableFuture<R> startSecondaryJoining(Executor executor) {
         return CompletableFuture.supplyAsync(() ->
-                vfl.callSecondaryJoiningBlock(blockName, startMessage, fn, endMessage), executor);
+                vfl.callSecondaryJoiningBlock(blockName, startMessage, fn, endMessage, endArgs), executor);
     }
 
     @Override

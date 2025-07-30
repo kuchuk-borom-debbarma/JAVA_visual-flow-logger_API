@@ -38,24 +38,22 @@ public abstract class VFL {
      * @param type    The log type (e.g. MESSAGE, WARN, or ERROR).
      * @param message The message to log.
      */
-    private void logInternal(LogTypeEnum type, String message, Object... args) {
+    private void logInternal(LogTypeEnum type, String message) {
         // Ensure the log block is started.
-        String formattedMsg = FormatMessage(message, args);
         ensureBlockStarted();
 
         // Create and push the new log entry using the provided type.
         var createdLog = VFLHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(), getContext().currentLogId, type,           // LogTypeEnum value (MESSAGE, WARN, or ERROR)
-                formattedMsg, getContext().buffer);
+                message, getContext().buffer);
 
         // Update the current log id.
         getContext().currentLogId = createdLog.getId();
     }
 
-    private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer) {
+    private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
         var r = fn.get();
         String msg = messageSerializer.apply(r);
-        String formattedMsg = FormatMessage(msg, r);
-        logInternal(type, formattedMsg);
+        logInternal(type, FormatMessage(msg, r, args));
         return r;
     }
 
@@ -64,24 +62,24 @@ public abstract class VFL {
         logInternal(LogTypeEnum.MESSAGE, message);
     }
 
-    public final <R> R logFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return logFnInternal(LogTypeEnum.MESSAGE, fn, messageSerializer);
+    public final <R> R logFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return logFnInternal(LogTypeEnum.MESSAGE, fn, messageSerializer, args);
     }
 
     public final void warn(String message) {
         logInternal(LogTypeEnum.WARN, message);
     }
 
-    public final <R> R warnFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return logFnInternal(LogTypeEnum.WARN, fn, messageSerializer);
+    public final <R> R warnFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return logFnInternal(LogTypeEnum.WARN, fn, messageSerializer, args);
     }
 
     public final void error(String message) {
         logInternal(LogTypeEnum.ERROR, message);
     }
 
-    public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return logFnInternal(LogTypeEnum.ERROR, fn, messageSerializer);
+    public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return logFnInternal(LogTypeEnum.ERROR, fn, messageSerializer, args);
     }
 
     // Abstract method that subclasses must implement to provide context.
@@ -108,7 +106,7 @@ public abstract class VFL {
             return b;
         }
 
-        public static <R> R CallFnWithLogger(Supplier<R> callable, VFL logger, Function<R, String> endMessageSerializer) {
+        public static <R> R CallFnWithLogger(Supplier<R> callable, VFL logger, Function<R, String> endMessageSerializer, Object... args) {
             R result = null;
             try {
                 result = callable.get();
@@ -120,6 +118,7 @@ public abstract class VFL {
                 if (endMessageSerializer != null) {
                     try {
                         endMsg = endMessageSerializer.apply(result);
+                        endMsg = FormatMessage(endMsg, result, args);
                     } catch (Exception e) {
                         endMsg = "Failed to serialize end message: " + e.getMessage();
                     }

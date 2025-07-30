@@ -30,7 +30,7 @@ public abstract class VFLFn extends VFL {
                             Function<VFLFn, R> fn,
                             Function<R, String> endMessageSerializer,
                             LogTypeBlockStartEnum logType,
-                            boolean move) {
+                            boolean move, Object... endMsgArgs) {
         var context = getContext();
         ensureBlockStarted();
         Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(
@@ -51,31 +51,31 @@ public abstract class VFLFn extends VFL {
             context.currentLogId = log.getId();
         }
         // subclasses will decide how to provide a logger.
-        return VFLHelper.CallFnWithLogger(() -> fn.apply(getLogger()), getLogger(), endMessageSerializer);
+        return VFLHelper.CallFnWithLogger(() -> fn.apply(getLogger()), getLogger(), endMessageSerializer, endMsgArgs);
     }
 
     public final <R> R callPrimarySubBlock(String blockName,
                                            String startMessage,
                                            Function<VFLFn, R> fn,
-                                           Function<R, String> endMessageSerializer) {
+                                           Function<R, String> endMessageSerializer, Object... args) {
         return this.fnHandler(blockName,
                 startMessage,
                 fn,
                 endMessageSerializer,
                 SUB_BLOCK_START_PRIMARY,
-                true);
+                true, args);
     }
 
     public final <R> R callSecondaryJoiningBlock(String blockName,
                                                  String startMessage,
                                                  Function<VFLFn, R> fn,
-                                                 Function<R, String> endMessageSerializer) {
+                                                 Function<R, String> endMessageSerializer, Object... args) {
         return this.fnHandler(blockName,
                 startMessage,
                 fn,
                 endMessageSerializer,
                 SUB_BLOCK_START_SECONDARY_JOIN,
-                false);
+                false, args);
     }
 
     public final <R> void callSecondaryNonJoiningBlock(String blockName,

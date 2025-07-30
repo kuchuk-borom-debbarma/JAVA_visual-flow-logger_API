@@ -1,10 +1,10 @@
 package threadVfl;
 
-import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.ThreadSafeInMemoryFlushHandlerImpl;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
+import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +54,7 @@ public class ThreadVFLTest {
             ThreadVFL.Runner.Instance.StartVFL("Simple Linear test", buffer, () -> {
                 ThreadVFL.Log("This is a log #1");
                 ThreadVFL.Log("Now going to start another block");
-                int result = ThreadVFL.CallPrimarySubBlock("Sum block", "Doing sum of 1, 2", () -> sum(1, 2), integer -> "Calculated sum is " + integer);
+                int result = ThreadVFL.CallPrimarySubBlock("Sum block", "Doing sum of 1, 2", () -> sum(1, 2), integer -> "Calculated sum is {}");
                 ThreadVFL.Log("So now the result is " + result);
             });
             write("linearFlow");
@@ -67,7 +67,7 @@ public class ThreadVFLTest {
         void asyncTest() {
             ThreadVFL.Runner.Instance.StartVFL("AsyncFlow Test", buffer, () -> {
                 ThreadVFL.Log("Starting async test now...");
-                int r = ThreadVFL.CallPrimarySubBlock("Sum primary", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is " + integer);
+                int r = ThreadVFL.CallPrimarySubBlock("Sum primary", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is {}");
                 CompletableFuture<Integer> t1 = ThreadVFL.CallSecondaryJoiningBlock("Sum async", "Squaring in async", () -> {
                     ThreadVFL.Log("Sleeping now");
                     try {
@@ -77,7 +77,7 @@ public class ThreadVFLTest {
                     }
                     ThreadVFL.Log("Finished sleeping");
                     return sum(1, 2);
-                }, integer -> "Result is " + integer, null);
+                }, integer -> "Result is {}");
                 CompletableFuture<Integer> t2 = ThreadVFL.CallSecondaryJoiningBlock("Multiply async", "Multiply in async", () -> {
                     ThreadVFL.Log("Sleeping now");
                     try {
@@ -87,7 +87,7 @@ public class ThreadVFLTest {
                     }
                     ThreadVFL.Log("Finished sleeping");
                     return multiply(1, 2);
-                }, integer -> "Result is " + integer, Executors.newVirtualThreadPerTaskExecutor());
+                }, integer -> "Result is {}", Executors.newVirtualThreadPerTaskExecutor());
 
                 Integer a;
                 Integer b;

@@ -35,15 +35,15 @@ public class ThreadVFLFluentTest {
     }
 
     int sum(int a, int b) {
-        FluentThreadVFL.Log("Going to sum " + a + " " + b);
+        FluentThreadVFL.Log("Going to sum {} and {}", a, b);
         return FluentThreadVFL.Call(() -> a + b)
-                .asLog(integer -> "Sum = " + integer);
+                .asLog(integer -> "Sum = {}");
     }
 
     int multiply(int a, int b) {
         FluentThreadVFL.Log("Multiplying " + a + " and " + b);
         return FluentThreadVFL.Call(() -> a * b)
-                .asLog(i -> "Multiplied value = " + i);
+                .asLog(i -> "Multiplied value = {}");
     }
 
     @Nested
@@ -57,9 +57,9 @@ public class ThreadVFLFluentTest {
                 int result = FluentThreadVFL.Call(() -> sum(1, 2))
                         .asSubBlock("Multiply block")
                         .withStartMessage("Doing sum of 1, 2")
-                        .withEndMessageMapper(o -> "Result is " + o)
+                        .withEndMessageMapper(o -> "Result is {}")
                         .startPrimary();
-                FluentThreadVFL.Log("So now the result is " + result);
+                FluentThreadVFL.Log("So now the result is {}", result);
                 return null;
             });
             write("linearFlow");
