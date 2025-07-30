@@ -5,6 +5,7 @@ import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
+import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -108,7 +109,7 @@ public abstract class VFLCallable extends VFL {
      * This method is invoked after pushing the sub block start log & sub block data to the buffer. <br>
      * It's main purpose is to setup the logger to handle the sub block start.
      * <br>
-     * {@link dev.kuku.vfl.ThreadVFL}
+     * {@link ThreadVFL}
      * In the Child class above, It is used to add a new logger instance to the ThreadLocal logger stack.
      *
      * @param parentBlockCtx   context under which the sub block start operation was invoked

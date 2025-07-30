@@ -1,4 +1,4 @@
-package dev.kuku.vfl;
+package dev.kuku.vfl.variants.thread_local;
 
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
@@ -28,7 +28,7 @@ public class ThreadVFL extends VFLCallable {
     /**
      * Get the current logger from the thread local stack
      */
-    private static ThreadVFL getCurrentLogger() {
+    static ThreadVFL getCurrentLogger() {
         return loggerStack.get().peek();
     }
 
@@ -44,15 +44,6 @@ public class ThreadVFL extends VFLCallable {
     }
 
     // ==================== Static Logging Methods ====================
-
-    /**
-     * Get instance of ThreadVFL. Needs to be called inside a runner wrapper.
-     *
-     * @return latest ThreadVFL instance in thread's logger stack.
-     */
-    static ThreadVFL Get() {
-        return getCurrentLogger();
-    }
 
     /**
      * Log a message at INFO level

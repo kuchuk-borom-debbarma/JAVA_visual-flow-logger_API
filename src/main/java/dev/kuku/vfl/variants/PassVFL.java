@@ -1,4 +1,4 @@
-package dev.kuku.vfl;
+package dev.kuku.vfl.variants;
 
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.vfl_abstracts.VFLFn;

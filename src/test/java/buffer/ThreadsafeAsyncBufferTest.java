@@ -1,12 +1,12 @@
 package buffer;
 
-import dev.kuku.vfl.FluentThreadVFL;
-import dev.kuku.vfl.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeAsyncVFLBuffer;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.ThreadSafeInMemoryFlushHandlerImpl;
 import dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable;
+import dev.kuku.vfl.variants.thread_local.FluentThreadVFL;
+import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -43,8 +43,7 @@ public class ThreadsafeAsyncBufferTest {
         @Test
         void multiThread() {
             ThreadVFL.Runner.Instance.StartVFL("Single Thread", b, () -> {
-                f = FluentThreadVFL.Get();
-                f.log("Starting single thread buffer test");
+                FluentThreadVFL.Log("Starting single thread buffer test");
                 int size = 10000;
                 List<CompletableFuture<Void>> sums = new ArrayList<>(size);
                 for (int i = 0; i < size; i++) {
@@ -58,9 +57,7 @@ public class ThreadsafeAsyncBufferTest {
                 sums.forEach(voidCompletableFuture -> {
                     try {
                         voidCompletableFuture.get();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         throw new RuntimeException(e);
                     }
                 });

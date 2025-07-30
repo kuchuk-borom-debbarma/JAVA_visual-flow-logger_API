@@ -1,6 +1,6 @@
 package threadVfl;
 
-import dev.kuku.vfl.ThreadVFL;
+import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.ThreadSafeInMemoryFlushHandlerImpl;
