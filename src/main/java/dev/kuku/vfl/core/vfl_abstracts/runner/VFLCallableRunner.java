@@ -19,6 +19,13 @@ public abstract class VFLCallableRunner extends VFLRunner {
         }
     }
 
+    public void startVFL(String blockName, VFLBuffer buffer, Runnable runnable) {
+        this.StartVFL(blockName, buffer, () -> {
+            runnable.run();
+            return null;
+        });
+    }
+
     public void StartEventListenerLogger(String eventListenerName, String eventStartMessage, VFLBuffer buffer, EventPublisherBlock eventData, Runnable r) {
         // Create the event listener block
         var eventListenerBlock = VFL.VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventData.block().getId(), buffer);
