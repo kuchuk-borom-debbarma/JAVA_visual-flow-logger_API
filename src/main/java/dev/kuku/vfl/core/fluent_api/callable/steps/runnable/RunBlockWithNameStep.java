@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
+
 @RequiredArgsConstructor
 public class RunBlockWithNameStep implements BlockStartMsg, BlockExecutor<Void>, AsyncBlockExecutor<Void> {
 
@@ -18,8 +20,8 @@ public class RunBlockWithNameStep implements BlockStartMsg, BlockExecutor<Void>,
     private String startMessage = null;
 
     @Override
-    public RunBlockWithNameStep withStartMessage(String startMessage) {
-        this.startMessage = startMessage;
+    public RunBlockWithNameStep withStartMessage(String startMessage, Object... args) {
+        this.startMessage = FormatMessage(startMessage, args);
         return this;
     }
 
@@ -36,7 +38,7 @@ public class RunBlockWithNameStep implements BlockStartMsg, BlockExecutor<Void>,
         return vflCallable.callSecondaryJoiningBlock(blockName, startMessage, () -> {
             runnable.run();
             return null;
-        }, null, executor);
+        }, executor, null);
     }
 
     @Override

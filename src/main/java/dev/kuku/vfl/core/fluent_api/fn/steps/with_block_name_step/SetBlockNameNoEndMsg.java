@@ -9,6 +9,8 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
+
 public class SetBlockNameNoEndMsg extends BaseSetBlockName implements BlockExecutor<Void>, AsyncBlockExecutor<Void> {
     protected final Consumer<VFLFn> consumer;
 
@@ -18,8 +20,8 @@ public class SetBlockNameNoEndMsg extends BaseSetBlockName implements BlockExecu
     }
 
     @Override
-    public SetBlockNameNoEndMsg withStartMessage(String startMessage) {
-        super.startMessage = startMessage;
+    public SetBlockNameNoEndMsg withStartMessage(String startMessage, Object... args) {
+        super.startMessage = FormatMessage(startMessage, args);
         return this;
     }
 

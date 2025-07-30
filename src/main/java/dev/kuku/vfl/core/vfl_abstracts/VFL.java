@@ -106,7 +106,7 @@ public abstract class VFL {
             return b;
         }
 
-        public static <R> R CallFnWithLogger(Supplier<R> callable, VFL logger, Function<R, String> endMessageSerializer) {
+        public static <R> R CallFnWithLogger(Supplier<R> callable, VFL logger, Function<R, String> endMessageSerializer, Object... args) {
             R result = null;
             try {
                 result = callable.get();
@@ -118,6 +118,7 @@ public abstract class VFL {
                 if (endMessageSerializer != null) {
                     try {
                         endMsg = endMessageSerializer.apply(result);
+                        endMsg = FormatMessage(endMsg, result, args);
                     } catch (Exception e) {
                         endMsg = "Failed to serialize end message: " + e.getMessage();
                     }

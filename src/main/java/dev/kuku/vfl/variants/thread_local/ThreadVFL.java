@@ -103,7 +103,7 @@ public class ThreadVFL extends VFLCallable {
     public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
                                                                      Supplier<R> supplier, Function<R, String> endMessageSerializer,
                                                                      Executor executor) {
-        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, endMessageSerializer, executor);
+        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, executor, endMessageSerializer);
     }
 
     /**
@@ -111,7 +111,7 @@ public class ThreadVFL extends VFLCallable {
      */
     public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
                                                                      Supplier<R> supplier, Function<R, String> endMessageSerializer) {
-        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, endMessageSerializer, null);
+        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, null, endMessageSerializer);
     }
 
     /**

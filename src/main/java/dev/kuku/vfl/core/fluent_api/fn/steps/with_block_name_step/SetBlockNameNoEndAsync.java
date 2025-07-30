@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
+
 public class SetBlockNameNoEndAsync<R> extends BaseSetBlockName implements AsyncBlockExecutor<R> {
 
     private final Function<VFLFn, R> fn;
@@ -17,8 +19,8 @@ public class SetBlockNameNoEndAsync<R> extends BaseSetBlockName implements Async
     }
 
     @Override
-    public SetBlockNameNoEndAsync withStartMessage(String startMessage) {
-        super.startMessage = startMessage;
+    public SetBlockNameNoEndAsync withStartMessage(String startMessage, Object... args) {
+        super.startMessage = FormatMessage(startMessage, args);
         return this;
     }
 

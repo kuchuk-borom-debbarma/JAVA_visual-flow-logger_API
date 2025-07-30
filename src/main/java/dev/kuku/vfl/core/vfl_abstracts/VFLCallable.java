@@ -23,7 +23,7 @@ public abstract class VFLCallable extends VFL {
      * Start a primary sub block
      */
     public final <R> R callPrimarySubBlock(String blockName, String startMessage, Supplier<R> supplier,
-                                           Function<R, String> endMessageSerializer) {
+                                           Function<R, String> endMessageSerializer, Object... args) {
         var context = getContext();
         ensureBlockStarted();
         Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
@@ -31,15 +31,15 @@ public abstract class VFLCallable extends VFL {
                 startMessage, subBlock.getId(), SUB_BLOCK_START_PRIMARY, context.buffer);
         context.currentLogId = log.getId();
         prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_PRIMARY);
-        return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer);
+        return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer, args);
     }
 
     /**
      * Create a secondary sub block. This block will join back to main flow once operation is complete.
      */
     public final <R> CompletableFuture<R> callSecondaryJoiningBlock(String blockName, String startMessage,
-                                                                    Supplier<R> supplier, Function<R, String> endMessageSerializer,
-                                                                    Executor executor) {
+                                                                    Supplier<R> supplier,
+                                                                    Executor executor, Function<R, String> endMessageSerializer, Object... args) {
         var context = getContext();
         ensureBlockStarted();
         //This will be called in the executor thread
@@ -48,7 +48,7 @@ public abstract class VFLCallable extends VFL {
             SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
                     startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_JOIN, context.buffer);
             prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_SECONDARY_JOIN);
-            return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer);
+            return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer, args);
         };
         if (executor != null)
             return CompletableFuture.supplyAsync(
