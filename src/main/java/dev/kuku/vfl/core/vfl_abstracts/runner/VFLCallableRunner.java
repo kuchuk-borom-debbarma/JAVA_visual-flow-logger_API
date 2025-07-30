@@ -19,7 +19,7 @@ public abstract class VFLCallableRunner extends VFLRunner {
         }
     }
 
-    public void startVFL(String blockName, VFLBuffer buffer, Runnable runnable) {
+    public void StartVFL(String blockName, VFLBuffer buffer, Runnable runnable) {
         this.StartVFL(blockName, buffer, () -> {
             runnable.run();
             return null;

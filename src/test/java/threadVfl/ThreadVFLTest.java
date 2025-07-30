@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class ThreadVFLTest {
 
     private final ThreadSafeInMemoryFlushHandlerImpl flush = new ThreadSafeInMemoryFlushHandlerImpl();
-    private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, 99999, flush);
+    private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, flush);
 
     void write(String fileName) {
         try {
@@ -54,12 +54,10 @@ public class ThreadVFLTest {
         @Test
         void linearFlow() {
             ThreadVFL.Runner.Instance.StartVFL("Simple Linear test", buffer, () -> {
-                var logger = ThreadVFL.Get();
-                logger.log("This is a log #1");
-                logger.log("Now going to start another block");
-                int result = logger.callPrimarySubBlock("Sum block", "Doing sum of 1, 2", () -> sum(1, 2), integer -> "Calculated sum is " + integer);
-                logger.log("So now the result is " + result);
-                return null;
+                ThreadVFL.Log("This is a log #1");
+                ThreadVFL.Log("Now going to start another block");
+                int result = ThreadVFL.CallPrimarySubBlock("Sum block", "Doing sum of 1, 2", () -> sum(1, 2), integer -> "Calculated sum is " + integer);
+                ThreadVFL.Log("So now the result is " + result);
             });
             write("linearFlow");
         }
@@ -70,21 +68,19 @@ public class ThreadVFLTest {
         @Test
         void asyncTest() {
             ThreadVFL.Runner.Instance.StartVFL("AsyncFlow Test", buffer, () -> {
-                var l = ThreadVFL.Get();
-                l.log("Starting async test now...");
-                int r = l.callPrimarySubBlock("Sum primary", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is " + integer);
-                CompletableFuture<Integer> t1 = l.callSecondaryJoiningBlock("Sum async", "Squaring in async", () -> {
-                    var m = ThreadVFL.Get();
-                    m.log("Sleeping now");
+                ThreadVFL.Log("Starting async test now...");
+                int r = ThreadVFL.CallPrimarySubBlock("Sum primary", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is " + integer);
+                CompletableFuture<Integer> t1 = ThreadVFL.CallSecondaryJoiningBlock("Sum async", "Squaring in async", () -> {
+                    ThreadVFL.Log("Sleeping now");
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    m.log("Finished sleeping");
+                    ThreadVFL.Log("Finished sleeping");
                     return sum(1, 2);
                 }, integer -> "Result is " + integer, null);
-                CompletableFuture<Integer> t2 = l.callSecondaryJoiningBlock("Multiply async", "Multiply in async", () -> {
+                CompletableFuture<Integer> t2 = ThreadVFL.CallSecondaryJoiningBlock("Multiply async", "Multiply in async", () -> {
                     var m = ThreadVFL.Get();
                     m.log("Sleeping now");
                     try {
@@ -107,9 +103,8 @@ public class ThreadVFLTest {
 
                 Integer finalA = a;
                 Integer finalB = b;
-                l.callPrimarySubBlock("Sum primary 2", "Doing sum of results", () -> sum(finalA, finalB), integer -> "Final result = " + integer);
-                l.log("Everything is DONE and dusted!!!");
-                return null;
+                ThreadVFL.CallPrimarySubBlock("Sum primary 2", "Doing sum of results", () -> sum(finalA, finalB), integer -> "Final result = " + integer);
+                ThreadVFL.Log("Everything is DONE and dusted!!!");
             });
             write("AsyncFlow");
         }
@@ -120,32 +115,28 @@ public class ThreadVFLTest {
 
         void sum(int a, int b, EventPublisherBlock eventPublisherBlock) {
             ThreadVFL.Runner.Instance.StartEventListenerLogger("Sum listener", "Calculating sum of " + a + " " + b, buffer, eventPublisherBlock, () -> {
-                var l = ThreadVFL.Get();
-                l.log("Starting event listener of sum");
+                ThreadVFL.Log("Starting event listener of sum");
                 int r = a + b;
-                l.log("Sum = " + r);
+                ThreadVFL.Log("Sum = " + r);
             });
         }
 
         void multiply(int a, int b, EventPublisherBlock eventPublisherBlock) {
             ThreadVFL.Runner.Instance.StartEventListenerLogger("Multiply listener", "Multiplying " + a + " and " + b, buffer, eventPublisherBlock, () -> {
-                var l = ThreadVFL.Get();
-                l.log("Starting event listener of multiply");
+                ThreadVFL.Log("Starting event listener of multiply");
                 int r = a * b;
-                l.log("Multiply = " + r);
+                ThreadVFL.Log("Multiply = " + r);
             });
         }
 
         @Test
         void linearEventFlow() {
             ThreadVFL.Runner.Instance.StartVFL("Linear event publisher and listener test", buffer, () -> {
-                var logger = ThreadVFL.Get();
-                logger.log("Starting event publisher and listener test");
-                var publisherBlock = logger.createEventPublisherBlock("On Publish number", "Publishing 2 numbers");
+                ThreadVFL.Log("Starting event publisher and listener test");
+                var publisherBlock = ThreadVFL.CreateEventPublisherBlock("On Publish number", "Publishing 2 numbers");
                 sum(1, 2, publisherBlock);
                 multiply(1, 2, publisherBlock);
-                logger.log("Published event now closing");
-                return null;
+                ThreadVFL.Log("Published event now closing");
             });
             write("linearEventFlow");
         }

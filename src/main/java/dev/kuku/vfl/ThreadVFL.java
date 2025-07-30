@@ -1,6 +1,7 @@
 package dev.kuku.vfl;
 
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -10,6 +11,10 @@ import dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Stack;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Slf4j
 public class ThreadVFL extends VFLCallable {
@@ -20,17 +25,10 @@ public class ThreadVFL extends VFLCallable {
         this.ctx = context;
     }
 
-    //TODO improve ThreadVFL by providing static methods completely and having to avoid .Get()
-
     /**
-     * Get the latest logger in the thread local logger stack.
-     * <p/>
-     * Note : It is completely fine to get one instance of the logger (Example :- Setting up class level logger) as internally every log operation gets the thread local stack's latest logger instance.
-     *
-     * @return {@link ThreadVFL} logger instance
-     * @throws NullPointerException If it's called outside methods provided by {@link Runner}
+     * Get the current logger from the thread local stack
      */
-    public static ThreadVFL Get() {
+    private static ThreadVFL getCurrentLogger() {
         return loggerStack.get().peek();
     }
 
@@ -44,6 +42,113 @@ public class ThreadVFL extends VFLCallable {
         String[] parts = fullId.split("-");
         return parts.length > 0 ? parts[parts.length - 1] : fullId;
     }
+
+    // ==================== Static Logging Methods ====================
+
+    /**
+     * Get instance of ThreadVFL. Needs to be called inside a runner wrapper.
+     * @return latest ThreadVFL instance in thread's logger stack.
+     */
+    public static ThreadVFL Get() {
+        return getCurrentLogger();
+    }
+
+    /**
+     * Log a message at INFO level
+     */
+    public static void Log(String message) {
+        getCurrentLogger().log(message);
+    }
+
+    /**
+     * Execute a function and log its result at INFO level
+     */
+    public static <R> R LogFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+        return getCurrentLogger().logFn(fn, messageSerializer);
+    }
+
+    /**
+     * Log a message at WARN level
+     */
+    public static void Warn(String message) {
+        getCurrentLogger().warn(message);
+    }
+
+    /**
+     * Execute a function and log its result at WARN level
+     */
+    public static <R> R WarnFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+        return getCurrentLogger().warnFn(fn, messageSerializer);
+    }
+
+    /**
+     * Log a message at ERROR level
+     */
+    public static void Error(String message) {
+        getCurrentLogger().error(message);
+    }
+
+    /**
+     * Execute a function and log its result at ERROR level
+     */
+    public static <R> R ErrorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+        return getCurrentLogger().errorFn(fn, messageSerializer);
+    }
+
+    // ==================== Static Block Operations ====================
+
+    /**
+     * Start a primary sub block
+     */
+    public static <R> R CallPrimarySubBlock(String blockName, String startMessage,
+                                            Supplier<R> supplier, Function<R, String> endMessageSerializer) {
+        return getCurrentLogger().callPrimarySubBlock(blockName, startMessage, supplier, endMessageSerializer);
+    }
+
+    /**
+     * Create a secondary sub block that joins back to main flow
+     */
+    public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
+                                                                     Supplier<R> supplier, Function<R, String> endMessageSerializer,
+                                                                     Executor executor) {
+        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, endMessageSerializer, executor);
+    }
+
+    /**
+     * Create a secondary sub block that joins back to main flow (using default executor)
+     */
+    public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
+                                                                     Supplier<R> supplier, Function<R, String> endMessageSerializer) {
+        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, endMessageSerializer, null);
+    }
+
+    /**
+     * Create a secondary sub block that does not join back to main flow
+     */
+    public static CompletableFuture<Void> CallSecondaryNonJoiningBlock(String blockName, String startMessage,
+                                                                       Runnable runnable, Executor executor) {
+        return getCurrentLogger().callSecondaryNonJoiningBlock(blockName, startMessage, runnable, executor);
+    }
+
+    /**
+     * Create a secondary sub block that does not join back to main flow (using default executor)
+     */
+    public static CompletableFuture<Void> CallSecondaryNonJoiningBlock(String blockName, String startMessage,
+                                                                       Runnable runnable) {
+        return getCurrentLogger().callSecondaryNonJoiningBlock(blockName, startMessage, runnable, null);
+    }
+
+    /**
+     * Create an event publisher block
+     */
+    public static EventPublisherBlock CreateEventPublisherBlock(String branchName, String startMessage) {
+        return getCurrentLogger().createEventPublisherBlock(branchName, startMessage);
+    }
+
+    // ==================== Instance Methods (inherited from parent) ====================
+    // These remain as instance methods and are used by the static methods above
+
+    // ==================== Original ThreadVFL Logic ====================
 
     @Override
     protected void prepareLoggerAfterSubBlockStartDataInitializedAndPushed(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum startType) {
@@ -73,15 +178,19 @@ public class ThreadVFL extends VFLCallable {
             log.info("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
         }
     }
-
+    /*
+    this method is used by super classes to get logger's instance.
+    We are overriding it to give it the thread local's logger stack's latest instance.
+    This allows us to define single instance that can be used across different scopes and it will always return the right stack.
+     */
     @Override
     protected ThreadVFL getLogger() {
-        return ThreadVFL.Get();
+        return getCurrentLogger();
     }
 
     @Override
     protected VFLBlockContext getContext() {
-        return getLogger().ctx;
+        return getCurrentLogger().ctx;
     }
 
     @Override
