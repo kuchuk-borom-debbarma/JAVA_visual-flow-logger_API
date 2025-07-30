@@ -22,15 +22,15 @@ public class FluentThreadVFL {
     /**
      * Log a message at INFO level
      */
-    public static void Log(String message) {
-        getCurrentFluentApi().log(message);
+    public static void Log(String message, Object... args) {
+        getCurrentFluentApi().log(message, args);
     }
 
     /**
      * Log a message at WARN level
      */
-    public static void Warn(String message) {
-        getCurrentFluentApi().warn(message);
+    public static void Warn(String message, Object... args) {
+        getCurrentFluentApi().warn(message, args);
     }
 
     /**

@@ -69,8 +69,8 @@ public class ThreadVFL extends VFLCallable {
     /**
      * Execute a function and log its result at WARN level
      */
-    public static <R> R WarnFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return getCurrentLogger().warnFn(fn, messageSerializer);
+    public static <R> R WarnFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return getCurrentLogger().warnFn(fn, messageSerializer, args);
     }
 
     /**
@@ -83,8 +83,8 @@ public class ThreadVFL extends VFLCallable {
     /**
      * Execute a function and log its result at ERROR level
      */
-    public static <R> R ErrorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return getCurrentLogger().errorFn(fn, messageSerializer);
+    public static <R> R ErrorFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
+        return getCurrentLogger().errorFn(fn, messageSerializer, args);
     }
 
     // ==================== Static Block Operations ====================
@@ -93,25 +93,25 @@ public class ThreadVFL extends VFLCallable {
      * Start a primary sub block
      */
     public static <R> R CallPrimarySubBlock(String blockName, String startMessage,
-                                            Supplier<R> supplier, Function<R, String> endMessageSerializer) {
-        return getCurrentLogger().callPrimarySubBlock(blockName, startMessage, supplier, endMessageSerializer);
+                                            Supplier<R> supplier, Function<R, String> endMessageSerializer, Object... args) {
+        return getCurrentLogger().callPrimarySubBlock(blockName, startMessage, supplier, endMessageSerializer, args);
     }
 
     /**
      * Create a secondary sub block that joins back to main flow
      */
     public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
-                                                                     Supplier<R> supplier, Function<R, String> endMessageSerializer,
-                                                                     Executor executor) {
-        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, executor, endMessageSerializer);
+                                                                     Supplier<R> supplier,
+                                                                     Executor executor, Function<R, String> endMessageSerializer, Object... args) {
+        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, executor, endMessageSerializer, args);
     }
 
     /**
      * Create a secondary sub block that joins back to main flow (using default executor)
      */
     public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
-                                                                     Supplier<R> supplier, Function<R, String> endMessageSerializer) {
-        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, null, endMessageSerializer);
+                                                                     Supplier<R> supplier, Function<R, String> endMessageSerializer, Object... args) {
+        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, null, endMessageSerializer, args);
     }
 
     /**
@@ -133,8 +133,8 @@ public class ThreadVFL extends VFLCallable {
     /**
      * Create an event publisher block
      */
-    public static EventPublisherBlock CreateEventPublisherBlock(String branchName, String startMessage) {
-        return getCurrentLogger().createEventPublisherBlock(branchName, startMessage);
+    public static EventPublisherBlock CreateEventPublisherBlock(String branchName, String startMessage, Object... args) {
+        return getCurrentLogger().createEventPublisherBlock(branchName, startMessage, args);
     }
 
     // ==================== Instance Methods (inherited from parent) ====================

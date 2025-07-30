@@ -12,6 +12,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
 import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
 
 /**
@@ -86,7 +87,7 @@ public abstract class VFLCallable extends VFL {
      * Setup an event publisher and return it's data. It is added as part of the main flow. <br>
      * This event block data needs to be used by event listener for starting an event
      */
-    public final EventPublisherBlock createEventPublisherBlock(String branchName, String startMessage) {
+    public final EventPublisherBlock createEventPublisherBlock(String branchName, String startMessage, Object... args) {
         var context = getContext();
         ensureBlockStarted();
         //Create event publisher block
@@ -95,7 +96,7 @@ public abstract class VFLCallable extends VFL {
         SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(
                 context.blockInfo.getId(),
                 context.currentLogId,
-                startMessage,
+                FormatMessage(startMessage, args),
                 subBlock.getId(),
                 PUBLISH_EVENT,
                 context.buffer);
