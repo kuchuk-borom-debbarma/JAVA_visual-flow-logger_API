@@ -32,6 +32,18 @@ public class ThreadSafeInMemoryFlushHandlerImpl implements VFLFlushHandler {
         return true;
     }
 
+    @Override
+    public boolean pushBlockStartsToServer(Map<String, Long> blockStarts) {
+        //TODO
+        return false;
+    }
+
+    @Override
+    public boolean pushBlockEndsToServer(Map<String, String> blockEnds) {
+        //TODO
+        return false;
+    }
+
     public void cleanup() {
         logs.clear();
         blocks.clear();

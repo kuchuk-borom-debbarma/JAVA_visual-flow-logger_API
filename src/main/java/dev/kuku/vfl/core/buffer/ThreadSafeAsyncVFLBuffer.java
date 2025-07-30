@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
@@ -69,19 +70,23 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     }
 
     private void flushBlocks(List<Block> blocks) {
+        if (logs.isEmpty()) return;
         flushHandler.pushBlocksToServer(blocks);
     }
 
     private void flushLogs(List<Log> logs) {
+        if (logs.isEmpty()) return;
         flushHandler.pushLogsToServer(logs);
     }
 
     private void flushBlockStarts(Map<String, Long> starts) {
-        //TODO
+        if (starts.isEmpty()) return;
+        flushHandler.pushBlockStartsToServer(starts);
     }
 
     private void flushBlockEnds(Map<String, String> ends) {
-        //TODO
+        if (ends.isEmpty()) return;
+        flushHandler.pushBlockEndsToServer(ends);
     }
 
     @Override
@@ -105,6 +110,7 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
         synchronized (lock) {
             blockStarts.put(blockId, timestamp);
         }
+        flushIfFull();
     }
 
     @Override
@@ -112,6 +118,7 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
         synchronized (lock) {
             blockEnds.put(blockId, endMessage);
         }
+        flushIfFull();
     }
 
     @Override
@@ -130,8 +137,9 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
                     break;
                 }
             }
+            throw new TimeoutException("Waiting time for flushing exceeded configured flush timeout " + flushTimeout);
         } catch (Exception e) {
-            log.error("Failed to close flush and close {}", e);
+            log.error("Failed to close flush and close {}", e.fillInStackTrace(), e.getMessage());
         }
     }
 }

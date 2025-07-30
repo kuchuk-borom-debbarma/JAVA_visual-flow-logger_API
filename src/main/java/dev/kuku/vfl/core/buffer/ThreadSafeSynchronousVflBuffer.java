@@ -5,23 +5,27 @@ import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
-    private final int logBufferSize;
-    private final int blockBufferSize;
+    private final int bufferSize;
     private final VFLFlushHandler api;
     private final AtomicBoolean isFlushing = new AtomicBoolean(false);
     private final List<Log> logsToFlush;
     private final List<Block> blocksToFlush;
+    private final Map<String, Long> blockStarts;
+    private final Map<String, String> blockEnds;
     private final Object locker = new Object();
 
-    public ThreadSafeSynchronousVflBuffer(int blockBufferSize, int logBufferSize, VFLFlushHandler api) {
-        this.blockBufferSize = blockBufferSize;
-        this.logBufferSize = logBufferSize;
-        logsToFlush = new ArrayList<>(logBufferSize);
-        blocksToFlush = new ArrayList<>(blockBufferSize);
+    public ThreadSafeSynchronousVflBuffer(int bufferSize, VFLFlushHandler api) {
+        this.bufferSize = bufferSize;
+        logsToFlush = new ArrayList<>();
+        blocksToFlush = new ArrayList<>();
+        blockStarts = new HashMap<>();
+        blockEnds = new HashMap<>();
         this.api = api;
     }
 
@@ -44,12 +48,18 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
 
     @Override
     public void pushLogStartToBuffer(String blockId, long timestamp) {
-        //TODO
+        synchronized (locker) {
+            blockStarts.put(blockId, timestamp);
+        }
+        flushIfFull();
     }
 
     @Override
     public void pushLogEndToBuffer(String blockId, String endMessage) {
-        //TODO
+        synchronized (locker) {
+            blockEnds.put(blockId, endMessage);
+        }
+        flushIfFull();
     }
 
 
@@ -61,7 +71,8 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     private void flushIfFull() {
         boolean shouldFlush = false;
         synchronized (locker) {
-            if (logsToFlush.size() > logBufferSize || blocksToFlush.size() > blockBufferSize) {
+            int size = logsToFlush.size() + blocksToFlush.size() + blockStarts.size() + blockEnds.size();
+            if (size > bufferSize) {
                 shouldFlush = true;
             }
         }
@@ -76,17 +87,29 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
             try {
                 List<Log> toFlushLogs;
                 List<Block> toFlushBlocks;
+                Map<String, Long> toFlushBlockStarts;
+                Map<String, String> toFLushBLockENds;
                 synchronized (locker) {
                     toFlushLogs = new ArrayList<>(logsToFlush);
                     toFlushBlocks = new ArrayList<>(blocksToFlush);
+                    toFlushBlockStarts = new HashMap<>(blockStarts);
+                    toFLushBLockENds = new HashMap<>(blockEnds);
                     blocksToFlush.clear();
                     logsToFlush.clear();
+                    blockStarts.clear();
+                    blockEnds.clear();
                 }
                 if (!toFlushBlocks.isEmpty()) {
                     api.pushBlocksToServer(toFlushBlocks);
                 }
                 if (!toFlushLogs.isEmpty()) {
                     api.pushLogsToServer(toFlushLogs);
+                }
+                if (!toFlushBlockStarts.isEmpty()) {
+                    api.pushBlockStartsToServer(toFlushBlockStarts);
+                }
+                if (!toFLushBLockENds.isEmpty()) {
+                    api.pushBlockEndsToServer(toFLushBLockENds);
                 }
             } finally {
                 isFlushing.set(false);
