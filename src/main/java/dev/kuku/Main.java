@@ -8,7 +8,10 @@ import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import java.util.concurrent.Executors;
 
 public class Main {
-
+    /*
+    TODO Goal of this branch is to create a EventSourceFlushHandler that will append the logs in the root block file.
+    We will extend this class with JSON something that will load the events from append only log and construct a json.
+     */
     public static void main(String... args) {
         //TODO Progressive logging with fixed format which can be used to then generate different output. for client only. VFL Hub can still focus purely on its own logic. But the VFL Hub needs to support importing the client log
         //Flush at interval
