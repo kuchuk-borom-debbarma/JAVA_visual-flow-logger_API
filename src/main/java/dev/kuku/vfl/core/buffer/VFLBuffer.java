@@ -2,6 +2,7 @@ package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
+import org.javatuples.Pair;
 
 public interface VFLBuffer {
     /**
@@ -22,7 +23,7 @@ public interface VFLBuffer {
     /**
      * Log that has ended needs to be pushed
      */
-    void pushLogEndToBuffer(String blockId, String endMessage);
+    void pushLogEndToBuffer(String blockId, Pair<Long, String> endTimeAndMessage);
 
     /**
      * Will flush all pending data and then shutdown

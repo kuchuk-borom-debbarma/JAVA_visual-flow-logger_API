@@ -3,6 +3,7 @@ package dev.kuku.vfl.core.buffer;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
+import org.javatuples.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,9 +56,9 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogEndToBuffer(String blockId, String endMessage) {
+    public void pushLogEndToBuffer(String blockId, Pair<Long, String> endTimeAndMessage) {
         synchronized (locker) {
-            blockEnds.put(blockId, endMessage);
+            blockEnds.put(blockId, endTimeAndMessage);
         }
         flushIfFull();
     }

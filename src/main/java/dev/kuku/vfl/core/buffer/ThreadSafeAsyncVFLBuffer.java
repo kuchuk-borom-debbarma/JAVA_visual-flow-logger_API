@@ -4,6 +4,7 @@ import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.javatuples.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,9 +116,9 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogEndToBuffer(String blockId, String endMessage) {
+    public void pushLogEndToBuffer(String blockId, Pair<Long, String> endTimeAndMessage) {
         synchronized (lock) {
-            blockEnds.put(blockId, endMessage);
+            blockEnds.put(blockId, endTimeAndMessage);
         }
         flushIfFull();
     }
