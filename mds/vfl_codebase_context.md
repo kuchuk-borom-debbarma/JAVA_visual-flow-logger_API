@@ -430,3 +430,47 @@ boolean pushBlockEndsToServer(Map<String, String> blockEnds);     // Handle comp
 - **Thread Management**: Proper executor shutdown with timeouts
 
 This context provides a comprehensive understanding of the VFL codebase architecture, patterns, and usage recommendations for effective development and maintenance.
+
+```json
+[
+  {
+    "block_id": "b1",
+    "parent_block_id": null,
+    "name": "root_block_wowo",
+    "start_time": "some time formatted nicely as string with precision. (Based on flushBlockStart() method's map's value which is utc milisecond time)",
+    "end_time": "time formated nicely with precision (based on current utc milisecond time)",
+    "end_message": "null (root blocks dont have end message)(based on flushLogEndMethod)",
+    "logs_chain": [
+      {
+        "id": "logID1",
+        "type": "MESSAGE",
+        "mesage": "STARTING BLOCK ",
+        "logs_chain": [
+          {
+            "id": "logID1",
+            "type": "MESSAGE",
+            "mesage": "STARTING BLOCK "
+          },
+          {
+            "id": "log2",
+            "type": "SUB_BLOCK_START_SECONDARY",
+            "end_message": "null (root blocks dont have end message)(based on flushLogEndMethod)",
+            "duration": "start time - end time delta",
+            "referenced_block": {
+              "block_id": "b1",
+              "parent_block_id": null,
+              "name": "root_block_wowo",
+              "start_time": "some time formatted nicely as string with precision. (Based on flushBlockStart() method's map's value which is utc milisecond time)",
+              "end_time": "time formated nicely with precision (based on current utc milisecond time)",
+              "end_message": "null (root blocks dont have end message)(based on flushLogEndMethod)",
+              "logs_chain": [
+                .....
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+```
