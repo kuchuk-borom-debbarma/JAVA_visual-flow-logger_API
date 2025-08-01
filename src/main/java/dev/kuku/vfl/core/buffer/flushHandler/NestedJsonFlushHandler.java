@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
+import org.javatuples.Pair;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,7 +31,7 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
     private final Map<String, Block> blocks = new ConcurrentHashMap<>();
     private final Map<String, Log> logs = new ConcurrentHashMap<>();
     private final Map<String, Long> blockStarts = new ConcurrentHashMap<>();
-    private final Map<String, String> blockEnds = new ConcurrentHashMap<>();
+    private final Map<String, Pair<Long, String>> blockEnds = new ConcurrentHashMap<>();
 
     public NestedJsonFlushHandler(String outputFilePath) {
         this.outputFilePath = outputFilePath;
@@ -69,7 +70,7 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
     }
 
     @Override
-    public boolean pushBlockEndsToServer(Map<String, String> blockEnds) {
+    public boolean pushBlockEndsToServer(Map<String, Pair<Long, String>> blockEnds) {
         if (blockEnds != null) {
             this.blockEnds.putAll(blockEnds);
         }
@@ -113,8 +114,12 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
             blockJson.startTime = formatTime(startTime);
         }
 
-        blockJson.endTime = formatTime(System.currentTimeMillis());
-        blockJson.endMessage = blockEnds.get(block.getId()); // Can be null for root blocks
+        // Handle block end time and message with null checking
+        Pair<Long, String> blockEnd = blockEnds.get(block.getId());
+        if (blockEnd != null) {
+            blockJson.endTime = formatTime(blockEnd.getValue0());
+            blockJson.endMessage = blockEnd.getValue1();
+        }
 
         // Build logs chain for this block
         blockJson.logsChain = buildLogsChain(block.getId(), null);
@@ -144,12 +149,13 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
 
                 // Add duration and end message for sub-block logs
                 Long subBlockStartTime = blockStarts.get(referencedBlockId);
-                if (subBlockStartTime != null) {
-                    long duration = System.currentTimeMillis() - subBlockStartTime;
-                    logJson.duration = formatDuration(duration);
-                }
+                Pair<Long, String> subBlockEnd = blockEnds.get(referencedBlockId);
 
-                logJson.endMessage = blockEnds.get(referencedBlockId);
+                if (subBlockStartTime != null && subBlockEnd != null) {
+                    long duration = subBlockEnd.getValue0() - subBlockStartTime;
+                    logJson.duration = formatDuration(duration);
+                    logJson.endMessage = subBlockEnd.getValue1();
+                }
 
                 // Add referenced block
                 Block referencedBlock = blocks.get(referencedBlockId);

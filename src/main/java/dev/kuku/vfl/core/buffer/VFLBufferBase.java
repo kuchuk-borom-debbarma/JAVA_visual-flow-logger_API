@@ -34,6 +34,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
         } finally {
             lock.unlock();
         }
+        flushIfFull();
     }
 
     @Override
@@ -44,6 +45,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
         } finally {
             lock.unlock();
         }
+        flushIfFull();
     }
 
     @Override
@@ -54,6 +56,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
         } finally {
             lock.unlock();
         }
+        flushIfFull();
     }
 
     @Override
@@ -64,10 +67,11 @@ public abstract class VFLBufferBase implements VFLBuffer {
         } finally {
             lock.unlock();
         }
+        flushIfFull();
     }
 
     private void flushIfFull() {
-        lock.lock();x
+        lock.lock();
         boolean shouldFlush = false;
         try {
             int logsSize = logs2Flush.size();
@@ -86,7 +90,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
         }
     }
 
-    private void flushAll() {
+    protected void flushAll() {
         List<Log> l;
         List<Block> b;
         Map<String, Long> bs;
@@ -104,24 +108,14 @@ public abstract class VFLBufferBase implements VFLBuffer {
         } finally {
             lock.unlock();
         }
-        if (!l.isEmpty() || !b.isEmpty() || !bs.isEmpty() || !be.isEmpty()) {
-            flushBlocks(b);
-            flushBlockStarts(bs);
-            flushBlockEnds(be);
-            flushLogs(l);
-        }
+        onFlushAll(l, b, bs, be);
     }
 
     @Override
     public void flushAndClose() {
         flushAll();
+
     }
 
-    protected abstract void flushBlockEnds(Map<String, Pair<Long, String>> blockEnds);
-
-    protected abstract void flushBlocks(List<Block> blocks);
-
-    protected abstract void flushBlockStarts(Map<String, Long> blockStarts);
-
-    protected abstract void flushLogs(List<Log> logs);
+    protected abstract void onFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds);
 }
