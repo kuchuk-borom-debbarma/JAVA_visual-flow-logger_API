@@ -56,7 +56,7 @@ public class ThreadVFLFluentTest {
             ThreadVFL.Runner.Instance.StartVFL("AsyncFlow Test", buffer, () -> {
                 FluentThreadVFL.Log("Starting async test now...");
 
-                FluentThreadVFL.RunSubBlock(() -> sum(1, 2))
+                FluentThreadVFL.Run(() -> sum(1, 2))
                         .asBlock("Sum Primary 1")
                         .startPrimary();
 
@@ -100,7 +100,7 @@ public class ThreadVFLFluentTest {
 
                 try {
                     FluentThreadVFL.Log("Running async non joining SUM now");
-                    FluentThreadVFL.RunSubBlock(() -> sum(1, 2))
+                    FluentThreadVFL.Run(() -> sum(1, 2))
                             .asBlock("Non Joining secondary")
                             .startSecondaryNonJoining(null).get();
                     FluentThreadVFL.Log("Async non joining SUM complete");
