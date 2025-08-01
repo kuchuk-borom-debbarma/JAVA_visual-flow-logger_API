@@ -114,7 +114,6 @@ public abstract class VFLBufferBase implements VFLBuffer {
     @Override
     public void flushAndClose() {
         flushAll();
-
     }
 
     protected abstract void onFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds);

@@ -1,18 +1,15 @@
 package buffer;
 
-import dev.kuku.vfl.core.buffer.ThreadSafeAsyncVFLBuffer;
-import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
+import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
+import dev.kuku.vfl.core.buffer.SynchronousVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.buffer.flushHandler.ThreadSafeInMemoryFlushHandlerImpl;
+import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable;
 import dev.kuku.vfl.variants.thread_local.FluentThreadVFL;
 import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -20,23 +17,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class ThreadsafeAsyncBufferTest {
-    ThreadSafeInMemoryFlushHandlerImpl flush = new ThreadSafeInMemoryFlushHandlerImpl();
-    VFLBuffer buffer = new ThreadSafeAsyncVFLBuffer(1, 5000, flush, Executors.newFixedThreadPool(10));
-    VFLBuffer b = new ThreadSafeSynchronousVflBuffer(1, flush);
+    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/threadVFL/fluent");
+    private final VFLBuffer buffer = new AsyncVFLBuffer(100, 5000, 5000, flush, Executors.newVirtualThreadPerTaskExecutor(), Executors.newScheduledThreadPool(2));
+    private final VFLBuffer b = new SynchronousVFLBuffer(100, flush);
     FluentVFLCallable f;
 
-    void write(String fileName) {
-        try {
-            String path = "test/output/vflBuffer/threadSafeAsync/stressTest";
-            Files.createDirectories(Path.of(path));
-            try (FileWriter f = new FileWriter(path + "/" + fileName + ".json")) {
-                f.write(flush.generateNestedJsonStructure());
-                flush.cleanup();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Nested
     class StressTestPush {
@@ -63,7 +48,6 @@ public class ThreadsafeAsyncBufferTest {
                 });
                 return null;
             });
-            write("multiThread");
         }
 
         void sum(int i) {

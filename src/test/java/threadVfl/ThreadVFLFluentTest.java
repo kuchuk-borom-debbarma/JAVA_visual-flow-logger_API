@@ -1,38 +1,22 @@
 package threadVfl;
 
-import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
+import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.buffer.flushHandler.ThreadSafeInMemoryFlushHandlerImpl;
+import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.variants.thread_local.FluentThreadVFL;
 import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class ThreadVFLFluentTest {
 
-    private final ThreadSafeInMemoryFlushHandlerImpl flush = new ThreadSafeInMemoryFlushHandlerImpl();
-    private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, flush);
-
-    void write(String fileName) {
-        try {
-            String path = "test/output/threadVFL/fluent";
-            Files.createDirectories(Path.of(path));
-            try (FileWriter f = new FileWriter(path + "/" + fileName + ".json")) {
-                f.write(flush.generateNestedJsonStructure());
-                flush.cleanup();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/threadVFL/fluent");
+    private final VFLBuffer buffer = new AsyncVFLBuffer(100, 5000, 5000, flush, Executors.newVirtualThreadPerTaskExecutor(), Executors.newScheduledThreadPool(2));
 
     int sum(int a, int b) {
         FluentThreadVFL.Log("Going to sum {} and {}", a, b);
@@ -62,7 +46,6 @@ public class ThreadVFLFluentTest {
                 FluentThreadVFL.Log("So now the result is {}", result);
                 return null;
             });
-            write("linearFlow");
         }
     }
 
@@ -127,7 +110,6 @@ public class ThreadVFLFluentTest {
                 FluentThreadVFL.Log("Everything is DONE and dusted!!!");
                 return null;
             });
-            write("AsyncFlow");
         }
     }
 
@@ -162,7 +144,6 @@ public class ThreadVFLFluentTest {
                 FluentThreadVFL.Log("Published event now closing");
                 return null;
             });
-            write("linearEventFlow");
         }
     }
 }
