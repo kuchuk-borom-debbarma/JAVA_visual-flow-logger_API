@@ -7,6 +7,7 @@ import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
+import org.javatuples.Pair;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,7 +30,7 @@ public abstract class VFL {
     // Closes the log block.
     protected void close(String endMessage) {
         ensureBlockStarted();
-        getContext().buffer.pushLogEndToBuffer(getContext().blockInfo.getId(), endMessage);
+        getContext().buffer.pushLogEndToBuffer(getContext().blockInfo.getId(), new Pair<>(Instant.now().toEpochMilli(), endMessage));
     }
 
     /**

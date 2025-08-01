@@ -1,37 +1,21 @@
 package threadVfl;
 
-import dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer;
+import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.buffer.flushHandler.ThreadSafeInMemoryFlushHandlerImpl;
+import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.models.EventPublisherBlock;
 import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class ThreadVFLTest {
 
-    private final ThreadSafeInMemoryFlushHandlerImpl flush = new ThreadSafeInMemoryFlushHandlerImpl();
-    private final VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(999999, flush);
-
-    void write(String fileName) {
-        try {
-            String path = "test/output/threadVFL/logger";
-            Files.createDirectories(Path.of(path));
-            try (FileWriter f = new FileWriter(path + "/" + fileName + ".json")) {
-                f.write(flush.generateNestedJsonStructure());
-                flush.cleanup();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/threadVFL/logger.json");
+    private final VFLBuffer buffer = new AsyncVFLBuffer(100, 5000, 5000, flush, Executors.newVirtualThreadPerTaskExecutor(), Executors.newScheduledThreadPool(2));
 
     int sum(int a, int b) {
         ThreadVFL.Log("Going to sum " + a + " " + b);
@@ -57,7 +41,6 @@ public class ThreadVFLTest {
                 int result = ThreadVFL.CallPrimarySubBlock("Sum block", "Doing sum of 1, 2", () -> sum(1, 2), integer -> "Calculated sum is {}");
                 ThreadVFL.Log("So now the result is " + result);
             });
-            write("linearFlow");
         }
     }
 
@@ -103,7 +86,6 @@ public class ThreadVFLTest {
                 ThreadVFL.CallPrimarySubBlock("Sum primary 2", "Doing sum of results", () -> sum(finalA, finalB), integer -> "Final result = " + integer);
                 ThreadVFL.Log("Everything is DONE and dusted!!!");
             });
-            write("AsyncFlow");
         }
     }
 
@@ -135,7 +117,6 @@ public class ThreadVFLTest {
                 multiply(1, 2, publisherBlock);
                 ThreadVFL.Log("Published event now closing");
             });
-            write("linearEventFlow");
         }
     }
 }
