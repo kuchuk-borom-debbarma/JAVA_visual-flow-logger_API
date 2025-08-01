@@ -24,6 +24,7 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
     private final Map<String, String> blockEnds = new HashMap<>();
     private final Object lock = new Object();
     private final ExecutorService executor;
+
     //TODO periodic flush in future
     public ThreadSafeAsyncVFLBuffer(int bufferSize, int flushTimeoutMillisecond, VFLFlushHandler flushHandler, ExecutorService executor) {
         this.bufferSize = bufferSize;
@@ -134,6 +135,7 @@ public class ThreadSafeAsyncVFLBuffer implements VFLBuffer {
             while (current < flushTimeout) {
                 current += 100;
                 if (executor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                    flushHandler.closeFlushHandler();
                     return;
                 }
             }

@@ -14,4 +14,6 @@ public interface VFLFlushHandler {
     boolean pushBlockStartsToServer(Map<String, Long> blockStarts);
 
     boolean pushBlockEndsToServer(Map<String, String> blockEnds);
+
+    void closeFlushHandler();
 }

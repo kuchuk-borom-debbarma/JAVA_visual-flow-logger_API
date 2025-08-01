@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     private final int bufferSize;
-    private final VFLFlushHandler api;
+    private final VFLFlushHandler flushHandler;
     private final AtomicBoolean isFlushing = new AtomicBoolean(false);
     private final List<Log> logsToFlush;
     private final List<Block> blocksToFlush;
@@ -20,13 +20,13 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     private final Map<String, String> blockEnds;
     private final Object locker = new Object();
 
-    public ThreadSafeSynchronousVflBuffer(int bufferSize, VFLFlushHandler api) {
+    public ThreadSafeSynchronousVflBuffer(int bufferSize, VFLFlushHandler flushHandler) {
         this.bufferSize = bufferSize;
         logsToFlush = new ArrayList<>();
         blocksToFlush = new ArrayList<>();
         blockStarts = new HashMap<>();
         blockEnds = new HashMap<>();
-        this.api = api;
+        this.flushHandler = flushHandler;
     }
 
     @Override
@@ -66,6 +66,7 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
     @Override
     public void flushAndClose() {
         flush();
+        flushHandler.closeFlushHandler();
     }
 
     private void flushIfFull() {
@@ -100,16 +101,16 @@ public class ThreadSafeSynchronousVflBuffer implements VFLBuffer {
                     blockEnds.clear();
                 }
                 if (!toFlushBlocks.isEmpty()) {
-                    api.pushBlocksToServer(toFlushBlocks);
+                    flushHandler.pushBlocksToServer(toFlushBlocks);
                 }
                 if (!toFlushLogs.isEmpty()) {
-                    api.pushLogsToServer(toFlushLogs);
+                    flushHandler.pushLogsToServer(toFlushLogs);
                 }
                 if (!toFlushBlockStarts.isEmpty()) {
-                    api.pushBlockStartsToServer(toFlushBlockStarts);
+                    flushHandler.pushBlockStartsToServer(toFlushBlockStarts);
                 }
                 if (!toFLushBLockENds.isEmpty()) {
-                    api.pushBlockEndsToServer(toFLushBLockENds);
+                    flushHandler.pushBlockEndsToServer(toFLushBLockENds);
                 }
             } finally {
                 isFlushing.set(false);

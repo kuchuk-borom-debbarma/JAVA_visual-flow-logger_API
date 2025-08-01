@@ -13,6 +13,7 @@ public class Main {
     We will extend this class with JSON something that will load the events from append only log and construct a json.
      */
     public static void main(String... args) {
+        //TODO create abstract class for vfl buffer and flush handler that will do the logical building while allowing abstract methods to be overridden
         //TODO Progressive logging with fixed format which can be used to then generate different output. for client only. VFL Hub can still focus purely on its own logic. But the VFL Hub needs to support importing the client log
         //Flush at interval
         //TODO logger can take string and args of param to fill in those {}
