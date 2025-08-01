@@ -57,7 +57,7 @@ public class ThreadVFLFluentTest {
                 FluentThreadVFL.Log("Starting async test now...");
 
                 FluentThreadVFL.RunSubBlock(() -> sum(1, 2))
-                        .withBlockName("Sum Primary 1")
+                        .asBlock("Sum Primary 1")
                         .startPrimary();
 
                 CompletableFuture<Integer> t1 = FluentThreadVFL.Call(() -> {
@@ -101,7 +101,7 @@ public class ThreadVFLFluentTest {
                 try {
                     FluentThreadVFL.Log("Running async non joining SUM now");
                     FluentThreadVFL.RunSubBlock(() -> sum(1, 2))
-                            .withBlockName("Non Joining secondary")
+                            .asBlock("Non Joining secondary")
                             .startSecondaryNonJoining(null).get();
                     FluentThreadVFL.Log("Async non joining SUM complete");
                 } catch (InterruptedException | ExecutionException e) {

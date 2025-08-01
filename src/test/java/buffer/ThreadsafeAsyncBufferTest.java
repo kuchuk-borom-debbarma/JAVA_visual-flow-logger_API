@@ -34,7 +34,7 @@ public class ThreadsafeAsyncBufferTest {
                 for (int i = 0; i < size; i++) {
                     int finalI = i;
                     var t = FluentThreadVFL.RunSubBlock(() -> sum(finalI))
-                            .withBlockName("Sum Block no. " + i)
+                            .asBlock("Sum Block no. " + i)
                             .withStartMessage("Summing " + i)
                             .startSecondaryJoining(Executors.newVirtualThreadPerTaskExecutor());
                     sums.add(t);

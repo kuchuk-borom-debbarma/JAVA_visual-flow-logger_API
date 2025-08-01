@@ -3,7 +3,7 @@ package dev.kuku.vfl.variants.thread_local;
 
 import dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable;
 import dev.kuku.vfl.core.fluent_api.callable.steps.CallableSupplierStep;
-import dev.kuku.vfl.core.fluent_api.callable.steps.runnable.RunSubBlockStep;
+import dev.kuku.vfl.core.fluent_api.callable.steps.runnable.RunnableForVFLCallableStep;
 
 import java.util.function.Supplier;
 
@@ -52,7 +52,7 @@ public class FluentThreadVFL {
     /**
      * Start a fluent runnable sub block chain
      */
-    public static RunSubBlockStep RunSubBlock(Runnable r) {
+    public static RunnableForVFLCallableStep RunSubBlock(Runnable r) {
         return getCurrentFluentApi().runSubBlock(r);
     }
 }

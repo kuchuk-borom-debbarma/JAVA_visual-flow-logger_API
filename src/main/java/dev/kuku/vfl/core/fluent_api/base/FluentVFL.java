@@ -1,5 +1,6 @@
 package dev.kuku.vfl.core.fluent_api.base;
 
+import dev.kuku.vfl.core.fluent_api.base.steps.RunnableStep;
 import dev.kuku.vfl.core.fluent_api.base.steps.SupplierStep;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
@@ -29,5 +30,9 @@ public class FluentVFL {
 
     public <R> SupplierStep<R> call(Supplier<R> fn) {
         return new SupplierStep<>(vfl, fn);
+    }
+
+    public <R> RunnableStep run(Runnable runnable) {
+        return new RunnableStep(runnable, vfl);
     }
 }
