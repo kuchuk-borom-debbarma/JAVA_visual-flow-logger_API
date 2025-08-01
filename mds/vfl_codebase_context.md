@@ -25,10 +25,56 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 ### 2. Key Components
 
 #### Core Data Models
-- **Block**: Represents execution scopes with ID, name, parent relationships
-- **Log**: Individual log entries within blocks with timestamps and types
-- **VFLBlockContext**: Contains block info and buffer reference
-- **EventPublisherBlock**: Special block type for event-driven patterns
+
+**Block** (`dev.kuku.vfl.core.models.Block`)
+- Simple data class representing execution scopes
+- **Fields**:
+    - `String id`: Unique block identifier
+    - `String parentBlockId`: Reference to parent block (null for root blocks)
+    - `String blockName`: Human-readable block name
+- **Purpose**: Creates hierarchical structure for execution flow tracking
+
+**Log** (`dev.kuku.vfl.core.models.logs.Log`)
+- Base class for all log entries within blocks
+- **Fields**:
+    - `String id`: Unique log identifier
+    - `String blockId`: Reference to containing block
+    - `String parentLogId`: Reference to parent log (for nested structure)
+    - `LogType logType`: Type wrapper containing enum value
+    - `String message`: Log content
+    - `long timestamp`: Epoch milliseconds timestamp
+- **Constructors**: Support both LogType object and LogTypeEnum enum
+- **Purpose**: Individual log entries that build the execution narrative
+
+**SubBlockStartLog** (`dev.kuku.vfl.core.models.logs.SubBlockStartLog`)
+- Specialized log for marking sub-block initiation
+- **Extends**: Log
+- **Additional Field**:
+    - `String referencedBlockId`: ID of the block being started
+- **Purpose**: Links parent blocks to their sub-blocks for flow visualization
+- **Constructors**:
+    - Direct creation with LogTypeBlockStartEnum
+    - Conversion from existing Log with block start type
+
+**LogType** (`dev.kuku.vfl.core.models.logs.LogType`)
+- Wrapper class for log type enums
+- **Field**: `String value` (final)
+- **Constructors**: Accepts LogTypeEnum or LogTypeBlockStartEnum
+- **Purpose**: Unified type system for different log categories
+
+**VFLBlockContext** (`dev.kuku.vfl.core.models.VFLBlockContext`)
+- Runtime context for active blocks
+- **Fields**:
+    - `Block blockInfo`: Associated block metadata
+    - `AtomicBoolean blockStarted`: Thread-safe block initialization flag
+    - `String currentLogId`: Current log identifier for nested logging
+    - `VFLBuffer buffer`: Buffer instance for log output
+- **Purpose**: Maintains runtime state and buffer reference for active blocks
+
+**EventPublisherBlock** (`dev.kuku.vfl.core.models.EventPublisherBlock`)
+- Record wrapper for event-driven logging
+- **Field**: `Block block`: Wrapped block instance
+- **Purpose**: Marker type for event publisher pattern integration
 
 #### Buffer System
 - **VFLBuffer Interface**: Defines buffer operations
@@ -39,6 +85,60 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 - **VFLFlushHandler Interface**: Defines output destinations
 - **InMemoryFlushHandler**: For development/testing
 - **VFLHubFlushHandler**: For production (sends to VFL Server)
+
+## Log Type System
+
+### 1. LogTypeEnum (`dev.kuku.vfl.core.models.logs.enums.LogTypeEnum`)
+**Purpose**: Standard log message types
+**Values**:
+- `MESSAGE("MESSAGE")`: Regular informational logs
+- `WARN("WARN")`: Warning level logs
+- `ERROR("ERROR")`: Error level logs
+
+### 2. LogTypeBlockStartEnum (`dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum`)
+**Purpose**: Sub-block start operation types
+**Values**:
+- `SUB_BLOCK_START_PRIMARY("SUB_BLOCK_START_PRIMARY")`: Sequential sub-block execution
+- `SUB_BLOCK_START_SECONDARY_JOIN("SUB_BLOCK_START_SECONDARY_JOIN")`: Parallel execution with join
+- `SUB_BLOCK_START_SECONDARY_NO_JOIN("SUB_BLOCK_START_SECONDARY_NO_JOIN")`: Fire-and-forget execution
+- `PUBLISH_EVENT("PUBLISH_EVENT")`: Event publisher initiation
+- `EVENT_LISTENER("EVENT_LISTENER")`: Event listener registration
+
+### 3. LogType Wrapper Pattern
+The LogType class provides a unified interface for both enum types:
+```java
+// Standard logging
+new LogType(LogTypeEnum.MESSAGE)
+
+// Block start logging  
+new LogType(LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY)
+```
+
+## Data Model Relationships
+
+### Hierarchical Structure
+```
+Block (Root)
+├── Log entries (MESSAGE/WARN/ERROR)
+├── SubBlockStartLog (references child Block)
+│   └── Child Block
+│       ├── Log entries
+│       └── SubBlockStartLog (references grandchild)
+└── More Log entries
+```
+
+### Block-to-Block Relationships
+- **Parent-Child**: `Block.parentBlockId` references parent `Block.id`
+- **Log-to-Block**: `Log.blockId` references containing `Block.id`
+- **Log-to-Log**: `Log.parentLogId` references parent `Log.id` (for nested logs)
+- **SubBlock Reference**: `SubBlockStartLog.referencedBlockId` references started `Block.id`
+
+### Context Flow
+```java
+VFLBlockContext context = new VFLBlockContext(block, buffer);
+context.blockStarted.compareAndSet(false, true); // Thread-safe initialization
+context.currentLogId = "log-123"; // Track current log for nesting
+```
 
 ## Class Hierarchy & Relationships
 
@@ -174,29 +274,40 @@ ThreadVFL.Runner.Instance.StartVFL("Operation", buffer, () -> {
 
 ## Block Types & Flow Control
 
-### 1. Primary Sub-blocks (Sequential)
+### Log Type to Execution Pattern Mapping
+
+#### 1. Primary Sub-blocks (Sequential)
+- **Log Type**: `LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY`
 - **Purpose**: Main execution flow operations
 - **Behavior**: Blocks parent execution until complete
 - **Thread**: Same thread as parent
 - **Logger Management**: Pushed to existing stack
+- **SubBlockStartLog**: References the started block via `referencedBlockId`
 
-### 2. Secondary Joining Blocks (Parallel)
+#### 2. Secondary Joining Blocks (Parallel)
+- **Log Type**: `LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN`
 - **Purpose**: Parallel operations that need to join back
 - **Behavior**: Returns CompletableFuture, parent can wait
 - **Thread**: New thread (uses executor)
 - **Logger Management**: New stack in new thread
+- **SubBlockStartLog**: Marks parallel execution start
 
-### 3. Secondary Non-Joining Blocks (Fire-and-Forget)
+#### 3. Secondary Non-Joining Blocks (Fire-and-Forget)
+- **Log Type**: `LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN`
 - **Purpose**: Background operations (logging, cleanup)
 - **Behavior**: Returns CompletableFuture<Void>, no joining needed
 - **Thread**: New thread (uses executor)
 - **Logger Management**: New stack in new thread
+- **SubBlockStartLog**: Marks fire-and-forget execution
 
-### 4. Event Publisher/Listener Pattern
+#### 4. Event Publisher/Listener Pattern
+- **Publisher Log Type**: `LogTypeBlockStartEnum.PUBLISH_EVENT`
+- **Listener Log Type**: `LogTypeBlockStartEnum.EVENT_LISTENER`
 - **Purpose**: Event-driven architectures
-- **Publisher**: Creates EventPublisherBlock
-- **Listeners**: Multiple listeners can handle same event
+- **Publisher**: Creates EventPublisherBlock, logs PUBLISH_EVENT
+- **Listeners**: Multiple listeners can handle same event, log EVENT_LISTENER
 - **Thread**: Depends on implementation (same or different thread)
+- **Flow**: EventPublisherBlock wraps Block for event-specific handling
 
 ## Key Design Patterns
 
@@ -262,20 +373,30 @@ ThreadVFL.Runner.Instance.StartVFL("Operation", buffer, () -> {
 
 ### VFLBuffer Contract
 ```java
-void pushLogToBuffer(Log log);           // Add log entry
-void pushBlockToBuffer(Block block);     // Add block entry  
-void pushLogStartToBuffer(...);          // Mark block start
-void pushLogEndToBuffer(...);            // Mark block end
-void flushAndClose();                    // Cleanup
+void pushLogToBuffer(Log log);                    // Add standard log entry
+void pushBlockToBuffer(Block block);              // Add block metadata
+void pushLogStartToBuffer(...);                   // Mark block start (creates SubBlockStartLog internally)
+void pushLogEndToBuffer(...);                     // Mark block end
+void flushAndClose();                             // Cleanup and flush remaining data
 ```
+
+**Log Creation Flow**:
+1. Standard logs: Direct `Log` creation with `LogTypeEnum`
+2. Sub-block starts: `SubBlockStartLog` creation with `LogTypeBlockStartEnum`
+3. Buffer operations: Internal conversion to appropriate log types
 
 ### VFLFlushHandler Contract
 ```java
-boolean pushLogsToServer(List<Log> logs);
-boolean pushBlocksToServer(List<Block> blocks);
-boolean pushBlockStartsToServer(Map<String, Long> blockStarts);
-boolean pushBlockEndsToServer(Map<String, String> blockEnds);
+boolean pushLogsToServer(List<Log> logs);                    // Handle all log types (Log + SubBlockStartLog)
+boolean pushBlocksToServer(List<Block> blocks);              // Handle block metadata
+boolean pushBlockStartsToServer(Map<String, Long> blockStarts);   // Handle timing data
+boolean pushBlockEndsToServer(Map<String, String> blockEnds);     // Handle completion data
 ```
+
+**Data Flow**:
+- Mixed log types in single list (Log and SubBlockStartLog instances)
+- Block metadata separate from log entries
+- Timing data extracted for performance analysis
 
 ## Recommendations for Usage
 
