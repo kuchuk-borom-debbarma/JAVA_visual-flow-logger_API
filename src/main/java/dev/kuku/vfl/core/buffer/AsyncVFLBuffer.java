@@ -11,52 +11,55 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Slf4j
-public class AsyncVFLBuffer extends VFLBufferBase {
+public class AsyncVFLBuffer extends VFLBufferWithFlushHandlerBase {
     private final ExecutorService flushExecutor;
     private final ScheduledExecutorService periodicExecutor;
-    private final VFLFlushHandler flushHandler;
     private final int flushTimeout;
 
-    public AsyncVFLBuffer(int bufferSize, int finalFlushTimeoutMillisecond, int periodicFlushTimeMillisecond, VFLFlushHandler flushHandler, ExecutorService bufferFlushExecutor, ScheduledExecutorService periodicFlushExecutor) {
-        super(bufferSize);
+    public AsyncVFLBuffer(int bufferSize, int finalFlushTimeoutMillisecond, int periodicFlushTimeMillisecond,
+                          VFLFlushHandler flushHandler, ExecutorService bufferFlushExecutor,
+                          ScheduledExecutorService periodicFlushExecutor) {
+        super(bufferSize, flushHandler);
         this.flushExecutor = bufferFlushExecutor;
         this.periodicExecutor = periodicFlushExecutor;
-        this.flushHandler = flushHandler;
         this.flushTimeout = finalFlushTimeoutMillisecond;
-        periodicExecutor.scheduleWithFixedDelay(this::flushAll, periodicFlushTimeMillisecond, periodicFlushTimeMillisecond, TimeUnit.MILLISECONDS);
+        periodicExecutor.scheduleWithFixedDelay(() -> flushAll(), periodicFlushTimeMillisecond, periodicFlushTimeMillisecond, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    protected void onFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds) {
-        flushExecutor.submit(() -> {
-            flushHandler.pushBlocksToServer(blocks);
-            flushHandler.pushBlockStartsToServer(blockStarts);
-            flushHandler.pushBlockEndsToServer(blockEnds);
-            flushHandler.pushLogsToServer(logs);
-        });
+    protected void executeFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds) {
+        flushExecutor.submit(() -> performOrderedFlush(logs, blocks, blockStarts, blockEnds));
     }
 
     @Override
     public void flushAndClose() {
-        super.flushAndClose();
+        super.flushAll();
         periodicExecutor.shutdown();
         flushExecutor.shutdown();
+
         try {
-            //Wait for 100 ms and recheck until we reach flushTimeout
-            int current = 0;
-            while (current < flushTimeout) {
-                current += 100;
+            int elapsed = 0;
+            while (elapsed < flushTimeout) {
                 if (flushExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                    // Tasks completed successfully
+                    log.debug("Finished flush executor shutdown. Closing flush handler.");
                     flushHandler.closeFlushHandler();
+                    log.debug("Finished Complete flush");
                     return;
                 }
+                elapsed += 100;
             }
-            throw new TimeoutException("Waiting time for flushing exceeded configured flush timeout " + flushTimeout);
-        } catch (Exception e) {
-            log.error("Failed to close flush and close {}:{}", e.fillInStackTrace(), e.getMessage());
+
+            // Timeout exceeded - force shutdown
+            flushExecutor.shutdownNow();
+            throw new RuntimeException("Flush timeout exceeded: " + flushTimeout + "ms");
+
+        } catch (InterruptedException e) {
+            flushExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted during shutdown", e);
         }
     }
 }

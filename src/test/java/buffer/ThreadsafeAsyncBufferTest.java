@@ -3,8 +3,8 @@ package buffer;
 import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
 import dev.kuku.vfl.core.buffer.SynchronousVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.buffer.flushHandler.DummyFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
-import dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable;
 import dev.kuku.vfl.variants.thread_local.FluentThreadVFL;
 import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 import org.junit.jupiter.api.Nested;
@@ -17,23 +17,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class ThreadsafeAsyncBufferTest {
-    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/threadVFL/fluent");
-    private final VFLBuffer buffer = new AsyncVFLBuffer(100, 5000, 5000, flush, Executors.newVirtualThreadPerTaskExecutor(), Executors.newScheduledThreadPool(2));
+    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/buffer_test.json");
+    private final DummyFlushHandler dummy = new DummyFlushHandler();
+    private final VFLBuffer buffer = new AsyncVFLBuffer(100, 5000, 5000, flush, Executors.newFixedThreadPool(160), Executors.newScheduledThreadPool(2));
     private final VFLBuffer b = new SynchronousVFLBuffer(100, flush);
-    FluentVFLCallable f;
 
 
     @Nested
     class StressTestPush {
         @Test
         void multiThread() {
-            ThreadVFL.Runner.Instance.StartVFL("Single Thread", b, () -> {
+            ThreadVFL.Runner.Instance.StartVFL("Single Thread", buffer, () -> {
                 FluentThreadVFL.Log("Starting single thread buffer test");
                 int size = 10000;
                 List<CompletableFuture<Void>> sums = new ArrayList<>(size);
                 for (int i = 0; i < size; i++) {
                     int finalI = i;
-                    var t = f.runSubBlock(() -> sum(finalI))
+                    var t = FluentThreadVFL.RunSubBlock(() -> sum(finalI))
                             .withBlockName("Sum Block no. " + i)
                             .withStartMessage("Summing " + i)
                             .startSecondaryJoining(Executors.newVirtualThreadPerTaskExecutor());
@@ -51,13 +51,13 @@ public class ThreadsafeAsyncBufferTest {
         }
 
         void sum(int i) {
-            f.log("Summing " + i);
+            FluentThreadVFL.Log("Summing " + i);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            f.log("Sum is " + i + i);
+            FluentThreadVFL.Log("Sum is " + i + i);
         }
     }
 }

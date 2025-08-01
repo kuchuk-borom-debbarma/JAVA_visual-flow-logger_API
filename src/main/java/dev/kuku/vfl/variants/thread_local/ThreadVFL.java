@@ -152,7 +152,7 @@ public class ThreadVFL extends VFLCallable {
             //if primary operation was started then it's in main thread and a stack with proper parent will already exist
             ThreadVFL newLogger = new ThreadVFL(subLoggerCtx);
             ThreadVFL.loggerStack.get().push(newLogger);
-            log.info("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
+            log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
             return;
         }
 
@@ -163,11 +163,11 @@ public class ThreadVFL extends VFLCallable {
             ThreadVFL newLogger = new ThreadVFL(subLoggerCtx);
             stack.push(newLogger);
             ThreadVFL.loggerStack.set(stack);
-            log.info("CREATE & PUSH: Created new stack and added logger '{}' {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, stack.size());
+            log.debug("CREATE & PUSH: Created new stack and added logger '{}' {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, stack.size());
         } else {
             ThreadVFL newLogger = new ThreadVFL(subLoggerCtx);
             ThreadVFL.loggerStack.get().push(newLogger);
-            log.info("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
+            log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", trimId(subLoggerCtx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
         }
     }
 
@@ -192,11 +192,11 @@ public class ThreadVFL extends VFLCallable {
         String threadInfo = getThreadInfo();
 
         var poppedLogger = ThreadVFL.loggerStack.get().pop();
-        log.info("POP: Removed logger '{}' from stack {} - Remaining stack size: {}", trimId(poppedLogger.ctx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
+        log.debug("POP: Removed logger '{}' from stack {} - Remaining stack size: {}", trimId(poppedLogger.ctx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
 
         if (ThreadVFL.loggerStack.get().isEmpty()) {
             ThreadVFL.loggerStack.remove();
-            log.info("REMOVE: Completely removed logger stack from {} - Stack cleaned up", threadInfo);
+            log.debug("REMOVE: Completely removed logger stack from {} - Stack cleaned up", threadInfo);
         }
     }
 
@@ -213,7 +213,7 @@ public class ThreadVFL extends VFLCallable {
             Stack<ThreadVFL> stack = new Stack<>();
             stack.push(rootLogger);
             ThreadVFL.loggerStack.set(stack);
-            log.info("CREATE ROOT: Created root logger '{}' and initialized stack {} - Stack size: {}", trimId(rootLogger.ctx.blockInfo.getId()), threadInfo, stack.size());
+            log.debug("CREATE ROOT: Created root logger '{}' and initialized stack {} - Stack size: {}", trimId(rootLogger.ctx.blockInfo.getId()), threadInfo, stack.size());
             return rootLogger;
         }
 
@@ -233,10 +233,10 @@ public class ThreadVFL extends VFLCallable {
                 Stack<ThreadVFL> newStack = new Stack<>();
                 ThreadVFL.loggerStack.set(newStack);
                 newStack.push(eventListenerBlockLogger);
-                log.info("CREATE EVENT: Created new stack for event listener '{}' {} - Stack size: {}", trimId(eventListenerBlockLogger.ctx.blockInfo.getId()), threadInfo, newStack.size());
+                log.debug("CREATE EVENT: Created new stack for event listener '{}' {} - Stack size: {}", trimId(eventListenerBlockLogger.ctx.blockInfo.getId()), threadInfo, newStack.size());
             } else {
                 ThreadVFL.loggerStack.get().push(eventListenerBlockLogger);
-                log.info("PUSH EVENT: Added event listener '{}' to existing stack {} - Stack size: {}", trimId(eventListenerBlockLogger.ctx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
+                log.debug("PUSH EVENT: Added event listener '{}' to existing stack {} - Stack size: {}", trimId(eventListenerBlockLogger.ctx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
             }
 
             return ThreadVFL.loggerStack.get().peek();

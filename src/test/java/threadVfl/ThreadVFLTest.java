@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 public class ThreadVFLTest {
 
-    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/threadVFL/logger");
+    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/threadVFL/logger.json");
     private final VFLBuffer buffer = new AsyncVFLBuffer(100, 5000, 5000, flush, Executors.newVirtualThreadPerTaskExecutor(), Executors.newScheduledThreadPool(2));
 
     int sum(int a, int b) {

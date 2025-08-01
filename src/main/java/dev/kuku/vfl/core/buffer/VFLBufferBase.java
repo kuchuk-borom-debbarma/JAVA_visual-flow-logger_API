@@ -91,24 +91,29 @@ public abstract class VFLBufferBase implements VFLBuffer {
     }
 
     protected void flushAll() {
-        List<Log> l;
-        List<Block> b;
-        Map<String, Long> bs;
-        Map<String, Pair<Long, String>> be;
+        List<Log> logsToFlush;
+        List<Block> blocksToFlush;
+        Map<String, Long> blockStartsToFlush;
+        Map<String, Pair<Long, String>> blockEndsToFlush;
+
+        // Minimize lock time - only hold lock while copying and clearing data
         lock.lock();
         try {
-            l = new ArrayList<>(logs2Flush);
-            b = new ArrayList<>(blocks2Flush);
-            bs = new HashMap<>(blockStarts2Flush);
-            be = new HashMap<>(blockEnds2Flush);
+            logsToFlush = new ArrayList<>(logs2Flush);
+            blocksToFlush = new ArrayList<>(blocks2Flush);
+            blockStartsToFlush = new HashMap<>(blockStarts2Flush);
+            blockEndsToFlush = new HashMap<>(blockEnds2Flush);
             logs2Flush.clear();
             blocks2Flush.clear();
             blockStarts2Flush.clear();
             blockEnds2Flush.clear();
         } finally {
-            lock.unlock();
+            lock.unlock(); // Release lock BEFORE calling onFlushAll
         }
-        onFlushAll(l, b, bs, be);
+
+        // multiple threads can execute onFlushAll concurrently
+        // since each has their own copy of the data
+        onFlushAll(logsToFlush, blocksToFlush, blockStartsToFlush, blockEndsToFlush);
     }
 
     @Override
