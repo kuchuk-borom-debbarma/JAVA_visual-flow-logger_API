@@ -21,7 +21,8 @@ public class PassVFL extends VFLFn {
         return ctx;
     }
 
-    static class Runner extends VFLFnRunner {
+    public static class Runner extends VFLFnRunner {
+        public static Runner INSTANCE = new Runner();
 
         @Override
         protected VFLFn createRootLogger(VFLBlockContext rootCtx) {

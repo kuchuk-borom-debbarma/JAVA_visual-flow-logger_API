@@ -9,6 +9,7 @@ import org.javatuples.Pair;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -30,13 +31,27 @@ public class AsyncVFLBuffer extends VFLBufferWithFlushHandlerBase {
 
     @Override
     protected void executeFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds) {
-        flushExecutor.submit(() -> performOrderedFlush(logs, blocks, blockStarts, blockEnds));
+        // Guard against shutdown executor
+        if (flushExecutor.isShutdown()) {
+            log.warn("Executor is shutdown, performing synchronous flush");
+            performOrderedFlush(logs, blocks, blockStarts, blockEnds);
+            return;
+        }
+
+        try {
+            flushExecutor.submit(() -> performOrderedFlush(logs, blocks, blockStarts, blockEnds));
+        } catch (RejectedExecutionException e) {
+            log.warn("Task rejected by executor (likely shutting down), performing synchronous flush", e);
+            performOrderedFlush(logs, blocks, blockStarts, blockEnds);
+        }
     }
 
     @Override
     public void flushAndClose() {
-        super.flushAll();
+        // First, stop the periodic executor to prevent new scheduled flushes
         periodicExecutor.shutdown();
+        super.flushAll();
+        // Now shutdown the flush executor
         flushExecutor.shutdown();
 
         try {

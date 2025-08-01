@@ -11,6 +11,7 @@ public class Main {
         //Flush at interval
         //TODO ability to run a function and log a runnable
         //TODO remove having to do Instanee.Runner
+        //TODO for string formatter of calable add result at last
         //TODO logger can take string and args of param to fill in those {}
         //TODO configuration using spring or file {@link https://claude.ai/chat/28eca1e0-9d4a-4465-836a-5d1feed5a3c4}
 
