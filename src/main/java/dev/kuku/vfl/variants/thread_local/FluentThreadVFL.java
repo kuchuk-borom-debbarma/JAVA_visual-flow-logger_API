@@ -53,6 +53,6 @@ public class FluentThreadVFL {
      * Start a fluent runnable sub block chain
      */
     public static RunnableForVFLCallableStep RunSubBlock(Runnable r) {
-        return getCurrentFluentApi().runSubBlock(r);
+        return getCurrentFluentApi().run(r);
     }
 }
