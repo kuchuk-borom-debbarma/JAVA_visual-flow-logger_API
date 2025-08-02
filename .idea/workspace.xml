@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed test 3">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated context md">
+      <change afterPath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddyInterceptorTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,6 +72,9 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor": "Run",
     "JUnit.ScopedFluentAPITest.test.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
@@ -119,18 +123,49 @@
       <recent name="dev.kuku.builder" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ThreadVFLTest">
-    <configuration name="ThreadVFLTest$AsyncFlow.asyncTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.ByteBuddyInterceptorTest">
+    <configuration name="ByteBuddyInterceptorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="threadVfl.*" />
+          <option name="PATTERN" value="bytebuddy.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
-      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$AsyncFlow" />
-      <option name="METHOD_NAME" value="asyncTest" />
+      <option name="PACKAGE_NAME" value="bytebuddy" />
+      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ByteBuddyInterceptorTest.testExecutionDurationMeasurement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="bytebuddy" />
+      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
+      <option name="METHOD_NAME" value="testExecutionDurationMeasurement" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ByteBuddyInterceptorTest.testMonitoredMethodInterception" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="bytebuddy" />
+      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
+      <option name="METHOD_NAME" value="testMonitoredMethodInterception" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -147,37 +182,6 @@
       <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
       <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$EventFlow" />
       <option name="METHOD_NAME" value="linearEventFlow" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ThreadVFLTest$LinearFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadVfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
-      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$LinearFlow" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ThreadVFLTest$LinearFlow.linearFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadVfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
-      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$LinearFlow" />
-      <option name="METHOD_NAME" value="linearFlow" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -200,11 +204,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
+        <item itemvalue="JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception" />
+        <item itemvalue="JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement" />
         <item itemvalue="JUnit.ThreadVFLTest" />
         <item itemvalue="JUnit.ThreadVFLTest$EventFlow.linearEventFlow" />
-        <item itemvalue="JUnit.ThreadVFLTest$AsyncFlow.asyncTest" />
-        <item itemvalue="JUnit.ThreadVFLTest$LinearFlow.linearFlow" />
-        <item itemvalue="JUnit.ThreadVFLTest$LinearFlow" />
       </list>
     </recent_temporary>
   </component>
@@ -282,15 +286,7 @@
       <workItem from="1753539553548" duration="8286000" />
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
-      <workItem from="1754146490629" duration="2610000" />
-    </task>
-    <task id="LOCAL-00086" summary="Util function. bug still not fixed">
-      <option name="closed" value="true" />
-      <created>1752752809037</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1752752809037</updated>
+      <workItem from="1754146490629" duration="4068000" />
     </task>
     <task id="LOCAL-00087" summary="Fixed bug when block end was not called for root function">
       <option name="closed" value="true" />
@@ -676,7 +672,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754147497448</updated>
     </task>
-    <option name="localTasksCounter" value="135" />
+    <task id="LOCAL-00135" summary="Updated context md">
+      <option name="closed" value="true" />
+      <created>1754151745323</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1754151745323</updated>
+    </task>
+    <option name="localTasksCounter" value="136" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -694,7 +698,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="simple async showcase done" />
     <MESSAGE value="heavy async seems to work too" />
     <MESSAGE value="updated scoped logger and made some design choice" />
     <MESSAGE value="ignored target" />
@@ -719,7 +722,8 @@
     <MESSAGE value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
     <MESSAGE value="Fixed test 2" />
     <MESSAGE value="Fixed test 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed test 3" />
+    <MESSAGE value="Updated context md" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated context md" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
