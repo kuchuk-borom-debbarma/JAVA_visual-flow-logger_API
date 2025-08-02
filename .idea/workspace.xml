@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed test 2">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed test 3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -282,15 +282,7 @@
       <workItem from="1753539553548" duration="8286000" />
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
-      <workItem from="1754146490629" duration="991000" />
-    </task>
-    <task id="LOCAL-00085" summary="Fixed bug">
-      <option name="closed" value="true" />
-      <created>1752749473620</created>
-      <option name="number" value="00085" />
-      <option name="presentableId" value="LOCAL-00085" />
-      <option name="project" value="LOCAL" />
-      <updated>1752749473620</updated>
+      <workItem from="1754146490629" duration="2610000" />
     </task>
     <task id="LOCAL-00086" summary="Util function. bug still not fixed">
       <option name="closed" value="true" />
@@ -676,7 +668,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754146590294</updated>
     </task>
-    <option name="localTasksCounter" value="134" />
+    <task id="LOCAL-00134" summary="Fixed test 3">
+      <option name="closed" value="true" />
+      <created>1754147497448</created>
+      <option name="number" value="00134" />
+      <option name="presentableId" value="LOCAL-00134" />
+      <option name="project" value="LOCAL" />
+      <updated>1754147497448</updated>
+    </task>
+    <option name="localTasksCounter" value="135" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -694,7 +694,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated in memory funciton to show nested logs with same parent" />
     <MESSAGE value="simple async showcase done" />
     <MESSAGE value="heavy async seems to work too" />
     <MESSAGE value="updated scoped logger and made some design choice" />
@@ -719,7 +718,8 @@
     <MESSAGE value="Refactor VFLRunner to VFLCallableRunner and update related classes" />
     <MESSAGE value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
     <MESSAGE value="Fixed test 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed test 2" />
+    <MESSAGE value="Fixed test 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed test 3" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

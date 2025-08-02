@@ -29,20 +29,20 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 **Block** (`dev.kuku.vfl.core.models.Block`)
 - Simple data class representing execution scopes
 - **Fields**:
-    - `String id`: Unique block identifier
-    - `String parentBlockId`: Reference to parent block (null for root blocks)
-    - `String blockName`: Human-readable block name
+  - `String id`: Unique block identifier
+  - `String parentBlockId`: Reference to parent block (null for root blocks)
+  - `String blockName`: Human-readable block name
 - **Purpose**: Creates hierarchical structure for execution flow tracking
 
 **Log** (`dev.kuku.vfl.core.models.logs.Log`)
 - Base class for all log entries within blocks
 - **Fields**:
-    - `String id`: Unique log identifier
-    - `String blockId`: Reference to containing block
-    - `String parentLogId`: Reference to parent log (for nested structure)
-    - `LogType logType`: Type wrapper containing enum value
-    - `String message`: Log content
-    - `long timestamp`: Epoch milliseconds timestamp
+  - `String id`: Unique log identifier
+  - `String blockId`: Reference to containing block
+  - `String parentLogId`: Reference to parent log (for nested structure)
+  - `LogType logType`: Type wrapper containing enum value
+  - `String message`: Log content
+  - `long timestamp`: Epoch milliseconds timestamp
 - **Constructors**: Support both LogType object and LogTypeEnum enum
 - **Purpose**: Individual log entries that build the execution narrative
 
@@ -50,41 +50,153 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 - Specialized log for marking sub-block initiation
 - **Extends**: Log
 - **Additional Field**:
-    - `String referencedBlockId`: ID of the block being started
+  - `String referencedBlockId`: ID of the block being started
 - **Purpose**: Links parent blocks to their sub-blocks for flow visualization
 - **Constructors**:
-    - Direct creation with LogTypeBlockStartEnum
-    - Conversion from existing Log with block start type
+  - Direct creation with LogTypeBlockStartEnum
+  - Conversion from existing Log with block start type
 
 **LogType** (`dev.kuku.vfl.core.models.logs.LogType`)
-- Wrapper class for log type enums
+- Wrapper class for log type enums with JSON serialization support
 - **Field**: `String value` (final)
 - **Constructors**: Accepts LogTypeEnum or LogTypeBlockStartEnum
+- **JSON Support**: `@JsonValue` and `@JsonCreator` annotations for proper serialization
 - **Purpose**: Unified type system for different log categories
 
 **VFLBlockContext** (`dev.kuku.vfl.core.dtos.VFLBlockContext`)
 - Runtime context for active blocks
 - **Fields**:
-    - `Block blockInfo`: Associated block metadata
-    - `AtomicBoolean blockStarted`: Thread-safe block initialization flag
-    - `String currentLogId`: Current log identifier for nested logging
-    - `VFLBuffer buffer`: Buffer instance for log output
+  - `Block blockInfo`: Associated block metadata
+  - `AtomicBoolean blockStarted`: Thread-safe block initialization flag
+  - `String currentLogId`: Current log identifier for nested logging
+  - `VFLBuffer buffer`: Buffer instance for log output
 - **Purpose**: Maintains runtime state and buffer reference for active blocks
+
+**BlockEndData** (`dev.kuku.vfl.core.dtos.BlockEndData`)
+- Data structure for block completion information
+- **Fields**:
+  - `Long endTime`: Block completion timestamp
+  - `String endMessage`: Optional completion message
+- **Purpose**: Encapsulates block termination data for consistent handling
 
 **EventPublisherBlock** (`dev.kuku.vfl.core.dtos.EventPublisherBlock`)
 - Record wrapper for event-driven logging
 - **Field**: `Block block`: Wrapped block instance
 - **Purpose**: Marker type for event publisher pattern integration
 
-#### Buffer System
-- **VFLBuffer Interface**: Defines buffer operations
-- **ThreadSafeAsyncVFLBuffer**: Asynchronous, thread-safe buffer with periodic flushing
-- **ThreadSafeSynchronousVflBuffer**: Simple synchronous buffer
+## Refined Buffer System Architecture
 
-#### Flush Handler System
-- **VFLFlushHandler Interface**: Defines output destinations
-- **InMemoryFlushHandler**: For development/testing
-- **VFLHubFlushHandler**: For production (sends to VFL Server)
+### 1. VFLBuffer Interface (`dev.kuku.vfl.core.buffer.VFLBuffer`)
+**Core Operations**:
+- `pushLogToBuffer(Log log)`: Add log entries (fire-and-forget)
+- `pushBlockToBuffer(Block block)`: Add block metadata
+- `pushLogStartToBuffer(String blockId, long timestamp)`: Record block start times
+- `pushLogEndToBuffer(String blockId, BlockEndData endData)`: Record block completion
+- `flushAndClose()`: Final flush and cleanup
+
+### 2. Abstract Base Classes
+
+#### VFLBufferBase (`dev.kuku.vfl.core.buffer.abstracts.VFLBufferBase`)
+**Purpose**: Foundation for all buffer implementations
+**Key Features**:
+- Thread-safe data collection with ReentrantLock
+- Automatic flushing when buffer size exceeded
+- Separate collections for logs, blocks, block starts, and block ends
+- Template method pattern with `onFlushAll()` hook
+
+#### VFLBufferWithFlushHandlerBase (`dev.kuku.vfl.core.buffer.abstracts.VFLBufferWithFlushHandlerBase`)
+**Purpose**: Adds flush handler integration and enforced ordering
+**Key Features**:
+- Enforced flush order: blocks → block starts → block ends → logs
+- `performOrderedFlush()` helper method for consistent ordering
+- Abstract `executeFlushAll()` for execution strategy customization
+- Automatic flush handler cleanup on close
+
+### 3. Concrete Buffer Implementations
+
+#### SynchronousVFLBuffer (`dev.kuku.vfl.core.buffer.SynchronousVFLBuffer`)
+**Purpose**: Simple synchronous flushing
+**Execution**: Direct flush calls in current thread
+**Use Case**: Development, testing, or single-threaded applications
+
+#### AsyncVFLBuffer (`dev.kuku.vfl.core.buffer.AsyncVFLBuffer`)
+**Purpose**: Asynchronous flushing with periodic scheduling
+**Key Features**:
+- **Periodic Flushing**: Scheduled flush intervals
+- **Graceful Shutdown**: Timeout-based executor termination
+- **Fallback Strategy**: Synchronous flush if executor unavailable
+- **Proper Cleanup**: Sequential executor shutdown (periodic → flush → handler)
+
+**Configuration Parameters**:
+- `bufferSize`: Threshold for automatic flushing
+- `finalFlushTimeoutMillisecond`: Maximum wait time for shutdown
+- `periodicFlushTimeMillisecond`: Interval for scheduled flushes
+- `bufferFlushExecutor`: Executor for flush operations
+- `periodicFlushExecutor`: Scheduler for periodic operations
+
+## Enhanced Flush Handler System
+
+### VFLFlushHandler Interface (`dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler`)
+**Operations**:
+- `pushLogsToServer(List<Log> logs)`: Handle mixed log types (Log + SubBlockStartLog)
+- `pushBlocksToServer(List<Block> blocks)`: Handle block metadata
+- `pushBlockStartsToServer(Map<String, Long> blockStarts)`: Handle timing data
+- `pushBlockEndsToServer(Map<String, BlockEndData> blockEnds)`: Handle completion data
+- `closeFlushHandler()`: Cleanup resources
+
+### Concrete Implementations
+
+#### NestedJsonFlushHandler (`dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler`)
+**Purpose**: Development/testing output as hierarchical JSON
+**Key Features**:
+- **Hierarchical Structure**: Builds nested JSON mirroring execution flow
+- **Time Formatting**: Human-readable timestamps and durations
+- **Referenced Blocks**: Full block details for SubBlockStartLog entries
+- **File Output**: Creates parent directories automatically
+
+**JSON Structure**:
+```json
+[
+  {
+    "blockId": "b1",
+    "parentBlockId": null,
+    "name": "root_block",
+    "startTime": "2024-01-01 10:00:00.123",
+    "endTime": "2024-01-01 10:00:05.456",
+    "endMessage": "Operation completed",
+    "logsChain": [
+      {
+        "id": "log1",
+        "type": "MESSAGE",
+        "message": "Starting operation",
+        "logsChain": [...] // Nested logs
+      },
+      {
+        "id": "log2",
+        "type": "SUB_BLOCK_START_PRIMARY",
+        "message": "Starting sub-operation",
+        "duration": "2.5s",
+        "endMessage": "Sub-operation completed",
+        "referencedBlock": { /* Full block details */ }
+      }
+    ]
+  }
+]
+```
+
+#### VFLHubFlushHandler (`dev.kuku.vfl.core.buffer.flushHandler.VFLHubFlushHandler`)
+**Purpose**: Production integration with VFL Server
+**Key Features**:
+- **HTTP Client**: Blocking HttpClient for ordered requests
+- **RESTful API**: Separate endpoints for different data types
+- **Error Handling**: Comprehensive logging and exception handling
+- **Status Validation**: HTTP status code verification
+
+**API Endpoints**:
+- `POST /api/v1/logs`: Log entries
+- `POST /api/v1/blocks`: Block metadata
+- `POST /api/v1/block-starts`: Block start times
+- `POST /api/v1/block-ends`: Block completion data
 
 ## Log Type System
 
@@ -105,39 +217,17 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 - `EVENT_LISTENER("EVENT_LISTENER")`: Event listener registration
 
 ### 3. LogType Wrapper Pattern
-The LogType class provides a unified interface for both enum types:
+The LogType class provides a unified interface with JSON serialization:
 ```java
 // Standard logging
 new LogType(LogTypeEnum.MESSAGE)
 
 // Block start logging  
 new LogType(LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY)
-```
 
-## Data Model Relationships
-
-### Hierarchical Structure
-```
-Block (Root)
-├── Log entries (MESSAGE/WARN/ERROR)
-├── SubBlockStartLog (references child Block)
-│   └── Child Block
-│       ├── Log entries
-│       └── SubBlockStartLog (references grandchild)
-└── More Log entries
-```
-
-### Block-to-Block Relationships
-- **Parent-Child**: `Block.parentBlockId` references parent `Block.id`
-- **Log-to-Block**: `Log.blockId` references containing `Block.id`
-- **Log-to-Log**: `Log.parentLogId` references parent `Log.id` (for nested logs)
-- **SubBlock Reference**: `SubBlockStartLog.referencedBlockId` references started `Block.id`
-
-### Context Flow
-```java
-VFLBlockContext context = new VFLBlockContext(block, buffer);
-context.blockStarted.compareAndSet(false, true); // Thread-safe initialization
-context.currentLogId = "log-123"; // Track current log for nesting
+// JSON serialization support
+@JsonValue toString() // Serializes as string value
+@JsonCreator fromString(String) // Deserializes from string
 ```
 
 ## Class Hierarchy & Relationships
@@ -153,15 +243,10 @@ context.currentLogId = "log-123"; // Track current log for nesting
 - Function logging: `logFn()`, `warnFn()`, `errorFn()`
 - Abstract `getContext()` method for subclass implementation
 
-**Core Pattern**:
-```java
-// Ensures block is started before any logging
-public final void ensureBlockStarted() {
-    if (blockStarted.compareAndSet(false, true)) {
-        getContext().buffer.pushLogStartToBuffer(...);
-    }
-}
-```
+**Enhanced Helper Class**: `VFLHelper` provides static utilities for:
+- Log creation and buffer operations
+- Block creation and management
+- Function execution with automatic cleanup (`CallFnWithLogger`)
 
 #### 2. VFLCallable (Extends VFL)
 **Location**: `dev.kuku.vfl.core.vfl_abstracts.VFLCallable`
@@ -182,6 +267,7 @@ public final void ensureBlockStarted() {
 **Key Features**:
 - Function-style sub-blocks: `callPrimarySubBlock(Function<VFLFn, R> fn)`
 - Manual logger passing pattern
+- Support for secondary blocks (joining and non-joining)
 - Abstract `getLogger()` for subclass implementation
 
 ### Concrete Implementations
@@ -194,24 +280,15 @@ public final void ensureBlockStarted() {
 - **Static Methods**: All operations available as static methods
 - **Automatic Context**: No need to pass loggers manually
 - **Thread Management**: Handles thread creation/cleanup for parallel operations
+- **Enhanced Debugging**: Detailed logging of stack operations with thread info
 
 **ThreadLocal Management**:
 ```java
 private static final ThreadLocal<Stack<ThreadVFL>> loggerStack = new ThreadLocal<>();
 
-// Push new logger for sub-blocks
-ThreadVFL.loggerStack.get().push(newLogger);
-
-// Pop when block completes
-ThreadVFL.loggerStack.get().pop();
-```
-
-**Static API Pattern**:
-```java
-// Static methods delegate to current thread's logger
-public static void Log(String message) {
-    getCurrentLogger().log(message);
-}
+// Enhanced logging with thread info and trimmed IDs
+log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", 
+    trimId(subLoggerCtx.blockInfo.getId()), getThreadInfo(), stack.size());
 ```
 
 #### 2. PassVFL (Extends VFLFn)
@@ -221,31 +298,33 @@ public static void Log(String message) {
 - **Explicit Control**: Manual logger lifecycle management
 - **Legacy Support**: Works with systems that can't use ThreadLocal
 - **Function Pattern**: Logger passed as function parameter
+- **Singleton Runner**: Static runner instance for convenience
 
-### Fluent API System
+## Enhanced Fluent API System
 
-#### 1. FluentVFL (Base Fluent Class)
+### 1. FluentVFL (Base Fluent Class)
 **Location**: `dev.kuku.vfl.core.fluent_api.base.FluentVFL`
 **Purpose**: Universal fluent wrapper for any VFL instance
 **Key Features**:
-- Parameter substitution in log messages
+- Parameter substitution in log messages with `FormatMessage`
 - Wraps any VFL implementation
-- Manual instantiation required
+- Basic fluent operations for call() and run()
 
-#### 2. FluentVFLCallable (Extends FluentVFL)
+### 2. FluentVFLCallable (Extends FluentVFL)
 **Location**: `dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable`
 **Purpose**: Fluent API for VFLCallable instances
 **Key Features**:
+- Enhanced supplier and runnable steps
 - Sub-block fluent chains
 - Method chaining for configuration
 
-#### 3. FluentThreadVFL (Static Wrapper)
+### 3. FluentThreadVFL (Static Wrapper)
 **Location**: `dev.kuku.vfl.variants.thread_local.FluentThreadVFL`
 **Purpose**: Static fluent API for ThreadVFL
 **Key Features**:
 - **Static Methods**: No instantiation needed
 - **Automatic Context**: Uses ThreadVFL's ThreadLocal context
-- **Fluent Chaining**: `Call()`, `RunSubBlock()` with method chains
+- **Fluent Chaining**: `Call()`, `Run()` with method chains
 
 **Usage Pattern**:
 ```java
@@ -257,220 +336,204 @@ String result = FluentThreadVFL.Call(() -> processData())
     .startPrimary();
 ```
 
-### Runner System
+### 4. Fluent API Step Classes
 
-#### VFLRunner Hierarchy
-- **VFLRunner**: Base abstract class with `initRootCtx()`
-- **VFLCallableRunner**: For Callable-style VFL implementations
-- **VFLFnRunner**: For Function-style VFL implementations
+#### AsSubBlockStep
+**Location**: `dev.kuku.vfl.core.fluent_api.callable.steps.AsSubBlockStep`
+**Purpose**: Configurable sub-block execution
+**Key Features**:
+- Start message configuration
+- End message mapping with parameters
+- Multiple execution strategies (primary, secondary joining, secondary non-joining)
 
-**Runner Pattern**:
-```java
-ThreadVFL.Runner.Instance.StartVFL("Operation", buffer, () -> {
-    // Your logging code here
-    return result;
-});
-```
+#### CallableSupplierStep and SupplierStep
+**Purpose**: Function execution with logging
+**Features**:
+- `asLog()`, `asError()`, `asWarning()` methods
+- Message serialization support
+- Parameter passing for formatted messages
+
+## Enhanced Runner System
+
+### Abstract Base Classes
+
+#### VFLRunner (`dev.kuku.vfl.core.vfl_abstracts.runner.VFLRunner`)
+**Purpose**: Base class for runner implementations
+**Key Feature**: `initRootCtx()` for consistent root context creation
+
+#### VFLCallableRunner (`dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner`)
+**Purpose**: Runner for Callable-style VFL implementations
+**Methods**:
+- `startVFL()`: For supplier and runnable execution
+- `startEventListenerLogger()`: For event-driven logging
+- Abstract methods for logger creation
+
+#### VFLFnRunner (`dev.kuku.vfl.core.vfl_abstracts.runner.VFLFnRunner`)
+**Purpose**: Runner for Function-style VFL implementations
+**Methods**:
+- `startVFL()`: With function and consumer variants
+- `startEventListenerLogger()`: For event-driven logging
+- Abstract methods for logger creation
+
+### Concrete Runner Implementations
+
+Both ThreadVFL.Runner and PassVFL.Runner extend their respective abstract runners and provide:
+- Static convenience methods
+- Automatic buffer cleanup with `finally` blocks
+- Event listener support
+- Proper context management
 
 ## Block Types & Flow Control
 
-### Log Type to Execution Pattern Mapping
+### Execution Pattern Mapping
 
 #### 1. Primary Sub-blocks (Sequential)
-- **Log Type**: `LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY`
-- **Purpose**: Main execution flow operations
-- **Behavior**: Blocks parent execution until complete
-- **Thread**: Same thread as parent
-- **Logger Management**: Pushed to existing stack
-- **SubBlockStartLog**: References the started block via `referencedBlockId`
+- **Log Type**: `SUB_BLOCK_START_PRIMARY`
+- **Behavior**: Blocks parent execution, same thread
+- **Context**: Pushed to existing logger stack
+- **Use Case**: Main execution flow operations
 
 #### 2. Secondary Joining Blocks (Parallel)
-- **Log Type**: `LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN`
-- **Purpose**: Parallel operations that need to join back
-- **Behavior**: Returns CompletableFuture, parent can wait
-- **Thread**: New thread (uses executor)
-- **Logger Management**: New stack in new thread
-- **SubBlockStartLog**: Marks parallel execution start
+- **Log Type**: `SUB_BLOCK_START_SECONDARY_JOIN`
+- **Behavior**: Returns CompletableFuture, new thread
+- **Context**: New logger stack in executor thread
+- **Use Case**: Parallel operations requiring results
 
 #### 3. Secondary Non-Joining Blocks (Fire-and-Forget)
-- **Log Type**: `LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN`
-- **Purpose**: Background operations (logging, cleanup)
-- **Behavior**: Returns CompletableFuture<Void>, no joining needed
-- **Thread**: New thread (uses executor)
-- **Logger Management**: New stack in new thread
-- **SubBlockStartLog**: Marks fire-and-forget execution
+- **Log Type**: `SUB_BLOCK_START_SECONDARY_NO_JOIN`
+- **Behavior**: Returns CompletableFuture<Void>, new thread
+- **Context**: New logger stack, no result expected
+- **Use Case**: Background operations (logging, cleanup)
 
 #### 4. Event Publisher/Listener Pattern
-- **Publisher Log Type**: `LogTypeBlockStartEnum.PUBLISH_EVENT`
-- **Listener Log Type**: `LogTypeBlockStartEnum.EVENT_LISTENER`
-- **Purpose**: Event-driven architectures
-- **Publisher**: Creates EventPublisherBlock, logs PUBLISH_EVENT
-- **Listeners**: Multiple listeners can handle same event, log EVENT_LISTENER
-- **Thread**: Depends on implementation (same or different thread)
-- **Flow**: EventPublisherBlock wraps Block for event-specific handling
+- **Publisher**: `PUBLISH_EVENT`, creates EventPublisherBlock
+- **Listener**: `EVENT_LISTENER`, handles published events
+- **Threading**: Depends on event system implementation
+- **Flow**: Decoupled execution with event data passing
 
 ## Key Design Patterns
 
-### 1. Strategy Pattern
-- **VFLFlushHandler**: Different output strategies (memory, file, server)
-- **VFLBuffer**: Different buffering strategies (sync, async)
-
-### 2. Template Method Pattern
+### 1. Template Method Pattern
+- **VFLBufferBase**: `onFlushAll()` hook for subclass customization
+- **VFLBufferWithFlushHandlerBase**: `executeFlushAll()` for execution strategy
 - **VFL.logInternal()**: Common logging logic with subclass hooks
-- **VFLHelper.CallFnWithLogger()**: Common function execution with cleanup
 
-### 3. ThreadLocal Pattern (ThreadVFL)
-- Automatic context management without manual passing
-- Stack-based nested context handling
-- Thread-safe parallel execution
+### 2. Strategy Pattern
+- **VFLFlushHandler**: Different output strategies (JSON, server, memory)
+- **VFLBuffer**: Different buffering strategies (sync, async)
+- **Runner**: Different logger management strategies
 
-### 4. Builder/Fluent Pattern
+### 3. Builder/Fluent Pattern
 - **FluentVFL**: Method chaining for readable configuration
 - **AsSubBlockStep**: Fluent configuration of sub-blocks
+- **Step Classes**: Progressive configuration building
 
-### 5. Factory Pattern
+### 4. Factory Pattern
 - **VFLHelper**: Static factory methods for creating logs/blocks
 - **Runners**: Factory methods for creating root/event loggers
 
+### 5. ThreadLocal Pattern (ThreadVFL)
+- Automatic context management without manual passing
+- Stack-based nested context handling
+- Thread-safe parallel execution with proper cleanup
+
 ## Thread Safety & Concurrency
+
+### Buffer Thread Safety
+- **ReentrantLock**: Protects shared data structures
+- **Atomic Operations**: Where appropriate for performance
+- **Lock Minimization**: Quick copy-and-clear strategy
 
 ### ThreadVFL Thread Management
 ```java
-// Main thread - uses existing stack
-callPrimarySubBlock() -> stack.push(newLogger)
+// Enhanced debugging with thread information
+private static String getThreadInfo() {
+    Thread currentThread = Thread.currentThread();
+    return String.format("[Thread: %s (ID: %d)]", 
+        currentThread.getName(), currentThread.threadId());
+}
 
-// New thread - creates new stack if needed
-callSecondaryJoiningBlock() -> CompletableFuture with new stack
-
-// Thread cleanup
-close() -> stack.pop(), remove ThreadLocal if empty
+// Stack operations with detailed logging
+log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}", 
+    trimId(subLoggerCtx.blockInfo.getId()), getThreadInfo(), stack.size());
 ```
 
-### Buffer Thread Safety
-- **ThreadSafeAsyncVFLBuffer**: Uses synchronization and async flushing
-- **Lock Management**: Synchronized blocks for data consistency
-- **Executor Management**: Proper shutdown with timeout
+### Async Buffer Concurrency
+- **Executor Management**: Proper shutdown sequences
+- **Fallback Strategy**: Synchronous execution when executors unavailable
+- **Timeout Handling**: Graceful shutdown with configurable timeouts
 
 ## Configuration & Setup
 
 ### Recommended Setup Pattern
 ```java
 // 1. Create flush handler
-ThreadSafeInMemoryFlushHandlerImpl flushHandler = new ThreadSafeInMemoryFlushHandlerImpl();
+VFLFlushHandler flushHandler = new NestedJsonFlushHandler("logs/output.json");
+// or for production:
+// VFLFlushHandler flushHandler = new VFLHubFlushHandler(serverUri);
 
 // 2. Create buffer
-VFLBuffer buffer = new ThreadSafeAsyncVFLBuffer(
-    bufferSize, flushInterval, flushHandler, executor
+VFLBuffer buffer = new AsyncVFLBuffer(
+    100,           // bufferSize
+    5000,          // finalFlushTimeoutMs
+    1000,          // periodicFlushMs
+    flushHandler,
+    flushExecutor,
+    periodicExecutor
 );
 
 // 3. Use with ThreadVFL (recommended)
-ThreadVFL.Runner.Instance.StartVFL("Operation", buffer, () -> {
-    // Your application logic
+ThreadVFL.Runner.StartVFL("Operation", buffer, () -> {
+    // Your application logic with automatic context management
+    ThreadVFL.Log("Starting operation");
+    return ThreadVFL.CallPrimarySubBlock("SubOperation", "msg", 
+        () -> { /* sub-operation */ return result; }, 
+        r -> "Completed: " + r);
 });
 ```
-
-## Key Interfaces & Contracts
-
-### VFLBuffer Contract
-```java
-void pushLogToBuffer(Log log);                    // Add standard log entry
-void pushBlockToBuffer(Block block);              // Add block metadata
-void pushLogStartToBuffer(...);                   // Mark block start (creates SubBlockStartLog internally)
-void pushLogEndToBuffer(...);                     // Mark block end
-void flushAndClose();                             // Cleanup and flush remaining data
-```
-
-**Log Creation Flow**:
-1. Standard logs: Direct `Log` creation with `LogTypeEnum`
-2. Sub-block starts: `SubBlockStartLog` creation with `LogTypeBlockStartEnum`
-3. Buffer operations: Internal conversion to appropriate log types
-
-### VFLFlushHandler Contract
-```java
-boolean pushLogsToServer(List<Log> logs);                    // Handle all log types (Log + SubBlockStartLog)
-boolean pushBlocksToServer(List<Block> blocks);              // Handle block metadata
-boolean pushBlockStartsToServer(Map<String, Long> blockStarts);   // Handle timing data
-boolean pushBlockEndsToServer(Map<String, String> blockEnds);     // Handle completion data
-```
-
-**Data Flow**:
-- Mixed log types in single list (Log and SubBlockStartLog instances)
-- Block metadata separate from log entries
-- Timing data extracted for performance analysis
-
-## Recommendations for Usage
-
-### Use ThreadVFL + FluentThreadVFL when:
-- Building new applications
-- Want automatic context management
-- Need clean, readable code
-- Working with multi-threaded applications
-
-### Use PassVFL when:
-- Working with legacy systems
-- Need explicit control over logger lifecycle
-- Building frameworks or libraries
-- Can't use ThreadLocal (rare cases)
-
-### Use FluentVFL when:
-- Want fluent API with PassVFL
-- Need explicit logger management with fluent syntax
-- Building flexible frameworks
 
 ## Error Handling & Cleanup
 
 ### Automatic Cleanup
-- **ThreadVFL**: Automatic ThreadLocal cleanup on block completion
-- **Buffer**: Automatic flushing on size limits or intervals
-- **Runner**: Ensures `buffer.flushAndClose()` in finally blocks
+- **Buffer System**: Automatic flushing on size/time limits
+- **ThreadLocal**: Automatic cleanup on block completion
+- **Executors**: Proper shutdown with timeout handling
+- **Runners**: Guaranteed `buffer.flushAndClose()` in finally blocks
 
 ### Exception Handling
 - **VFLHelper.CallFnWithLogger()**: Catches exceptions, logs them, ensures cleanup
-- **Buffer Operations**: Fire-and-forget pattern for buffer operations
-- **Thread Management**: Proper executor shutdown with timeouts
+- **Buffer Operations**: Fire-and-forget with fallback strategies
+- **HTTP Client**: Comprehensive error logging and status validation
 
-This context provides a comprehensive understanding of the VFL codebase architecture, patterns, and usage recommendations for effective development and maintenance.
+### Graceful Degradation
+- **Executor Shutdown**: Synchronous fallback when async unavailable
+- **Network Failures**: Logged but don't break application flow
+- **Serialization Errors**: Logged with fallback messages
 
-```json
-[
-  {
-    "block_id": "b1",
-    "parent_block_id": null,
-    "name": "root_block_wowo",
-    "start_time": "some time formatted nicely as string with precision. (Based on flushBlockStart() method's map's value which is utc milisecond time)",
-    "end_time": "time formated nicely with precision (based on current utc milisecond time)",
-    "end_message": "null (root blocks dont have end message)(based on flushLogEndMethod)",
-    "logs_chain": [
-      {
-        "id": "logID1",
-        "type": "MESSAGE",
-        "mesage": "STARTING BLOCK ",
-        "logs_chain": [
-          {
-            "id": "logID1",
-            "type": "MESSAGE",
-            "mesage": "STARTING BLOCK "
-          },
-          {
-            "id": "log2",
-            "type": "SUB_BLOCK_START_SECONDARY",
-            "end_message": "null (root blocks dont have end message)(based on flushLogEndMethod)",
-            "duration": "start time - end time delta",
-            "referenced_block": {
-              "block_id": "b1",
-              "parent_block_id": null,
-              "name": "root_block_wowo",
-              "start_time": "some time formatted nicely as string with precision. (Based on flushBlockStart() method's map's value which is utc milisecond time)",
-              "end_time": "time formated nicely with precision (based on current utc milisecond time)",
-              "end_message": "null (root blocks dont have end message)(based on flushLogEndMethod)",
-              "logs_chain": [
-                .....
-              ]
-            }
-          }
-        ]
-      }
-    ]
-  }
-]
-```
+## Usage Recommendations
+
+### Use ThreadVFL + FluentThreadVFL when:
+- Building new applications requiring automatic context management
+- Need clean, readable code with static API
+- Working with multi-threaded applications
+- Want comprehensive debugging and monitoring
+
+### Use PassVFL when:
+- Working with legacy systems requiring explicit control
+- Building frameworks or libraries
+- Cannot use ThreadLocal (rare edge cases)
+- Need maximum flexibility in logger lifecycle management
+
+### Use AsyncVFLBuffer when:
+- Production environments with high throughput
+- Network-based flush handlers (VFLHubFlushHandler)
+- Performance is critical
+- Can tolerate eventual consistency
+
+### Use SynchronousVFLBuffer when:
+- Development and testing environments
+- Immediate consistency required
+- Simple single-threaded applications
+- Local file output (NestedJsonFlushHandler)
+
+This updated context reflects the significant architectural improvements, enhanced error handling, better thread safety, and more flexible configuration options in the VFL codebase.
