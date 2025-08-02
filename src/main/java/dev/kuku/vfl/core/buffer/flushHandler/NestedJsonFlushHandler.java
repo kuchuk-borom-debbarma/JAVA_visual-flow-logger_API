@@ -3,7 +3,7 @@ package dev.kuku.vfl.core.buffer.flushHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 
@@ -117,8 +117,8 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
         // Handle block end time and message with null checking
         BlockEndData blockEnd = blockEnds.get(block.getId());
         if (blockEnd != null) {
-            blockJson.endTime = formatTime(blockEnd.getTimestamp());
-            blockJson.endMessage = blockEnd.getData();
+            blockJson.endTime = formatTime(blockEnd.getEndTime());
+            blockJson.endMessage = blockEnd.getEndMessage();
         }
 
         // Build logs chain for this block
@@ -152,9 +152,9 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
                 BlockEndData subBlockEnd = blockEnds.get(referencedBlockId);
 
                 if (subBlockStartTime != null && subBlockEnd != null) {
-                    long duration = subBlockEnd.getTimestamp() - subBlockStartTime;
+                    long duration = subBlockEnd.getEndTime() - subBlockStartTime;
                     logJson.duration = formatDuration(duration);
-                    logJson.endMessage = subBlockEnd.getData();
+                    logJson.endMessage = subBlockEnd.getEndMessage();
                 }
 
                 // Add referenced block

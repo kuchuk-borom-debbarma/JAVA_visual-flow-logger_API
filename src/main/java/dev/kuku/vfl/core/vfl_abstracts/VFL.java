@@ -1,9 +1,9 @@
 package dev.kuku.vfl.core.vfl_abstracts;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.VFLBlockContext;
-import dev.kuku.vfl.core.models.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -54,7 +54,11 @@ public abstract class VFL {
     private <R> R logFnInternal(LogTypeEnum type, Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
         var r = fn.get();
         String msg = messageSerializer.apply(r);
-        logInternal(type, FormatMessage(msg, r, args));
+        if (args.length > 0) {
+            logInternal(type, FormatMessage(msg, args, r));
+        } else {
+            logInternal(type, FormatMessage(msg, r, args));
+        }
         return r;
     }
 
@@ -119,7 +123,11 @@ public abstract class VFL {
                 if (endMessageSerializer != null) {
                     try {
                         endMsg = endMessageSerializer.apply(result);
-                        endMsg = FormatMessage(endMsg, result, args);
+                        if (args.length > 0) {
+                            endMsg = FormatMessage(endMsg, args, result);
+                        } else {
+                            endMsg = FormatMessage(endMsg, result);
+                        }
                     } catch (Exception e) {
                         endMsg = "Failed to serialize end message: " + e.getMessage();
                     }

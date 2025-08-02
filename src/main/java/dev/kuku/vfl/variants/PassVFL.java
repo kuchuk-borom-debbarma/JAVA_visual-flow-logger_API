@@ -1,8 +1,13 @@
 package dev.kuku.vfl.variants;
 
-import dev.kuku.vfl.core.models.VFLBlockContext;
+import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.dtos.EventPublisherBlock;
+import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
 import dev.kuku.vfl.core.vfl_abstracts.runner.VFLFnRunner;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class PassVFL extends VFLFn {
     private final VFLBlockContext ctx;
@@ -22,7 +27,20 @@ public class PassVFL extends VFLFn {
     }
 
     public static class Runner extends VFLFnRunner {
-        public static Runner INSTANCE = new Runner();
+        private static Runner INSTANCE = new Runner();
+
+        public static <R> R StartVFL(String blockName, VFLBuffer buffer, Function<VFLFn, R> fn) {
+            return INSTANCE.startVFL(blockName, buffer, fn);
+        }
+
+        public static void StartVFL(String blockName, VFLBuffer buffer, Consumer<VFLFn> fn) {
+            INSTANCE.StartVFL(blockName, buffer, fn);
+        }
+
+        public static void StartEventListenerLogger(String eventListenerName, String eventStartMessage, VFLBuffer buffer, EventPublisherBlock eventData, Consumer<VFLFn> r) {
+            INSTANCE.startEventListenerLogger(eventListenerName, eventStartMessage, buffer, eventData, r);
+        }
+
 
         @Override
         protected VFLFn createRootLogger(VFLBlockContext rootCtx) {

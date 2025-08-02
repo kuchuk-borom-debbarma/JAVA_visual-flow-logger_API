@@ -1,7 +1,8 @@
-package dev.kuku.vfl.core.buffer;
+package dev.kuku.vfl.core.buffer.abstracts;
 
+import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 
 import java.util.ArrayList;
@@ -60,10 +61,10 @@ public abstract class VFLBufferBase implements VFLBuffer {
     }
 
     @Override
-    public void pushLogEndToBuffer(String blockId, BlockEndData endTimeAndMessage) {
+    public void pushLogEndToBuffer(String blockId, BlockEndData endData) {
         lock.lock();
         try {
-            blockEnds2Flush.put(blockId, endTimeAndMessage);
+            blockEnds2Flush.put(blockId, endData);
         } finally {
             lock.unlock();
         }

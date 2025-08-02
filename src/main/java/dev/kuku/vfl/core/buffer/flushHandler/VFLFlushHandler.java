@@ -1,7 +1,7 @@
 package dev.kuku.vfl.core.buffer.flushHandler;
 
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 
 import java.util.List;

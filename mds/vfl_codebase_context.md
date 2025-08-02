@@ -62,7 +62,7 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 - **Constructors**: Accepts LogTypeEnum or LogTypeBlockStartEnum
 - **Purpose**: Unified type system for different log categories
 
-**VFLBlockContext** (`dev.kuku.vfl.core.models.VFLBlockContext`)
+**VFLBlockContext** (`dev.kuku.vfl.core.dtos.VFLBlockContext`)
 - Runtime context for active blocks
 - **Fields**:
     - `Block blockInfo`: Associated block metadata
@@ -71,7 +71,7 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
     - `VFLBuffer buffer`: Buffer instance for log output
 - **Purpose**: Maintains runtime state and buffer reference for active blocks
 
-**EventPublisherBlock** (`dev.kuku.vfl.core.models.EventPublisherBlock`)
+**EventPublisherBlock** (`dev.kuku.vfl.core.dtos.EventPublisherBlock`)
 - Record wrapper for event-driven logging
 - **Field**: `Block block`: Wrapped block instance
 - **Purpose**: Marker type for event publisher pattern integration

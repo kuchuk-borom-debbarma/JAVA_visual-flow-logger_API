@@ -1,8 +1,8 @@
 package dev.kuku.vfl.core.vfl_abstracts.runner;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.models.EventPublisherBlock;
-import dev.kuku.vfl.core.models.VFLBlockContext;
+import dev.kuku.vfl.core.dtos.EventPublisherBlock;
+import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class VFLFnRunner extends VFLRunner {
-    public <R> R StartVFL(String blockName, VFLBuffer buffer, Function<VFLFn, R> fn) {
+    public <R> R startVFL(String blockName, VFLBuffer buffer, Function<VFLFn, R> fn) {
         var context = initRootCtx(blockName, buffer);
         var logger = createRootLogger(context);
         try {
@@ -21,14 +21,14 @@ public abstract class VFLFnRunner extends VFLRunner {
         }
     }
 
-    public void StartVFL(String blockName, VFLBuffer buffer, Consumer<VFLFn> fn) {
-        this.StartVFL(blockName, buffer, (l) -> {
+    public void startVFL(String blockName, VFLBuffer buffer, Consumer<VFLFn> fn) {
+        this.startVFL(blockName, buffer, (l) -> {
             fn.accept(l);
             return null;
         });
     }
 
-    public void StartEventListenerLogger(String eventListenerName, String eventStartMessage, VFLBuffer buffer, EventPublisherBlock eventData, Consumer<VFLFn> r) {
+    public void startEventListenerLogger(String eventListenerName, String eventStartMessage, VFLBuffer buffer, EventPublisherBlock eventData, Consumer<VFLFn> r) {
         // Create the event listener block
         var eventListenerBlock = VFL.VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventData.block().getId(), buffer);
         // Create a log for event publisher block of type event listener

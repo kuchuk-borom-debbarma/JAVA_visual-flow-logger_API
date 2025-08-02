@@ -1,8 +1,9 @@
 package dev.kuku.vfl.variants.thread_local;
 
+import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.core.dtos.EventPublisherBlock;
+import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.EventPublisherBlock;
-import dev.kuku.vfl.core.models.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
@@ -202,7 +203,19 @@ public class ThreadVFL extends VFLCallable {
 
 
     public static class Runner extends VFLCallableRunner {
-        public final static Runner Instance = new Runner();
+        private final static Runner INSTANCE = new Runner();
+
+        public static <R> R StartVFL(String blockName, VFLBuffer buffer, Supplier<R> fn) {
+            return INSTANCE.startVFL(blockName, buffer, fn);
+        }
+
+        public static void StartVFL(String blockName, VFLBuffer buffer, Runnable runnable) {
+            INSTANCE.startVFL(blockName, buffer, runnable);
+        }
+
+        public static void StartEventListenerLogger(String eventListenerName, String eventStartMessage, VFLBuffer buffer, EventPublisherBlock eventData, Runnable r) {
+            INSTANCE.startEventListenerLogger(eventListenerName, eventStartMessage, buffer, eventData, r);
+        }
 
         @Override
         protected VFL createRootLogger(VFLBlockContext rootCtx) {

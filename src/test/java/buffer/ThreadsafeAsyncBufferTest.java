@@ -27,7 +27,7 @@ public class ThreadsafeAsyncBufferTest {
     class StressTestPush {
         @Test
         void multiThread() {
-            ThreadVFL.Runner.Instance.StartVFL("Single Thread", buffer, () -> {
+            ThreadVFL.Runner.Instance.startVFL("Single Thread", buffer, () -> {
                 FluentThreadVFL.Log("Starting single thread buffer test");
                 int size = 10000;
                 List<CompletableFuture<Void>> sums = new ArrayList<>(size);

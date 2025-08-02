@@ -1,7 +1,7 @@
 package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 
 public interface VFLBuffer {
@@ -23,7 +23,7 @@ public interface VFLBuffer {
     /**
      * Log that has ended needs to be pushed
      */
-    void pushLogEndToBuffer(String blockId, BlockEndData endTimeAndMessage);
+    void pushLogEndToBuffer(String blockId, BlockEndData endData);
 
     /**
      * Will flush all pending data and then shutdown

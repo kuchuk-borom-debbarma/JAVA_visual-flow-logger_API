@@ -1,8 +1,9 @@
 package dev.kuku.vfl.core.buffer;
 
+import dev.kuku.vfl.core.buffer.abstracts.VFLBufferWithFlushHandlerBase;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,7 @@ public class AsyncVFLBuffer extends VFLBufferWithFlushHandlerBase {
         this.flushExecutor = bufferFlushExecutor;
         this.periodicExecutor = periodicFlushExecutor;
         this.flushTimeout = finalFlushTimeoutMillisecond;
-        periodicExecutor.scheduleWithFixedDelay(() -> flushAll(), periodicFlushTimeMillisecond, periodicFlushTimeMillisecond, TimeUnit.MILLISECONDS);
+        periodicExecutor.scheduleWithFixedDelay(this::flushAll, periodicFlushTimeMillisecond, periodicFlushTimeMillisecond, TimeUnit.MILLISECONDS);
     }
 
     @Override

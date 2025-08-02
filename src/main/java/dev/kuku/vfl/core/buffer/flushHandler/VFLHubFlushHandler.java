@@ -2,7 +2,7 @@ package dev.kuku.vfl.core.buffer.flushHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +15,16 @@ import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * VFL Hub flush handler with blocking HttpClient. This is because the order at which the requests are made may or may not be important.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class VFLHubFlushHandler implements VFLFlushHandler {
+    private static final String ADD_LOGS_EP = "/logs";
+    private static final String ADD_BLOCKS_EP = "/blocks";
+    private static final String ADD_BLOCK_STARTS_EP = "/block-starts";
+    private static final String ADD_BLOCK_ENDS_EP = "/block-ends";
     private static final String API_VERSION = "api/v1";
     private final URI url;
     private final HttpClient httpClient = HttpClient
@@ -34,11 +41,11 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .uri(URI.create(url + "/" + API_VERSION + "/logs"))
+                    .uri(URI.create(url + "/" + API_VERSION + ADD_LOGS_EP))
                     .header("Content-Type", "application/json")
                     .build();
 
-            log.debug("Sending POST request to: {}", url + "/" + API_VERSION + "/logs");
+            log.debug("Sending POST request to: {}", url + "/" + API_VERSION + ADD_LOGS_EP);
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             boolean success = response.statusCode() >= 200 && response.statusCode() < 300;
@@ -51,7 +58,7 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
             return success;
         } catch (IOException | InterruptedException e) {
             log.error("Error pushing logs to server", e);
-            e.printStackTrace();
+            log.error(e.fillInStackTrace().toString());
             return false;
         }
     }
@@ -65,11 +72,11 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .uri(URI.create(url + "/" + API_VERSION + "/blocks"))
+                    .uri(URI.create(url + "/" + API_VERSION + ADD_BLOCKS_EP))
                     .header("Content-Type", "application/json")
                     .build();
 
-            log.debug("Sending POST request to: {}", url + "/" + API_VERSION + "/blocks");
+            log.debug("Sending POST request to: {}", url + "/" + API_VERSION + ADD_BLOCKS_EP);
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             boolean success = response.statusCode() >= 200 && response.statusCode() < 300;
@@ -82,7 +89,7 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
             return success;
         } catch (IOException | InterruptedException e) {
             log.error("Error pushing blocks to server", e);
-            e.printStackTrace();
+            log.error(e.fillInStackTrace().toString());
             return false;
         }
     }
@@ -96,11 +103,11 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .uri(URI.create(url + "/" + API_VERSION + "/block-starts"))
+                    .uri(URI.create(url + "/" + API_VERSION + ADD_BLOCK_STARTS_EP))
                     .header("Content-Type", "application/json")
                     .build();
 
-            log.debug("Sending POST request to: {}", url + "/" + API_VERSION + "/block-starts");
+            log.debug("Sending POST request to: {}", url + "/" + API_VERSION + ADD_BLOCK_STARTS_EP);
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             boolean success = response.statusCode() >= 200 && response.statusCode() < 300;
@@ -113,7 +120,7 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
             return success;
         } catch (IOException | InterruptedException e) {
             log.error("Error pushing block starts to server", e);
-            e.printStackTrace();
+            log.error(e.fillInStackTrace().toString());
             return false;
         }
     }
@@ -127,7 +134,7 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .uri(URI.create(url + "/" + API_VERSION + "/block-ends"))
+                    .uri(URI.create(url + "/" + API_VERSION + ADD_BLOCK_ENDS_EP))
                     .header("Content-Type", "application/json")
                     .build();
 
@@ -144,7 +151,7 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
             return success;
         } catch (IOException | InterruptedException e) {
             log.error("Error pushing block ends to server", e);
-            e.printStackTrace();
+            log.error(e.fillInStackTrace().toString());
             return false;
         }
     }
