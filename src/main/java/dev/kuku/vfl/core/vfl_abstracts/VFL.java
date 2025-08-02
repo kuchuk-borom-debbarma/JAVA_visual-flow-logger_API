@@ -3,11 +3,11 @@ package dev.kuku.vfl.core.vfl_abstracts;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.VFLBlockContext;
+import dev.kuku.vfl.core.models.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
-import org.javatuples.Pair;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,7 +30,7 @@ public abstract class VFL {
     // Closes the log block.
     protected void close(String endMessage) {
         ensureBlockStarted();
-        getContext().buffer.pushLogEndToBuffer(getContext().blockInfo.getId(), new Pair<>(Instant.now().toEpochMilli(), endMessage));
+        getContext().buffer.pushLogEndToBuffer(getContext().blockInfo.getId(), new BlockEndData(Instant.now().toEpochMilli(), endMessage));
     }
 
     /**

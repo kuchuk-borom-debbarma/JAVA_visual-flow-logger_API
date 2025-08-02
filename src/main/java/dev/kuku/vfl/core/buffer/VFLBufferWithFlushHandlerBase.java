@@ -2,8 +2,8 @@ package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
-import org.javatuples.Pair;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,7 @@ public abstract class VFLBufferWithFlushHandlerBase extends VFLBufferBase {
     }
 
     @Override
-    protected final void onFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds) {
+    protected final void onFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, BlockEndData> blockEnds) {
         // Delegate to subclass for execution strategy (sync vs async)
         executeFlushAll(logs, blocks, blockStarts, blockEnds);
     }
@@ -29,10 +29,10 @@ public abstract class VFLBufferWithFlushHandlerBase extends VFLBufferBase {
     }
 
     // Abstract method for subclasses to implement their execution strategy
-    protected abstract void executeFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds);
+    protected abstract void executeFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, BlockEndData> blockEnds);
 
     // Helper method to perform ordered flushing - can be called by subclasses
-    protected final void performOrderedFlush(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds) {
+    protected final void performOrderedFlush(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, BlockEndData> blockEnds) {
         // Enforced flush order: blocks -> block starts -> block ends -> logs
         if (!blocks.isEmpty()) {
             flushHandler.pushBlocksToServer(blocks);

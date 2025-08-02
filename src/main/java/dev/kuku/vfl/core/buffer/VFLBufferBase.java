@@ -1,8 +1,8 @@
 package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
-import org.javatuples.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
     private final List<Log> logs2Flush;
     private final List<Block> blocks2Flush;
     private final Map<String, Long> blockStarts2Flush;
-    private final Map<String, Pair<Long, String>> blockEnds2Flush;
+    private final Map<String, BlockEndData> blockEnds2Flush;
 
     public VFLBufferBase(int bufferSize) {
         this.bufferSize = bufferSize;
@@ -60,7 +60,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
     }
 
     @Override
-    public void pushLogEndToBuffer(String blockId, Pair<Long, String> endTimeAndMessage) {
+    public void pushLogEndToBuffer(String blockId, BlockEndData endTimeAndMessage) {
         lock.lock();
         try {
             blockEnds2Flush.put(blockId, endTimeAndMessage);
@@ -94,7 +94,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
         List<Log> logsToFlush;
         List<Block> blocksToFlush;
         Map<String, Long> blockStartsToFlush;
-        Map<String, Pair<Long, String>> blockEndsToFlush;
+        Map<String, BlockEndData> blockEndsToFlush;
 
         // Minimize lock time - only hold lock while copying and clearing data
         lock.lock();
@@ -121,5 +121,5 @@ public abstract class VFLBufferBase implements VFLBuffer {
         flushAll();
     }
 
-    protected abstract void onFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, Pair<Long, String>> blockEnds);
+    protected abstract void onFlushAll(List<Log> logs, List<Block> blocks, Map<String, Long> blockStarts, Map<String, BlockEndData> blockEnds);
 }

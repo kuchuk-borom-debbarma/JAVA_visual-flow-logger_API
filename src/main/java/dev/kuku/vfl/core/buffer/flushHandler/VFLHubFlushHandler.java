@@ -2,10 +2,10 @@ package dev.kuku.vfl.core.buffer.flushHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.javatuples.Pair;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,12 +18,12 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class VFLHubFlushHandler implements VFLFlushHandler {
+    private static final String API_VERSION = "api/v1";
     private final URI url;
     private final HttpClient httpClient = HttpClient
             .newBuilder()
             .build();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String API_VERSION = "api/v1";
 
     @Override
     public boolean pushLogsToServer(List<Log> logs) {
@@ -119,7 +119,7 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
     }
 
     @Override
-    public boolean pushBlockEndsToServer(Map<String, Pair<Long, String>> blockEnds) {
+    public boolean pushBlockEndsToServer(Map<String, BlockEndData> blockEnds) {
         log.debug("Attempting to push {} block ends to server", blockEnds.size());
         try {
             String jsonBody = objectMapper.writeValueAsString(blockEnds);
@@ -127,7 +127,7 @@ public class VFLHubFlushHandler implements VFLFlushHandler {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                    .uri(URI.create(url + "/" + API_VERSION + "/blocks-ends"))
+                    .uri(URI.create(url + "/" + API_VERSION + "/block-ends"))
                     .header("Content-Type", "application/json")
                     .build();
 

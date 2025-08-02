@@ -1,8 +1,8 @@
 package dev.kuku.vfl.core.buffer;
 
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.dtos.BlockEndData;
 import dev.kuku.vfl.core.models.logs.Log;
-import org.javatuples.Pair;
 
 public class DummyBuffer implements VFLBuffer {
     @Override
@@ -21,7 +21,7 @@ public class DummyBuffer implements VFLBuffer {
     }
 
     @Override
-    public void pushLogEndToBuffer(String blockId, Pair<Long, String> endTimeAndMessage) {
+    public void pushLogEndToBuffer(String blockId, BlockEndData endTimeAndMessage) {
 
     }
 
