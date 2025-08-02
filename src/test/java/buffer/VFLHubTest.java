@@ -16,7 +16,7 @@ public class VFLHubTest {
 
     @Test
     void linearTest() {
-        PassVFL.Runner.INSTANCE.StartVFL("linear test", buffer, vflFn -> {
+        PassVFL.Runner.StartVFL("linear test", buffer, vflFn -> {
             var f = new FluentVFLFn(vflFn);
             f.log("Starting linear test right now");
             f.log("Going to start another call right now");
