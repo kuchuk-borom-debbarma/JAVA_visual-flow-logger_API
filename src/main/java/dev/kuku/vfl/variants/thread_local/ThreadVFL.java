@@ -12,10 +12,10 @@ import dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Stack;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static dev.kuku.vfl.core.helpers.Util.getThreadInfo;
+import static dev.kuku.vfl.core.helpers.Util.trimId;
 
 @Slf4j
 public class ThreadVFL extends VFLCallable {
@@ -33,118 +33,12 @@ public class ThreadVFL extends VFLCallable {
         return loggerStack.get().peek();
     }
 
-    private static String getThreadInfo() {
-        Thread currentThread = Thread.currentThread();
-        return String.format("[Thread: %s (ID: %d)]", currentThread.getName(), currentThread.threadId());
-    }
-
-    private static String trimId(String fullId) {
-        if (fullId == null) return "null";
-        String[] parts = fullId.split("-");
-        return parts.length > 0 ? parts[parts.length - 1] : fullId;
-    }
-
-    // ==================== Static Logging Methods ====================
-
     /**
-     * Log a message at INFO level
+     * After sub block start has been initialized we need to create a logger based on sub block created and push it to the stack. <br>
+     * We have to do this because it means that the passed function for the sub block is going to be invoked and when the sub block's function attempts to get the logger will give it the latest logger i.e the logger for the sub block which is exactly what we want
      */
-    public static void Log(String message) {
-        getCurrentLogger().log(message);
-    }
-
-    /**
-     * Execute a function and log its result at INFO level
-     */
-    public static <R> R LogFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return getCurrentLogger().logFn(fn, messageSerializer);
-    }
-
-    /**
-     * Log a message at WARN level
-     */
-    public static void Warn(String message) {
-        getCurrentLogger().warn(message);
-    }
-
-    /**
-     * Execute a function and log its result at WARN level
-     */
-    public static <R> R WarnFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
-        return getCurrentLogger().warnFn(fn, messageSerializer, args);
-    }
-
-    /**
-     * Log a message at ERROR level
-     */
-    public static void Error(String message) {
-        getCurrentLogger().error(message);
-    }
-
-    /**
-     * Execute a function and log its result at ERROR level
-     */
-    public static <R> R ErrorFn(Supplier<R> fn, Function<R, String> messageSerializer, Object... args) {
-        return getCurrentLogger().errorFn(fn, messageSerializer, args);
-    }
-
-    // ==================== Static Block Operations ====================
-
-    /**
-     * Start a primary sub block
-     */
-    public static <R> R CallPrimarySubBlock(String blockName, String startMessage,
-                                            Supplier<R> supplier, Function<R, String> endMessageSerializer, Object... args) {
-        return getCurrentLogger().callPrimarySubBlock(blockName, startMessage, supplier, endMessageSerializer, args);
-    }
-
-    /**
-     * Create a secondary sub block that joins back to main flow
-     */
-    public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
-                                                                     Supplier<R> supplier,
-                                                                     Executor executor, Function<R, String> endMessageSerializer, Object... args) {
-        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, executor, endMessageSerializer, args);
-    }
-
-    /**
-     * Create a secondary sub block that joins back to main flow (using default executor)
-     */
-    public static <R> CompletableFuture<R> CallSecondaryJoiningBlock(String blockName, String startMessage,
-                                                                     Supplier<R> supplier, Function<R, String> endMessageSerializer, Object... args) {
-        return getCurrentLogger().callSecondaryJoiningBlock(blockName, startMessage, supplier, null, endMessageSerializer, args);
-    }
-
-    /**
-     * Create a secondary sub block that does not join back to main flow
-     */
-    public static CompletableFuture<Void> CallSecondaryNonJoiningBlock(String blockName, String startMessage,
-                                                                       Runnable runnable, Executor executor) {
-        return getCurrentLogger().callSecondaryNonJoiningBlock(blockName, startMessage, runnable, executor);
-    }
-
-    /**
-     * Create a secondary sub block that does not join back to main flow (using default executor)
-     */
-    public static CompletableFuture<Void> CallSecondaryNonJoiningBlock(String blockName, String startMessage,
-                                                                       Runnable runnable) {
-        return getCurrentLogger().callSecondaryNonJoiningBlock(blockName, startMessage, runnable, null);
-    }
-
-    /**
-     * Create an event publisher block
-     */
-    public static EventPublisherBlock CreateEventPublisherBlock(String branchName, String startMessage, Object... args) {
-        return getCurrentLogger().createEventPublisherBlock(branchName, startMessage, args);
-    }
-
-    // ==================== Instance Methods (inherited from parent) ====================
-    // These remain as instance methods and are used by the static methods above
-
-    // ==================== Original ThreadVFL Logic ====================
-
     @Override
-    protected void prepareLoggerAfterSubBlockStartDataInitializedAndPushed(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum startType) {
+    protected void afterSubBlockStartInit(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum startType) {
         var subLoggerCtx = new VFLBlockContext(subBlock, false, parentBlockCtx.buffer);
         String threadInfo = getThreadInfo();
 

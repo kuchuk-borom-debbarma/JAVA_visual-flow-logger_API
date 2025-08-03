@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added tests for byte buddy">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Created new dto for inheritable thread local">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/Helper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/VFLBlockContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/VFLBlockContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -287,15 +288,7 @@
       <workItem from="1753539553548" duration="8286000" />
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
-      <workItem from="1754146490629" duration="7002000" />
-    </task>
-    <task id="LOCAL-00088" summary="Fixed bug when block end was not called for root function for scoped logger">
-      <option name="closed" value="true" />
-      <created>1752760521146</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1752760521146</updated>
+      <workItem from="1754146490629" duration="7553000" />
     </task>
     <task id="LOCAL-00089" summary="toJsonNested function fixed">
       <option name="closed" value="true" />
@@ -681,7 +674,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754173568694</updated>
     </task>
-    <option name="localTasksCounter" value="137" />
+    <task id="LOCAL-00137" summary="Created new dto for inheritable thread local">
+      <option name="closed" value="true" />
+      <created>1754192324369</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1754192324370</updated>
+    </task>
+    <option name="localTasksCounter" value="138" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -699,7 +700,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated scoped logger and made some design choice" />
     <MESSAGE value="ignored target" />
     <MESSAGE value="refactored based on new design chooice i mad" />
     <MESSAGE value="updated todos" />
@@ -724,7 +724,8 @@
     <MESSAGE value="Fixed test 3" />
     <MESSAGE value="Updated context md" />
     <MESSAGE value="Added tests for byte buddy" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added tests for byte buddy" />
+    <MESSAGE value="Created new dto for inheritable thread local" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created new dto for inheritable thread local" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -748,6 +749,11 @@
           <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
           <line>73</line>
           <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java</url>
+          <line>25</line>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
