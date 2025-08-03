@@ -49,8 +49,8 @@ public class ThreadVFLTest {
         ThreadVFLRunner.StartVFL("Threadpool test", b, () -> {
             ThreadVFL.getCurrentLogger().log("Running in thread " + Thread.currentThread().threadId());
             var a = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t1", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
-            var b = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t1", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
-            var c = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t1", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
+            var b = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t2", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
+            var c = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t3", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
             try {
                 a.get();
                 b.get();
@@ -63,9 +63,12 @@ public class ThreadVFLTest {
     }
 
     private int square(int x) {
+        System.out.println("Executor thread stack size: " + ThreadVFL.loggerStack.get().size());
+        System.out.println("Current logger block name: " + ThreadVFL.getCurrentLogger().ctx.blockInfo.getBlockName() + " and id " + ThreadVFL.getCurrentLogger().ctx.blockInfo.getId());
         ThreadVFL.getCurrentLogger().log("Running in thread " + Thread.currentThread().threadId());
         return x * x;
     }
+
 
     int asyncSquare(int a) {
         square(a);
