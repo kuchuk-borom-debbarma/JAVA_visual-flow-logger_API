@@ -19,6 +19,7 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
  */
 public abstract class VFLCallable extends VFL {
 
+
     /**
      * Start a primary sub block
      */
