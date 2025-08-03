@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Some progress. Multi thread works. Just need to figure out thread pooling stuff now">
-      <change afterPath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddySupplierTest.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="BYTE BUDDY INTERCEPTION TO WRAP FUNCTION TEST">
+      <change afterPath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddyAdviceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddySupplierTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,6 +71,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.ByteBuddyAdviceTest.executor": "Run",
+    "Application.ByteBuddyDirectModificationTest.executor": "Run",
     "Application.ByteBuddySupplierTest.executor": "Run",
     "Application.Main.executor": "Run",
     "JUnit.ByteBuddyInterceptorTest.executor": "Run",
@@ -130,7 +132,33 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.ByteBuddySupplierTest">
+  <component name="RunManager" selected="Application.ByteBuddyAdviceTest">
+    <configuration name="ByteBuddyAdviceTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyAdviceTest" />
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ByteBuddyDirectModificationTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyDirectModificationTest" />
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ByteBuddySupplierTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddySupplierTest" />
       <module name="vfl_java" />
@@ -140,37 +168,6 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ByteBuddyInterceptorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="bytebuddy.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="bytebuddy" />
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ThreadVFLTest.multiThreadCleanupTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadVfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadVfl" />
-      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest" />
-      <option name="METHOD_NAME" value="multiThreadCleanupTest" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -209,11 +206,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.ByteBuddyAdviceTest" />
+        <item itemvalue="Application.ByteBuddyDirectModificationTest" />
         <item itemvalue="Application.ByteBuddySupplierTest" />
         <item itemvalue="JUnit.ThreadVFLTest.threadPoolTest" />
         <item itemvalue="JUnit.ThreadVFLTest.nestedMultiThreadTest" />
-        <item itemvalue="JUnit.ThreadVFLTest.multiThreadCleanupTest" />
-        <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
       </list>
     </recent_temporary>
   </component>
@@ -291,15 +288,7 @@
       <workItem from="1753539553548" duration="8286000" />
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
-      <workItem from="1754146490629" duration="24286000" />
-    </task>
-    <task id="LOCAL-00092" summary="added important todos">
-      <option name="closed" value="true" />
-      <created>1752763301957</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1752763301957</updated>
+      <workItem from="1754146490629" duration="24797000" />
     </task>
     <task id="LOCAL-00093" summary="completed few todos mainly related to adding new textFn for taking in lambda and showing it">
       <option name="closed" value="true" />
@@ -685,7 +674,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754202358443</updated>
     </task>
-    <option name="localTasksCounter" value="141" />
+    <task id="LOCAL-00141" summary="BYTE BUDDY INTERCEPTION TO WRAP FUNCTION TEST">
+      <option name="closed" value="true" />
+      <created>1754219271523</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1754219271523</updated>
+    </task>
+    <option name="localTasksCounter" value="142" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -703,7 +700,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="going to add fluent api now" />
     <MESSAGE value="Fluent api demo works" />
     <MESSAGE value="Improved fluent api design" />
     <MESSAGE value="Working on fluent API progress" />
@@ -728,7 +724,8 @@
     <MESSAGE value="Refactored to give better names" />
     <MESSAGE value="Cleaned up code" />
     <MESSAGE value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
+    <MESSAGE value="BYTE BUDDY INTERCEPTION TO WRAP FUNCTION TEST" />
+    <option name="LAST_COMMIT_MESSAGE" value="BYTE BUDDY INTERCEPTION TO WRAP FUNCTION TEST" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
