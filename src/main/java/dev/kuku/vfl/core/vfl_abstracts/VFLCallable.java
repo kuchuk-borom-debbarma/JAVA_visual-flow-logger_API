@@ -4,7 +4,6 @@ import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
-import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,7 +30,7 @@ public abstract class VFLCallable extends VFL {
         SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
                 startMessage, subBlock.getId(), SUB_BLOCK_START_PRIMARY, context.buffer);
         context.currentLogId = log.getId();
-        afterSubBlockStartInit(context, subBlock, log, SUB_BLOCK_START_PRIMARY);
+        afterSubBlockStartInit(context, subBlock);
         return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer, args);
     }
 
@@ -48,7 +47,7 @@ public abstract class VFLCallable extends VFL {
             Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
             SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
                     startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_JOIN, context.buffer);
-            afterSubBlockStartInit(context, subBlock, log, SUB_BLOCK_START_SECONDARY_JOIN);
+            afterSubBlockStartInit(context, subBlock);
             return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer, args);
         };
         if (executor != null)
@@ -72,7 +71,7 @@ public abstract class VFLCallable extends VFL {
             Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
             SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
                     startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_NO_JOIN, context.buffer);
-            afterSubBlockStartInit(context, subBlock, log, SUB_BLOCK_START_SECONDARY_NO_JOIN);
+            afterSubBlockStartInit(context, subBlock);
             VFLHelper.CallFnWithLogger(() -> {
                 runnable.run();
                 return null;
@@ -113,10 +112,8 @@ public abstract class VFLCallable extends VFL {
      * {@link ThreadVFL}
      * In the Child class above, It is used to add a new logger instance to the ThreadLocal logger stack.
      *
-     * @param parentBlockCtx   context under which the sub block start operation was invoked
-     * @param subBlock         The subblock data that was created and pushed to buffer
-     * @param subBlockStartLog The subblock start log that was created and pushed to buffer
-     * @param logType          The type of subblock start.
+     * @param parentBlockCtx context under which the sub block start operation was invoked
+     * @param subBlock       The subblock data that was created and pushed to buffer
      */
-    protected abstract void afterSubBlockStartInit(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum logType);
+    protected abstract void afterSubBlockStartInit(VFLBlockContext parentBlockCtx, Block subBlock);
 }
