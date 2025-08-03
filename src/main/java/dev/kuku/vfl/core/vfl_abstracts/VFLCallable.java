@@ -31,6 +31,8 @@ public abstract class VFLCallable extends VFL {
                 startMessage, subBlock.getId(), SUB_BLOCK_START_PRIMARY, context.buffer);
         context.currentLogId = log.getId();
         afterSubBlockStartInit(context, subBlock);
+        // The finally blocin in CallFnWithLogger Removes logger instance from caller thread. If supplier was running in another thread then it won't get cleaned there but rather destroyed along with thread.
+        // Or if using thread pool, the stack will contain 1 instance of stale logger. When that same thread is used again it will setup a new stack with valid sub block logger
         return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer, args);
     }
 

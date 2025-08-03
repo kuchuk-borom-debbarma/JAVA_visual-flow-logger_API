@@ -33,7 +33,7 @@ public abstract class VFLFnRunner extends VFLRunner {
         var eventListenerBlock = VFL.VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventData.block().getId(), buffer);
         // Create a log for event publisher block of type event listener
         var log = VFL.VFLHelper.CreateLogAndPush2Buffer(eventData.block().getId(), null, eventStartMessage, eventListenerBlock.getId(), LogTypeBlockStartEnum.EVENT_LISTENER, buffer);
-        VFLBlockContext eventListenerCtx = new VFLBlockContext(eventListenerBlock, buffer);
+        VFLBlockContext eventListenerCtx = new VFLBlockContext(eventListenerBlock, false, buffer);
         var logger = createEventListenerLogger(eventListenerCtx);
         try {
             VFL.VFLHelper.CallFnWithLogger(() -> {

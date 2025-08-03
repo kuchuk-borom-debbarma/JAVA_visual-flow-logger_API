@@ -14,8 +14,8 @@ import static dev.kuku.vfl.core.helpers.Util.getThreadInfo;
 import static dev.kuku.vfl.core.helpers.Util.trimId;
 
 @Slf4j
-public class Runner extends VFLCallableRunner {
-    private final static Runner INSTANCE = new Runner();
+public class ThreadVFLRunner extends VFLCallableRunner {
+    private final static ThreadVFLRunner INSTANCE = new ThreadVFLRunner();
 
     public static <R> R StartVFL(String blockName, VFLBuffer buffer, Supplier<R> fn) {
         return INSTANCE.startVFL(blockName, buffer, fn);

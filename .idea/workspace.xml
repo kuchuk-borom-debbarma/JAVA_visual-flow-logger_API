@@ -4,12 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Refactored to give better names">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/InheritableThreadVFLStack.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/Runner.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Cleaned up code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLCallableRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLCallableRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLFnRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLFnRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/InheritableThreadVFLStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/InheritableThreadVFLStack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/Runner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFLRunner.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/buffer/ThreadsafeAsyncBufferTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/buffer/ThreadsafeAsyncBufferTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLFluentTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLFluentTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +92,9 @@
     "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
     "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
     "JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor": "Run",
+    "JUnit.ThreadVFLTest.multiThreadCleanupTest.executor": "Run",
+    "JUnit.ThreadVFLTest.nestedMultiThreadTest.executor": "Run",
+    "JUnit.ThreadVFLTest.threadPoolTest.executor": "Run",
     "JUnit.VFLTests.executor": "Run",
     "JUnit.VFLTests.expected.executor": "Run",
     "JUnit.VFLTests.simple.executor": "Debug",
@@ -125,7 +135,7 @@
       <recent name="dev.kuku.builder" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ByteBuddyInterceptorTest">
+  <component name="RunManager" selected="JUnit.ThreadVFLTest.nestedMultiThreadTest">
     <configuration name="ByteBuddyInterceptorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
@@ -137,22 +147,6 @@
       <option name="PACKAGE_NAME" value="bytebuddy" />
       <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ByteBuddyInterceptorTest.testExecutionDurationMeasurement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="bytebuddy.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="bytebuddy" />
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
-      <option name="METHOD_NAME" value="testExecutionDurationMeasurement" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -173,23 +167,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ThreadVFLTest$EventFlow.linearEventFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadVfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadVfl.ThreadVFLTest" />
-      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest$EventFlow" />
-      <option name="METHOD_NAME" value="linearEventFlow" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ThreadVFLTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ThreadVFLTest.multiThreadCleanupTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
@@ -199,18 +177,51 @@
       </extension>
       <option name="PACKAGE_NAME" value="threadVfl" />
       <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="METHOD_NAME" value="multiThreadCleanupTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ThreadVFLTest.nestedMultiThreadTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadVfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadVfl" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="METHOD_NAME" value="nestedMultiThreadTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ThreadVFLTest.threadPoolTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadVfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadVfl" />
+      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest" />
+      <option name="METHOD_NAME" value="threadPoolTest" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.ThreadVFLTest.nestedMultiThreadTest" />
+        <item itemvalue="JUnit.ThreadVFLTest.threadPoolTest" />
+        <item itemvalue="JUnit.ThreadVFLTest.multiThreadCleanupTest" />
         <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
         <item itemvalue="JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception" />
-        <item itemvalue="JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement" />
-        <item itemvalue="JUnit.ThreadVFLTest" />
-        <item itemvalue="JUnit.ThreadVFLTest$EventFlow.linearEventFlow" />
       </list>
     </recent_temporary>
   </component>
@@ -288,15 +299,7 @@
       <workItem from="1753539553548" duration="8286000" />
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
-      <workItem from="1754146490629" duration="8284000" />
-    </task>
-    <task id="LOCAL-00090" summary="Fixed bug related to not pushing root block">
-      <option name="closed" value="true" />
-      <created>1752763202187</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1752763202187</updated>
+      <workItem from="1754146490629" duration="17003000" />
     </task>
     <task id="LOCAL-00091" summary="Removed souts">
       <option name="closed" value="true" />
@@ -682,7 +685,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754192923006</updated>
     </task>
-    <option name="localTasksCounter" value="139" />
+    <task id="LOCAL-00139" summary="Cleaned up code">
+      <option name="closed" value="true" />
+      <created>1754193610038</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1754193610038</updated>
+    </task>
+    <option name="localTasksCounter" value="140" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -700,7 +711,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactored based on new design chooice i mad" />
     <MESSAGE value="updated todos" />
     <MESSAGE value="going to add fluent api now" />
     <MESSAGE value="Fluent api demo works" />
@@ -725,7 +735,8 @@
     <MESSAGE value="Added tests for byte buddy" />
     <MESSAGE value="Created new dto for inheritable thread local" />
     <MESSAGE value="Refactored to give better names" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored to give better names" />
+    <MESSAGE value="Cleaned up code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up code" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -742,18 +753,11 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
-          <line>56</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
-          <line>73</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java</url>
-          <line>16</line>
-          <option name="timeStamp" value="12" />
+          <line>72</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

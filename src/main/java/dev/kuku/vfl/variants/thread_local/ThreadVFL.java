@@ -10,8 +10,8 @@ import static dev.kuku.vfl.core.helpers.Util.trimId;
 
 @Slf4j
 public class ThreadVFL extends VFLCallable {
-    static final InheritableThreadVFLStack loggerStack = new InheritableThreadVFLStack();
-    final VFLBlockContext ctx;
+    public static final InheritableThreadVFLStack loggerStack = new InheritableThreadVFLStack();
+    public final VFLBlockContext ctx;
 
     ThreadVFL(VFLBlockContext context) {
         this.ctx = context;
@@ -20,7 +20,7 @@ public class ThreadVFL extends VFLCallable {
     /**
      * Get the current logger from the thread local stack
      */
-    static ThreadVFL getCurrentLogger() {
+    public static ThreadVFL getCurrentLogger() {
         return loggerStack.get().peek();
     }
 
@@ -56,19 +56,17 @@ public class ThreadVFL extends VFLCallable {
     @Override
     protected void close(String endMessage) {
         super.close(endMessage);
-        String threadInfo = getThreadInfo();
+        popLoggerFromStack();
+    }
 
+    private void popLoggerFromStack() {
         var poppedLogger = ThreadVFL.loggerStack.get().pop();
+        String threadInfo = getThreadInfo();
         log.debug("POP: Removed logger '{}' from stack {} - Remaining stack size: {}", trimId(poppedLogger.ctx.blockInfo.getId()), threadInfo, ThreadVFL.loggerStack.get().size());
-
         //Clean up the thread local if its empty or if the last remaining instance has inherited context
         if (ThreadVFL.loggerStack.get().isEmpty()) {
             ThreadVFL.loggerStack.remove();
             log.debug("REMOVE: Completely removed logger stack from {} - Stack cleaned up", threadInfo);
-        } else if (ThreadVFL.loggerStack.get().size() == 1 && ThreadVFL.loggerStack.get().peek().ctx.inheritedContext) {
-            var inheritedLogger = ThreadVFL.loggerStack.get().pop();
-            ThreadVFL.loggerStack.remove();
-            log.debug("REMOVE: Removed logger stack from {} as only inherited parent context {} was left", threadInfo, inheritedLogger.ctx.blockInfo.getId());
         }
     }
 }
