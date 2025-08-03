@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 
 @Slf4j
 public class ThreadVFL extends VFLCallable {
-    private static final ThreadLocal<Stack<ThreadVFL>> loggerStack = new ThreadLocal<>();
+    private static final InheritableThreadVFLStack loggerStack = new InheritableThreadVFLStack();
     private final VFLBlockContext ctx;
 
     private ThreadVFL(VFLBlockContext context) {
@@ -145,7 +145,7 @@ public class ThreadVFL extends VFLCallable {
 
     @Override
     protected void prepareLoggerAfterSubBlockStartDataInitializedAndPushed(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum startType) {
-        var subLoggerCtx = new VFLBlockContext(subBlock, parentBlockCtx.buffer);
+        var subLoggerCtx = new VFLBlockContext(subBlock, false, parentBlockCtx.buffer);
         String threadInfo = getThreadInfo();
 
         // If sub logger data has been pushed to buffer, we must now create the respective logger and add it to stack
@@ -198,9 +198,12 @@ public class ThreadVFL extends VFLCallable {
         if (ThreadVFL.loggerStack.get().isEmpty()) {
             ThreadVFL.loggerStack.remove();
             log.debug("REMOVE: Completely removed logger stack from {} - Stack cleaned up", threadInfo);
+        } else if (ThreadVFL.loggerStack.get().size() == 1 && ThreadVFL.loggerStack.get().peek().ctx.inheritedContext) {
+            var inheritedLogger = ThreadVFL.loggerStack.get().pop();
+            ThreadVFL.loggerStack.remove();
+            log.debug("REMOVE: Removed logger stack from {} as only inherited parent context {} was left", threadInfo, inheritedLogger.ctx.blockInfo.getId());
         }
     }
-
 
     public static class Runner extends VFLCallableRunner {
         private final static Runner INSTANCE = new Runner();
@@ -253,6 +256,22 @@ public class ThreadVFL extends VFLCallable {
             }
 
             return ThreadVFL.loggerStack.get().peek();
+        }
+    }
+
+    static class InheritableThreadVFLStack extends InheritableThreadLocal<Stack<ThreadVFL>> {
+        /*
+        When a new thread is spawned, Only copy the latest ThreadVFL instance from the inheriting thread.
+        The last element is the parent from which this thread is being spawned
+         */
+        @Override
+        protected Stack<ThreadVFL> childValue(Stack<ThreadVFL> parentValue) {
+            //Create a copy of latest logger from parent with inheritedContext set to true
+            ThreadVFL latestVFL = new ThreadVFL(new VFLBlockContext(parentValue.peek().ctx.blockInfo, true, parentValue.peek().ctx.buffer));
+            Stack<ThreadVFL> threadStack = new Stack<>();
+            threadStack.add(latestVFL);
+            log.debug("Creating new log stack with inherited parent VFL : {}", latestVFL.ctx.blockInfo.getId());
+            return threadStack;
         }
     }
 }

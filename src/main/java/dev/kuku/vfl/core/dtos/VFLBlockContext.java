@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class VFLBlockContext {
     public final Block blockInfo;
+    public final boolean inheritedContext;
     public final AtomicBoolean blockStarted = new AtomicBoolean(false);
     public final VFLBuffer buffer;
     public String currentLogId;
