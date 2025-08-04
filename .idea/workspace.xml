@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Advice based method weaving TEST">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/byte_buddy_system/ByteBuddyVFLData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/byte_buddy_system/CompletableFutureInterceptor.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="intercepting completable futures with advice">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/wrappers/VFLCompletableFuture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddyInterceptorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddyInterceptorTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddySupplierTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/bytebuddy/ByteBuddyInterceptorTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,14 +133,31 @@
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
     </key>
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="bytebuddy" />
+    </key>
   </component>
-  <component name="RunManager" selected="JUnit.ByteBuddyInterceptorTest">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="ByteBuddySupplierTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddySupplierTest" />
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="PATTERN" value="dev.kuku.vfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
+      <module name="vfl_java" />
+      <option name="VM_PARAMETERS" value="-Djdk.instrument.traceUsage" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="dev.kuku.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -155,7 +169,7 @@
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="PATTERN" value="dev.kuku.vfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -171,7 +185,7 @@
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="PATTERN" value="dev.kuku.vfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -186,7 +200,7 @@
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="bytebuddy.*" />
+          <option name="PATTERN" value="dev.kuku.vfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -199,36 +213,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ThreadVFLTest.threadPoolTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadVfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadVfl" />
-      <option name="MAIN_CLASS_NAME" value="threadVfl.ThreadVFLTest" />
-      <option name="METHOD_NAME" value="threadPoolTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
+      <item itemvalue="Application.Main" />
       <item itemvalue="Application.ByteBuddySupplierTest" />
       <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
       <item itemvalue="JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception" />
       <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
-      <item itemvalue="JUnit.ThreadVFLTest.threadPoolTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
         <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
         <item itemvalue="JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception" />
         <item itemvalue="Application.ByteBuddySupplierTest" />
-        <item itemvalue="JUnit.ThreadVFLTest.threadPoolTest" />
       </list>
     </recent_temporary>
   </component>
@@ -307,15 +305,7 @@
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
-      <workItem from="1754233008979" duration="5948000" />
-    </task>
-    <task id="LOCAL-00092" summary="added important todos">
-      <option name="closed" value="true" />
-      <created>1752763301957</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1752763301957</updated>
+      <workItem from="1754233008979" duration="11467000" />
     </task>
     <task id="LOCAL-00093" summary="completed few todos mainly related to adding new textFn for taking in lambda and showing it">
       <option name="closed" value="true" />
@@ -701,7 +691,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754202358443</updated>
     </task>
-    <option name="localTasksCounter" value="141" />
+    <task id="LOCAL-00141" summary="intercepting completable futures with advice">
+      <option name="closed" value="true" />
+      <created>1754241644423</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1754241644423</updated>
+    </task>
+    <option name="localTasksCounter" value="142" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -719,7 +717,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="going to add fluent api now" />
     <MESSAGE value="Fluent api demo works" />
     <MESSAGE value="Improved fluent api design" />
     <MESSAGE value="Working on fluent API progress" />
@@ -744,7 +741,8 @@
     <MESSAGE value="Refactored to give better names" />
     <MESSAGE value="Cleaned up code" />
     <MESSAGE value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
+    <MESSAGE value="intercepting completable futures with advice" />
+    <option name="LAST_COMMIT_MESSAGE" value="intercepting completable futures with advice" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
