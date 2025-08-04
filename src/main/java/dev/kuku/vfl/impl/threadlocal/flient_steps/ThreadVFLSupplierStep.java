@@ -6,8 +6,8 @@ import dev.kuku.vfl.impl.threadlocal.flient_steps.sub_block.AsSubBlockCallableSt
 
 import java.util.function.Supplier;
 
-public class CallableSupplierStep<R> extends SupplierStep<R> {
-    public CallableSupplierStep(VFL vfl, Supplier<R> supplier) {
+public class ThreadVFLSupplierStep<R> extends SupplierStep<R> {
+    public ThreadVFLSupplierStep(VFL vfl, Supplier<R> supplier) {
         super(vfl, supplier);
     }
 
