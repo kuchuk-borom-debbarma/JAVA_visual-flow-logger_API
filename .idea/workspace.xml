@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated base fluent. Removed other fluents.">
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/PassVFL.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/RunnableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/RunnableStep.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +99,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "enhancement/threadVFL",
+    "git-widget-placeholder": "main",
     "ignore.preview.features.used": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
