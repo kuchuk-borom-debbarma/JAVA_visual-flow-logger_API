@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated base fluent. Removed other fluents.">
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/RunnableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/RunnableStep.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="updated runnable step">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/supplied/FluentSuppliedVFL.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/AsSubBlockCallableStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/CallableSupplierStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +103,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "enhancement/fluent",
     "ignore.preview.features.used": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
@@ -303,14 +307,6 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-    </task>
-    <task id="LOCAL-00099" summary="added important todo">
-      <option name="closed" value="true" />
-      <created>1752809512001</created>
-      <option name="number" value="00099" />
-      <option name="presentableId" value="LOCAL-00099" />
-      <option name="project" value="LOCAL" />
-      <updated>1752809512001</updated>
     </task>
     <task id="LOCAL-00100" summary="added package-info.java for scoped logger">
       <option name="closed" value="true" />
@@ -696,7 +692,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754276268263</updated>
     </task>
-    <option name="localTasksCounter" value="148" />
+    <task id="LOCAL-00148" summary="updated runnable step">
+      <option name="closed" value="true" />
+      <created>1754284403762</created>
+      <option name="number" value="00148" />
+      <option name="presentableId" value="LOCAL-00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1754284403762</updated>
+    </task>
+    <option name="localTasksCounter" value="149" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -714,7 +718,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Removed package info for now" />
     <MESSAGE value="Added comments" />
     <MESSAGE value="Code much more clean now" />
     <MESSAGE value="Code clean, removed ContextualVFL.java" />
@@ -739,7 +742,8 @@
     <MESSAGE value="Refactored ThreadVFL and its runner. Next is fixing fluents" />
     <MESSAGE value="Updated git ignore" />
     <MESSAGE value="Updated base fluent. Removed other fluents." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated base fluent. Removed other fluents." />
+    <MESSAGE value="updated runnable step" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated runnable step" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
