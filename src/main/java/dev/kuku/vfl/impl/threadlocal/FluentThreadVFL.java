@@ -13,4 +13,9 @@ public class FluentThreadVFL extends FluentVFL {
     public <R> CallableSupplierStep<R> call(Supplier<R> fn) {
         return new CallableSupplierStep<>(ThreadVFL.getCurrentLogger(), fn);
     }
+
+    @Override
+    public <R> CallableRunnableStep run(Runnable runnable) {
+        return new CallableRunnableStep(runnable, vfl);
+    }
 }

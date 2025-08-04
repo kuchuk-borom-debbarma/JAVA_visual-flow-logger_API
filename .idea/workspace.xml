@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="updated runnable step">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/supplied/FluentSuppliedVFL.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/AsSubBlockCallableStep.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/CallableSupplierStep.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added AsSubBlockCallableStep">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/AsSubBlockRunnableStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/CallableRunnableStep.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,6 +127,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="dev.kuku.vfl.impl.threadlocal" />
       <recent name="dev.kuku.vfl.scopedVFLogger.fluentApi" />
       <recent name="dev.kuku.builder" />
     </key>
@@ -307,14 +307,6 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-    </task>
-    <task id="LOCAL-00100" summary="added package-info.java for scoped logger">
-      <option name="closed" value="true" />
-      <created>1752810611812</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1752810611812</updated>
     </task>
     <task id="LOCAL-00101" summary="renaming changes and other stuff">
       <option name="closed" value="true" />
@@ -700,7 +692,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754284403762</updated>
     </task>
-    <option name="localTasksCounter" value="149" />
+    <task id="LOCAL-00149" summary="Added AsSubBlockCallableStep">
+      <option name="closed" value="true" />
+      <created>1754303928488</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1754303928488</updated>
+    </task>
+    <option name="localTasksCounter" value="150" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -718,7 +718,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added comments" />
     <MESSAGE value="Code much more clean now" />
     <MESSAGE value="Code clean, removed ContextualVFL.java" />
     <MESSAGE value="testing and noticed a bug" />
@@ -743,7 +742,8 @@
     <MESSAGE value="Updated git ignore" />
     <MESSAGE value="Updated base fluent. Removed other fluents." />
     <MESSAGE value="updated runnable step" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated runnable step" />
+    <MESSAGE value="Added AsSubBlockCallableStep" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added AsSubBlockCallableStep" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
