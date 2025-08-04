@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Refactored ThreadVFL and its runner. Next is fixing fluents">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated git ignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/SupplierStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/SupplierStep.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +70,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "Application.ByteBuddySupplierTest.executor": "Run",
     "Application.Main.executor": "Run",
     "JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor": "Run",
@@ -302,15 +303,7 @@
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
-      <workItem from="1754233008979" duration="20429000" />
-    </task>
-    <task id="LOCAL-00097" summary="Added async sub block fn handler that will copy current context, create a new scope in that environment and return it">
-      <option name="closed" value="true" />
-      <created>1752807643885</created>
-      <option name="number" value="00097" />
-      <option name="presentableId" value="LOCAL-00097" />
-      <option name="project" value="LOCAL" />
-      <updated>1752807643885</updated>
+      <workItem from="1754233008979" duration="21020000" />
     </task>
     <task id="LOCAL-00098" summary="Added async versions">
       <option name="closed" value="true" />
@@ -696,7 +689,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754275545488</updated>
     </task>
-    <option name="localTasksCounter" value="146" />
+    <task id="LOCAL-00146" summary="Updated git ignore">
+      <option name="closed" value="true" />
+      <created>1754275646544</created>
+      <option name="number" value="00146" />
+      <option name="presentableId" value="LOCAL-00146" />
+      <option name="project" value="LOCAL" />
+      <updated>1754275646545</updated>
+    </task>
+    <option name="localTasksCounter" value="147" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -714,7 +715,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="PROGRESS" />
     <MESSAGE value="updated workscpace seting" />
     <MESSAGE value="Removed package info for now" />
     <MESSAGE value="Added comments" />
@@ -739,7 +739,8 @@
     <MESSAGE value="Improved comment" />
     <MESSAGE value="Refactored ThreadVFL and its runner" />
     <MESSAGE value="Refactored ThreadVFL and its runner. Next is fixing fluents" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored ThreadVFL and its runner. Next is fixing fluents" />
+    <MESSAGE value="Updated git ignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated git ignore" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
