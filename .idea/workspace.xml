@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated git ignore">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/SupplierStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/SupplierStep.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated base fluent. Removed other fluents.">
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/PassVFL.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -303,15 +304,7 @@
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
-      <workItem from="1754233008979" duration="21020000" />
-    </task>
-    <task id="LOCAL-00098" summary="Added async versions">
-      <option name="closed" value="true" />
-      <created>1752808977657</created>
-      <option name="number" value="00098" />
-      <option name="presentableId" value="LOCAL-00098" />
-      <option name="project" value="LOCAL" />
-      <updated>1752808977657</updated>
+      <workItem from="1754233008979" duration="21131000" />
     </task>
     <task id="LOCAL-00099" summary="added important todo">
       <option name="closed" value="true" />
@@ -697,7 +690,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754275646545</updated>
     </task>
-    <option name="localTasksCounter" value="147" />
+    <task id="LOCAL-00147" summary="Updated base fluent. Removed other fluents.">
+      <option name="closed" value="true" />
+      <created>1754276268263</created>
+      <option name="number" value="00147" />
+      <option name="presentableId" value="LOCAL-00147" />
+      <option name="project" value="LOCAL" />
+      <updated>1754276268263</updated>
+    </task>
+    <option name="localTasksCounter" value="148" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -715,7 +716,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated workscpace seting" />
     <MESSAGE value="Removed package info for now" />
     <MESSAGE value="Added comments" />
     <MESSAGE value="Code much more clean now" />
@@ -740,7 +740,8 @@
     <MESSAGE value="Refactored ThreadVFL and its runner" />
     <MESSAGE value="Refactored ThreadVFL and its runner. Next is fixing fluents" />
     <MESSAGE value="Updated git ignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated git ignore" />
+    <MESSAGE value="Updated base fluent. Removed other fluents." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated base fluent. Removed other fluents." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
