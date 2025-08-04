@@ -23,4 +23,16 @@ public class Util {
         }
         return result;
     }
+
+    public static String getThreadInfo() {
+        Thread currentThread = Thread.currentThread();
+        return String.format("[Thread: %s (ID: %d)]", currentThread.getName(), currentThread.threadId());
+    }
+
+    public static String trimId(String fullId) {
+        if (fullId == null) return "null";
+        String[] parts = fullId.split("-");
+        return parts.length > 0 ? parts[parts.length - 1] : fullId;
+    }
+
 }

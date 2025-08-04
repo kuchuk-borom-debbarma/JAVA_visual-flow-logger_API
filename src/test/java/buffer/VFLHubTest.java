@@ -4,7 +4,7 @@ import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLHubFlushHandler;
 import dev.kuku.vfl.core.fluent_api.fn.FluentVFLFn;
 import dev.kuku.vfl.core.vfl_abstracts.VFLFn;
-import dev.kuku.vfl.variants.PassVFL;
+import dev.kuku.vfl.impl.PassVFL;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

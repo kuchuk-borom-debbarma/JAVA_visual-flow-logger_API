@@ -1,11 +1,11 @@
 package threadVfl;
 
-import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
+import dev.kuku.vfl.core.buffer.SynchronousVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
-import dev.kuku.vfl.core.dtos.EventPublisherBlock;
-import dev.kuku.vfl.variants.thread_local.ThreadVFL;
-import org.junit.jupiter.api.Nested;
+import dev.kuku.vfl.core.models.VFLExecutionException;
+import dev.kuku.vfl.impl.threadlocal.ThreadVFL;
+import dev.kuku.vfl.impl.threadlocal.ThreadVFLRunner;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
@@ -13,110 +13,73 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class ThreadVFLTest {
+    VFLBuffer b = new SynchronousVFLBuffer(10, new NestedJsonFlushHandler("test/output/threadVFL/gg.json"));
 
-    private final NestedJsonFlushHandler flush = new NestedJsonFlushHandler("test/output/threadVFL/logger.json");
-    private final VFLBuffer buffer = new AsyncVFLBuffer(100, 5000, 5000, flush, Executors.newVirtualThreadPerTaskExecutor(), Executors.newScheduledThreadPool(2));
-
-    int sum(int a, int b) {
-        ThreadVFL.Log("Going to sum " + a + " " + b);
-        ThreadVFL.Log("Sum = " + a + b);
-        return a + b;
+    @Test
+    void nestedMultiThreadTest() {
+        ThreadVFLRunner.StartVFL("Multi thread test", b, () -> {
+            //So this works
+            ThreadVFL.getCurrentLogger().log("Running in thread " + Thread.currentThread().threadId());
+            ThreadVFL.getCurrentLogger().log("Running sum same thread");
+            int ss = ThreadVFL.getCurrentLogger().callPrimarySubBlock("Sum main", null, () -> square(2), null);
+            System.out.println(ss);
+            ThreadVFL.getCurrentLogger().log("Finished main sum " + ss);
+            var s = ThreadVFL.getCurrentLogger().callPrimarySubBlock("Sum another thread", null, () -> CompletableFuture.supplyAsync(() -> asyncSquare(2)
+                    , Executors.newSingleThreadExecutor(r -> {
+                        var t = new Thread(r);
+                        t.setName("GGEZ");
+                        return t;
+                    })), null);
+            try {
+                s.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new VFLExecutionException(e);
+            }
+            ThreadVFL.getCurrentLogger().log("Finished sum another thread");
+        });
     }
 
-    int multiply(int a, int b) {
-        ThreadVFL.Log("Multiplying " + a + " and " + b);
-        int result = a * b;
-        ThreadVFL.Log("Multiplying value = " + result);
-        return result;
+    @Test
+    void threadPoolTest() {
+        var e = Executors.newSingleThreadExecutor(r -> {
+            var t = new Thread(r);
+            t.setName("GGEZ");
+            return t;
+        });
+        ThreadVFLRunner.StartVFL("Threadpool test", b, () -> {
+            ThreadVFL.getCurrentLogger().log("Running in thread " + Thread.currentThread().threadId());
+            var a = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t1", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
+            var b = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t2", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
+            var c = ThreadVFL.getCurrentLogger().callPrimarySubBlock("t3", null, () -> CompletableFuture.supplyAsync(() -> square(2), e), null);
+            try {
+                a.get();
+                b.get();
+                c.get();
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+    }
+
+    private int square(int x) {
+        System.out.println("Executor thread stack size: " + ThreadVFL.loggerStack.get().size());
+        System.out.println("Current logger block name: " + ThreadVFL.getCurrentLogger().ctx.blockInfo.getBlockName() + " and id " + ThreadVFL.getCurrentLogger().ctx.blockInfo.getId());
+        ThreadVFL.getCurrentLogger().log("Running in thread " + Thread.currentThread().threadId());
+        return x * x;
     }
 
 
-    @Nested
-    class LinearFlow {
-        @Test
-        void linearFlow() {
-            ThreadVFL.Runner.StartVFL("Simple Linear test", buffer, () -> {
-                ThreadVFL.Log("This is a log #1");
-                ThreadVFL.Log("Now going to start another block");
-                int result = ThreadVFL.CallPrimarySubBlock("Sum block", "Doing sum of 1, 2", () -> sum(1, 2), integer -> "Calculated sum is {}");
-                ThreadVFL.Log("So now the result is " + result);
-            });
-        }
-    }
-
-    @Nested
-    class AsyncFlow {
-        @Test
-        void asyncTest() {
-            ThreadVFL.Runner.StartVFL("AsyncFlow Test", buffer, () -> {
-                ThreadVFL.Log("Starting async test now...");
-                int r = ThreadVFL.CallPrimarySubBlock("Sum primary", "Starting primary sum block first", () -> sum(1, 2), integer -> "Result of sum block is {}");
-                CompletableFuture<Integer> t1 = ThreadVFL.CallSecondaryJoiningBlock("Sum async", "Squaring in async", () -> {
-                    ThreadVFL.Log("Sleeping now");
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    ThreadVFL.Log("Finished sleeping");
-                    return sum(1, 2);
-                }, integer -> "Result is {}");
-                CompletableFuture<Integer> t2 = ThreadVFL.CallSecondaryJoiningBlock("Multiply async", "Multiply in async", () -> {
-                    ThreadVFL.Log("Sleeping now");
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    ThreadVFL.Log("Finished sleeping");
-                    return multiply(1, 2);
-                }, integer -> "Result is {}", Executors.newVirtualThreadPerTaskExecutor());
-
-                Integer a;
-                Integer b;
-                try {
-                    a = t1.get();
-                    b = t2.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-
-                Integer finalA = a;
-                Integer finalB = b;
-                ThreadVFL.CallPrimarySubBlock("Sum primary 2", "Doing sum of results", () -> sum(finalA, finalB), integer -> "Final result = " + integer);
-                ThreadVFL.Log("Everything is DONE and dusted!!!");
-            });
-        }
-    }
-
-    @Nested
-    class EventFlow {
-
-        void sum(int a, int b, EventPublisherBlock eventPublisherBlock) {
-            ThreadVFL.Runner.StartEventListenerLogger("Sum listener", "Calculating sum of " + a + " " + b, buffer, eventPublisherBlock, () -> {
-                ThreadVFL.Log("Starting event listener of sum");
-                int r = a + b;
-                ThreadVFL.Log("Sum = " + r);
-            });
-        }
-
-        void multiply(int a, int b, EventPublisherBlock eventPublisherBlock) {
-            ThreadVFL.Runner.StartEventListenerLogger("Multiply listener", "Multiplying " + a + " and " + b, buffer, eventPublisherBlock, () -> {
-                ThreadVFL.Log("Starting event listener of multiply");
-                int r = a * b;
-                ThreadVFL.Log("Multiply = " + r);
-            });
-        }
-
-        @Test
-        void linearEventFlow() {
-            ThreadVFL.Runner.StartVFL("Linear event publisher and listener test", buffer, () -> {
-                ThreadVFL.Log("Starting event publisher and listener test");
-                var publisherBlock = ThreadVFL.CreateEventPublisherBlock("On Publish number", "Publishing 2 numbers");
-                sum(1, 2, publisherBlock);
-                multiply(1, 2, publisherBlock);
-                ThreadVFL.Log("Published event now closing");
-            });
-        }
+    int asyncSquare(int a) {
+        square(a);
+        ThreadVFL.getCurrentLogger().log("Another thread starting ...");
+        ThreadVFL.getCurrentLogger().callPrimarySubBlock("nested thead", null, () -> CompletableFuture.supplyAsync(() -> square(a),
+                Executors.newSingleThreadExecutor(r -> {
+                    var t = new Thread(r);
+                    t.setName("NESTED");
+                    return t;
+                })), null);
+        ThreadVFL.getCurrentLogger().log("Another thread Complete " + Thread.currentThread().threadId());
+        return 1;
     }
 }

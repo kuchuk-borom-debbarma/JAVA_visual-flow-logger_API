@@ -1,122 +1,344 @@
 package dev.kuku.vfl.core.vfl_abstracts;
 
-import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
+import dev.kuku.vfl.core.helpers.VFLHelper;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import dev.kuku.vfl.variants.thread_local.ThreadVFL;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
 import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
 
 /**
- * Abstract class for VFL that can process callables.
+ * Abstract base class for VFL implementations that support executing callable operations
+ * within managed sub-blocks with proper logging and context management.
+ * <p>
+ * This class provides a framework for running synchronous and asynchronous operations
+ * while maintaining execution context, logging hierarchy, and sub-block lifecycle.
  */
 public abstract class VFLCallable extends VFL {
 
     /**
-     * Start a primary sub block
+     * Core execution method that orchestrates sub-block creation, logging setup,
+     * and supplier execution with proper context management.
+     * <p>
+     * This method handles the complete lifecycle:
+     * 1. Creates and registers a new sub-block
+     * 2. Generates appropriate start logging
+     * 3. Updates execution context if needed
+     * 4. Delegates to implementation-specific initialization
+     * 5. Executes the supplier with managed logging
+     *
+     * @param <R>                    the return type of the supplier
+     * @param subBlockName           descriptive name for the sub-block being created
+     * @param subBlockStartMessage   optional message logged when sub-block starts
+     * @param subBlockStartType      determines logging behavior and execution flow control
+     * @param supplier               the operation to execute within the sub-block context
+     * @param resultMessageFormatter optional function to format the result for logging
+     * @return the result returned by the supplier
      */
-    public final <R> R callPrimarySubBlock(String blockName, String startMessage, Supplier<R> supplier,
-                                           Function<R, String> endMessageSerializer, Object... args) {
-        var context = getContext();
+    private <R> R executeWithinSubBlock(String subBlockName, String subBlockStartMessage, LogTypeBlockStartEnum subBlockStartType, Supplier<R> supplier, Function<R, String> resultMessageFormatter) {
         ensureBlockStarted();
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
-                startMessage, subBlock.getId(), SUB_BLOCK_START_PRIMARY, context.buffer);
-        context.currentLogId = log.getId();
-        prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_PRIMARY);
-        return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer, args);
+
+        var executionContext = getContext();
+
+        // Create sub-block and register it in the execution buffer
+        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
+
+        // Create and register sub-block start log entry
+        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+                executionContext.blockInfo.getId(),
+                executionContext.currentLogId,
+                subBlockStartMessage,
+                subBlock.getId(),
+                subBlockStartType,
+                executionContext.buffer
+        );
+
+        // Update current log ID if this is a primary sub-block that affects execution flow
+        if (subBlockStartType == SUB_BLOCK_START_PRIMARY) {
+            executionContext.currentLogId = subBlockStartLog.getId();
+        }
+
+        // Delegate to implementation-specific sub-block initialization
+        initializeSubBlockInImplementation(executionContext, subBlock, subBlockStartLog);
+
+        // Execute the supplier with managed logging and result formatting
+        return VFLHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
     }
 
     /**
-     * Create a secondary sub block. This block will join back to main flow once operation is complete.
+     * Simplified execution engine for async operations where the sub-block context
+     * has already been established.
+     * <p>
+     * This method is used internally by async methods to execute suppliers without
+     * repeating the sub-block setup that was already done synchronously.
+     *
+     * @param <R>                    the return type of the supplier
+     * @param supplier               the operation to execute
+     * @param resultMessageFormatter optional function to format the result for logging
+     * @return the result returned by the supplier
      */
-    public final <R> CompletableFuture<R> callSecondaryJoiningBlock(String blockName, String startMessage,
-                                                                    Supplier<R> supplier,
-                                                                    Executor executor, Function<R, String> endMessageSerializer, Object... args) {
-        var context = getContext();
-        ensureBlockStarted();
-        //This will be called in the executor thread
-        Supplier<R> c = () -> {
-            Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
-            SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
-                    startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_JOIN, context.buffer);
-            prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_SECONDARY_JOIN);
-            return VFLHelper.CallFnWithLogger(supplier, getLogger(), endMessageSerializer, args);
-        };
-        if (executor != null)
-            return CompletableFuture.supplyAsync(
-                    c,
-                    executor);
-        return CompletableFuture.supplyAsync(
-                c);
+    private <R> R executeWithExistingSubBlockContext(Supplier<R> supplier, Function<R, String> resultMessageFormatter, Block subBlock, Log subBlockStartLog) {
+        // Execute the supplier with the appropriate logger and result formatting
+        return VFLHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
     }
 
-    /**
-     * Create a secondary sub block. This block will not join back to the main flow.
-     */
-    public final CompletableFuture<Void> callSecondaryNonJoiningBlock(String blockName, String startMessage,
-                                                                      Runnable runnable,
-                                                                      Executor executor) {
-        var context = getContext();
+    // ========== SUPPLY METHOD OVERLOADS ==========
+
+    // Base method with all parameters
+    public final <R> R supply(String subBlockName, String subBlockStartMessage, Supplier<R> supplier, LogTypeBlockStartEnum blockStartType, Function<R, String> endMessageSerializer) {
+        return executeWithinSubBlock(subBlockName, subBlockStartMessage, blockStartType, supplier, endMessageSerializer);
+    }
+
+    // Minimal overload - only mandatory parameters
+    public final <R> R supply(String subBlockName, Supplier<R> supplier) {
+        return executeWithinSubBlock(subBlockName, null, SUB_BLOCK_START_PRIMARY, supplier, null);
+    }
+
+    // With start message
+    public final <R> R supply(String subBlockName, String subBlockStartMessage, Supplier<R> supplier) {
+        return executeWithinSubBlock(subBlockName, subBlockStartMessage, SUB_BLOCK_START_PRIMARY, supplier, null);
+    }
+
+    // With block start type
+    public final <R> R supply(String subBlockName, Supplier<R> supplier, LogTypeBlockStartEnum blockStartType) {
+        return executeWithinSubBlock(subBlockName, null, blockStartType, supplier, null);
+    }
+
+    // With end message serializer
+    public final <R> R supply(String subBlockName, Supplier<R> supplier, Function<R, String> endMessageSerializer) {
+        return executeWithinSubBlock(subBlockName, null, SUB_BLOCK_START_PRIMARY, supplier, endMessageSerializer);
+    }
+
+    // With start message and block start type
+    public final <R> R supply(String subBlockName, String subBlockStartMessage, Supplier<R> supplier, LogTypeBlockStartEnum blockStartType) {
+        return executeWithinSubBlock(subBlockName, subBlockStartMessage, blockStartType, supplier, null);
+    }
+
+    // With start message and end message serializer
+    public final <R> R supply(String subBlockName, String subBlockStartMessage, Supplier<R> supplier, Function<R, String> endMessageSerializer) {
+        return executeWithinSubBlock(subBlockName, subBlockStartMessage, SUB_BLOCK_START_PRIMARY, supplier, endMessageSerializer);
+    }
+
+    // With block start type and end message serializer
+    public final <R> R supply(String subBlockName, Supplier<R> supplier, LogTypeBlockStartEnum blockStartType, Function<R, String> endMessageSerializer) {
+        return executeWithinSubBlock(subBlockName, null, blockStartType, supplier, endMessageSerializer);
+    }
+
+    // ========== RUN METHOD OVERLOADS ==========
+
+    // Base run method with all parameters
+    public final void run(String subBlockName, String subBlockStartMessage, Runnable runnable, LogTypeBlockStartEnum blockStartType) {
+        executeWithinSubBlock(subBlockName, subBlockStartMessage, blockStartType, () -> {
+            runnable.run();
+            return null;
+        }, null);
+    }
+
+    // Minimal run overload
+    public final void run(String subBlockName, Runnable runnable) {
+        run(subBlockName, null, runnable, SUB_BLOCK_START_PRIMARY);
+    }
+
+    // With start message
+    public final void run(String subBlockName, String subBlockStartMessage, Runnable runnable) {
+        run(subBlockName, subBlockStartMessage, runnable, SUB_BLOCK_START_PRIMARY);
+    }
+
+    // With block start type
+    public final void run(String subBlockName, Runnable runnable, LogTypeBlockStartEnum blockStartType) {
+        run(subBlockName, null, runnable, blockStartType);
+    }
+
+    // ========== ASYNC SUPPLY METHOD OVERLOADS ==========
+
+    // Base async supply method
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, String subBlockStartMessage, Supplier<R> supplier, LogTypeBlockStartEnum subBlockStartType, Function<R, String> endMessageSerializer) {
+        // In current thread: create the block, log and push to buffer
         ensureBlockStarted();
-        //This will be called in the executor thread
-        Runnable r = () -> {
-            Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, context.currentLogId, context.buffer);
-            SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(context.blockInfo.getId(), context.currentLogId,
-                    startMessage, subBlock.getId(), SUB_BLOCK_START_SECONDARY_NO_JOIN, context.buffer);
-            prepareLoggerAfterSubBlockStartDataInitializedAndPushed(context, subBlock, log, SUB_BLOCK_START_SECONDARY_NO_JOIN);
-            VFLHelper.CallFnWithLogger(() -> {
+        var executionContext = getContext();
+
+        // Create sub-block and push to buffer
+        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
+
+        // Create and push sub-block start log
+        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+                executionContext.blockInfo.getId(),
+                executionContext.currentLogId,
+                subBlockStartMessage,
+                subBlock.getId(),
+                subBlockStartType,
+                executionContext.buffer
+        );
+
+        // Update current log ID if this is a primary sub-block
+        if (subBlockStartType == SUB_BLOCK_START_PRIMARY) {
+            executionContext.currentLogId = subBlockStartLog.getId();
+        }
+
+        // Execute asynchronously in new thread
+        return CompletableFuture.supplyAsync(() -> {
+            // In new thread: setup async sub-block context
+            setupAsyncSubBlockContext(subBlock, subBlockStartLog);
+            // Execute the supplier with existing context
+            return executeWithExistingSubBlockContext(supplier, endMessageSerializer, subBlock, subBlockStartLog);
+        });
+    }
+
+    // Minimal async supply overload
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, Supplier<R> supplier) {
+        return supplyAsync(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null);
+    }
+
+    // With start message
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, String subBlockStartMessage, Supplier<R> supplier) {
+        return supplyAsync(subBlockName, subBlockStartMessage, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null);
+    }
+
+    // With block start type
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, Supplier<R> supplier, LogTypeBlockStartEnum blockStartType) {
+        return supplyAsync(subBlockName, null, supplier, blockStartType, null);
+    }
+
+    // With end message serializer
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, Supplier<R> supplier, Function<R, String> endMessageSerializer) {
+        return supplyAsync(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, endMessageSerializer);
+    }
+
+    // ========== ASYNC RUN METHOD OVERLOADS ==========
+
+    // Base async run method
+    public final CompletableFuture<Void> runAsync(String subBlockName, String subBlockStartMessage, Runnable runnable, LogTypeBlockStartEnum subBlockStartType) {
+        // In current thread: create the block, log and push to buffer
+        ensureBlockStarted();
+        var executionContext = getContext();
+
+        // Create sub-block and push to buffer
+        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
+
+        // Create and push sub-block start log
+        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+                executionContext.blockInfo.getId(),
+                executionContext.currentLogId,
+                subBlockStartMessage,
+                subBlock.getId(),
+                subBlockStartType,
+                executionContext.buffer
+        );
+
+        // Update current log ID if this is a primary sub-block
+        if (subBlockStartType == SUB_BLOCK_START_PRIMARY) {
+            executionContext.currentLogId = subBlockStartLog.getId();
+        }
+
+        // Execute asynchronously in new thread
+        return CompletableFuture.runAsync(() -> {
+            // In new thread: setup async sub-block context
+            setupAsyncSubBlockContext(subBlock, subBlockStartLog);
+
+            // Execute the runnable with existing context
+            executeWithExistingSubBlockContext(() -> {
                 runnable.run();
                 return null;
-            }, getLogger(), null);
-        };
-        if (executor != null)
-            return CompletableFuture.runAsync(r, executor);
-        return CompletableFuture.runAsync(r);
+            }, null, subBlock, subBlockStartLog);
+        });
     }
 
-    /**
-     * Setup an event publisher and return it's data. It is added as part of the main flow. <br>
-     * This event block data needs to be used by event listener for starting an event
-     */
-    public final EventPublisherBlock createEventPublisherBlock(String branchName, String startMessage, Object... args) {
-        var context = getContext();
-        ensureBlockStarted();
-        //Create event publisher block
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(branchName, context.currentLogId, context.buffer);
-        //Create log in current logger about publishing event
-        SubBlockStartLog log = VFLHelper.CreateLogAndPush2Buffer(
-                context.blockInfo.getId(),
-                context.currentLogId,
-                FormatMessage(startMessage, args),
-                subBlock.getId(),
-                PUBLISH_EVENT,
-                context.buffer);
-        getContext().currentLogId = log.getId();
-        return new EventPublisherBlock(subBlock);
+    // Minimal async run overload
+    public final CompletableFuture<Void> runAsync(String subBlockName, Runnable runnable) {
+        return runAsync(subBlockName, null, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN);
     }
 
-    protected abstract VFLCallable getLogger();
+    // With start message
+    public final CompletableFuture<Void> runAsync(String subBlockName, String subBlockStartMessage, Runnable runnable) {
+        return runAsync(subBlockName, subBlockStartMessage, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN);
+    }
+
+    // With block start type
+    public final CompletableFuture<Void> runAsync(String subBlockName, Runnable runnable, LogTypeBlockStartEnum blockStartType) {
+        return runAsync(subBlockName, null, runnable, blockStartType);
+    }
+
+    // ========== EVENT PUBLISHER METHODS ==========
 
     /**
-     * This method is invoked after pushing the sub block start log & sub block data to the buffer. <br>
-     * It's main purpose is to setup the logger to handle the sub block start.
-     * <br>
-     * {@link ThreadVFL}
-     * In the Child class above, It is used to add a new logger instance to the ThreadLocal logger stack.
+     * Creates and registers an event publisher block for asynchronous event-driven execution.
      *
-     * @param parentBlockCtx   context under which the sub block start operation was invoked
-     * @param subBlock         The subblock data that was created and pushed to buffer
-     * @param subBlockStartLog The subblock start log that was created and pushed to buffer
-     * @param logType          The type of subblock start.
+     * <p>The returned {@link EventPublisherBlock} must be used with the appropriate runner methods
+     * to ensure proper logger initialization and context propagation:
+     * <ul>
+     * <li>{@link dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner#startEventListenerLogger}</li>
+     * <li>{@link dev.kuku.vfl.core.vfl_abstracts.runner.VFLFnRunner#startEventListenerLogger}</li>
+     * </ul>
+     *
+     * @param eventBranchName     descriptive identifier for the event publishing branch
+     * @param publishStartMessage message logged when the event publisher is created, or null for no message
+     * @return {@link EventPublisherBlock} containing the context required by event listeners
+     * @see EventPublisherBlock
      */
-    protected abstract void prepareLoggerAfterSubBlockStartDataInitializedAndPushed(VFLBlockContext parentBlockCtx, Block subBlock, SubBlockStartLog subBlockStartLog, LogTypeBlockStartEnum logType);
+    public final EventPublisherBlock createEventPublisherBlock(String eventBranchName, String publishStartMessage) {
+        var executionContext = getContext();
+        ensureBlockStarted();
+
+        // Create event publisher sub-block and register it
+        Block eventPublisherSubBlock = VFLHelper.CreateBlockAndPush2Buffer(eventBranchName, executionContext.currentLogId, executionContext.buffer);
+
+        // Create log entry documenting the event publisher creation
+        SubBlockStartLog eventPublishLog = VFLHelper.CreateLogAndPush2Buffer(
+                executionContext.blockInfo.getId(),
+                executionContext.currentLogId,
+                publishStartMessage,
+                eventPublisherSubBlock.getId(),
+                PUBLISH_EVENT,
+                executionContext.buffer
+        );
+
+        getContext().currentLogId = eventPublishLog.getId();
+        return new EventPublisherBlock(eventPublisherSubBlock);
+    }
+
+    // ========== ABSTRACT METHODS ==========
+
+    /**
+     * Provides the logger instance that should be used for sub-block execution.
+     * <p>
+     * Implementations must return a logger that is properly configured for the
+     * current execution context and sub-block hierarchy. This logger will be
+     * used by the VFLHelper to manage logging during supplier/runnable execution.
+     *
+     * @return VFLCallable instance configured as the appropriate logger for sub-block operations
+     */
+    protected abstract VFLCallable getSubBlockLogger();
+
+    /**
+     * Performs implementation-specific initialization after a sub-block and its start log
+     * have been created and registered in the execution buffer.
+     * <p>
+     * This hook allows implementations to set up any necessary context, logging infrastructure,
+     * or thread-local state required for proper sub-block execution. For example, ThreadVFL
+     * uses this to push a new logger instance onto its ThreadLocal logger stack.
+     *
+     * @param executionContext the current execution context when sub-block initialization was triggered
+     * @param createdSubBlock  the sub-block that was created and registered
+     * @param subBlockStartLog the start log entry that was created for this sub-block
+     */
+    protected abstract void initializeSubBlockInImplementation(VFLBlockContext executionContext, Block createdSubBlock, SubBlockStartLog subBlockStartLog);
+
+    /**
+     * Establishes the necessary execution context for a sub-block running on an asynchronous thread.
+     * <p>
+     * This method is called on the async thread before executing the supplier/runnable, allowing
+     * implementations to set up thread-local variables, logging context, or other thread-specific
+     * state that was established in the original calling thread.
+     *
+     * @param subBlock         the sub-block that will execute on this async thread
+     * @param subBlockStartLog the start log entry associated with this sub-block
+     */
+    protected abstract void setupAsyncSubBlockContext(Block subBlock, Log subBlockStartLog);
 }
