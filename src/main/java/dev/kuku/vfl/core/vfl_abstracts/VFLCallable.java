@@ -24,7 +24,7 @@ import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
 public abstract class VFLCallable extends VFL {
 
     /**
-     * Core execution engine that orchestrates sub-block creation, logging setup,
+     * Core execution method that orchestrates sub-block creation, logging setup,
      * and supplier execution with proper context management.
      * <p>
      * This method handles the complete lifecycle:
@@ -74,7 +74,7 @@ public abstract class VFLCallable extends VFL {
 
     /**
      * Simplified execution engine for async operations where the sub-block context
-     * has already been established in the calling thread.
+     * has already been established.
      * <p>
      * This method is used internally by async methods to execute suppliers without
      * repeating the sub-block setup that was already done synchronously.

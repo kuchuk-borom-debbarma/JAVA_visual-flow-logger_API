@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added Completable future with basics for now">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Refactored VFLCallable">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -306,15 +302,7 @@
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
-      <workItem from="1754233008979" duration="16334000" />
-    </task>
-    <task id="LOCAL-00094" summary="updated ScopedLoggerImpl to support new changes to base logger">
-      <option name="closed" value="true" />
-      <created>1752767861325</created>
-      <option name="number" value="00094" />
-      <option name="presentableId" value="LOCAL-00094" />
-      <option name="project" value="LOCAL" />
-      <updated>1752767861325</updated>
+      <workItem from="1754233008979" duration="16440000" />
     </task>
     <task id="LOCAL-00095" summary="added clean up method for in memory flush handler for testing">
       <option name="closed" value="true" />
@@ -700,7 +688,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754266717730</updated>
     </task>
-    <option name="localTasksCounter" value="143" />
+    <task id="LOCAL-00143" summary="Refactored VFLCallable">
+      <option name="closed" value="true" />
+      <created>1754271584148</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1754271584148</updated>
+    </task>
+    <option name="localTasksCounter" value="144" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -718,7 +714,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Improved fluent api design" />
     <MESSAGE value="Working on fluent API progress" />
     <MESSAGE value="added byte buddy for future use" />
     <MESSAGE value="Refactoring to make complex loggers simpler" />
@@ -743,7 +738,8 @@
     <MESSAGE value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
     <MESSAGE value="intercepting completable futures with advice" />
     <MESSAGE value="Added Completable future with basics for now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Completable future with basics for now" />
+    <MESSAGE value="Refactored VFLCallable" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored VFLCallable" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
