@@ -4,25 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Refactored ThreadVFL and its runner">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/supplied/SuppliedVFL.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Refactored ThreadVFL and its runner. Next is fixing fluents">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/byte_buddy_system/ByteBuddyVFLData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/byte_buddy_system/CompletableFutureInterceptor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/VFLBlockContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/VFLBlockContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLFn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLFn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/wrappers/VFLCompletableFuture.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/PassVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/PassVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/FluentThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/Helper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/InheritableThreadVFLStack.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/variants/thread_local/ThreadVFLRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLRunner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/buffer/VFLHubTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/buffer/VFLHubTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -318,15 +302,7 @@
       <workItem from="1753621987852" duration="3376000" />
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
-      <workItem from="1754233008979" duration="20329000" />
-    </task>
-    <task id="LOCAL-00096" summary="added thread safe async virtual thread buffer">
-      <option name="closed" value="true" />
-      <created>1752779861173</created>
-      <option name="number" value="00096" />
-      <option name="presentableId" value="LOCAL-00096" />
-      <option name="project" value="LOCAL" />
-      <updated>1752779861173</updated>
+      <workItem from="1754233008979" duration="20429000" />
     </task>
     <task id="LOCAL-00097" summary="Added async sub block fn handler that will copy current context, create a new scope in that environment and return it">
       <option name="closed" value="true" />
@@ -712,7 +688,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754271673219</updated>
     </task>
-    <option name="localTasksCounter" value="145" />
+    <task id="LOCAL-00145" summary="Refactored ThreadVFL and its runner. Next is fixing fluents">
+      <option name="closed" value="true" />
+      <created>1754275545488</created>
+      <option name="number" value="00145" />
+      <option name="presentableId" value="LOCAL-00145" />
+      <option name="project" value="LOCAL" />
+      <updated>1754275545488</updated>
+    </task>
+    <option name="localTasksCounter" value="146" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -730,7 +714,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactoring to make complex loggers simpler" />
     <MESSAGE value="PROGRESS" />
     <MESSAGE value="updated workscpace seting" />
     <MESSAGE value="Removed package info for now" />
@@ -755,7 +738,8 @@
     <MESSAGE value="Refactored VFLCallable" />
     <MESSAGE value="Improved comment" />
     <MESSAGE value="Refactored ThreadVFL and its runner" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored ThreadVFL and its runner" />
+    <MESSAGE value="Refactored ThreadVFL and its runner. Next is fixing fluents" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored ThreadVFL and its runner. Next is fixing fluents" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
