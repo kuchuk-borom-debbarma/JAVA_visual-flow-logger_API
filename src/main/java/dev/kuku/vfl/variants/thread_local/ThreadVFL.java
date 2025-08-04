@@ -2,6 +2,7 @@ package dev.kuku.vfl.variants.thread_local;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.vfl_abstracts.VFLCallable;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,9 +30,9 @@ public class ThreadVFL extends VFLCallable {
      * We have to do this because it means that the passed function for the sub block is going to be invoked and when the sub block's function attempts to get the logger will give it the latest logger i.e the logger for the sub block which is exactly what we want
      */
     @Override
-    protected void afterSubBlockStartInit(VFLBlockContext parentBlockCtx, Block subBlock) {
+    protected void afterSubBlockStartInit(VFLBlockContext withContext, Block subBlock, SubBlockStartLog startLog) {
         /// inheritedContext is false because this is not an inherited from parent thread. inheritedContext is true only when a child thread is spawned. Check out {@link InheritableThreadVFLStack}
-        var subLoggerCtx = new VFLBlockContext(subBlock, false, parentBlockCtx.buffer);
+        var subLoggerCtx = new VFLBlockContext(subBlock, false, withContext.buffer);
         ThreadVFL newLogger = new ThreadVFL(subLoggerCtx);
         ThreadVFL.loggerStack.get().push(newLogger);
         String threadInfo = getThreadInfo();
@@ -54,7 +55,7 @@ public class ThreadVFL extends VFLCallable {
     }
 
     @Override
-    protected void close(String endMessage) {
+    public void close(String endMessage) {
         super.close(endMessage);
         popLoggerFromStack();
     }
