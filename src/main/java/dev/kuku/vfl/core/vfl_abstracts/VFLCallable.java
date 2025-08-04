@@ -84,7 +84,7 @@ public abstract class VFLCallable extends VFL {
      * @param resultMessageFormatter optional function to format the result for logging
      * @return the result returned by the supplier
      */
-    private <R> R executeWithExistingSubBlockContext(Supplier<R> supplier, Function<R, String> resultMessageFormatter) {
+    private <R> R executeWithExistingSubBlockContext(Supplier<R> supplier, Function<R, String> resultMessageFormatter, Block subBlock, Log subBlockStartLog) {
         // Execute the supplier with the appropriate logger and result formatting
         return VFLHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
     }
@@ -187,7 +187,7 @@ public abstract class VFLCallable extends VFL {
             // In new thread: setup async sub-block context
             setupAsyncSubBlockContext(subBlock, subBlockStartLog);
             // Execute the supplier with existing context
-            return executeWithExistingSubBlockContext(supplier, endMessageSerializer);
+            return executeWithExistingSubBlockContext(supplier, endMessageSerializer, subBlock, subBlockStartLog);
         });
     }
 
@@ -246,7 +246,7 @@ public abstract class VFLCallable extends VFL {
             executeWithExistingSubBlockContext(() -> {
                 runnable.run();
                 return null;
-            }, null);
+            }, null, subBlock, subBlockStartLog);
         });
     }
 

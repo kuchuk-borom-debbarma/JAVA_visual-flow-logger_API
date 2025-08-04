@@ -1,4 +1,4 @@
-package dev.kuku.vfl.variants;
+package dev.kuku.vfl.impl;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;

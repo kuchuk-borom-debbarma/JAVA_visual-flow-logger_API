@@ -1,4 +1,4 @@
-package dev.kuku.vfl.variants.thread_local;
+package dev.kuku.vfl.impl.threadlocal;
 
 
 import dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable;
