@@ -5,9 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added deep nested flow">
+      <change afterPath="$PROJECT_DIR$/src/test/java/threadvfl/StaticFluentThreadVFLTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/StaticThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/StaticThreadVFLTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/SupplierStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent_api/base/steps/SupplierStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockCallableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockCallableStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,6 +87,7 @@
     "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.StaticFluentThreadVFLTest.flatFlow.executor": "Run",
     "JUnit.StaticThreadVFLTest.asyncFlow.executor": "Run",
     "JUnit.StaticThreadVFLTest.deepNestedFlow.executor": "Run",
     "JUnit.StaticThreadVFLTest.flatFlow.executor": "Run",
@@ -143,17 +148,19 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.StaticThreadVFLTest.asyncFlow">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
+  <component name="RunManager" selected="JUnit.StaticFluentThreadVFLTest.flatFlow">
+    <configuration name="StaticFluentThreadVFLTest.flatFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
-      <option name="VM_PARAMETERS" value="-Djdk.instrument.traceUsage" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="dev.kuku.*" />
+          <option name="PATTERN" value="threadvfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticFluentThreadVFLTest" />
+      <option name="METHOD_NAME" value="flatFlow" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -223,7 +230,7 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.Main" />
+      <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
       <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
       <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
       <item itemvalue="JUnit.StaticThreadVFLTest.flatFlow" />
@@ -231,11 +238,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.flatNestedFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.flatFlow" />
-        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -315,15 +322,7 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-      <workItem from="1754357082202" duration="5671000" />
-    </task>
-    <task id="LOCAL-00109" summary="updated scoped logger and made some design choice">
-      <option name="closed" value="true" />
-      <created>1752835506596</created>
-      <option name="number" value="00109" />
-      <option name="presentableId" value="LOCAL-00109" />
-      <option name="project" value="LOCAL" />
-      <updated>1752835506596</updated>
+      <workItem from="1754357082202" duration="8952000" />
     </task>
     <task id="LOCAL-00110" summary="updated scoped logger and made some design choice">
       <option name="closed" value="true" />
@@ -709,7 +708,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754361318984</updated>
     </task>
-    <option name="localTasksCounter" value="158" />
+    <task id="LOCAL-00158" summary="Added deep nested flow">
+      <option name="closed" value="true" />
+      <created>1754362792366</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1754362792366</updated>
+    </task>
+    <option name="localTasksCounter" value="159" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

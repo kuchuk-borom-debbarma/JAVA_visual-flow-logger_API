@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static dev.kuku.vfl.core.helpers.Util.UpdateEndMsg;
+
+
 @RequiredArgsConstructor
 public class AsSubBlockCallableStep<R> {
     private final Supplier<R> fn;
@@ -15,16 +18,6 @@ public class AsSubBlockCallableStep<R> {
     private String startMessage;
     private Function<R, String> endMessage;
 
-    private Function<R, String> updateEndMsg(Function<R, String> msgSerializer, Object... args) {
-        return (r) -> {
-            // Get the message template from the user's serializer
-            String messageTemplate = msgSerializer.apply(r);
-
-            // Format the message with user args + return value
-            // Args convention: user args fill {0}, {1}, {2}... and return value fills the last placeholder
-            return Util.FormatMessage(messageTemplate, args, r);
-        };
-    }
 
     public AsSubBlockCallableStep<R> withStartMessage(String startMessage) {
         this.startMessage = startMessage;
@@ -32,12 +25,16 @@ public class AsSubBlockCallableStep<R> {
     }
 
     public AsSubBlockCallableStep<R> withEndMessage(Function<R, String> endMessage, Object... args) {
-        this.endMessage = updateEndMsg(endMessage, args);
+        this.endMessage = UpdateEndMsg(endMessage, args);
         return this;
     }
 
     public AsSubBlockCallableStep<R> withEndMessage(String endMessage, Object... args) {
-        this.endMessage = (r) -> Util.FormatMessage(endMessage, args, r);
+
+        this.endMessage = (r) -> {
+            Object[] allArgs = Util.combineArgsWithReturn(args, r);
+            return Util.FormatMessage(endMessage, allArgs);
+        };
         return this;
     }
 
