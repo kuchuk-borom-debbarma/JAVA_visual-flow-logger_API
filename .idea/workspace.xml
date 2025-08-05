@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed string formatter bug which contains return value">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Tested nested fluent api for thread vfl">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/TestBlockLibrary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotationInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockCallableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockCallableStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockRunnableAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockRunnableAsyncStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/StaticFluentThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/StaticFluentThreadVFLTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,8 +22,8 @@
         <option value="Enum" />
         <option value="Kotlin Class" />
         <option value="Record" />
-        <option value="Interface" />
         <option value="package-info" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -36,7 +36,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="enhancement/fluent" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -76,6 +76,7 @@
     "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "Application.ByteBuddySupplierTest.executor": "Run",
     "Application.Main.executor": "Run",
+    "Application.TestBlockLibrary.executor": "Run",
     "JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor": "Run",
     "JUnit.ByteBuddyInterceptorTest.executor": "Run",
     "JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor": "Run",
@@ -109,9 +110,10 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "enhancement/fluent",
+    "git-widget-placeholder": "main",
     "ignore.preview.features.used": "true",
     "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -122,7 +124,7 @@
     "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.intentionPowerPack",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   },
@@ -147,7 +149,20 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.StaticFluentThreadVFLTest.nest">
+  <component name="RunManager" selected="Application.TestBlockLibrary">
+    <configuration name="TestBlockLibrary" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="dev.kuku.vfl.TestBlockLibrary" />
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="dev.kuku.vfl.Demo" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="StaticFluentThreadVFLTest.flatFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
@@ -212,44 +227,28 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="StaticThreadVFLTest.flatNestedFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadvfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadvfl" />
-      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
-      <option name="METHOD_NAME" value="flatNestedFlow" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
+      <item itemvalue="Application.TestBlockLibrary" />
       <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
       <item itemvalue="JUnit.StaticFluentThreadVFLTest.nest" />
       <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
       <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
-      <item itemvalue="JUnit.StaticThreadVFLTest.flatNestedFlow" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.TestBlockLibrary" />
         <item itemvalue="JUnit.StaticFluentThreadVFLTest.nest" />
         <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
-        <item itemvalue="JUnit.StaticThreadVFLTest.flatNestedFlow" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.23892.409" />
+        <option value="bundled-js-predefined-d6986cc7102b-e03c56caf84a-JavaScript-IU-252.23892.409" />
       </set>
     </attachedChunks>
   </component>
@@ -322,6 +321,7 @@
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
       <workItem from="1754357082202" duration="10486000" />
+      <workItem from="1754376850352" duration="2582000" />
     </task>
     <task id="LOCAL-00111" summary="ignored target">
       <option name="closed" value="true" />
@@ -772,14 +772,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFLRunner.java</url>
           <line>25</line>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java</url>
-          <line>75</line>
-          <properties>
-            <option name="lambda-ordinal" value="-1" />
-          </properties>
-          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
