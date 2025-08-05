@@ -10,6 +10,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
 import static dev.kuku.vfl.core.helpers.Util.UpdateEndMsg;
 
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class AsSubBlockSupplierAsyncStep<R> {
     private Executor executor;
 
 
-    public AsSubBlockSupplierAsyncStep<R> withStartMessage(String startMessage) {
-        this.startMessage = startMessage;
+    public AsSubBlockSupplierAsyncStep<R> withStartMessage(String startMessage, Object... args) {
+        this.startMessage = FormatMessage(startMessage, args);
         return this;
     }
 

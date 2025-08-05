@@ -18,7 +18,8 @@ public class StaticFluentThreadVFLTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return StaticThreadVFL.LogFn(() -> a * a, integer -> "Square of " + a + " = " + integer);
+        return StaticFluentThreadVFL.Call(() -> a * a)
+                .asLog("Square of {} is {}", a);
     }
 
     VFLBuffer createBuffer(String fileName) {
@@ -32,6 +33,26 @@ public class StaticFluentThreadVFLTest {
             StaticFluentThreadVFL.Log("Starting {} linear flow", this.getClass().getSimpleName());
             StaticFluentThreadVFL.Call(() -> square(2))
                     .asLog("Result is {}");
+            StaticFluentThreadVFL.Run(() -> square(3))
+                    .andLog("GGEZ {}", "song");
+        });
+    }
+
+    @Test
+    void nest() {
+        ThreadVFLRunner.StartVFL("nest test", createBuffer("nestTest"), () -> {
+            StaticFluentThreadVFL.Log("Starting {} nested flow", this.getClass().getSimpleName());
+
+            StaticFluentThreadVFL.Call(() -> square(3))
+                    .asSubBlock("Sum block")
+                    .withStartMessage("Squaring {}", 3)
+                    .withEndMessage("Result of {} is {}", 3)
+                    .execute();
+
+            StaticFluentThreadVFL.Run(() -> square(4))
+                    .asSubBlock("Sum run block")
+                    .execute();
+
         });
     }
 }

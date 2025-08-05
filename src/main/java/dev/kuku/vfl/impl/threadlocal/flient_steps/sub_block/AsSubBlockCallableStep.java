@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
 import static dev.kuku.vfl.core.helpers.Util.UpdateEndMsg;
 
 
@@ -19,8 +20,8 @@ public class AsSubBlockCallableStep<R> {
     private Function<R, String> endMessage;
 
 
-    public AsSubBlockCallableStep<R> withStartMessage(String startMessage) {
-        this.startMessage = startMessage;
+    public AsSubBlockCallableStep<R> withStartMessage(String startMessage, Object... args) {
+        this.startMessage = FormatMessage(startMessage, args);
         return this;
     }
 

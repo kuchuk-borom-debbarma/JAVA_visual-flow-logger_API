@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import static dev.kuku.vfl.core.helpers.Util.FormatMessage;
+
 @RequiredArgsConstructor
 public class AsSubBlockRunnableAsyncStep {
     private final Runnable supplier;
@@ -15,8 +17,8 @@ public class AsSubBlockRunnableAsyncStep {
     private Executor executor;
 
 
-    public AsSubBlockRunnableAsyncStep withStartMessage(String startMessage) {
-        this.startMessage = startMessage;
+    public AsSubBlockRunnableAsyncStep withStartMessage(String startMessage, Object... args) {
+        this.startMessage = FormatMessage(startMessage, args);
         return this;
     }
 
