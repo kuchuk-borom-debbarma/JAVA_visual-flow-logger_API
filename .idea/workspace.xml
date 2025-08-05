@@ -4,17 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Need second main function to run">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/Foo.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Wrote basic logic but not tested yet">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLAnnotationCompletableFuture.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/VFLBootstrap.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotationInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLInstrumentation.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -324,15 +317,7 @@
       <workItem from="1754233008979" duration="21131000" />
       <workItem from="1754357082202" duration="10486000" />
       <workItem from="1754376850352" duration="9630000" />
-      <workItem from="1754404906077" duration="4682000" />
-    </task>
-    <task id="LOCAL-00113" summary="updated todos">
-      <option name="closed" value="true" />
-      <created>1752839805519</created>
-      <option name="number" value="00113" />
-      <option name="presentableId" value="LOCAL-00113" />
-      <option name="project" value="LOCAL" />
-      <updated>1752839805520</updated>
+      <workItem from="1754404906077" duration="7526000" />
     </task>
     <task id="LOCAL-00114" summary="updated todos">
       <option name="closed" value="true" />
@@ -718,7 +703,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754388662287</updated>
     </task>
-    <option name="localTasksCounter" value="162" />
+    <task id="LOCAL-00162" summary="Wrote basic logic but not tested yet">
+      <option name="closed" value="true" />
+      <created>1754409733407</created>
+      <option name="number" value="00162" />
+      <option name="presentableId" value="LOCAL-00162" />
+      <option name="project" value="LOCAL" />
+      <updated>1754409733407</updated>
+    </task>
+    <option name="localTasksCounter" value="163" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -736,7 +729,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Created new dto for inheritable thread local" />
     <MESSAGE value="Refactored to give better names" />
     <MESSAGE value="Cleaned up code" />
     <MESSAGE value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
@@ -761,7 +753,8 @@
     <MESSAGE value="Fixed string formatter bug which contains return value" />
     <MESSAGE value="Basic setup done" />
     <MESSAGE value="Need second main function to run" />
-    <option name="LAST_COMMIT_MESSAGE" value="Need second main function to run" />
+    <MESSAGE value="Wrote basic logic but not tested yet" />
+    <option name="LAST_COMMIT_MESSAGE" value="Wrote basic logic but not tested yet" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

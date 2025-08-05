@@ -20,7 +20,7 @@ public class ThreadVFLAnnotation {
     static VFLBuffer buffer;
     private static boolean initialized = false;
     // If a sub block is started in a new thread this variable will store the started sub block
-    private static ThreadLocal<Block> startedSubBlockInParentThread = new ThreadLocal<>();
+     static ThreadLocal<Block> startedSubBlockInParentThread = new ThreadLocal<>();
 
     public static synchronized void initialise(VFLBuffer buffer) {
         if (initialized) {
@@ -154,38 +154,40 @@ public class ThreadVFLAnnotation {
             //1. Start of a new operation if startedSubBlockInParentThread is null
             //2. Sub block start in a new thread if startedSubBlockInParentThread is valid
 
-            //Scenario 2
-            if (startedSubBlockInParentThread.get() != null) {
-                //Create a new stack and set it as this thread's logger stack by pushing startedSubBlockInParent to the stack
-                Stack<ThreadVFL> stack = new Stack<>();
-                stack.push(new ThreadVFL(new VFLBlockContext(startedSubBlockInParentThread.get(), buffer)));
+            //Scenario 1
+            if (startedSubBlockInParentThread.get() == null) {
+                //Create root block and push it to a new stack
+                Block rootBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, null, buffer);
+                ThreadVFL rootLogger = new ThreadVFL(new VFLBlockContext(rootBlock, buffer));
+                loggerStack = new Stack<>();
+                loggerStack.push(rootLogger);
                 return;
             }
-            //Scenario 1
-            //Create root block and push it to a new stack
-            Block rootBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, null, buffer);
-            ThreadVFL rootLogger = new ThreadVFL(new VFLBlockContext(rootBlock, buffer));
-            loggerStack = new Stack<>();
-            loggerStack.push(rootLogger);
-        } else {
-            //If logger stack is valid it's already part of an on-going flow and this method invocation is a sub block start
-            VFLBlockContext parentBlock = ThreadVFL.getCurrentLogger().loggerContext;
-            Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
-            SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
-                    parentBlock.blockInfo.getId(),
-                    parentBlock.currentLogId,
-                    null,
-                    subBlock.getId(),
-                    LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY, buffer);
-            //Update flow
-            parentBlock.currentLogId = subBlockStartLog.getId();
+            //Scenario 2
+            //Create a new stack and set it as this thread's logger stack by pushing startedSubBlockInParent to the stack
+            Stack<ThreadVFL> stack = new Stack<>();
+            //We will clean up startedSubBlockInParent when the thread's stack is cleaned.
+            stack.push(new ThreadVFL(new VFLBlockContext(startedSubBlockInParentThread.get(), buffer)));
+            return;
         }
+        //If logger stack is valid it's already part of an on-going flow and this method invocation is a sub block start
+        VFLBlockContext parentBlock = ThreadVFL.getCurrentLogger().loggerContext;
+        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
+        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+                parentBlock.blockInfo.getId(),
+                parentBlock.currentLogId,
+                null,
+                subBlock.getId(),
+                LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY, buffer);
+        //Update flow in parentBlock
+        parentBlock.currentLogId = subBlockStartLog.getId();
     }
 
     @Advice.OnMethodExit
     static void onExit() {
         //This will close the block and pop the logger from thread and remove the stack if it's empty.
         ThreadVFL.getCurrentLogger().onClose(null);
+        //if logger stack has been removed so root caller has ended
         if (ThreadVFL.LOGGER_STACK.get() == null) {
             //If startedSubBlockInParentThread is null then it's root logger and this marks the end of the operation
             if (startedSubBlockInParentThread.get() == null) {
