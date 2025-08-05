@@ -15,6 +15,16 @@ public class StaticThreadVFLTest {
         return StaticThreadVFL.LogFn(() -> a * a, integer -> "Square of " + a + " = " + integer);
     }
 
+    void transaction(String item) {
+        StaticThreadVFL.Log("Transaction " + item);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        StaticThreadVFL.Log("Finished transaction " + item);
+    }
+
     VFLBuffer createBuffer(String fileName) {
         NestedJsonFlushHandler f = new NestedJsonFlushHandler("test/output/" + StaticThreadVFLTest.class.getSimpleName() + "/" + fileName + ".json");
         return new AsyncVFLBuffer(100, 3000, 100, f, Executors.newVirtualThreadPerTaskExecutor(), Executors.newSingleThreadScheduledExecutor());
@@ -30,7 +40,16 @@ public class StaticThreadVFLTest {
     }
 
     @Test
-    void nestedFlow() {
-
+    void flatNestedFlow() {
+        ThreadVFLRunner.StartVFL("Nested FLow", createBuffer("flatNestedFlow.json"), () -> {
+            StaticThreadVFL.Log("Starting nested FLow right now");
+            int a = 2;
+            int finalA = a;
+            a = StaticThreadVFL.Supply("Square block", "Starting to sqaure", () -> square(finalA), integer -> "Result is " + integer);
+            StaticThreadVFL.Log("Updated a = " + a);
+            int finalA1 = a;
+            StaticThreadVFL.Run("Transaction Block", "Transactioning " + a, () -> transaction(String.valueOf(finalA1)));
+            StaticThreadVFL.Log("Finished nested FLow right now");
+        });
     }
 }
