@@ -1,10 +1,27 @@
 package dev.kuku;
 
+import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.impl.threadlocal.VFLBlock;
+
 public class Main {
+    private static VFLBuffer globalBuffer;
+
+    static {
+        VFLBootstrap.init();
+    }
+
     public static void main(String... args) {
-        //TODO configuration using spring or file {@link https://claude.ai/chat/28eca1e0-9d4a-4465-836a-5d1feed5a3c4}
-        //TODO create runner for SuppliedVFL
-        //TODO create static logger version creator
-        //TODO LogFn BUT takes runnable
+        foo();
+    }
+
+    @VFLBlock
+    static void foo() {
+        System.out.println("hello");
+        bar();
+    }
+
+    @VFLBlock
+    static void bar() {
+        System.out.println("bar");
     }
 }

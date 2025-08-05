@@ -78,4 +78,14 @@ public class AsyncVFLBuffer extends VFLBufferWithFlushHandlerBase {
             throw new RuntimeException("Interrupted during shutdown", e);
         }
     }
+
+    @Override
+    public String toString() {
+        return "AsyncVFLBuffer{" +
+                "flushTimeout=" + flushTimeout +
+                ", flushHandler=" + flushHandler +
+                ", periodicExecutor=" + periodicExecutor +
+                ", flushExecutor=" + flushExecutor +
+                '}';
+    }
 }

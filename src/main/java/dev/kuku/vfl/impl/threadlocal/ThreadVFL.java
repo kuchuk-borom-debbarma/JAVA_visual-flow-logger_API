@@ -149,16 +149,24 @@ public class ThreadVFL extends VFLCallable {
         log.debug("Initialized async ThreadVFL stack for thread: {}", Thread.currentThread().getName());
     }
 
-    @Override
-    public void close(String endMessage) {
+    void onClose(String endMessage) {
         super.close(endMessage);
+        //This should point to this logger because thread is sequential
         var removedLogger = LOGGER_STACK.get().pop();
+        if(removedLogger != this){
+            throw new IllegalStateException("Latest logger is NOT same as this logger");
+        }
         String loggerId = Util.trimId(removedLogger.loggerContext.blockInfo.getId());
         log.debug("Removed logger from stack {} for thread: {}", loggerId, Thread.currentThread().getName());
         if (LOGGER_STACK.get().isEmpty()) {
             log.debug("Closing ThreadVFL stack for thread: {}-{}", Thread.currentThread().getName(), Thread.currentThread().threadId());
             LOGGER_STACK.remove();
         }
+    }
+
+    @Override
+    public void close(String endMessage) {
+        onClose(endMessage);
     }
 
     /**

@@ -4,12 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Tested nested fluent api for thread vfl">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/TestBlockLibrary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotationInitializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLBlock.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Basic setup done">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/VFLBootstrap.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLInstrumentation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/TestBlockLibrary.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncVFLBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncVFLBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/NestedJsonFlushHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/NestedJsonFlushHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotationInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotationInitializer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +45,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="enhancement/fluent" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -77,6 +86,8 @@
     "Application.ByteBuddySupplierTest.executor": "Run",
     "Application.Main.executor": "Run",
     "Application.TestBlockLibrary.executor": "Run",
+    "Application.VFLBootstrap.executor": "Run",
+    "JUnit.AnnotationTest.nest.executor": "Run",
     "JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor": "Run",
     "JUnit.ByteBuddyInterceptorTest.executor": "Run",
     "JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor": "Run",
@@ -108,9 +119,10 @@
     "Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "feature/annotation",
     "ignore.preview.features.used": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
@@ -124,7 +136,7 @@
     "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "com.intellij.re.entityDeclaration",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   },
@@ -149,7 +161,20 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.TestBlockLibrary">
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="dev.kuku.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="TestBlockLibrary" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.vfl.TestBlockLibrary" />
       <module name="vfl_java" />
@@ -163,7 +188,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="StaticFluentThreadVFLTest.flatFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="VFLBootstrap" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="dev.kuku.VFLBootstrap" />
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="dev.kuku.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AnnotationTest.nest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
@@ -172,8 +210,8 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="threadvfl" />
-      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticFluentThreadVFLTest" />
-      <option name="METHOD_NAME" value="flatFlow" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.AnnotationTest" />
+      <option name="METHOD_NAME" value="nest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -195,52 +233,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="StaticThreadVFLTest.asyncFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadvfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadvfl" />
-      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
-      <option name="METHOD_NAME" value="asyncFlow" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="StaticThreadVFLTest.deepNestedFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="threadvfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="threadvfl" />
-      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
-      <option name="METHOD_NAME" value="deepNestedFlow" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
+      <item itemvalue="Application.Main" />
       <item itemvalue="Application.TestBlockLibrary" />
-      <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
+      <item itemvalue="Application.VFLBootstrap" />
+      <item itemvalue="JUnit.AnnotationTest.nest" />
       <item itemvalue="JUnit.StaticFluentThreadVFLTest.nest" />
-      <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
-      <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.VFLBootstrap" />
         <item itemvalue="Application.TestBlockLibrary" />
+        <item itemvalue="JUnit.AnnotationTest.nest" />
         <item itemvalue="JUnit.StaticFluentThreadVFLTest.nest" />
-        <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
-        <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
-        <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
       </list>
     </recent_temporary>
   </component>
@@ -321,15 +327,7 @@
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
       <workItem from="1754357082202" duration="10486000" />
-      <workItem from="1754376850352" duration="2582000" />
-    </task>
-    <task id="LOCAL-00111" summary="ignored target">
-      <option name="closed" value="true" />
-      <created>1752838562595</created>
-      <option name="number" value="00111" />
-      <option name="presentableId" value="LOCAL-00111" />
-      <option name="project" value="LOCAL" />
-      <updated>1752838562596</updated>
+      <workItem from="1754376850352" duration="9630000" />
     </task>
     <task id="LOCAL-00112" summary="refactored based on new design chooice i mad">
       <option name="closed" value="true" />
@@ -715,7 +713,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754367979038</updated>
     </task>
-    <option name="localTasksCounter" value="160" />
+    <task id="LOCAL-00160" summary="Basic setup done">
+      <option name="closed" value="true" />
+      <created>1754380870948</created>
+      <option name="number" value="00160" />
+      <option name="presentableId" value="LOCAL-00160" />
+      <option name="project" value="LOCAL" />
+      <updated>1754380870948</updated>
+    </task>
+    <option name="localTasksCounter" value="161" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -733,7 +739,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated context md" />
     <MESSAGE value="Added tests for byte buddy" />
     <MESSAGE value="Created new dto for inheritable thread local" />
     <MESSAGE value="Refactored to give better names" />
@@ -758,7 +763,8 @@
     <MESSAGE value="Removed unnecessary public functions from threadVFL" />
     <MESSAGE value="Added deep nested flow" />
     <MESSAGE value="Fixed string formatter bug which contains return value" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed string formatter bug which contains return value" />
+    <MESSAGE value="Basic setup done" />
+    <option name="LAST_COMMIT_MESSAGE" value="Basic setup done" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -772,6 +778,11 @@
           <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/vfl/contextualVFLogger/ContextualVFLRunner.java</url>
           <line>25</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/Main.java</url>
+          <line>5</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
