@@ -10,6 +10,7 @@ import dev.kuku.vfl.impl.threadlocal.dto.SubBlockStartExecutorData;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
+import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,11 +120,13 @@ public class ThreadVFLAnnotation {
     }
 
     @Advice.OnMethodExit
-    static void onExit(@Advice.Origin Method method) throws NoSuchFieldException, IllegalAccessException {
+    static void onExit(@Advice.Origin Method method,
+                       @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue
+    ) throws NoSuchFieldException, IllegalAccessException {
         // close current logger
         ThreadVFL logger = ThreadVFL.getCurrentLogger();
         log.debug("[VFL] EXIT {} (blockId={})", method.getName(), logger.loggerContext.blockInfo.getId());
-        logger.onClose(null);
+        logger.onClose(returnedValue == null ? null : "Returned " + returnedValue);
 
         //Check if it was root block, if yes then flush buffer
         var LoggerStackVar = ThreadVFL.class.getDeclaredField("LOGGER_STACK");

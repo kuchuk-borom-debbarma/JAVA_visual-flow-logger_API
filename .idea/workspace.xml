@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Annotation seems working">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added test showing annotations">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/Foo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/Foo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -321,15 +319,7 @@
       <workItem from="1754376850352" duration="9630000" />
       <workItem from="1754404906077" duration="10265000" />
       <workItem from="1754423681859" duration="81000" />
-      <workItem from="1754423771713" duration="1159000" />
-    </task>
-    <task id="LOCAL-00118" summary="Working on fluent API progress">
-      <option name="closed" value="true" />
-      <created>1752866849019</created>
-      <option name="number" value="00118" />
-      <option name="presentableId" value="LOCAL-00118" />
-      <option name="project" value="LOCAL" />
-      <updated>1752866849019</updated>
+      <workItem from="1754423771713" duration="2341000" />
     </task>
     <task id="LOCAL-00119" summary="added byte buddy for future use">
       <option name="closed" value="true" />
@@ -715,7 +705,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754423505792</updated>
     </task>
-    <option name="localTasksCounter" value="167" />
+    <task id="LOCAL-00167" summary="Added test showing annotations">
+      <option name="closed" value="true" />
+      <created>1754424994506</created>
+      <option name="number" value="00167" />
+      <option name="presentableId" value="LOCAL-00167" />
+      <option name="project" value="LOCAL" />
+      <updated>1754424994506</updated>
+    </task>
+    <option name="localTasksCounter" value="168" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -733,7 +731,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added Completable future with basics for now" />
     <MESSAGE value="Refactored VFLCallable" />
     <MESSAGE value="Improved comment" />
     <MESSAGE value="Refactored ThreadVFL and its runner" />
@@ -758,7 +755,8 @@
     <MESSAGE value="Code refactor" />
     <MESSAGE value="Re did the logic for advice" />
     <MESSAGE value="Annotation seems working" />
-    <option name="LAST_COMMIT_MESSAGE" value="Annotation seems working" />
+    <MESSAGE value="Added test showing annotations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added test showing annotations" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
