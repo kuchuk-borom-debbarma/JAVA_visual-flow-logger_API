@@ -7,11 +7,17 @@ import dev.kuku.vfl.impl.threadlocal.StaticThreadVFL;
 import dev.kuku.vfl.impl.threadlocal.ThreadVFLRunner;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
 public class StaticThreadVFLTest {
     int square(int a) {
         StaticThreadVFL.Log("Squaring " + a);
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return StaticThreadVFL.LogFn(() -> a * a, integer -> "Square of " + a + " = " + integer);
     }
 
@@ -88,4 +94,37 @@ public class StaticThreadVFLTest {
             StaticThreadVFL.Log("Final is " + last);
         });
     }
+
+    @Test
+    void asyncFlow() {
+        ThreadVFLRunner.StartVFL("Async FLow", createBuffer("asyncFlow.json"), () -> {
+            StaticThreadVFL.Log("Starting async flow right now");
+            CompletableFuture<Integer> a = StaticThreadVFL.SupplyAsync("Async Sum", () -> square(2), integer -> "Result is " + integer);
+            CompletableFuture<Integer> b = StaticThreadVFL.SupplyAsync("Async Sum2", () -> square(3), integer -> "Result is " + integer);
+            int finalA = a.join();
+            int finalB = b.join();
+            StaticThreadVFL.Log("Final is " + finalA);
+            StaticThreadVFL.Log("Final is " + finalB);
+            var t1 = StaticThreadVFL.RunAsync("Async rin block", () -> {
+                StaticThreadVFL.Log("Starting a rin block right now");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                StaticThreadVFL.Log("Finished a rin block right now");
+            });
+            var t2 = StaticThreadVFL.RunAsync("Async rin block2 ", () -> {
+                StaticThreadVFL.Log("Starting a rin block right now");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                StaticThreadVFL.Log("Finished a rin block right now");
+            });
+            CompletableFuture.allOf(t2, t2).join();
+        });
+    }
+
 }

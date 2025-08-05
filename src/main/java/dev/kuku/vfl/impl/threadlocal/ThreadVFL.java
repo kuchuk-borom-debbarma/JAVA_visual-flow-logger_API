@@ -10,49 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Stack;
 
-/**
- * ThreadLocal-based implementation of VFLCallable that provides hierarchical logging
- * within synchronous thread execution contexts.
- *
- * <p>This implementation leverages the synchronous nature of thread execution to maintain
- * a stack-based hierarchy of loggers using ThreadLocal storage. Each sub-block execution
- * creates a new logger instance that is pushed onto the current thread's logger stack,
- * ensuring proper context isolation and automatic cleanup when sub-blocks complete.
- *
- * <h3>Key Features:</h3>
- * <ul>
- *   <li><strong>Stack-based Logger Hierarchy:</strong> Uses a ThreadLocal Stack to maintain
- *       the current logger context, with the top of the stack always representing the
- *       active logging context</li>
- *   <li><strong>Automatic Context Management:</strong> Sub-block loggers are automatically
- *       pushed and popped from the stack during execution</li>
- *   <li><strong>Thread Safety:</strong> Each thread maintains its own logger stack,
- *       preventing cross-thread interference</li>
- *   <li><strong>Async Support:</strong> Properly initializes logger context for
- *       asynchronous operations running on separate threads</li>
- * </ul>
- *
- * <h3>Usage Pattern:</h3>
- * <pre>{@code
- * // Initialize root logger for the thread
- * ThreadVFL.initializeForCurrentThread(rootContext);
- *
- * // Use the logger - sub-blocks will automatically manage the stack
- * ThreadVFL logger = ThreadVFL.getCurrentLogger();
- * logger.supply("SubBlock", () -> {
- *     // This code runs with a new logger pushed onto the stack
- *     return someOperation();
- * });
- * }</pre>
- *
- * <p><strong>Thread Safety:</strong> This class is thread-safe as each thread maintains
- * its own independent logger stack via ThreadLocal storage.
- *
- * @author Kuchuk Boram Debbarma
- * @see VFLCallable
- * @see VFLBlockContext
- * @since 1.0
- */
+
 @Slf4j
 public class ThreadVFL extends VFLCallable {
 
@@ -101,9 +59,7 @@ public class ThreadVFL extends VFLCallable {
 
         if (stack == null) {
             throw new IllegalStateException(
-                    "No logger stack initialized for current thread. " +
-                            "Ensure ThreadVFL.initializeForCurrentThread() was called before using the logger."
-            );
+                    "No logger stack initialized for current thread. " + Util.getThreadInfo());
         }
 
         if (stack.isEmpty()) {
