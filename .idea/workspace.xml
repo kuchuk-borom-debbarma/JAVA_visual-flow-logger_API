@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Code refactor">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/dto/SubBlockStartExecutorData.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Re did the logic for advice">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLAnnotationCompletableFuture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLAnnotationCompletableFuture.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/Foo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/Foo.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -319,14 +317,6 @@
       <workItem from="1754357082202" duration="10486000" />
       <workItem from="1754376850352" duration="9630000" />
       <workItem from="1754404906077" duration="10265000" />
-    </task>
-    <task id="LOCAL-00116" summary="Fluent api demo works">
-      <option name="closed" value="true" />
-      <created>1752860410233</created>
-      <option name="number" value="00116" />
-      <option name="presentableId" value="LOCAL-00116" />
-      <option name="project" value="LOCAL" />
-      <updated>1752860410233</updated>
     </task>
     <task id="LOCAL-00117" summary="Improved fluent api design">
       <option name="closed" value="true" />
@@ -712,7 +702,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754419583117</updated>
     </task>
-    <option name="localTasksCounter" value="165" />
+    <task id="LOCAL-00165" summary="Re did the logic for advice">
+      <option name="closed" value="true" />
+      <created>1754422520521</created>
+      <option name="number" value="00165" />
+      <option name="presentableId" value="LOCAL-00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1754422520521</updated>
+    </task>
+    <option name="localTasksCounter" value="166" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -730,7 +728,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
     <MESSAGE value="intercepting completable futures with advice" />
     <MESSAGE value="Added Completable future with basics for now" />
     <MESSAGE value="Refactored VFLCallable" />
@@ -755,7 +752,8 @@
     <MESSAGE value="Wrote basic logic but not tested yet" />
     <MESSAGE value="Created wrappers and shit but need to test it out" />
     <MESSAGE value="Code refactor" />
-    <option name="LAST_COMMIT_MESSAGE" value="Code refactor" />
+    <MESSAGE value="Re did the logic for advice" />
+    <option name="LAST_COMMIT_MESSAGE" value="Re did the logic for advice" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
