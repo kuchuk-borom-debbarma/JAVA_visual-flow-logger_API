@@ -17,4 +17,15 @@ public class VFLInstrumentation {
                 .installOnByteBuddyAgent();
     }
 
+    @VFLBlock
+   public static void foo() {
+        System.out.println("hello");
+        bar();
+    }
+
+    @VFLBlock
+    static void bar() {
+        System.out.println("bar");
+    }
+
 }

@@ -14,6 +14,7 @@ public class ThreadVFLAdvice {
         String first = args.length > 0 ? String.valueOf(args[0]) : "";
         String blockName = method.getName() + "(" + first + ") started";
         System.out.println("Started " + blockName);
+        System.out.println(ThreadVFL.LOGGER_STACK.get());
     }
 
     @Advice.OnMethodExit
