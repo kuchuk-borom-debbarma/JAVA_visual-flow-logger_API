@@ -1,18 +1,10 @@
 package dev.kuku;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
-
-import static dev.kuku.vfl.impl.threadlocal.VFLInstrumentation.foo;
+import dev.kuku.vfl.core.buffer.DummyBuffer;
+import dev.kuku.vfl.impl.threadlocal.ThreadVFLAnnotation;
 
 public class Main {
-    private static VFLBuffer globalBuffer;
-
-
     public static void main(String... args) {
-        foo();
-        foo();
-        foo();
+        ThreadVFLAnnotation.initialise(new DummyBuffer());
     }
-
-
 }

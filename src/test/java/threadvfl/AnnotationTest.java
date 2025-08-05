@@ -3,7 +3,7 @@ package threadvfl;
 import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
-import dev.kuku.vfl.impl.threadlocal.ThreadVFLAnnotationInitializer;
+import dev.kuku.vfl.impl.threadlocal.ThreadVFLAnnotation;
 import dev.kuku.vfl.impl.threadlocal.VFLBlock;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ public class AnnotationTest {
     static {
         b = createBuffer("nest");
 
-        ThreadVFLAnnotationInitializer.initialise(b);
+        ThreadVFLAnnotation.initialise(b);
     }
 
     static VFLBuffer createBuffer(String fileName) {

@@ -4,12 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Basic setup done">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Need second main function to run">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/Foo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/VFLBootstrap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/VFLBootstrap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLInstrumentation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLInstrumentation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/VFLBootstrap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAdvice.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotationInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLBlock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLInstrumentation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +157,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.VFLBootstrap">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -233,8 +238,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.VFLBootstrap" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="Application.VFLBootstrap" />
         <item itemvalue="Application.TestBlockLibrary" />
         <item itemvalue="JUnit.AnnotationTest.nest" />
         <item itemvalue="JUnit.StaticFluentThreadVFLTest.nest" />
@@ -319,14 +324,7 @@
       <workItem from="1754233008979" duration="21131000" />
       <workItem from="1754357082202" duration="10486000" />
       <workItem from="1754376850352" duration="9630000" />
-    </task>
-    <task id="LOCAL-00112" summary="refactored based on new design chooice i mad">
-      <option name="closed" value="true" />
-      <created>1752839377336</created>
-      <option name="number" value="00112" />
-      <option name="presentableId" value="LOCAL-00112" />
-      <option name="project" value="LOCAL" />
-      <updated>1752839377336</updated>
+      <workItem from="1754404906077" duration="4682000" />
     </task>
     <task id="LOCAL-00113" summary="updated todos">
       <option name="closed" value="true" />
@@ -712,7 +710,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754380870948</updated>
     </task>
-    <option name="localTasksCounter" value="161" />
+    <task id="LOCAL-00161" summary="Need second main function to run">
+      <option name="closed" value="true" />
+      <created>1754388662287</created>
+      <option name="number" value="00161" />
+      <option name="presentableId" value="LOCAL-00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1754388662287</updated>
+    </task>
+    <option name="localTasksCounter" value="162" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -730,7 +736,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added tests for byte buddy" />
     <MESSAGE value="Created new dto for inheritable thread local" />
     <MESSAGE value="Refactored to give better names" />
     <MESSAGE value="Cleaned up code" />
@@ -755,7 +760,8 @@
     <MESSAGE value="Added deep nested flow" />
     <MESSAGE value="Fixed string formatter bug which contains return value" />
     <MESSAGE value="Basic setup done" />
-    <option name="LAST_COMMIT_MESSAGE" value="Basic setup done" />
+    <MESSAGE value="Need second main function to run" />
+    <option name="LAST_COMMIT_MESSAGE" value="Need second main function to run" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
