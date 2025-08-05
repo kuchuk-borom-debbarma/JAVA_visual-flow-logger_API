@@ -8,6 +8,6 @@ import dev.kuku.vfl.core.models.Block;
 public abstract class VFLRunner {
     protected static VFLBlockContext initRootCtx(String operationName, VFLBuffer buffer) {
         Block rootBlock = VFLHelper.CreateBlockAndPush2Buffer(operationName, null, buffer);
-        return new VFLBlockContext(rootBlock, false, buffer);
+        return new VFLBlockContext(rootBlock, buffer);
     }
 }

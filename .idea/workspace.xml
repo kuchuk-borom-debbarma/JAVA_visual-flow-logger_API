@@ -4,10 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Created Static ThreadVFL wrapper for ease of use">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/StaticFluentThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Created Static fluent">
+      <change afterPath="$PROJECT_DIR$/src/test/java/threadvfl/StaticThreadVFLTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/NestedJsonFlushHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/NestedJsonFlushHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLCallableRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLCallableRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLFnRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLFnRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/StaticThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/StaticThreadVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/buffer/ThreadsafeAsyncBufferTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/buffer/VFLHubTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLFluentTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadVfl/ThreadVFLTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,61 +79,62 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Application.ByteBuddySupplierTest.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedFluentAPITest.test.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.run.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$LinearFlow.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.multiThreadCleanupTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.nestedMultiThreadTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.threadPoolTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.expected.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.simple.executor&quot;: &quot;Debug&quot;,
-    &quot;Maven.vfl_java [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;enhancement/fluent&quot;,
-    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.intentionPowerPack&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Application.ByteBuddySupplierTest.executor": "Run",
+    "Application.Main.executor": "Run",
+    "JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor": "Run",
+    "JUnit.ScopedFluentAPITest.test.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.StaticThreadVFLTest.flatFlow.executor": "Run",
+    "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
+    "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
+    "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
+    "JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor": "Run",
+    "JUnit.ThreadVFLTest.multiThreadCleanupTest.executor": "Run",
+    "JUnit.ThreadVFLTest.nestedMultiThreadTest.executor": "Run",
+    "JUnit.ThreadVFLTest.threadPoolTest.executor": "Run",
+    "JUnit.VFLTests.executor": "Run",
+    "JUnit.VFLTests.expected.executor": "Run",
+    "JUnit.VFLTests.simple.executor": "Debug",
+    "Maven.vfl_java [clean].executor": "Run",
+    "Maven.vfl_java [install].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "enhancement/fluent",
+    "ignore.preview.features.used": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
+    "project.structure.last.edited": "Problems",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.intentionPowerPack",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
-      &quot;SQLite&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "SQLite"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="dev.kuku.vfl.impl.threadlocal.flient_steps.sub_block" />
@@ -139,20 +150,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
-    <configuration name="ByteBuddySupplierTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddySupplierTest" />
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.kuku.vfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.StaticThreadVFLTest.flatFlow">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -215,20 +213,36 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="StaticThreadVFLTest.flatFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadvfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
+      <option name="METHOD_NAME" value="flatFlow" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Application.Main" />
-      <item itemvalue="Application.ByteBuddySupplierTest" />
+      <item itemvalue="JUnit.StaticThreadVFLTest.flatFlow" />
       <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
       <item itemvalue="JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception" />
       <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.StaticThreadVFLTest.flatFlow" />
         <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
         <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
         <item itemvalue="JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception" />
-        <item itemvalue="Application.ByteBuddySupplierTest" />
       </list>
     </recent_temporary>
   </component>
@@ -308,15 +322,7 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-      <workItem from="1754357082202" duration="902000" />
-    </task>
-    <task id="LOCAL-00105" summary="heavy async seems to work too">
-      <option name="closed" value="true" />
-      <created>1752818369603</created>
-      <option name="number" value="00105" />
-      <option name="presentableId" value="LOCAL-00105" />
-      <option name="project" value="LOCAL" />
-      <updated>1752818369603</updated>
+      <workItem from="1754357082202" duration="2431000" />
     </task>
     <task id="LOCAL-00106" summary="heavy async seems to work too">
       <option name="closed" value="true" />
@@ -702,7 +708,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754357417799</updated>
     </task>
-    <option name="localTasksCounter" value="154" />
+    <task id="LOCAL-00154" summary="Created Static fluent">
+      <option name="closed" value="true" />
+      <created>1754357991850</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1754357991850</updated>
+    </task>
+    <option name="localTasksCounter" value="155" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -720,7 +734,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Never mind it seems to be working lol" />
     <MESSAGE value="Refactor VFLRunner to VFLCallableRunner and update related classes" />
     <MESSAGE value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
     <MESSAGE value="Fixed test 2" />
@@ -745,7 +758,8 @@
     <MESSAGE value="Created fluent for ThreadVFL" />
     <MESSAGE value="Deleted fluent for SuppliedVFL" />
     <MESSAGE value="Created Static ThreadVFL wrapper for ease of use" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created Static ThreadVFL wrapper for ease of use" />
+    <MESSAGE value="Created Static fluent" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created Static fluent" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

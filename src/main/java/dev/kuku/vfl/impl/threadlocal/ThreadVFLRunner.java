@@ -13,72 +13,6 @@ import java.util.function.Supplier;
 import static dev.kuku.vfl.core.helpers.Util.getThreadInfo;
 import static dev.kuku.vfl.core.helpers.Util.trimId;
 
-/**
- * ThreadLocal-based runner implementation for the VFL (Visual Flow Logging) system.
- *
- * <p>This class serves as the primary entry point for executing VFL operations within
- * ThreadLocal-managed logging contexts. It handles the initialization and management
- * of logger stacks for both regular VFL blocks and event-driven logging scenarios.
- *
- * <h3>Key Responsibilities:</h3>
- * <ul>
- *   <li><strong>Root Logger Management:</strong> Creates and initializes root logging
- *       contexts with proper ThreadLocal stack setup</li>
- *   <li><strong>Event Logger Support:</strong> Manages event listener loggers that may
- *       execute in same-thread or cross-thread scenarios</li>
- *   <li><strong>Stack Lifecycle:</strong> Ensures proper initialization, management,
- *       and cleanup of ThreadLocal logger stacks</li>
- *   <li><strong>Thread Safety:</strong> Provides thread-safe access to VFL operations
- *       through singleton pattern and ThreadLocal isolation</li>
- * </ul>
- *
- * <h3>Usage Patterns:</h3>
- *
- * <h4>Basic VFL Block Execution:</h4>
- * <pre>{@code
- * // Execute a function within a VFL logging block
- * String result = ThreadVFLRunner.startVFL("ProcessData", buffer, () -> {
- *     // Your business logic here
- *     return processData();
- * });
- *
- * // Execute a runnable within a VFL logging block
- * ThreadVFLRunner.startVFL("InitializeSystem", buffer, () -> {
- *     initializeSystem();
- * });
- * }</pre>
- *
- * <h4>Event-Driven Logging:</h4>
- * <pre>{@code
- * // Start an event listener logger
- * ThreadVFLRunner.startEventListenerLogger(
- *     "DataProcessor",
- *     "Processing incoming data",
- *     buffer,
- *     eventPublisherBlock,
- *     () -> handleDataEvent()
- * );
- * }</pre>
- *
- * <h3>Thread Handling:</h3>
- * <p>The runner intelligently handles different threading scenarios:
- * <ul>
- *   <li><strong>Same-thread events:</strong> Event listeners running on the same thread
- *       as the caller are added to the existing logger stack</li>
- *   <li><strong>Cross-thread events:</strong> Event listeners running on different threads
- *       receive their own isolated logger stack</li>
- * </ul>
- *
- * <p><strong>Thread Safety:</strong> This class is thread-safe through the use of
- * ThreadLocal storage and singleton pattern. Each thread maintains its own independent
- * logger stack.
- *
- * @author VFL Framework
- * @see VFLCallableRunner
- * @see ThreadVFL
- * @see VFLBlockContext
- * @since 1.0
- */
 @Slf4j
 public final class ThreadVFLRunner extends VFLCallableRunner {
 
@@ -146,6 +80,71 @@ public final class ThreadVFLRunner extends VFLCallableRunner {
         }
     }
 
+    // ==================== STATIC METHODS ====================
+
+    /**
+     * Static version of startVFL method for executing functions within VFL logging context.
+     *
+     * <p>This static method provides convenient access to VFL functionality without requiring
+     * direct instance management. It delegates to the singleton instance while providing
+     * the same functionality and error handling.
+     *
+     * @param <R>       the return type of the function
+     * @param blockName descriptive name for the logging block
+     * @param buffer    the VFL buffer where log entries will be stored
+     * @param function  the function to execute within the logging context
+     * @return the result returned by the executed function
+     * @throws IllegalArgumentException if blockName is null or empty, buffer is null, or function is null
+     * @throws RuntimeException         if an error occurs during VFL execution (wraps underlying exceptions)
+     */
+    public static <R> R StartVFL(String blockName, VFLBuffer buffer, Supplier<R> function) {
+        return INSTANCE.startVFL(blockName, buffer, function);
+    }
+
+    /**
+     * Static version of startVFL method for executing runnables within VFL logging context.
+     *
+     * <p>This static method provides convenient access to VFL functionality without requiring
+     * direct instance management. It delegates to the singleton instance while providing
+     * the same functionality and error handling.
+     *
+     * @param blockName descriptive name for the logging block
+     * @param buffer    the VFL buffer where log entries will be stored
+     * @param runnable  the runnable to execute within the logging context
+     * @throws IllegalArgumentException if blockName is null or empty, buffer is null, or runnable is null
+     * @throws RuntimeException         if an error occurs during VFL execution (wraps underlying exceptions)
+     */
+    public static void StartVFL(String blockName, VFLBuffer buffer, Runnable runnable) {
+        INSTANCE.startVFL(blockName, buffer, runnable);
+    }
+
+    /**
+     * Static version of startEventListenerLogger method for event-driven logging scenarios.
+     *
+     * <p>This static method provides convenient access to event listener logging functionality
+     * without requiring direct instance management. It delegates to the singleton instance
+     * while providing the same functionality and error handling.
+     *
+     * @param eventListenerName   descriptive name for the event listener
+     * @param eventStartMessage   optional message logged when the event listener starts
+     * @param buffer              the VFL buffer where log entries will be stored
+     * @param eventPublisherBlock context information from the event publisher
+     * @param runnable            the runnable to execute within the event listener context
+     * @throws IllegalArgumentException if any required parameter is null or eventListenerName is empty
+     * @throws RuntimeException         if an error occurs during event listener execution
+     */
+    public static void StartEventListenerLogger(
+            String eventListenerName,
+            String eventStartMessage,
+            VFLBuffer buffer,
+            EventPublisherBlock eventPublisherBlock,
+            Runnable runnable) {
+
+        INSTANCE.startEventListenerLogger(eventListenerName, eventStartMessage, buffer, eventPublisherBlock, runnable);
+    }
+
+    // ==================== INSTANCE METHODS ====================
+
     /**
      * Starts a VFL logging block and executes the provided function within its context.
      *
@@ -168,7 +167,7 @@ public final class ThreadVFLRunner extends VFLCallableRunner {
         validateStartVFLParameters(blockName, buffer, function);
 
         try {
-            return INSTANCE.startVFL(blockName, buffer, function);
+            return super.startVFL(blockName, buffer, function);
         } catch (Exception e) {
             log.error("Failed to execute VFL block '{}': {}", blockName, e.getMessage(), e);
             throw new RuntimeException("VFL execution failed for block: " + blockName, e);
@@ -195,7 +194,7 @@ public final class ThreadVFLRunner extends VFLCallableRunner {
         validateStartVFLParameters(blockName, buffer, runnable);
 
         try {
-            INSTANCE.startVFL(blockName, buffer, runnable);
+            super.startVFL(blockName, buffer, runnable);
         } catch (Exception e) {
             log.error("Failed to execute VFL block '{}': {}", blockName, e.getMessage(), e);
             throw new RuntimeException("VFL execution failed for block: " + blockName, e);
@@ -236,7 +235,7 @@ public final class ThreadVFLRunner extends VFLCallableRunner {
         validateEventListenerParameters(eventListenerName, buffer, eventPublisherBlock, runnable);
 
         try {
-            INSTANCE.startEventListenerLogger(eventListenerName, eventStartMessage, buffer, eventPublisherBlock, runnable);
+            super.startEventListenerLogger(eventListenerName, eventStartMessage, buffer, eventPublisherBlock, runnable);
         } catch (Exception e) {
             log.error("Failed to execute event listener '{}': {}", eventListenerName, e.getMessage(), e);
             throw new RuntimeException("Event listener execution failed: " + eventListenerName, e);
@@ -309,7 +308,7 @@ public final class ThreadVFLRunner extends VFLCallableRunner {
         String threadInfo = getThreadInfo();
         String loggerId = trimId(eventLogger.loggerContext.blockInfo.getId());
 
-        Stack<ThreadVFL> currentStack = ThreadVFL.LOGGER_STACK;
+        Stack<ThreadVFL> currentStack = ThreadVFL.LOGGER_STACK.get();
 
         if (currentStack == null) {
             // Cross-thread scenario: Create new stack for this thread

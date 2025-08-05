@@ -3,6 +3,7 @@ package dev.kuku.vfl.core.vfl_abstracts.runner;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
+import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
@@ -13,7 +14,7 @@ public abstract class VFLCallableRunner extends VFLRunner {
         var context = initRootCtx(blockName, buffer);
         var logger = createRootLogger(context);
         try {
-            return VFL.VFLHelper.CallFnWithLogger(fn, logger, null);
+            return VFLHelper.CallFnWithLogger(fn, logger, null);
         } finally {
             buffer.flushAndClose();
         }
@@ -28,13 +29,13 @@ public abstract class VFLCallableRunner extends VFLRunner {
 
     public void startEventListenerLogger(String eventListenerName, String eventStartMessage, VFLBuffer buffer, EventPublisherBlock eventData, Runnable r) {
         // Create the event listener block
-        var eventListenerBlock = VFL.VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventData.block().getId(), buffer);
+        var eventListenerBlock = VFLHelper.CreateBlockAndPush2Buffer(eventListenerName, eventData.block().getId(), buffer);
         // Create a log for event publisher block of type event listener
-        var log = VFL.VFLHelper.CreateLogAndPush2Buffer(eventData.block().getId(), null, eventStartMessage, eventListenerBlock.getId(), LogTypeBlockStartEnum.EVENT_LISTENER, buffer);
-        VFLBlockContext eventListenerCtx = new VFLBlockContext(eventListenerBlock, false, buffer);
+        var log = VFLHelper.CreateLogAndPush2Buffer(eventData.block().getId(), null, eventStartMessage, eventListenerBlock.getId(), LogTypeBlockStartEnum.EVENT_LISTENER, buffer);
+        VFLBlockContext eventListenerCtx = new VFLBlockContext(eventListenerBlock, buffer);
         var logger = createEventListenerLogger(eventListenerCtx);
         try {
-            VFL.VFLHelper.CallFnWithLogger(() -> {
+            VFLHelper.CallFnWithLogger(() -> {
                 r.run();
                 return null;
             }, logger, null);
