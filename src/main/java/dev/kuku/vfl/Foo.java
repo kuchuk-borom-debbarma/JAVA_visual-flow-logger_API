@@ -23,11 +23,15 @@ public class Foo {
         });
         try {
             t1.get();
-            t2.get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
         bar();
+        try {
+            t2.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @VFLBlock
