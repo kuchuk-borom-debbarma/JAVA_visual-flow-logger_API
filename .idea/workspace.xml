@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Deleted fluent for SuppliedVFL">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/StaticThreadVFL.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Created Static ThreadVFL wrapper for ease of use">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/StaticFluentThreadVFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -308,15 +308,7 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-      <workItem from="1754357082202" duration="280000" />
-    </task>
-    <task id="LOCAL-00104" summary="simple async showcase done">
-      <option name="closed" value="true" />
-      <created>1752817361581</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1752817361581</updated>
+      <workItem from="1754357082202" duration="902000" />
     </task>
     <task id="LOCAL-00105" summary="heavy async seems to work too">
       <option name="closed" value="true" />
@@ -702,7 +694,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754309107846</updated>
     </task>
-    <option name="localTasksCounter" value="153" />
+    <task id="LOCAL-00153" summary="Created Static ThreadVFL wrapper for ease of use">
+      <option name="closed" value="true" />
+      <created>1754357417799</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1754357417799</updated>
+    </task>
+    <option name="localTasksCounter" value="154" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -720,7 +720,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created" />
     <MESSAGE value="Never mind it seems to be working lol" />
     <MESSAGE value="Refactor VFLRunner to VFLCallableRunner and update related classes" />
     <MESSAGE value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
@@ -745,7 +744,8 @@
     <MESSAGE value="Added Async step" />
     <MESSAGE value="Created fluent for ThreadVFL" />
     <MESSAGE value="Deleted fluent for SuppliedVFL" />
-    <option name="LAST_COMMIT_MESSAGE" value="Deleted fluent for SuppliedVFL" />
+    <MESSAGE value="Created Static ThreadVFL wrapper for ease of use" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created Static ThreadVFL wrapper for ease of use" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
