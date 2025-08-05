@@ -63,12 +63,16 @@ public class ThreadVFLAnnotation {
 
     @Advice.OnMethodEnter
     static void onEnter(@Advice.Origin Method method,
-                        @Advice.AllArguments Object[] args) {
+                        @Advice.AllArguments Object[] args) throws NoSuchFieldException, IllegalAccessException {
 
         String blockName = getMethodName(method, args);
 
+        var LoggerStackVar = ThreadVFL.class.getDeclaredField("LOGGER_STACK");
+        LoggerStackVar.setAccessible(true);
+        ThreadLocal<Stack<ThreadVFL>> reflectedLoggerStack = (ThreadLocal<Stack<ThreadVFL>>) LoggerStackVar.get(null);
+
         // 1. No stack yet – either root call or sub-block in fresh thread
-        if (ThreadVFL.LOGGER_STACK.get() == null) {
+        if (reflectedLoggerStack.get() == null) {
 
             if (startedSubBlockInParentThread.get() == null) {
                 /* ---------- ROOT BLOCK ---------- */
@@ -77,8 +81,8 @@ public class ThreadVFLAnnotation {
                 Block rootBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, buffer);
                 ThreadVFL logger = new ThreadVFL(new VFLBlockContext(rootBlock, buffer));
 
-                ThreadVFL.LOGGER_STACK.set(new Stack<>());
-                ThreadVFL.LOGGER_STACK.get().push(logger);
+                reflectedLoggerStack.set(new Stack<>());
+                reflectedLoggerStack.get().push(logger);
                 logger.ensureBlockStarted();
                 return;
             }
@@ -86,11 +90,11 @@ public class ThreadVFLAnnotation {
             /* ---------- NEW THREAD SUB-BLOCK ---------- */
             log.debug("[VFL] THREAD-inherit {}", blockName);
 
-            ThreadVFL.LOGGER_STACK.set(new Stack<>());
+            reflectedLoggerStack.set(new Stack<>());
             ThreadVFL logger = new ThreadVFL(
                     new VFLBlockContext(startedSubBlockInParentThread.get(), buffer));
 
-            ThreadVFL.LOGGER_STACK.get().push(logger);
+            reflectedLoggerStack.get().push(logger);
             logger.ensureBlockStarted();
             return;
         }
@@ -113,12 +117,16 @@ public class ThreadVFLAnnotation {
         parentCtx.currentLogId = sLog.getId();
 
         ThreadVFL subLogger = new ThreadVFL(new VFLBlockContext(subBlock, buffer));
-        ThreadVFL.LOGGER_STACK.get().push(subLogger);
+        reflectedLoggerStack.get().push(subLogger);
         subLogger.ensureBlockStarted();
     }
 
     @Advice.OnMethodExit
-    static void onExit(@Advice.Origin Method method) {
+    static void onExit(@Advice.Origin Method method) throws NoSuchFieldException, IllegalAccessException {
+
+        var LoggerStackVar = ThreadVFL.class.getDeclaredField("LOGGER_STACK");
+        LoggerStackVar.setAccessible(true);
+        ThreadLocal<Stack<ThreadVFL>> reflectedLoggerStack = (ThreadLocal<Stack<ThreadVFL>>) LoggerStackVar.get(null);
 
         ThreadVFL logger = ThreadVFL.getCurrentLogger();
         log.debug("[VFL] EXIT {} (blockId={})",
@@ -127,7 +135,7 @@ public class ThreadVFLAnnotation {
 
         logger.onClose(null);
 
-        if (ThreadVFL.LOGGER_STACK.get() == null) {          // stack emptied
+        if (reflectedLoggerStack.get() == null) {          // stack emptied
             if (startedSubBlockInParentThread.get() == null) {
                 log.debug("[VFL] ROOT complete – flushing buffer");
                 buffer.flushAndClose();

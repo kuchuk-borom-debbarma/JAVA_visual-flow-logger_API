@@ -19,20 +19,13 @@ public class ThreadVFL extends VFLCallable {
      * The stack ensures that nested sub-block executions maintain proper logging context
      * with the most recent (deepest) logger always at the top of the stack.
      */
-    public static final ThreadLocal<Stack<ThreadVFL>> LOGGER_STACK = new ThreadLocal<>();
+    static final ThreadLocal<Stack<ThreadVFL>> LOGGER_STACK = new ThreadLocal<>();
 
     /**
      * The execution context associated with this specific logger instance.
      * Contains block information, buffer references, and current log sequence state.
      */
     public final VFLBlockContext loggerContext;
-
-    @Override
-    public String toString() {
-        return "ThreadVFL{" +
-                "loggerContext=" + loggerContext +
-                '}';
-    }
 
     /**
      * Constructs a new ThreadVFL instance with the specified logging context.
@@ -76,6 +69,13 @@ public class ThreadVFL extends VFLCallable {
         }
 
         return stack.peek();
+    }
+
+    @Override
+    public String toString() {
+        return "ThreadVFL{" +
+                "loggerContext=" + loggerContext +
+                '}';
     }
 
     /**

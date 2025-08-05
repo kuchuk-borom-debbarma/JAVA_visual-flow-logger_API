@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Created wrappers and shit but need to test it out">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Code refactor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLFlowHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLFn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLFn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLCallableRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLCallableRunner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLFnRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLFnRunner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLAnnotationCompletableFuture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLAnnotationCompletableFuture.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -326,14 +318,6 @@
       <workItem from="1754357082202" duration="10486000" />
       <workItem from="1754376850352" duration="9630000" />
       <workItem from="1754404906077" duration="10265000" />
-    </task>
-    <task id="LOCAL-00115" summary="going to add fluent api now">
-      <option name="closed" value="true" />
-      <created>1752854563461</created>
-      <option name="number" value="00115" />
-      <option name="presentableId" value="LOCAL-00115" />
-      <option name="project" value="LOCAL" />
-      <updated>1752854563461</updated>
     </task>
     <task id="LOCAL-00116" summary="Fluent api demo works">
       <option name="closed" value="true" />
@@ -719,7 +703,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754413155279</updated>
     </task>
-    <option name="localTasksCounter" value="164" />
+    <task id="LOCAL-00164" summary="Code refactor">
+      <option name="closed" value="true" />
+      <created>1754419583117</created>
+      <option name="number" value="00164" />
+      <option name="presentableId" value="LOCAL-00164" />
+      <option name="project" value="LOCAL" />
+      <updated>1754419583117</updated>
+    </task>
+    <option name="localTasksCounter" value="165" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -737,7 +729,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Cleaned up code" />
     <MESSAGE value="Some progress. Multi thread works. Just need to figure out thread pooling stuff now" />
     <MESSAGE value="intercepting completable futures with advice" />
     <MESSAGE value="Added Completable future with basics for now" />
@@ -762,7 +753,8 @@
     <MESSAGE value="Need second main function to run" />
     <MESSAGE value="Wrote basic logic but not tested yet" />
     <MESSAGE value="Created wrappers and shit but need to test it out" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created wrappers and shit but need to test it out" />
+    <MESSAGE value="Code refactor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code refactor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
