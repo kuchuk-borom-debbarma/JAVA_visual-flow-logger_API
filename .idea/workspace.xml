@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added Async step">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/ThreadVFLRunnableAsyncStep.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Deleted fluent for SuppliedVFL">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/StaticThreadVFL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/CallableRunnableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/ThreadVFLRunnableStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/CallableRunnableStepAsync.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/CallableSupplierStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/ThreadVFLSupplierStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/CallableSupplierStepAsync.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/ThreadVFLSupplierAsyncStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockCallableAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockRunnableAsyncStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -314,22 +308,7 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-    </task>
-    <task id="LOCAL-00102" summary="creating tests to see how things work">
-      <option name="closed" value="true" />
-      <created>1752815689209</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1752815689209</updated>
-    </task>
-    <task id="LOCAL-00103" summary="updated in memory funciton to show nested logs with same parent">
-      <option name="closed" value="true" />
-      <created>1752816178196</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1752816178196</updated>
+      <workItem from="1754357082202" duration="280000" />
     </task>
     <task id="LOCAL-00104" summary="simple async showcase done">
       <option name="closed" value="true" />
@@ -707,7 +686,23 @@
       <option name="project" value="LOCAL" />
       <updated>1754307343310</updated>
     </task>
-    <option name="localTasksCounter" value="151" />
+    <task id="LOCAL-00151" summary="Created fluent for ThreadVFL">
+      <option name="closed" value="true" />
+      <created>1754309077041</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1754309077041</updated>
+    </task>
+    <task id="LOCAL-00152" summary="Deleted fluent for SuppliedVFL">
+      <option name="closed" value="true" />
+      <created>1754309107846</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1754309107846</updated>
+    </task>
+    <option name="localTasksCounter" value="153" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -725,8 +720,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Code clean, removed ContextualVFL.java" />
-    <MESSAGE value="testing and noticed a bug" />
     <MESSAGE value="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created" />
     <MESSAGE value="Never mind it seems to be working lol" />
     <MESSAGE value="Refactor VFLRunner to VFLCallableRunner and update related classes" />
@@ -750,7 +743,9 @@
     <MESSAGE value="updated runnable step" />
     <MESSAGE value="Added AsSubBlockCallableStep" />
     <MESSAGE value="Added Async step" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Async step" />
+    <MESSAGE value="Created fluent for ThreadVFL" />
+    <MESSAGE value="Deleted fluent for SuppliedVFL" />
+    <option name="LAST_COMMIT_MESSAGE" value="Deleted fluent for SuppliedVFL" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

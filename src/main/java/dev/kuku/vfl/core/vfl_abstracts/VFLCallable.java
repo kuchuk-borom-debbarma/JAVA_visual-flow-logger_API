@@ -446,7 +446,7 @@ public abstract class VFLCallable extends VFL {
 
     /**
      * Performs implementation-specific initialization after a sub-block and its start log
-     * have been created and registered in the execution buffer.
+     * have be  en created and registered in the execution buffer.
      * <p>
      * This hook allows implementations to set up any necessary context, logging infrastructure,
      * or thread-local state required for proper sub-block execution. For example, ThreadVFL
