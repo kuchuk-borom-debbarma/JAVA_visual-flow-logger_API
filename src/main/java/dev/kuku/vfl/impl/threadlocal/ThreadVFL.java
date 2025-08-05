@@ -1,6 +1,7 @@
 package dev.kuku.vfl.impl.threadlocal;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
+import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
@@ -9,49 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Stack;
 
-/**
- * ThreadLocal-based implementation of VFLCallable that provides hierarchical logging
- * within synchronous thread execution contexts.
- *
- * <p>This implementation leverages the synchronous nature of thread execution to maintain
- * a stack-based hierarchy of loggers using ThreadLocal storage. Each sub-block execution
- * creates a new logger instance that is pushed onto the current thread's logger stack,
- * ensuring proper context isolation and automatic cleanup when sub-blocks complete.
- *
- * <h3>Key Features:</h3>
- * <ul>
- *   <li><strong>Stack-based Logger Hierarchy:</strong> Uses a ThreadLocal Stack to maintain
- *       the current logger context, with the top of the stack always representing the
- *       active logging context</li>
- *   <li><strong>Automatic Context Management:</strong> Sub-block loggers are automatically
- *       pushed and popped from the stack during execution</li>
- *   <li><strong>Thread Safety:</strong> Each thread maintains its own logger stack,
- *       preventing cross-thread interference</li>
- *   <li><strong>Async Support:</strong> Properly initializes logger context for
- *       asynchronous operations running on separate threads</li>
- * </ul>
- *
- * <h3>Usage Pattern:</h3>
- * <pre>{@code
- * // Initialize root logger for the thread
- * ThreadVFL.initializeForCurrentThread(rootContext);
- *
- * // Use the logger - sub-blocks will automatically manage the stack
- * ThreadVFL logger = ThreadVFL.getCurrentLogger();
- * logger.supply("SubBlock", () -> {
- *     // This code runs with a new logger pushed onto the stack
- *     return someOperation();
- * });
- * }</pre>
- *
- * <p><strong>Thread Safety:</strong> This class is thread-safe as each thread maintains
- * its own independent logger stack via ThreadLocal storage.
- *
- * @author Kuchuk Boram Debbarma
- * @see VFLCallable
- * @see VFLBlockContext
- * @since 1.0
- */
+
 @Slf4j
 public class ThreadVFL extends VFLCallable {
 
@@ -100,9 +59,7 @@ public class ThreadVFL extends VFLCallable {
 
         if (stack == null) {
             throw new IllegalStateException(
-                    "No logger stack initialized for current thread. " +
-                            "Ensure ThreadVFL.initializeForCurrentThread() was called before using the logger."
-            );
+                    "No logger stack initialized for current thread. " + Util.getThreadInfo());
         }
 
         if (stack.isEmpty()) {
@@ -112,62 +69,6 @@ public class ThreadVFL extends VFLCallable {
         }
 
         return stack.peek();
-    }
-
-    /**
-     * Initializes the logger stack for the current thread with a root logger instance.
-     *
-     * <p>This method must be called before any logging operations can be performed
-     * on the current thread. It establishes the root logging context and prepares
-     * the ThreadLocal storage for subsequent sub-block operations.
-     *
-     * @param rootContext the root execution context to initialize the logger stack with
-     * @throws IllegalArgumentException if rootContext is null
-     * @throws IllegalStateException    if a logger stack is already initialized for the current thread
-     */
-    public static void initializeForCurrentThread(VFLBlockContext rootContext) {
-        if (rootContext == null) {
-            throw new IllegalArgumentException("Root context cannot be null");
-        }
-
-        if (LOGGER_STACK.get() != null) {
-            throw new IllegalStateException(
-                    "Logger stack already initialized for current thread. " +
-                            "Call clearCurrentThread() first if reinitialization is needed."
-            );
-        }
-
-        Stack<ThreadVFL> stack = new Stack<>();
-        stack.push(new ThreadVFL(rootContext));
-        LOGGER_STACK.set(stack);
-
-        log.debug("Initialized ThreadVFL stack for thread: {}", Thread.currentThread().getName());
-    }
-
-    /**
-     * Clears the logger stack for the current thread, releasing ThreadLocal resources.
-     *
-     * <p>This method should be called when thread execution is complete to prevent
-     * memory leaks associated with ThreadLocal storage. It's particularly important
-     * in environments where threads are reused (e.g., thread pools).
-     */
-    public static void clearCurrentThread() {
-        LOGGER_STACK.remove();
-        log.debug("Cleared ThreadVFL stack for thread: {}", Thread.currentThread().getName());
-    }
-
-    /**
-     * Returns the current depth of the logger stack for diagnostic purposes.
-     *
-     * @return the number of nested logger contexts in the current thread's stack
-     * @throws IllegalStateException if no logger stack is initialized for the current thread
-     */
-    public static int getStackDepth() {
-        Stack<ThreadVFL> stack = LOGGER_STACK.get();
-        if (stack == null) {
-            throw new IllegalStateException("No logger stack initialized for current thread");
-        }
-        return stack.size();
     }
 
     /**
@@ -251,7 +152,9 @@ public class ThreadVFL extends VFLCallable {
     @Override
     public void close(String endMessage) {
         super.close(endMessage);
-        LOGGER_STACK.get().pop();
+        var removedLogger = LOGGER_STACK.get().pop();
+        String loggerId = Util.trimId(removedLogger.loggerContext.blockInfo.getId());
+        log.debug("Removed logger from stack {} for thread: {}", loggerId, Thread.currentThread().getName());
         if (LOGGER_STACK.get().isEmpty()) {
             log.debug("Closing ThreadVFL stack for thread: {}-{}", Thread.currentThread().getName(), Thread.currentThread().threadId());
             LOGGER_STACK.remove();

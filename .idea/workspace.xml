@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated base fluent. Removed other fluents.">
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/PassVFL.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/FluentThreadVFL.java" beforeDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed string formatter bug which contains return value">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockCallableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockCallableStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockRunnableAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockRunnableAsyncStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/StaticFluentThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/StaticFluentThreadVFLTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,6 +85,12 @@
     "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.StaticFluentThreadVFLTest.flatFlow.executor": "Run",
+    "JUnit.StaticFluentThreadVFLTest.nest.executor": "Run",
+    "JUnit.StaticThreadVFLTest.asyncFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.deepNestedFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.flatFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.flatNestedFlow.executor": "Run",
     "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
     "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
     "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
@@ -101,7 +109,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "enhancement/threadVFL",
+    "git-widget-placeholder": "enhancement/fluent",
     "ignore.preview.features.used": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
@@ -126,6 +134,9 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="dev.kuku.vfl.impl.threadlocal.flient_steps.sub_block" />
+      <recent name="dev.kuku.vfl.impl.threadlocal.flient_steps" />
+      <recent name="dev.kuku.vfl.impl.threadlocal" />
       <recent name="dev.kuku.vfl.scopedVFLogger.fluentApi" />
       <recent name="dev.kuku.builder" />
     </key>
@@ -136,96 +147,101 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
-    <configuration name="ByteBuddySupplierTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddySupplierTest" />
+  <component name="RunManager" selected="JUnit.StaticFluentThreadVFLTest.nest">
+    <configuration name="StaticFluentThreadVFLTest.flatFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="dev.kuku.vfl.*" />
+          <option name="PATTERN" value="threadvfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
-      <module name="vfl_java" />
-      <option name="VM_PARAMETERS" value="-Djdk.instrument.traceUsage" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.kuku.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ByteBuddyAlternativeTest.testCustomCompletableFutureInterception" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.kuku.vfl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="bytebuddy" />
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyAlternativeTest" />
-      <option name="METHOD_NAME" value="testCustomCompletableFutureInterception" />
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticFluentThreadVFLTest" />
+      <option name="METHOD_NAME" value="flatFlow" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ByteBuddyInterceptorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="StaticFluentThreadVFLTest.nest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="dev.kuku.vfl.*" />
+          <option name="PATTERN" value="threadvfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="bytebuddy" />
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticFluentThreadVFLTest" />
+      <option name="METHOD_NAME" value="nest" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ByteBuddyInterceptorTest.testCompletableFutureInterception" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="StaticThreadVFLTest.asyncFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="dev.kuku.vfl.*" />
+          <option name="PATTERN" value="threadvfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="bytebuddy" />
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
-      <option name="METHOD_NAME" value="testCompletableFutureInterception" />
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
+      <option name="METHOD_NAME" value="asyncFlow" />
       <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StaticThreadVFLTest.deepNestedFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadvfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
+      <option name="METHOD_NAME" value="deepNestedFlow" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StaticThreadVFLTest.flatNestedFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadvfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
+      <option name="METHOD_NAME" value="flatNestedFlow" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.Main" />
-      <item itemvalue="Application.ByteBuddySupplierTest" />
-      <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
-      <item itemvalue="JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception" />
-      <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
+      <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
+      <item itemvalue="JUnit.StaticFluentThreadVFLTest.nest" />
+      <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
+      <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
+      <item itemvalue="JUnit.StaticThreadVFLTest.flatNestedFlow" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
-        <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
-        <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
-        <item itemvalue="JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception" />
-        <item itemvalue="Application.ByteBuddySupplierTest" />
+        <item itemvalue="JUnit.StaticFluentThreadVFLTest.nest" />
+        <item itemvalue="JUnit.StaticFluentThreadVFLTest.flatFlow" />
+        <item itemvalue="JUnit.StaticThreadVFLTest.asyncFlow" />
+        <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
+        <item itemvalue="JUnit.StaticThreadVFLTest.flatNestedFlow" />
       </list>
     </recent_temporary>
   </component>
@@ -305,102 +321,7 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-    </task>
-    <task id="LOCAL-00099" summary="added important todo">
-      <option name="closed" value="true" />
-      <created>1752809512001</created>
-      <option name="number" value="00099" />
-      <option name="presentableId" value="LOCAL-00099" />
-      <option name="project" value="LOCAL" />
-      <updated>1752809512001</updated>
-    </task>
-    <task id="LOCAL-00100" summary="added package-info.java for scoped logger">
-      <option name="closed" value="true" />
-      <created>1752810611812</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1752810611812</updated>
-    </task>
-    <task id="LOCAL-00101" summary="renaming changes and other stuff">
-      <option name="closed" value="true" />
-      <created>1752811515471</created>
-      <option name="number" value="00101" />
-      <option name="presentableId" value="LOCAL-00101" />
-      <option name="project" value="LOCAL" />
-      <updated>1752811515471</updated>
-    </task>
-    <task id="LOCAL-00102" summary="creating tests to see how things work">
-      <option name="closed" value="true" />
-      <created>1752815689209</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1752815689209</updated>
-    </task>
-    <task id="LOCAL-00103" summary="updated in memory funciton to show nested logs with same parent">
-      <option name="closed" value="true" />
-      <created>1752816178196</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1752816178196</updated>
-    </task>
-    <task id="LOCAL-00104" summary="simple async showcase done">
-      <option name="closed" value="true" />
-      <created>1752817361581</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1752817361581</updated>
-    </task>
-    <task id="LOCAL-00105" summary="heavy async seems to work too">
-      <option name="closed" value="true" />
-      <created>1752818369603</created>
-      <option name="number" value="00105" />
-      <option name="presentableId" value="LOCAL-00105" />
-      <option name="project" value="LOCAL" />
-      <updated>1752818369603</updated>
-    </task>
-    <task id="LOCAL-00106" summary="heavy async seems to work too">
-      <option name="closed" value="true" />
-      <created>1752819853358</created>
-      <option name="number" value="00106" />
-      <option name="presentableId" value="LOCAL-00106" />
-      <option name="project" value="LOCAL" />
-      <updated>1752819853358</updated>
-    </task>
-    <task id="LOCAL-00107" summary="updated scoped logger and made some design choice">
-      <option name="closed" value="true" />
-      <created>1752835341124</created>
-      <option name="number" value="00107" />
-      <option name="presentableId" value="LOCAL-00107" />
-      <option name="project" value="LOCAL" />
-      <updated>1752835341124</updated>
-    </task>
-    <task id="LOCAL-00108" summary="updated scoped logger and made some design choice">
-      <option name="closed" value="true" />
-      <created>1752835449628</created>
-      <option name="number" value="00108" />
-      <option name="presentableId" value="LOCAL-00108" />
-      <option name="project" value="LOCAL" />
-      <updated>1752835449628</updated>
-    </task>
-    <task id="LOCAL-00109" summary="updated scoped logger and made some design choice">
-      <option name="closed" value="true" />
-      <created>1752835506596</created>
-      <option name="number" value="00109" />
-      <option name="presentableId" value="LOCAL-00109" />
-      <option name="project" value="LOCAL" />
-      <updated>1752835506596</updated>
-    </task>
-    <task id="LOCAL-00110" summary="updated scoped logger and made some design choice">
-      <option name="closed" value="true" />
-      <created>1752835538465</created>
-      <option name="number" value="00110" />
-      <option name="presentableId" value="LOCAL-00110" />
-      <option name="project" value="LOCAL" />
-      <updated>1752835538465</updated>
+      <workItem from="1754357082202" duration="10486000" />
     </task>
     <task id="LOCAL-00111" summary="ignored target">
       <option name="closed" value="true" />
@@ -698,7 +619,103 @@
       <option name="project" value="LOCAL" />
       <updated>1754276268263</updated>
     </task>
-    <option name="localTasksCounter" value="148" />
+    <task id="LOCAL-00148" summary="updated runnable step">
+      <option name="closed" value="true" />
+      <created>1754284403762</created>
+      <option name="number" value="00148" />
+      <option name="presentableId" value="LOCAL-00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1754284403762</updated>
+    </task>
+    <task id="LOCAL-00149" summary="Added AsSubBlockCallableStep">
+      <option name="closed" value="true" />
+      <created>1754303928488</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1754303928488</updated>
+    </task>
+    <task id="LOCAL-00150" summary="Added Async step">
+      <option name="closed" value="true" />
+      <created>1754307343310</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1754307343310</updated>
+    </task>
+    <task id="LOCAL-00151" summary="Created fluent for ThreadVFL">
+      <option name="closed" value="true" />
+      <created>1754309077041</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1754309077041</updated>
+    </task>
+    <task id="LOCAL-00152" summary="Deleted fluent for SuppliedVFL">
+      <option name="closed" value="true" />
+      <created>1754309107846</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1754309107846</updated>
+    </task>
+    <task id="LOCAL-00153" summary="Created Static ThreadVFL wrapper for ease of use">
+      <option name="closed" value="true" />
+      <created>1754357417799</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1754357417799</updated>
+    </task>
+    <task id="LOCAL-00154" summary="Created Static fluent">
+      <option name="closed" value="true" />
+      <created>1754357991850</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1754357991850</updated>
+    </task>
+    <task id="LOCAL-00155" summary="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow">
+      <option name="closed" value="true" />
+      <created>1754359530911</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1754359530911</updated>
+    </task>
+    <task id="LOCAL-00156" summary="Removed unnecessary public functions from threadVFL">
+      <option name="closed" value="true" />
+      <created>1754360319872</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1754360319872</updated>
+    </task>
+    <task id="LOCAL-00157" summary="Added deep nested flow">
+      <option name="closed" value="true" />
+      <created>1754361318984</created>
+      <option name="number" value="00157" />
+      <option name="presentableId" value="LOCAL-00157" />
+      <option name="project" value="LOCAL" />
+      <updated>1754361318984</updated>
+    </task>
+    <task id="LOCAL-00158" summary="Added deep nested flow">
+      <option name="closed" value="true" />
+      <created>1754362792366</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1754362792366</updated>
+    </task>
+    <task id="LOCAL-00159" summary="Fixed string formatter bug which contains return value">
+      <option name="closed" value="true" />
+      <created>1754367979038</created>
+      <option name="number" value="00159" />
+      <option name="presentableId" value="LOCAL-00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1754367979038</updated>
+    </task>
+    <option name="localTasksCounter" value="160" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -716,17 +733,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Removed package info for now" />
-    <MESSAGE value="Added comments" />
-    <MESSAGE value="Code much more clean now" />
-    <MESSAGE value="Code clean, removed ContextualVFL.java" />
-    <MESSAGE value="testing and noticed a bug" />
-    <MESSAGE value="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created" />
-    <MESSAGE value="Never mind it seems to be working lol" />
-    <MESSAGE value="Refactor VFLRunner to VFLCallableRunner and update related classes" />
-    <MESSAGE value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
-    <MESSAGE value="Fixed test 2" />
-    <MESSAGE value="Fixed test 3" />
     <MESSAGE value="Updated context md" />
     <MESSAGE value="Added tests for byte buddy" />
     <MESSAGE value="Created new dto for inheritable thread local" />
@@ -741,7 +747,18 @@
     <MESSAGE value="Refactored ThreadVFL and its runner. Next is fixing fluents" />
     <MESSAGE value="Updated git ignore" />
     <MESSAGE value="Updated base fluent. Removed other fluents." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated base fluent. Removed other fluents." />
+    <MESSAGE value="updated runnable step" />
+    <MESSAGE value="Added AsSubBlockCallableStep" />
+    <MESSAGE value="Added Async step" />
+    <MESSAGE value="Created fluent for ThreadVFL" />
+    <MESSAGE value="Deleted fluent for SuppliedVFL" />
+    <MESSAGE value="Created Static ThreadVFL wrapper for ease of use" />
+    <MESSAGE value="Created Static fluent" />
+    <MESSAGE value="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow" />
+    <MESSAGE value="Removed unnecessary public functions from threadVFL" />
+    <MESSAGE value="Added deep nested flow" />
+    <MESSAGE value="Fixed string formatter bug which contains return value" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed string formatter bug which contains return value" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -9,6 +9,7 @@ import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -158,8 +159,10 @@ public abstract class VFLCallable extends VFL {
 
     // ========== ASYNC SUPPLY METHOD OVERLOADS ==========
 
-    // Base async supply method
-    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, String subBlockStartMessage, Supplier<R> supplier, LogTypeBlockStartEnum subBlockStartType, Function<R, String> endMessageSerializer) {
+    // Core async supply method - all parameters including executor
+    private <R> CompletableFuture<R> supplyAsyncCore(String subBlockName, String subBlockStartMessage,
+                                                     Supplier<R> supplier, LogTypeBlockStartEnum subBlockStartType,
+                                                     Function<R, String> endMessageSerializer, Executor executor) {
         // In current thread: create the block, log and push to buffer
         ensureBlockStarted();
         var executionContext = getContext();
@@ -182,39 +185,123 @@ public abstract class VFLCallable extends VFL {
             executionContext.currentLogId = subBlockStartLog.getId();
         }
 
-        // Execute asynchronously in new thread
-        return CompletableFuture.supplyAsync(() -> {
-            // In new thread: setup async sub-block context
-            setupAsyncSubBlockContext(subBlock, subBlockStartLog);
-            // Execute the supplier with existing context
-            return executeWithExistingSubBlockContext(supplier, endMessageSerializer, subBlock, subBlockStartLog);
-        });
+        // Execute asynchronously with specified executor (null uses default)
+        if (executor != null) {
+            return CompletableFuture.supplyAsync(() -> {
+                setupAsyncSubBlockContext(subBlock, subBlockStartLog);
+                return executeWithExistingSubBlockContext(supplier, endMessageSerializer, subBlock, subBlockStartLog);
+            }, executor);
+        } else {
+            return CompletableFuture.supplyAsync(() -> {
+                setupAsyncSubBlockContext(subBlock, subBlockStartLog);
+                return executeWithExistingSubBlockContext(supplier, endMessageSerializer, subBlock, subBlockStartLog);
+            });
+        }
     }
 
-    // Minimal async supply overload
+    // ========== SUPPLY ASYNC - NO EXECUTOR VARIANTS ==========
+
+    // Full method without executor
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, String subBlockStartMessage,
+                                                      Supplier<R> supplier, LogTypeBlockStartEnum subBlockStartType,
+                                                      Function<R, String> endMessageSerializer) {
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, subBlockStartType, endMessageSerializer, null);
+    }
+
+    // Minimal overload
     public final <R> CompletableFuture<R> supplyAsync(String subBlockName, Supplier<R> supplier) {
-        return supplyAsync(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null);
+        return supplyAsyncCore(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null, null);
     }
 
     // With start message
     public final <R> CompletableFuture<R> supplyAsync(String subBlockName, String subBlockStartMessage, Supplier<R> supplier) {
-        return supplyAsync(subBlockName, subBlockStartMessage, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null);
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null, null);
     }
 
     // With block start type
     public final <R> CompletableFuture<R> supplyAsync(String subBlockName, Supplier<R> supplier, LogTypeBlockStartEnum blockStartType) {
-        return supplyAsync(subBlockName, null, supplier, blockStartType, null);
+        return supplyAsyncCore(subBlockName, null, supplier, blockStartType, null, null);
     }
 
     // With end message serializer
     public final <R> CompletableFuture<R> supplyAsync(String subBlockName, Supplier<R> supplier, Function<R, String> endMessageSerializer) {
-        return supplyAsync(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, endMessageSerializer);
+        return supplyAsyncCore(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, endMessageSerializer, null);
+    }
+
+    // With start message and block start type
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, String subBlockStartMessage,
+                                                      Supplier<R> supplier, LogTypeBlockStartEnum blockStartType) {
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, blockStartType, null, null);
+    }
+
+    // With start message and end message serializer
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, String subBlockStartMessage,
+                                                      Supplier<R> supplier, Function<R, String> endMessageSerializer) {
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, SUB_BLOCK_START_SECONDARY_JOIN, endMessageSerializer, null);
+    }
+
+    // With block start type and end message serializer
+    public final <R> CompletableFuture<R> supplyAsync(String subBlockName, Supplier<R> supplier,
+                                                      LogTypeBlockStartEnum blockStartType, Function<R, String> endMessageSerializer) {
+        return supplyAsyncCore(subBlockName, null, supplier, blockStartType, endMessageSerializer, null);
+    }
+
+    // ========== SUPPLY ASYNC - WITH EXECUTOR VARIANTS ==========
+
+    // Full method with executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, String subBlockStartMessage,
+                                                          Supplier<R> supplier, LogTypeBlockStartEnum subBlockStartType,
+                                                          Function<R, String> endMessageSerializer, Executor executor) {
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, subBlockStartType, endMessageSerializer, executor);
+    }
+
+    // Minimal with executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, Supplier<R> supplier, Executor executor) {
+        return supplyAsyncCore(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null, executor);
+    }
+
+    // With start message and executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, String subBlockStartMessage,
+                                                          Supplier<R> supplier, Executor executor) {
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, SUB_BLOCK_START_SECONDARY_JOIN, null, executor);
+    }
+
+    // With block start type and executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, Supplier<R> supplier,
+                                                          LogTypeBlockStartEnum blockStartType, Executor executor) {
+        return supplyAsyncCore(subBlockName, null, supplier, blockStartType, null, executor);
+    }
+
+    // With end message serializer and executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, Supplier<R> supplier,
+                                                          Function<R, String> endMessageSerializer, Executor executor) {
+        return supplyAsyncCore(subBlockName, null, supplier, SUB_BLOCK_START_SECONDARY_JOIN, endMessageSerializer, executor);
+    }
+
+    // With start message, block start type and executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, String subBlockStartMessage,
+                                                          Supplier<R> supplier, LogTypeBlockStartEnum blockStartType, Executor executor) {
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, blockStartType, null, executor);
+    }
+
+    // With start message, end message serializer and executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, String subBlockStartMessage,
+                                                          Supplier<R> supplier, Function<R, String> endMessageSerializer, Executor executor) {
+        return supplyAsyncCore(subBlockName, subBlockStartMessage, supplier, SUB_BLOCK_START_SECONDARY_JOIN, endMessageSerializer, executor);
+    }
+
+    // With block start type, end message serializer and executor
+    public final <R> CompletableFuture<R> supplyAsyncWith(String subBlockName, Supplier<R> supplier,
+                                                          LogTypeBlockStartEnum blockStartType, Function<R, String> endMessageSerializer, Executor executor) {
+        return supplyAsyncCore(subBlockName, null, supplier, blockStartType, endMessageSerializer, executor);
     }
 
     // ========== ASYNC RUN METHOD OVERLOADS ==========
 
-    // Base async run method
-    public final CompletableFuture<Void> runAsync(String subBlockName, String subBlockStartMessage, Runnable runnable, LogTypeBlockStartEnum subBlockStartType) {
+    // Core async run method - all parameters including executor
+    private CompletableFuture<Void> runAsyncCore(String subBlockName, String subBlockStartMessage,
+                                                 Runnable runnable, LogTypeBlockStartEnum subBlockStartType,
+                                                 Executor executor) {
         // In current thread: create the block, log and push to buffer
         ensureBlockStarted();
         var executionContext = getContext();
@@ -237,32 +324,73 @@ public abstract class VFLCallable extends VFL {
             executionContext.currentLogId = subBlockStartLog.getId();
         }
 
-        // Execute asynchronously in new thread
-        return CompletableFuture.runAsync(() -> {
-            // In new thread: setup async sub-block context
-            setupAsyncSubBlockContext(subBlock, subBlockStartLog);
-
-            // Execute the runnable with existing context
-            executeWithExistingSubBlockContext(() -> {
-                runnable.run();
-                return null;
-            }, null, subBlock, subBlockStartLog);
-        });
+        // Execute asynchronously with specified executor (null uses default)
+        if (executor != null) {
+            return CompletableFuture.runAsync(() -> {
+                setupAsyncSubBlockContext(subBlock, subBlockStartLog);
+                executeWithExistingSubBlockContext(() -> {
+                    runnable.run();
+                    return null;
+                }, null, subBlock, subBlockStartLog);
+            }, executor);
+        } else {
+            return CompletableFuture.runAsync(() -> {
+                setupAsyncSubBlockContext(subBlock, subBlockStartLog);
+                executeWithExistingSubBlockContext(() -> {
+                    runnable.run();
+                    return null;
+                }, null, subBlock, subBlockStartLog);
+            });
+        }
     }
 
-    // Minimal async run overload
+    // ========== RUN ASYNC - NO EXECUTOR VARIANTS ==========
+
+    // Full method without executor
+    public final CompletableFuture<Void> runAsync(String subBlockName, String subBlockStartMessage,
+                                                  Runnable runnable, LogTypeBlockStartEnum subBlockStartType) {
+        return runAsyncCore(subBlockName, subBlockStartMessage, runnable, subBlockStartType, null);
+    }
+
+    // Minimal overload
     public final CompletableFuture<Void> runAsync(String subBlockName, Runnable runnable) {
-        return runAsync(subBlockName, null, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN);
+        return runAsyncCore(subBlockName, null, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN, null);
     }
 
     // With start message
     public final CompletableFuture<Void> runAsync(String subBlockName, String subBlockStartMessage, Runnable runnable) {
-        return runAsync(subBlockName, subBlockStartMessage, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN);
+        return runAsyncCore(subBlockName, subBlockStartMessage, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN, null);
     }
 
     // With block start type
     public final CompletableFuture<Void> runAsync(String subBlockName, Runnable runnable, LogTypeBlockStartEnum blockStartType) {
-        return runAsync(subBlockName, null, runnable, blockStartType);
+        return runAsyncCore(subBlockName, null, runnable, blockStartType, null);
+    }
+
+    // ========== RUN ASYNC - WITH EXECUTOR VARIANTS ==========
+
+    // Full method with executor
+    public final CompletableFuture<Void> runAsyncWith(String subBlockName, String subBlockStartMessage,
+                                                      Runnable runnable, LogTypeBlockStartEnum subBlockStartType,
+                                                      Executor executor) {
+        return runAsyncCore(subBlockName, subBlockStartMessage, runnable, subBlockStartType, executor);
+    }
+
+    // Minimal with executor
+    public final CompletableFuture<Void> runAsyncWith(String subBlockName, Runnable runnable, Executor executor) {
+        return runAsyncCore(subBlockName, null, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN, executor);
+    }
+
+    // With start message and executor
+    public final CompletableFuture<Void> runAsyncWith(String subBlockName, String subBlockStartMessage,
+                                                      Runnable runnable, Executor executor) {
+        return runAsyncCore(subBlockName, subBlockStartMessage, runnable, SUB_BLOCK_START_SECONDARY_NO_JOIN, executor);
+    }
+
+    // With block start type and executor
+    public final CompletableFuture<Void> runAsyncWith(String subBlockName, Runnable runnable,
+                                                      LogTypeBlockStartEnum blockStartType, Executor executor) {
+        return runAsyncCore(subBlockName, null, runnable, blockStartType, executor);
     }
 
     // ========== EVENT PUBLISHER METHODS ==========
@@ -318,7 +446,7 @@ public abstract class VFLCallable extends VFL {
 
     /**
      * Performs implementation-specific initialization after a sub-block and its start log
-     * have been created and registered in the execution buffer.
+     * have be  en created and registered in the execution buffer.
      * <p>
      * This hook allows implementations to set up any necessary context, logging infrastructure,
      * or thread-local state required for proper sub-block execution. For example, ThreadVFL

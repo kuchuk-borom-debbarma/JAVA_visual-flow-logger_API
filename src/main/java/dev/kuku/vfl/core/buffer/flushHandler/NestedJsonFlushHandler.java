@@ -1,5 +1,6 @@
 package dev.kuku.vfl.core.buffer.flushHandler;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.kuku.vfl.core.models.Block;
@@ -37,6 +38,7 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
         this.outputFilePath = outputFilePath;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
                 .withZone(ZoneId.systemDefault());
     }
@@ -108,17 +110,23 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
         blockJson.parentBlockId = block.getParentBlockId();
         blockJson.name = block.getBlockName();
 
-        // Format times
+        // Format times and calculate duration
         Long startTime = blockStarts.get(block.getId());
         if (startTime != null) {
             blockJson.startTime = formatTime(startTime);
         }
 
-        // Handle block end time and message with null checking
+        // Handle block end time and calculate duration
         BlockEndData blockEnd = blockEnds.get(block.getId());
         if (blockEnd != null) {
             blockJson.endTime = formatTime(blockEnd.getEndTime());
             blockJson.endMessage = blockEnd.getEndMessage();
+
+            // Calculate duration if both start and end times are available
+            if (startTime != null) {
+                long duration = blockEnd.getEndTime() - startTime;
+                blockJson.duration = formatDuration(duration);
+            }
         }
 
         // Build logs chain for this block
@@ -142,6 +150,7 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
             logJson.id = log.getId();
             logJson.type = log.getLogType().toString();
             logJson.message = log.getMessage();
+            logJson.timestamp = formatTime(log.getTimestamp());
 
             // Handle SubBlockStartLog special case
             if (log instanceof SubBlockStartLog subBlockLog) {
@@ -217,6 +226,7 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
         public String name;
         public String startTime;
         public String endTime;
+        public String duration;
         public String endMessage;
         public List<LogJson> logsChain;
     }
@@ -225,9 +235,10 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
         public String id;
         public String type;
         public String message;
-        public String duration; // Only for sub-block logs
-        public String endMessage; // Only for sub-block logs
-        public BlockJson referencedBlock; // Only for sub-block logs
+        public String timestamp;
+        public String duration; // Only for SubBlockStartLog
+        public String endMessage; // Only for SubBlockStartLog
+        public BlockJson referencedBlock; // Only for SubBlockStartLog
         public List<LogJson> logsChain; // Nested logs
     }
 }
