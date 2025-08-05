@@ -1,50 +1,30 @@
 package dev.kuku.vfl.impl.threadlocal;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
-import dev.kuku.vfl.core.helpers.VFLFlowHelper;
-import dev.kuku.vfl.core.models.Block;
-import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
+import dev.kuku.vfl.impl.threadlocal.dto.SubBlockStartExecutorData;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.impl.threadlocal.ThreadVFLAnnotation.buffer;
-
 public class VFLAnnotationCompletableFuture {
 
-    public static <R> CompletableFuture<R> supplyAsync(String blockName, Supplier<R> supplier) {
+    public static <R> CompletableFuture<R> supplyAsync(Supplier<R> supplier) {
         ThreadVFL callerLogger = ThreadVFL.getCurrentLogger();
         VFLBlockContext parentBlock = callerLogger.loggerContext;
-        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
-        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
-                parentBlock.blockInfo.getId(),
-                parentBlock.currentLogId,
-                null,
-                subBlock.getId(),
-                LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN, buffer);
-        //Since it's a secondary sub block start, this will not move the flow
-        //parentBlock.currentLogId = subBlockStartLog.getId();
+        SubBlockStartExecutorData spawnedThreadData = new SubBlockStartExecutorData(parentBlock, LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN);
         return CompletableFuture.supplyAsync((() -> {
-            ThreadVFLAnnotation.startedSubBlockInParentThread.set(subBlock);
+            ThreadVFLAnnotation.parentThreadLoggerData.set(spawnedThreadData);
             return supplier.get();
         }));
     }
 
-    public static CompletableFuture<Void> runAsync(String blockName, Runnable runnable) {
+    public static CompletableFuture<Void> runAsync(Runnable runnable) {
         ThreadVFL callerLogger = ThreadVFL.getCurrentLogger();
         VFLBlockContext parentBlock = callerLogger.loggerContext;
-        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
-        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
-                parentBlock.blockInfo.getId(),
-                parentBlock.currentLogId,
-                null,
-                subBlock.getId(),
-                LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN, buffer);
-        //Since it's a secondary sub block start, this will not move the flow
-        //parentBlock.currentLogId = subBlockStartLog.getId();
+        SubBlockStartExecutorData spawnedThreadData = new SubBlockStartExecutorData(parentBlock, LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN);
         return CompletableFuture.runAsync((() -> {
-            ThreadVFLAnnotation.startedSubBlockInParentThread.set(subBlock);
+            ThreadVFLAnnotation.parentThreadLoggerData.set(spawnedThreadData);
             runnable.run();
         }));
     }

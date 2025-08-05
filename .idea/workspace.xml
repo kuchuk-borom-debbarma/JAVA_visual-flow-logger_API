@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Code refactor">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/dto/SubBlockStartExecutorData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFLAnnotation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLAnnotationCompletableFuture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/VFLAnnotationCompletableFuture.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
