@@ -19,13 +19,20 @@ public class ThreadVFL extends VFLCallable {
      * The stack ensures that nested sub-block executions maintain proper logging context
      * with the most recent (deepest) logger always at the top of the stack.
      */
-    static final ThreadLocal<Stack<ThreadVFL>> LOGGER_STACK = new ThreadLocal<>();
+    public static final ThreadLocal<Stack<ThreadVFL>> LOGGER_STACK = new ThreadLocal<>();
 
     /**
      * The execution context associated with this specific logger instance.
      * Contains block information, buffer references, and current log sequence state.
      */
-    final VFLBlockContext loggerContext;
+    public final VFLBlockContext loggerContext;
+
+    @Override
+    public String toString() {
+        return "ThreadVFL{" +
+                "loggerContext=" + loggerContext +
+                '}';
+    }
 
     /**
      * Constructs a new ThreadVFL instance with the specified logging context.
@@ -36,7 +43,7 @@ public class ThreadVFL extends VFLCallable {
      * @param loggerContext the execution context for this logger instance
      * @throws IllegalArgumentException if loggerContext is null
      */
-    ThreadVFL(VFLBlockContext loggerContext) {
+    public ThreadVFL(VFLBlockContext loggerContext) {
         if (loggerContext == null) {
             throw new IllegalArgumentException("Logger context cannot be null");
         }
@@ -149,11 +156,11 @@ public class ThreadVFL extends VFLCallable {
         log.debug("Initialized async ThreadVFL stack for thread: {}", Thread.currentThread().getName());
     }
 
-    void onClose(String endMessage) {
+    public void onClose(String endMessage) {
         super.close(endMessage);
         //This should point to this logger because thread is sequential
         var removedLogger = LOGGER_STACK.get().pop();
-        if(removedLogger != this){
+        if (removedLogger != this) {
             throw new IllegalStateException("Latest logger is NOT same as this logger");
         }
         String loggerId = Util.trimId(removedLogger.loggerContext.blockInfo.getId());
