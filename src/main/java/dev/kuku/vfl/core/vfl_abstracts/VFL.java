@@ -2,7 +2,7 @@ package dev.kuku.vfl.core.vfl_abstracts;
 
 import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
-import dev.kuku.vfl.core.helpers.VFLHelper;
+import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 
 import java.time.Instant;
@@ -84,7 +84,7 @@ public abstract class VFL {
         final VFLBlockContext context = getContext();
 
         // Create and push the new log entry using the specified type and current sequence
-        final var createdLog = VFLHelper.CreateLogAndPush2Buffer(
+        final var createdLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 context.blockInfo.getId(),
                 context.currentLogId,
                 type,

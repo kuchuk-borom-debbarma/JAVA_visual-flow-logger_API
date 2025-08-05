@@ -2,7 +2,7 @@ package dev.kuku.vfl.impl.threadlocal;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
-import dev.kuku.vfl.core.helpers.VFLHelper;
+import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.util.Stack;
+
+import static dev.kuku.vfl.core.helpers.Util.getMethodName;
 
 public class ThreadVFLAnnotation {
     public static final ThreadLocal<Block> startedSubBlockInParentThread = new ThreadLocal<>();
@@ -72,7 +74,7 @@ public class ThreadVFLAnnotation {
                 /* ---------- ROOT BLOCK ---------- */
                 log.debug("[VFL] ROOT-start {}", blockName);
 
-                Block rootBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, null, buffer);
+                Block rootBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, buffer);
                 ThreadVFL logger = new ThreadVFL(new VFLBlockContext(rootBlock, buffer));
 
                 ThreadVFL.LOGGER_STACK.set(new Stack<>());
@@ -97,10 +99,10 @@ public class ThreadVFLAnnotation {
         VFLBlockContext parentCtx = ThreadVFL.getCurrentLogger().loggerContext;
         log.debug("[VFL] SUB-start {} → {}", parentCtx.blockInfo.getBlockName(), blockName);
 
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(
                 blockName, parentCtx.blockInfo.getId(), buffer);
 
-        SubBlockStartLog sLog = VFLHelper.CreateLogAndPush2Buffer(
+        SubBlockStartLog sLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 parentCtx.blockInfo.getId(),
                 parentCtx.currentLogId,
                 null,
@@ -132,29 +134,5 @@ public class ThreadVFLAnnotation {
             }
             startedSubBlockInParentThread.remove();
         }
-    }
-
-    /* ---------------- Helper ---------------- */
-
-    public static String getMethodName(Method method, Object[] args) {
-        VFLBlock anno = method.getAnnotation(VFLBlock.class);
-        if (anno != null && !anno.blockName().isEmpty()) {
-            String name = anno.blockName();
-            if (args != null) {
-                for (int i = 0; i < args.length; i++) {
-                    name = name.replace("{" + i + "}", String.valueOf(args[i]));
-                }
-            }
-            return name;
-        }
-
-        StringBuilder sb = new StringBuilder(method.getName()).append('(');
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                if (i > 0) sb.append(", ");
-                sb.append(args[i]);
-            }
-        }
-        return sb.append(')').toString();
     }
 }

@@ -1,7 +1,7 @@
 package dev.kuku.vfl.impl.threadlocal;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
-import dev.kuku.vfl.core.helpers.VFLHelper;
+import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -16,8 +16,8 @@ public class VFLAnnotationCompletableFuture {
     public static <R> CompletableFuture<R> supplyAsync(String blockName, Supplier<R> supplier) {
         ThreadVFL callerLogger = ThreadVFL.getCurrentLogger();
         VFLBlockContext parentBlock = callerLogger.loggerContext;
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
-        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
+        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 parentBlock.blockInfo.getId(),
                 parentBlock.currentLogId,
                 null,
@@ -34,8 +34,8 @@ public class VFLAnnotationCompletableFuture {
     public static CompletableFuture<Void> runAsync(String blockName, Runnable runnable) {
         ThreadVFL callerLogger = ThreadVFL.getCurrentLogger();
         VFLBlockContext parentBlock = callerLogger.loggerContext;
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
-        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlock.blockInfo.getId(), buffer);
+        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 parentBlock.blockInfo.getId(),
                 parentBlock.currentLogId,
                 null,
