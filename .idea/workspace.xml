@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Removed unnecessary public functions from threadVFL">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/ThreadVFL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/StaticThreadVFLTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/StaticThreadVFLTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,6 +82,7 @@
     "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
     "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.StaticThreadVFLTest.deepNestedFlow.executor": "Run",
     "JUnit.StaticThreadVFLTest.flatFlow.executor": "Run",
     "JUnit.StaticThreadVFLTest.flatNestedFlow.executor": "Run",
     "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
@@ -141,7 +141,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.StaticThreadVFLTest.flatNestedFlow">
+  <component name="RunManager" selected="JUnit.StaticThreadVFLTest.deepNestedFlow">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -171,19 +171,18 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ByteBuddyInterceptorTest.testCompletableFutureInterception" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="StaticThreadVFLTest.deepNestedFlow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="dev.kuku.vfl.*" />
+          <option name="PATTERN" value="threadvfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="bytebuddy" />
-      <option name="MAIN_CLASS_NAME" value="bytebuddy.ByteBuddyInterceptorTest" />
-      <option name="METHOD_NAME" value="testCompletableFutureInterception" />
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.StaticThreadVFLTest" />
+      <option name="METHOD_NAME" value="deepNestedFlow" />
       <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -222,18 +221,18 @@
     </configuration>
     <list>
       <item itemvalue="Application.Main" />
+      <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
       <item itemvalue="JUnit.StaticThreadVFLTest.flatFlow" />
       <item itemvalue="JUnit.StaticThreadVFLTest.flatNestedFlow" />
       <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
-      <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.StaticThreadVFLTest.deepNestedFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.flatNestedFlow" />
         <item itemvalue="JUnit.StaticThreadVFLTest.flatFlow" />
         <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.ByteBuddyInterceptorTest" />
-        <item itemvalue="JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception" />
       </list>
     </recent_temporary>
   </component>
@@ -313,15 +312,7 @@
       <workItem from="1753625390767" duration="3397000" />
       <workItem from="1754146490629" duration="24286000" />
       <workItem from="1754233008979" duration="21131000" />
-      <workItem from="1754357082202" duration="3198000" />
-    </task>
-    <task id="LOCAL-00107" summary="updated scoped logger and made some design choice">
-      <option name="closed" value="true" />
-      <created>1752835341124</created>
-      <option name="number" value="00107" />
-      <option name="presentableId" value="LOCAL-00107" />
-      <option name="project" value="LOCAL" />
-      <updated>1752835341124</updated>
+      <workItem from="1754357082202" duration="4224000" />
     </task>
     <task id="LOCAL-00108" summary="updated scoped logger and made some design choice">
       <option name="closed" value="true" />
@@ -707,7 +698,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754359530911</updated>
     </task>
-    <option name="localTasksCounter" value="156" />
+    <task id="LOCAL-00156" summary="Removed unnecessary public functions from threadVFL">
+      <option name="closed" value="true" />
+      <created>1754360319872</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1754360319872</updated>
+    </task>
+    <option name="localTasksCounter" value="157" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -725,7 +724,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactor VFLRunner and VFLCallable to streamline logging functionality" />
     <MESSAGE value="Fixed test 2" />
     <MESSAGE value="Fixed test 3" />
     <MESSAGE value="Updated context md" />
@@ -750,7 +748,8 @@
     <MESSAGE value="Created Static ThreadVFL wrapper for ease of use" />
     <MESSAGE value="Created Static fluent" />
     <MESSAGE value="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow" />
+    <MESSAGE value="Removed unnecessary public functions from threadVFL" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary public functions from threadVFL" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

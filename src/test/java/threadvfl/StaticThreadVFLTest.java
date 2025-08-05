@@ -25,6 +25,31 @@ public class StaticThreadVFLTest {
         StaticThreadVFL.Log("Finished transaction " + item);
     }
 
+    int moveToTarget(int num, int target) {
+        StaticThreadVFL.Log("Move to target " + num + " from " + target);
+        if (target == num) {
+            StaticThreadVFL.Log("REached target returning it (" + num + ")");
+            return num;
+        }
+        int returned;
+        if (num < target) {
+            returned = StaticThreadVFL.Supply(
+                    "Move to target block " + num + 1,
+                    "Incrementing num to " + num + 1,
+                    () -> moveToTarget(num + 1, target),
+                    integer -> "Increased num to " + integer
+            );
+        } else {
+            returned = StaticThreadVFL.Supply(
+                    "Move to target block " + (num - 1),
+                    "Decrement num to " + (num - 1),
+                    () -> moveToTarget(num - 1, target),
+                    integer -> "Decreased num to " + integer
+            );
+        }
+        return StaticThreadVFL.LogFn(() -> returned, integer -> "Returned " + returned);
+    }
+
     VFLBuffer createBuffer(String fileName) {
         NestedJsonFlushHandler f = new NestedJsonFlushHandler("test/output/" + StaticThreadVFLTest.class.getSimpleName() + "/" + fileName + ".json");
         return new AsyncVFLBuffer(100, 3000, 100, f, Executors.newVirtualThreadPerTaskExecutor(), Executors.newSingleThreadScheduledExecutor());
@@ -50,6 +75,17 @@ public class StaticThreadVFLTest {
             int finalA1 = a;
             StaticThreadVFL.Run("Transaction Block", "Transactioning " + a, () -> transaction(String.valueOf(finalA1)));
             StaticThreadVFL.Log("Finished nested FLow right now");
+        });
+    }
+
+    @Test
+    void deepNestedFlow() {
+        ThreadVFLRunner.StartVFL("Nested FLow", createBuffer("deepNestedFlow.json"), () -> {
+            StaticThreadVFL.Log("Starting nested FLow right now");
+            int a = 2;
+            int target = 5;
+            int last = StaticThreadVFL.Supply("Move to target block root ", () -> moveToTarget(a, target));
+            StaticThreadVFL.Log("Final is " + last);
         });
     }
 }
