@@ -23,7 +23,7 @@ public class AnnotationTest {
 
     @Test
     void linear() {
-        VFLAnnotationProcessor.initialise(createBuffer("linear"));
+        //VFLAnnotationProcessor.initialise(createBuffer("linear"));
         new TestService().linear();
     }
 

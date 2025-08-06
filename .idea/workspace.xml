@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Is buffer broken or something else idk. Probably logic in advice or something">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="REmoved fluent">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -327,23 +326,7 @@
       <workItem from="1754423681859" duration="81000" />
       <workItem from="1754423771713" duration="2538000" />
       <workItem from="1754443176965" duration="3932000" />
-      <workItem from="1754479312633" duration="6544000" />
-    </task>
-    <task id="LOCAL-00131" summary="Refactor VFLRunner to VFLCallableRunner and update related classes">
-      <option name="closed" value="true" />
-      <created>1753625499056</created>
-      <option name="number" value="00131" />
-      <option name="presentableId" value="LOCAL-00131" />
-      <option name="project" value="LOCAL" />
-      <updated>1753625499056</updated>
-    </task>
-    <task id="LOCAL-00132" summary="Refactor VFLRunner and VFLCallable to streamline logging functionality">
-      <option name="closed" value="true" />
-      <created>1753627599306</created>
-      <option name="number" value="00132" />
-      <option name="presentableId" value="LOCAL-00132" />
-      <option name="project" value="LOCAL" />
-      <updated>1753627599306</updated>
+      <workItem from="1754479312633" duration="6940000" />
     </task>
     <task id="LOCAL-00133" summary="Fixed test 2">
       <option name="closed" value="true" />
@@ -721,7 +704,23 @@
       <option name="project" value="LOCAL" />
       <updated>1754485484072</updated>
     </task>
-    <option name="localTasksCounter" value="180" />
+    <task id="LOCAL-00180" summary="Fixed logical bug">
+      <option name="closed" value="true" />
+      <created>1754485932358</created>
+      <option name="number" value="00180" />
+      <option name="presentableId" value="LOCAL-00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1754485932358</updated>
+    </task>
+    <task id="LOCAL-00181" summary="REmoved fluent">
+      <option name="closed" value="true" />
+      <created>1754485965257</created>
+      <option name="number" value="00181" />
+      <option name="presentableId" value="LOCAL-00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1754485965257</updated>
+    </task>
+    <option name="localTasksCounter" value="182" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -739,8 +738,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Created Static ThreadVFL wrapper for ease of use" />
-    <MESSAGE value="Created Static fluent" />
     <MESSAGE value="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow" />
     <MESSAGE value="Removed unnecessary public functions from threadVFL" />
     <MESSAGE value="Added deep nested flow" />
@@ -764,7 +761,9 @@
     <MESSAGE value="VFL annotation works properly now" />
     <MESSAGE value="Refactoring in progress. Logic not workign as expected" />
     <MESSAGE value="Is buffer broken or something else idk. Probably logic in advice or something" />
-    <option name="LAST_COMMIT_MESSAGE" value="Is buffer broken or something else idk. Probably logic in advice or something" />
+    <MESSAGE value="Fixed logical bug" />
+    <MESSAGE value="REmoved fluent" />
+    <option name="LAST_COMMIT_MESSAGE" value="REmoved fluent" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
