@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="REmoved fluent">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Made it so that if logger is not initialized it works fine">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,6 +78,7 @@
     "Application.Main.executor": "Run",
     "Application.TestBlockLibrary.executor": "Run",
     "Application.VFLBootstrap.executor": "Run",
+    "JUnit.AnnotationTest.async.executor": "Run",
     "JUnit.AnnotationTest.asyncTest.executor": "Run",
     "JUnit.AnnotationTest.linear.executor": "Run",
     "JUnit.AnnotationTest.nest.executor": "Run",
@@ -152,7 +156,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest.linear">
+  <component name="RunManager" selected="JUnit.AnnotationTest.async">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -166,15 +170,18 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="VFLBootstrap" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="dev.kuku.VFLBootstrap" />
+    <configuration name="AnnotationTest.async" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="dev.kuku.*" />
+          <option name="PATTERN" value="threadvfl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.AnnotationTest" />
+      <option name="METHOD_NAME" value="async" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -229,18 +236,18 @@
     </configuration>
     <list>
       <item itemvalue="Application.Main" />
-      <item itemvalue="Application.VFLBootstrap" />
+      <item itemvalue="JUnit.AnnotationTest.async" />
       <item itemvalue="JUnit.AnnotationTest.linear" />
       <item itemvalue="JUnit.AnnotationTest.asyncTest" />
       <item itemvalue="JUnit.AnnotationTest.test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest.test" />
         <item itemvalue="JUnit.AnnotationTest.asyncTest" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.VFLBootstrap" />
       </list>
     </recent_temporary>
   </component>
@@ -326,15 +333,7 @@
       <workItem from="1754423681859" duration="81000" />
       <workItem from="1754423771713" duration="2538000" />
       <workItem from="1754443176965" duration="3932000" />
-      <workItem from="1754479312633" duration="6940000" />
-    </task>
-    <task id="LOCAL-00133" summary="Fixed test 2">
-      <option name="closed" value="true" />
-      <created>1754146590294</created>
-      <option name="number" value="00133" />
-      <option name="presentableId" value="LOCAL-00133" />
-      <option name="project" value="LOCAL" />
-      <updated>1754146590294</updated>
+      <workItem from="1754479312633" duration="8049000" />
     </task>
     <task id="LOCAL-00134" summary="Fixed test 3">
       <option name="closed" value="true" />
@@ -720,7 +719,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754485965257</updated>
     </task>
-    <option name="localTasksCounter" value="182" />
+    <task id="LOCAL-00182" summary="Made it so that if logger is not initialized it works fine">
+      <option name="closed" value="true" />
+      <created>1754486282664</created>
+      <option name="number" value="00182" />
+      <option name="presentableId" value="LOCAL-00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1754486282665</updated>
+    </task>
+    <option name="localTasksCounter" value="183" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -738,7 +745,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow" />
     <MESSAGE value="Removed unnecessary public functions from threadVFL" />
     <MESSAGE value="Added deep nested flow" />
     <MESSAGE value="Fixed string formatter bug which contains return value" />
@@ -763,7 +769,8 @@
     <MESSAGE value="Is buffer broken or something else idk. Probably logic in advice or something" />
     <MESSAGE value="Fixed logical bug" />
     <MESSAGE value="REmoved fluent" />
-    <option name="LAST_COMMIT_MESSAGE" value="REmoved fluent" />
+    <MESSAGE value="Made it so that if logger is not initialized it works fine" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made it so that if logger is not initialized it works fine" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

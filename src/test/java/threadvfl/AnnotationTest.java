@@ -1,15 +1,16 @@
 package threadvfl;
 
 import dev.kuku.vfl.core.buffer.AsyncBuffer;
-import dev.kuku.vfl.core.buffer.NoOpsBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
 import dev.kuku.vfl.impl.annotation.Log;
 import dev.kuku.vfl.impl.annotation.VFLAnnotationProcessor;
 import dev.kuku.vfl.impl.annotation.VFLBlock;
+import dev.kuku.vfl.impl.annotation.VFLFutures;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class AnnotationTest {
@@ -25,6 +26,12 @@ public class AnnotationTest {
     void linear() {
         //VFLAnnotationProcessor.initialise(createBuffer("linear"));
         new TestService().linear();
+    }
+
+    @Test
+    void async() throws ExecutionException, InterruptedException {
+        VFLAnnotationProcessor.initialise(createBuffer("async"));
+        new TestService().async();
     }
 
 }
@@ -48,4 +55,16 @@ class TestService {
         int b = squareAndMultiply(a, 2);
         square(b);
     }
+
+    @VFLBlock
+    public void async() throws ExecutionException, InterruptedException {
+        Log.Info("SUP");
+        var t = VFLFutures.runAsync(() -> {
+            //This throws exception as no block has started. Need to resolve this
+            //Log.Info("async block number 1");
+            square(1);
+        });
+        t.get();
+    }
+
 }

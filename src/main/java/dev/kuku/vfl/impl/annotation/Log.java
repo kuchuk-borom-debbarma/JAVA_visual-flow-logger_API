@@ -23,6 +23,19 @@ public class Log {
         return ContextManager.logger.infoFn(fn, s);
     }
 
+    public static void InfoFn(Runnable runnable, String message, Object... args) {
+        if (!VFLAnnotationProcessor.initialized) {
+            runnable.run();
+            return;
+        }
+        Supplier<Void> supplier = () -> {
+            runnable.run();
+            return null;
+        };
+        Function<Void, String> s = (r) -> Util.FormatMessage(message, args);
+        ContextManager.logger.infoFn(supplier, s);
+    }
+
     // ================ WARN METHODS ================
     public static void Warn(String message, Object... args) {
         if (!VFLAnnotationProcessor.initialized) return;
@@ -40,6 +53,19 @@ public class Log {
         return ContextManager.logger.warnFn(fn, s);
     }
 
+    public static void WarnFn(Runnable runnable, String message, Object... args) {
+        if (!VFLAnnotationProcessor.initialized) {
+            runnable.run();
+            return;
+        }
+        Supplier<Void> supplier = () -> {
+            runnable.run();
+            return null;
+        };
+        Function<Void, String> s = (r) -> Util.FormatMessage(message, args);
+        ContextManager.logger.warnFn(supplier, s);
+    }
+
     // ================ ERROR METHODS ================
     public static void Error(String message, Object... args) {
         if (!VFLAnnotationProcessor.initialized) return;
@@ -55,5 +81,18 @@ public class Log {
         if (!VFLAnnotationProcessor.initialized) return fn.get();
         Function<R, String> s = (r) -> Util.FormatMessage(message, Util.CombineArgsWithReturn(args, r));
         return ContextManager.logger.errorFn(fn, s);
+    }
+
+    public static void ErrorFn(Runnable runnable, String message, Object... args) {
+        if (!VFLAnnotationProcessor.initialized) {
+            runnable.run();
+            return;
+        }
+        Supplier<Void> supplier = () -> {
+            runnable.run();
+            return null;
+        };
+        Function<Void, String> s = (r) -> Util.FormatMessage(message, args);
+        ContextManager.logger.errorFn(supplier, s);
     }
 }
