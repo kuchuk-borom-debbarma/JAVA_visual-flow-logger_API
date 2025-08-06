@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.helpers.Util.UID;
 
-public class VFLHelper {
+public class VFLFlowHelper {
 
     public static Log CreateLogAndPush2Buffer(String blockId, String parentLogId, LogTypeEnum logType, String message, VFLBuffer buffer) {
         Log l = new Log(UID(), blockId, parentLogId, logType, message, Instant.now().toEpochMilli());

@@ -2,7 +2,7 @@ package dev.kuku.vfl.core.vfl_abstracts;
 
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
-import dev.kuku.vfl.core.helpers.VFLHelper;
+import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
@@ -49,10 +49,10 @@ public abstract class VFLCallable extends VFL {
         var executionContext = getContext();
 
         // Create sub-block and register it in the execution buffer
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
 
         // Create and register sub-block start log entry
-        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 executionContext.blockInfo.getId(),
                 executionContext.currentLogId,
                 subBlockStartMessage,
@@ -70,7 +70,7 @@ public abstract class VFLCallable extends VFL {
         initializeSubBlockInImplementation(executionContext, subBlock, subBlockStartLog);
 
         // Execute the supplier with managed logging and result formatting
-        return VFLHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
+        return VFLFlowHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class VFLCallable extends VFL {
      */
     private <R> R executeWithExistingSubBlockContext(Supplier<R> supplier, Function<R, String> resultMessageFormatter, Block subBlock, Log subBlockStartLog) {
         // Execute the supplier with the appropriate logger and result formatting
-        return VFLHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
+        return VFLFlowHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
     }
 
     // ========== SUPPLY METHOD OVERLOADS ==========
@@ -168,10 +168,10 @@ public abstract class VFLCallable extends VFL {
         var executionContext = getContext();
 
         // Create sub-block and push to buffer
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
 
         // Create and push sub-block start log
-        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 executionContext.blockInfo.getId(),
                 executionContext.currentLogId,
                 subBlockStartMessage,
@@ -307,10 +307,10 @@ public abstract class VFLCallable extends VFL {
         var executionContext = getContext();
 
         // Create sub-block and push to buffer
-        Block subBlock = VFLHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(subBlockName, executionContext.currentLogId, executionContext.buffer);
 
         // Create and push sub-block start log
-        SubBlockStartLog subBlockStartLog = VFLHelper.CreateLogAndPush2Buffer(
+        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 executionContext.blockInfo.getId(),
                 executionContext.currentLogId,
                 subBlockStartMessage,
@@ -415,10 +415,10 @@ public abstract class VFLCallable extends VFL {
         ensureBlockStarted();
 
         // Create event publisher sub-block and register it
-        Block eventPublisherSubBlock = VFLHelper.CreateBlockAndPush2Buffer(eventBranchName, executionContext.currentLogId, executionContext.buffer);
+        Block eventPublisherSubBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(eventBranchName, executionContext.currentLogId, executionContext.buffer);
 
         // Create log entry documenting the event publisher creation
-        SubBlockStartLog eventPublishLog = VFLHelper.CreateLogAndPush2Buffer(
+        SubBlockStartLog eventPublishLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 executionContext.blockInfo.getId(),
                 executionContext.currentLogId,
                 publishStartMessage,
@@ -438,7 +438,7 @@ public abstract class VFLCallable extends VFL {
      * <p>
      * Implementations must return a logger that is properly configured for the
      * current execution context and sub-block hierarchy. This logger will be
-     * used by the VFLHelper to manage logging during supplier/runnable execution.
+     * used by the VFLFlowHelper to manage logging during supplier/runnable execution.
      *
      * @return VFLCallable instance configured as the appropriate logger for sub-block operations
      */

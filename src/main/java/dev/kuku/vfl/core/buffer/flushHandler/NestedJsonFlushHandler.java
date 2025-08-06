@@ -241,4 +241,12 @@ public class NestedJsonFlushHandler implements VFLFlushHandler {
         public BlockJson referencedBlock; // Only for SubBlockStartLog
         public List<LogJson> logsChain; // Nested logs
     }
+
+    @Override
+    public String toString() {
+        return "NestedJsonFlushHandler{" +
+                "blocks=" + blocks +
+                ", logs=" + logs +
+                '}';
+    }
 }

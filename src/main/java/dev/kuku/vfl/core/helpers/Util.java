@@ -1,5 +1,8 @@
 package dev.kuku.vfl.core.helpers;
 
+import dev.kuku.vfl.impl.threadlocal.VFLBlock;
+
+import java.lang.reflect.Method;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -65,6 +68,29 @@ public class Util {
             Object[] allArgs = Util.combineArgsWithReturn(args, r);
             return Util.FormatMessage(messageTemplate, allArgs);
         };
+    }
+
+
+    public static String getMethodName(Method method, Object[] args) {
+        VFLBlock anno = method.getAnnotation(VFLBlock.class);
+        if (anno != null && !anno.blockName().isEmpty()) {
+            String name = anno.blockName();
+            if (args != null) {
+                for (int i = 0; i < args.length; i++) {
+                    name = name.replace("{" + i + "}", String.valueOf(args[i]));
+                }
+            }
+            return name;
+        }
+
+        StringBuilder sb = new StringBuilder(method.getName()).append('(');
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                if (i > 0) sb.append(", ");
+                sb.append(args[i]);
+            }
+        }
+        return sb.append(')').toString();
     }
 
 }
