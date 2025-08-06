@@ -14,35 +14,10 @@ import java.util.function.Function;
 
 import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
 
-/**
- * Abstract base class for VFL implementations that support executing function operations
- * within managed sub-blocks with proper logging and context management.
- * <p>
- * This class provides a framework for running synchronous and asynchronous function operations
- * where the functions receive a VFLFn logger instance, maintaining execution context,
- * logging hierarchy, and sub-block lifecycle.
- */
+
 public abstract class VFLFn extends VFL {
 
-    /**
-     * Core execution method that orchestrates sub-block creation, logging setup,
-     * and function execution with proper context management.
-     * <p>
-     * This method handles the complete lifecycle:
-     * 1. Creates and registers a new sub-block
-     * 2. Generates appropriate start logging
-     * 3. Updates execution context if needed
-     * 4. Delegates to implementation-specific initialization
-     * 5. Executes the function with managed logging, providing the logger instance
-     *
-     * @param <R>                    the return type of the function
-     * @param subBlockName           descriptive name for the sub-block being created
-     * @param subBlockStartMessage   optional message logged when sub-block starts
-     * @param subBlockStartType      determines logging behavior and execution flow control
-     * @param function               the function to execute within the sub-block context, receives VFLFn logger
-     * @param resultMessageFormatter optional function to format the result for logging
-     * @return the result returned by the function
-     */
+
     private <R> R executeWithinSubBlock(String subBlockName, String subBlockStartMessage, LogTypeBlockStartEnum subBlockStartType, Function<VFLFn, R> function, Function<R, String> resultMessageFormatter) {
         ensureBlockStarted();
 
@@ -73,20 +48,7 @@ public abstract class VFLFn extends VFL {
         return VFLFlowHelper.CallFnWithLogger(() -> function.apply(getSubBlockLogger(subBlock, subBlockStartLog)), getSubBlockLogger(subBlock, subBlockStartLog), resultMessageFormatter);
     }
 
-    /**
-     * Simplified execution engine for async operations where the sub-block context
-     * has already been established.
-     * <p>
-     * This method is used internally by async methods to execute functions without
-     * repeating the sub-block setup that was already done synchronously.
-     *
-     * @param <R>                    the return type of the function
-     * @param function               the function to execute, receives VFLFn logger
-     * @param resultMessageFormatter optional function to format the result for logging
-     * @param subBlock               the sub-block that was already created
-     * @param subBlockStartLog       the start log that was already created
-     * @return the result returned by the function
-     */
+
     private <R> R executeWithExistingSubBlockContext(Function<VFLFn, R> function, Function<R, String> resultMessageFormatter, Block subBlock, SubBlockStartLog subBlockStartLog) {
         // Execute the function with the appropriate logger and result formatting
         return VFLFlowHelper.CallFnWithLogger(() -> function.apply(getSubBlockLogger(subBlock, subBlockStartLog)), getSubBlockLogger(subBlock, subBlockStartLog), resultMessageFormatter);
@@ -270,21 +232,7 @@ public abstract class VFLFn extends VFL {
 
     // ========== EVENT PUBLISHER METHODS ==========
 
-    /**
-     * Creates and registers an event publisher block for asynchronous event-driven execution.
-     *
-     * <p>The returned {@link EventPublisherBlock} must be used with the appropriate runner methods
-     * to ensure proper logger initialization and context propagation:
-     * <ul>
-     * <li>{@link dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner#startEventListenerLogger}</li>
-     * <li>{@link dev.kuku.vfl.core.vfl_abstracts.runner.VFLFnRunner#startEventListenerLogger}</li>
-     * </ul>
-     *
-     * @param eventBranchName     descriptive identifier for the event publishing branch
-     * @param publishStartMessage message logged when the event publisher is created, or null for no message
-     * @return {@link EventPublisherBlock} containing the context required by event listeners
-     * @see EventPublisherBlock
-     */
+
     public final EventPublisherBlock createEventPublisherBlock(String eventBranchName, String publishStartMessage) {
         var executionContext = getContext();
         ensureBlockStarted();

@@ -15,34 +15,10 @@ import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum.*;
 
-/**
- * Abstract base class for VFL implementations that support executing callable operations
- * within managed sub-blocks with proper logging and context management.
- * <p>
- * This class provides a framework for running synchronous and asynchronous operations
- * while maintaining execution context, logging hierarchy, and sub-block lifecycle.
- */
+
 public abstract class VFLCallable extends VFL {
 
-    /**
-     * Core execution method that orchestrates sub-block creation, logging setup,
-     * and supplier execution with proper context management.
-     * <p>
-     * This method handles the complete lifecycle:
-     * 1. Creates and registers a new sub-block
-     * 2. Generates appropriate start logging
-     * 3. Updates execution context if needed
-     * 4. Delegates to implementation-specific initialization
-     * 5. Executes the supplier with managed logging
-     *
-     * @param <R>                    the return type of the supplier
-     * @param subBlockName           descriptive name for the sub-block being created
-     * @param subBlockStartMessage   optional message logged when sub-block starts
-     * @param subBlockStartType      determines logging behavior and execution flow control
-     * @param supplier               the operation to execute within the sub-block context
-     * @param resultMessageFormatter optional function to format the result for logging
-     * @return the result returned by the supplier
-     */
+
     private <R> R executeWithinSubBlock(String subBlockName, String subBlockStartMessage, LogTypeBlockStartEnum subBlockStartType, Supplier<R> supplier, Function<R, String> resultMessageFormatter) {
         ensureBlockStarted();
 
@@ -73,18 +49,7 @@ public abstract class VFLCallable extends VFL {
         return VFLFlowHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
     }
 
-    /**
-     * Simplified execution engine for async operations where the sub-block context
-     * has already been established.
-     * <p>
-     * This method is used internally by async methods to execute suppliers without
-     * repeating the sub-block setup that was already done synchronously.
-     *
-     * @param <R>                    the return type of the supplier
-     * @param supplier               the operation to execute
-     * @param resultMessageFormatter optional function to format the result for logging
-     * @return the result returned by the supplier
-     */
+
     private <R> R executeWithExistingSubBlockContext(Supplier<R> supplier, Function<R, String> resultMessageFormatter, Block subBlock, Log subBlockStartLog) {
         // Execute the supplier with the appropriate logger and result formatting
         return VFLFlowHelper.CallFnWithLogger(supplier, getSubBlockLogger(), resultMessageFormatter);
@@ -395,21 +360,6 @@ public abstract class VFLCallable extends VFL {
 
     // ========== EVENT PUBLISHER METHODS ==========
 
-    /**
-     * Creates and registers an event publisher block for asynchronous event-driven execution.
-     *
-     * <p>The returned {@link EventPublisherBlock} must be used with the appropriate runner methods
-     * to ensure proper logger initialization and context propagation:
-     * <ul>
-     * <li>{@link dev.kuku.vfl.core.vfl_abstracts.runner.VFLCallableRunner#startEventListenerLogger}</li>
-     * <li>{@link dev.kuku.vfl.core.vfl_abstracts.runner.VFLFnRunner#startEventListenerLogger}</li>
-     * </ul>
-     *
-     * @param eventBranchName     descriptive identifier for the event publishing branch
-     * @param publishStartMessage message logged when the event publisher is created, or null for no message
-     * @return {@link EventPublisherBlock} containing the context required by event listeners
-     * @see EventPublisherBlock
-     */
     public final EventPublisherBlock createEventPublisherBlock(String eventBranchName, String publishStartMessage) {
         var executionContext = getContext();
         ensureBlockStarted();

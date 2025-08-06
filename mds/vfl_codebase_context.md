@@ -114,12 +114,12 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 
 ### 3. Concrete Buffer Implementations
 
-#### SynchronousVFLBuffer (`dev.kuku.vfl.core.buffer.SynchronousVFLBuffer`)
+#### SynchronousVFLBuffer (`dev.kuku.vfl.core.buffer.SynchronousBuffer`)
 **Purpose**: Simple synchronous flushing
 **Execution**: Direct flush calls in current thread
 **Use Case**: Development, testing, or single-threaded applications
 
-#### AsyncVFLBuffer (`dev.kuku.vfl.core.buffer.AsyncVFLBuffer`)
+#### AsyncVFLBuffer (`dev.kuku.vfl.core.buffer.AsyncBuffer`)
 **Purpose**: Asynchronous flushing with periodic scheduling
 **Key Features**:
 - **Periodic Flushing**: Scheduled flush intervals
@@ -273,7 +273,7 @@ new LogType(LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY)
 ### Concrete Implementations
 
 #### 1. ThreadVFL (Extends VFLCallable)
-**Location**: `dev.kuku.vfl.impl.threadlocal.ThreadVFL`
+**Location**: `dev.kuku.vfl.impl.threadlocal.logger.ThreadVFL`
 **Purpose**: ThreadLocal-based automatic context management
 **Key Features**:
 - **ThreadLocal Stack**: Uses `ThreadLocal<Stack<ThreadVFL>>` for context
@@ -303,7 +303,7 @@ log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
 ## Enhanced Fluent API System
 
 ### 1. FluentVFL (Base Fluent Class)
-**Location**: `dev.kuku.vfl.core.fluent_api.base.FluentVFL`
+**Location**: `dev.kuku.vfl.core.fluent.FluentVFL`
 **Purpose**: Universal fluent wrapper for any VFL instance
 **Key Features**:
 - Parameter substitution in log messages with `FormatMessage`
@@ -311,7 +311,7 @@ log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
 - Basic fluent operations for call() and run()
 
 ### 2. FluentVFLCallable (Extends FluentVFL)
-**Location**: `dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable`
+**Location**: `dev.kuku.vfl.core.fluent.callable.FluentVFLCallable`
 **Purpose**: Fluent API for VFLCallable instances
 **Key Features**:
 - Enhanced supplier and runnable steps
@@ -319,7 +319,7 @@ log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
 - Method chaining for configuration
 
 ### 3. FluentThreadVFL (Static Wrapper)
-**Location**: `dev.kuku.vfl.impl.threadlocal.FluentThreadVFL`
+**Location**: `dev.kuku.vfl.impl.threadlocal.fluent.FluentThreadVFL`
 **Purpose**: Static fluent API for ThreadVFL
 **Key Features**:
 - **Static Methods**: No instantiation needed
@@ -339,7 +339,7 @@ String result = FluentThreadVFL.Call(() -> processData())
 ### 4. Fluent API Step Classes
 
 #### AsSubBlockStep
-**Location**: `dev.kuku.vfl.core.fluent_api.callable.steps.AsSubBlockStep`
+**Location**: `dev.kuku.vfl.core.fluent.callable.steps.AsSubBlockStep`
 **Purpose**: Configurable sub-block execution
 **Key Features**:
 - Start message configuration

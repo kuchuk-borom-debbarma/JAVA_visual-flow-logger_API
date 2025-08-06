@@ -1,6 +1,6 @@
 package dev.kuku.vfl.core.helpers;
 
-import dev.kuku.vfl.impl.threadlocal.VFLBlock;
+import dev.kuku.vfl.impl.threadlocal.annotations.VFLBlock;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -36,7 +36,7 @@ public class Util {
      * @param returnValue The return value to append
      * @return A new array containing all user args followed by the return value
      */
-    public static Object[] combineArgsWithReturn(Object[] userArgs, Object returnValue) {
+    public static Object[] CombineArgsWithReturn(Object[] userArgs, Object returnValue) {
         if (userArgs == null) {
             return new Object[]{returnValue};
         }
@@ -47,12 +47,12 @@ public class Util {
         return combined;
     }
 
-    public static String getThreadInfo() {
+    public static String GetThreadInfo() {
         Thread currentThread = Thread.currentThread();
         return String.format("[Thread: %s (ID: %d)]", currentThread.getName(), currentThread.threadId());
     }
 
-    public static String trimId(String fullId) {
+    public static String TrimId(String fullId) {
         if (fullId == null) return "null";
         String[] parts = fullId.split("-");
         return parts.length > 0 ? parts[parts.length - 1] : fullId;
@@ -65,13 +65,13 @@ public class Util {
 
             // Format the message with user args + return value
             // Args convention: user args fill {0}, {1}, {2}... and return value fills the last placeholder
-            Object[] allArgs = Util.combineArgsWithReturn(args, r);
+            Object[] allArgs = Util.CombineArgsWithReturn(args, r);
             return Util.FormatMessage(messageTemplate, allArgs);
         };
     }
 
 
-    public static String getMethodName(Method method, Object[] args) {
+    public static String GetMethodName(Method method, Object[] args) {
         VFLBlock anno = method.getAnnotation(VFLBlock.class);
         if (anno != null && !anno.blockName().isEmpty()) {
             String name = anno.blockName();

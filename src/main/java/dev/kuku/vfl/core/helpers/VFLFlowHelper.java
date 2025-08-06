@@ -43,12 +43,12 @@ public class VFLFlowHelper {
             logger.error("Exception occurred: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             throw e;
         } finally {
-            String endMsg = createEndMessage(result, endMessageSerializer);
+            String endMsg = CreateEndMessage(result, endMessageSerializer);
             logger.close(endMsg);
         }
     }
 
-    private static <R> String createEndMessage(R result, Function<R, String> serializer) {
+    private static <R> String CreateEndMessage(R result, Function<R, String> serializer) {
         if (serializer == null) return null;
 
         try {
