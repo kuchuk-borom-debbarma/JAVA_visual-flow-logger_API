@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal;
+package dev.kuku.vfl.impl.threadlocal.logger;
 
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;

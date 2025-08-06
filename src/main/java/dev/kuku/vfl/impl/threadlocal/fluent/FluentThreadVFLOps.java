@@ -1,6 +1,5 @@
-package dev.kuku.vfl.impl.threadlocal;
+package dev.kuku.vfl.impl.threadlocal.fluent;
 
-import dev.kuku.vfl.impl.threadlocal.fluent.FluentThreadVFL;
 import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.ThreadVFLRunnableAsyncStep;
 import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.ThreadVFLRunnableStep;
 import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.ThreadVFLSupplierAsyncStep;

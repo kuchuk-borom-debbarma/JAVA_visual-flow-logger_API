@@ -35,7 +35,7 @@ public class ThreadLocalLogAnnotationProcessor {
             new AgentBuilder.Default().with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
                     .type(ElementMatchers.declaresMethod(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
                     .transform((b, td, cl, jm, pd) ->
-                            b.visit(Advice.to(ThreadLocalLogAnnotationProcessor.class)
+                            b.visit(Advice.to(ThreadLocalLogAdvice.class)
                                     .on(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
                     )
                     .installOn(inst);
