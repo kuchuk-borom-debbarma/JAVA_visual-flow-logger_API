@@ -3,6 +3,7 @@ package dev.kuku.vfl.impl.annotation;
 import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
+import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -81,6 +82,7 @@ public class ContextManager {
 
         initializeContextStack();
         pushContext(rootContext);
+        spawnedThreadContext.remove(); //Remove left over spawnedThreadContext if any. Should always be clean but still
         logger.ensureBlockStarted();
 
         log.debug("[VFL] Started root block: {}-{} in thread {}",
@@ -89,8 +91,8 @@ public class ContextManager {
 
 
     public static void startSubBlockFromSpawnedThreadContext(String blockName) {
-        log.debug("Starting sub block from spawned thread context {}", blockName);
         SpawnedThreadContext callerData = spawnedThreadContext.get();
+        log.debug("Starting sub block {} from spawned thread context {}-{}", blockName, callerData.parentContext().blockInfo.getBlockName(), Util.TrimId(callerData.parentContext().blockInfo.getId()));
 
         // Create sub block in new thread
         Block subBlockNewThread = CreateBlockAndPush2Buffer(
@@ -208,7 +210,7 @@ public class ContextManager {
             AnnotationBuffer.flushAndClose();
         }
 
-        log.debug("[VFL] EMPTIED STACK: in thread {}", GetThreadInfo());
+        log.debug("[VFL] EMPTIED STACK N SPAWNED CONTEXT: in thread {}", GetThreadInfo());
 
         // Clean up thread-local resources
         loggerCtxStack.remove();

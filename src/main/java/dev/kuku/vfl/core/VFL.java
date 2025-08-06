@@ -27,7 +27,6 @@ public abstract class VFL {
     }
 
     public void close(String endMessage) {
-        log.debug("[VFL] Closing {}-{} with message: {}", getContext().blockInfo.getBlockName(), Util.TrimId(getContext().blockInfo.getId()), endMessage);
         ensureBlockStarted();
 
         final VFLBlockContext context = getContext();

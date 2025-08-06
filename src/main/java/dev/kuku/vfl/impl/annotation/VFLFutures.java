@@ -38,8 +38,9 @@ public class VFLFutures {
      * Wraps a supplier with VFL context setup
      */
     private static <R> Supplier<R> wrapSupplier(Supplier<R> supplier) {
+        var spawnedThreadCtx = createSpawnedThreadContext();
         return () -> {
-            setupSpawnedThreadContext(createSpawnedThreadContext());
+            setupSpawnedThreadContext(spawnedThreadCtx);
             return supplier.get();
         };
     }
@@ -48,8 +49,9 @@ public class VFLFutures {
      * Wraps a runnable with VFL context setup
      */
     private static Runnable wrapRunnable(Runnable runnable) {
+        var spawnedThreadCtx = createSpawnedThreadContext();
         return () -> {
-            setupSpawnedThreadContext(createSpawnedThreadContext());
+            setupSpawnedThreadContext(spawnedThreadCtx);
             runnable.run();
         };
     }

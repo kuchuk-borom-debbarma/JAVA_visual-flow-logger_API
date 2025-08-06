@@ -10,7 +10,6 @@ import dev.kuku.vfl.impl.annotation.VFLBlock;
 import dev.kuku.vfl.impl.annotation.VFLFutures;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 public class AnnotationTest {
@@ -29,7 +28,7 @@ public class AnnotationTest {
     }
 
     @Test
-    void async() throws ExecutionException, InterruptedException {
+    void async() {
         VFLAnnotationProcessor.initialise(createBuffer("async"));
         new TestService().async();
     }
@@ -57,14 +56,15 @@ class TestService {
     }
 
     @VFLBlock
-    public void async() throws ExecutionException, InterruptedException {
+    public void async() {
         Log.Info("SUP");
-        var t = VFLFutures.runAsync(() -> {
-            //This throws exception as no block has started. Need to resolve this
-            //Log.Info("async block number 1");
-            square(1);
-        });
-        t.get();
+        var e = Executors.newFixedThreadPool(1);
+        var t = VFLFutures.runAsync(() -> square(1), e);
+        var t2 = VFLFutures.runAsync(() -> square(1), e);
+        var t3 = VFLFutures.runAsync(() -> square(1), e);
+        t.join();
+        t2.join();
+        t3.join();
     }
 
 }
