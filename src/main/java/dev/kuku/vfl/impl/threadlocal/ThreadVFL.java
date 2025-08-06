@@ -19,7 +19,7 @@ public class ThreadVFL extends VFLCallable {
      * The stack ensures that nested sub-block executions maintain proper logging context
      * with the most recent (deepest) logger always at the top of the stack.
      */
-    static final ThreadLocal<Stack<ThreadVFL>> LOGGER_STACK = new ThreadLocal<>();
+    public static final ThreadLocal<Stack<ThreadVFL>> LOGGER_STACK = new ThreadLocal<>();
 
     /**
      * The execution context associated with this specific logger instance.
@@ -56,18 +56,9 @@ public class ThreadVFL extends VFLCallable {
      */
     public static ThreadVFL getCurrentLogger() {
         Stack<ThreadVFL> stack = LOGGER_STACK.get();
-
         if (stack == null) {
-            throw new IllegalStateException(
-                    "No logger stack initialized for current thread. " + Util.getThreadInfo());
+            return null;
         }
-
-        if (stack.isEmpty()) {
-            throw new IllegalStateException(
-                    "Logger stack is empty. No active logger context available."
-            );
-        }
-
         return stack.peek();
     }
 
