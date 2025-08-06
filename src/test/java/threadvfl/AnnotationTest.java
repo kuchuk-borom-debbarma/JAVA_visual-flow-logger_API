@@ -4,8 +4,8 @@ import dev.kuku.vfl.core.buffer.AsyncBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
-import dev.kuku.vfl.impl.threadlocal.annotations.ThreadVFLCompletableFuture;
-import dev.kuku.vfl.impl.threadlocal.annotations.VFLBlock;
+import dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLCompletableFuture;
+import dev.kuku.vfl.impl.threadlocal_annotation.VFLBlock;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;

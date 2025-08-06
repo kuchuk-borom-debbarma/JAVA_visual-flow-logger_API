@@ -1,7 +1,7 @@
-package dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.sub_block;
+package dev.kuku.vfl.impl.threadlocal_annotation.fluent.flient_steps.sub_block;
 
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import dev.kuku.vfl.impl.threadlocal.logger.ThreadVFL;
+import dev.kuku.vfl.impl.threadlocal_annotation.logger.ThreadVFL;
 import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.CompletableFuture;

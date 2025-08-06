@@ -128,7 +128,7 @@ public abstract class VFL {
      *
      * @param message The message to log
      */
-    public final void log(String message) {
+    public final void info(String message) {
         logInternal(LogTypeEnum.MESSAGE, message);
     }
 
@@ -141,7 +141,7 @@ public abstract class VFL {
      * @param messageSerializer Function to convert the result to a log message
      * @return The result of the executed function
      */
-    public final <R> R logFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+    public final <R> R infoFn(Supplier<R> fn, Function<R, String> messageSerializer) {
         return logFnInternal(LogTypeEnum.MESSAGE, fn, messageSerializer);
     }
 

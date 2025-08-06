@@ -1,11 +1,11 @@
-package dev.kuku.vfl.impl.threadlocal.fluent;
+package dev.kuku.vfl.impl.threadlocal_annotation.fluent;
 
 import dev.kuku.vfl.core.fluent.FluentVFL;
-import dev.kuku.vfl.impl.threadlocal.logger.ThreadVFL;
-import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.ThreadVFLRunnableAsyncStep;
-import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.ThreadVFLRunnableStep;
-import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.ThreadVFLSupplierAsyncStep;
-import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.ThreadVFLSupplierStep;
+import dev.kuku.vfl.impl.threadlocal_annotation.logger.ThreadVFL;
+import dev.kuku.vfl.impl.threadlocal_annotation.fluent.flient_steps.ThreadVFLRunnableAsyncStep;
+import dev.kuku.vfl.impl.threadlocal_annotation.fluent.flient_steps.ThreadVFLRunnableStep;
+import dev.kuku.vfl.impl.threadlocal_annotation.fluent.flient_steps.ThreadVFLSupplierAsyncStep;
+import dev.kuku.vfl.impl.threadlocal_annotation.fluent.flient_steps.ThreadVFLSupplierStep;
 
 import java.util.function.Supplier;
 

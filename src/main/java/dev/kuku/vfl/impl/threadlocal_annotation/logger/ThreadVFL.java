@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal.logger;
+package dev.kuku.vfl.impl.threadlocal_annotation.logger;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;

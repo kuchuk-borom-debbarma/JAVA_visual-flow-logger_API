@@ -1,8 +1,8 @@
-package dev.kuku.vfl.impl.threadlocal.fluent.flient_steps;
+package dev.kuku.vfl.impl.threadlocal_annotation.fluent.flient_steps;
 
 import dev.kuku.vfl.core.fluent.steps.SupplierStep;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
-import dev.kuku.vfl.impl.threadlocal.fluent.flient_steps.sub_block.AsSubBlockCallableStep;
+import dev.kuku.vfl.impl.threadlocal_annotation.fluent.flient_steps.sub_block.AsSubBlockCallableStep;
 
 import java.util.function.Supplier;
 

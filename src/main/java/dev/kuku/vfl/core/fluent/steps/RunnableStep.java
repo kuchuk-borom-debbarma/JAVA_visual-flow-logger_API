@@ -14,7 +14,7 @@ public class RunnableStep {
 
     public void andLog(String message, Object... args) {
         runnable.run();
-        vfl.log(Util.FormatMessage(message, args));
+        vfl.info(Util.FormatMessage(message, args));
     }
 
     public void andWarn(String message, Object... args) {

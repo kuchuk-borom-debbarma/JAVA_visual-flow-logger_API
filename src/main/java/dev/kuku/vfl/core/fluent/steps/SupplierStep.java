@@ -26,7 +26,7 @@ public class SupplierStep<R> {
 
 
     public R asLog(Function<R, String> messageSerializer, Object... args) {
-        return vfl.logFn(supplier, updateEndMsg(messageSerializer, args));
+        return vfl.infoFn(supplier, updateEndMsg(messageSerializer, args));
     }
 
     public R asError(Function<R, String> errorMessageSerializer, Object... args) {

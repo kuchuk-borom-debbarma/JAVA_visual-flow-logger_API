@@ -1,14 +1,14 @@
-package dev.kuku.vfl.impl.threadlocal.annotations;
+package dev.kuku.vfl.impl.threadlocal_annotation.annotations;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import dev.kuku.vfl.impl.threadlocal.logger.ThreadVFL;
+import dev.kuku.vfl.impl.threadlocal_annotation.logger.ThreadVFL;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadVFLAdviceData.parentThreadLoggerData;
+import static dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLAdviceData.parentThreadLoggerData;
 
 public class ThreadVFLCompletableFuture {
 

@@ -1,6 +1,7 @@
-package dev.kuku.vfl.impl.threadlocal.annotations;
+package dev.kuku.vfl.impl.threadlocal_annotation.annotations;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
+import dev.kuku.vfl.impl.threadlocal_annotation.VFLBlock;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;

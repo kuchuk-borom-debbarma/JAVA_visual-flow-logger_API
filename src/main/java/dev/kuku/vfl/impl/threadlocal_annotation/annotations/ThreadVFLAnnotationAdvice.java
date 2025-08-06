@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal.annotations;
+package dev.kuku.vfl.impl.threadlocal_annotation.annotations;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.helpers.Util;
@@ -6,7 +6,7 @@ import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import dev.kuku.vfl.impl.threadlocal.logger.ThreadVFL;
+import dev.kuku.vfl.impl.threadlocal_annotation.logger.ThreadVFL;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.slf4j.Logger;
@@ -17,8 +17,8 @@ import java.util.Objects;
 import java.util.Stack;
 
 import static dev.kuku.vfl.core.helpers.Util.GetMethodName;
-import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadVFLAdviceData.buffer;
-import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadVFLAdviceData.parentThreadLoggerData;
+import static dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLAdviceData.buffer;
+import static dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLAdviceData.parentThreadLoggerData;
 
 public class ThreadVFLAnnotationAdvice {
     public static Logger log = LoggerFactory.getLogger(ThreadVFLAnnotationAdvice.class);

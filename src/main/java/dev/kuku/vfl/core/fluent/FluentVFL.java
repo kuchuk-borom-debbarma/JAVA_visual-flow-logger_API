@@ -16,7 +16,7 @@ public class FluentVFL {
 
     public void log(String message, Object... args) {
         String finalMsg = FormatMessage(message, args);
-        vfl.log(finalMsg);
+        vfl.info(finalMsg);
     }
 
     public void warn(String message, Object... args) {

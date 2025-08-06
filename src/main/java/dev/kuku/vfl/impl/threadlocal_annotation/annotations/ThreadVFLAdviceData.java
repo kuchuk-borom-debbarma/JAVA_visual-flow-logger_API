@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal.annotations;
+package dev.kuku.vfl.impl.threadlocal_annotation.annotations;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import org.slf4j.Logger;

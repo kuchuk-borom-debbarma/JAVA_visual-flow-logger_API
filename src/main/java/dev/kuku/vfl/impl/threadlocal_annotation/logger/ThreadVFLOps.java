@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal.logger;
+package dev.kuku.vfl.impl.threadlocal_annotation.logger;
 
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.helpers.Util.GetThreadInfo;
 import static dev.kuku.vfl.core.helpers.Util.TrimId;
-import static dev.kuku.vfl.impl.threadlocal.logger.ThreadVFL.getCurrentLogger;
+import static dev.kuku.vfl.impl.threadlocal_annotation.logger.ThreadVFL.getCurrentLogger;
 
 @Slf4j
 public final class ThreadVFLOps {
@@ -63,7 +63,7 @@ public final class ThreadVFLOps {
         logMethodEntry("Log", "message", message);
         ThreadVFL logger = getLoggerWithValidation("Log");
         log.trace("Executing log operation with message length: {}", message != null ? message.length() : 0);
-        logger.log(message);
+        logger.info(message);
         log.trace("Log operation completed successfully");
     }
 
@@ -72,7 +72,7 @@ public final class ThreadVFLOps {
         ThreadVFL logger = getLoggerWithValidation("LogFn");
         log.trace("Executing LogFn operation");
         try {
-            R result = logger.logFn(fn, messageSerializer);
+            R result = logger.infoFn(fn, messageSerializer);
             log.trace("LogFn operation completed - Result type: {}",
                     result != null ? result.getClass().getSimpleName() : "null");
             return result;

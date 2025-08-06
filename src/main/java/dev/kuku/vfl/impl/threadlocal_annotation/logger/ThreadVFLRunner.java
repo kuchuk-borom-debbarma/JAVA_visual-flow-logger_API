@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal.logger;
+package dev.kuku.vfl.impl.threadlocal_annotation.logger;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
