@@ -17,15 +17,15 @@ import java.util.Objects;
 import java.util.Stack;
 
 import static dev.kuku.vfl.core.helpers.Util.GetMethodName;
-import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadLocalAdviceData.buffer;
-import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadLocalAdviceData.parentThreadLoggerData;
+import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadVFLAdviceData.buffer;
+import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadVFLAdviceData.parentThreadLoggerData;
 
-public class ThreadLocalLogAdvice {
-    public static Logger log = LoggerFactory.getLogger(ThreadLocalLogAdvice.class);
+public class ThreadVFLAnnotationAdvice {
+    public static Logger log = LoggerFactory.getLogger(ThreadVFLAnnotationAdvice.class);
 
     @Advice.OnMethodEnter
     static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
-        if (!ThreadLocalLogAnnotationProcessor.initialized) return;
+        if (!ThreadVFLAnnotationProcessor.initialized) return;
 
         String blockName = GetMethodName(method, args);
         // 1. No stack yet – either root call or sub-block in fresh thread
@@ -84,7 +84,7 @@ public class ThreadLocalLogAdvice {
     static void onExit(@Advice.Origin Method method,
                        @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue
     ) {
-        if (!ThreadLocalLogAnnotationProcessor.initialized) return;
+        if (!ThreadVFLAnnotationProcessor.initialized) return;
         // close current logger
         ThreadVFL logger = ThreadVFL.getCurrentLogger();
         log.debug("[VFL] EXIT {} (blockId={})", method.getName(), Objects.requireNonNull(logger).loggerContext.blockInfo.getId());

@@ -8,9 +8,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadLocalAdviceData.parentThreadLoggerData;
+import static dev.kuku.vfl.impl.threadlocal.annotations.ThreadVFLAdviceData.parentThreadLoggerData;
 
-public class VFLAnnotationCompletableFuture {
+public class ThreadVFLCompletableFuture {
 
     public static <R> CompletableFuture<R> supplyAsync(Supplier<R> supplier) {
         // Safely get logger context or null if not available

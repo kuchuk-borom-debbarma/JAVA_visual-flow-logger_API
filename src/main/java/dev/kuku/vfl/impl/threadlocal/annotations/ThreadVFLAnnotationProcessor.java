@@ -13,8 +13,8 @@ import java.lang.instrument.Instrumentation;
 /**
  * Annotation support for methods. The only limitation is it is not possible to annotate static methods in the same class where it's getting initialized. Also, make sure to initialize as early as possible
  */
-public class ThreadLocalLogAnnotationProcessor {
-    public static Logger log = LoggerFactory.getLogger(ThreadLocalLogAnnotationProcessor.class);
+public class ThreadVFLAnnotationProcessor {
+    public static Logger log = LoggerFactory.getLogger(ThreadVFLAnnotationProcessor.class);
 
     public static volatile boolean initialized = false;
 
@@ -30,12 +30,12 @@ public class ThreadLocalLogAnnotationProcessor {
 
         try {
             Instrumentation inst = ByteBuddyAgent.install();
-            ThreadLocalAdviceData.buffer = buffer;
+            ThreadVFLAdviceData.buffer = buffer;
 
             new AgentBuilder.Default().with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
                     .type(ElementMatchers.declaresMethod(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
                     .transform((b, td, cl, jm, pd) ->
-                            b.visit(Advice.to(ThreadLocalLogAdvice.class)
+                            b.visit(Advice.to(ThreadVFLAnnotationAdvice.class)
                                     .on(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
                     )
                     .installOn(inst);
@@ -50,7 +50,7 @@ public class ThreadLocalLogAnnotationProcessor {
 
     public static synchronized void reset() {
         initialized = false;
-        ThreadLocalAdviceData.buffer = null;
+        ThreadVFLAdviceData.buffer = null;
     }
 
 }
