@@ -59,7 +59,10 @@ class TestService {
     public void async() {
         Log.Info("SUP");
         var e = Executors.newFixedThreadPool(1);
-        var t = VFLFutures.runAsync(() -> square(1), e);
+        var t = VFLFutures.runAsync(() -> {
+            Log.Info("CRASH");
+            square(1);
+        }, e);
         var t2 = VFLFutures.runAsync(() -> square(1), e);
         var t3 = VFLFutures.runAsync(() -> square(1), e);
         t.join();
