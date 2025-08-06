@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added Design Documentation.md">
-      <change afterPath="$PROJECT_DIR$/mds/prompts/Create Design doc prompt.txt" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed issue of using logger in lambda of a new thread">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/Design Documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/Design Documentation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/prompts/Create Design doc prompt.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mds/prompts/Create Design doc prompt.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -337,15 +336,7 @@
       <workItem from="1754423771713" duration="2538000" />
       <workItem from="1754443176965" duration="3932000" />
       <workItem from="1754479312633" duration="8106000" />
-      <workItem from="1754494426182" duration="4973000" />
-    </task>
-    <task id="LOCAL-00137" summary="Created new dto for inheritable thread local">
-      <option name="closed" value="true" />
-      <created>1754192324369</created>
-      <option name="number" value="00137" />
-      <option name="presentableId" value="LOCAL-00137" />
-      <option name="project" value="LOCAL" />
-      <updated>1754192324370</updated>
+      <workItem from="1754494426182" duration="5496000" />
     </task>
     <task id="LOCAL-00138" summary="Refactored to give better names">
       <option name="closed" value="true" />
@@ -731,7 +722,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754498177124</updated>
     </task>
-    <option name="localTasksCounter" value="186" />
+    <task id="LOCAL-00186" summary="Fixed issue of using logger in lambda of a new thread">
+      <option name="closed" value="true" />
+      <created>1754499842909</created>
+      <option name="number" value="00186" />
+      <option name="presentableId" value="LOCAL-00186" />
+      <option name="project" value="LOCAL" />
+      <updated>1754499842909</updated>
+    </task>
+    <option name="localTasksCounter" value="187" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -749,7 +748,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Basic setup done" />
     <MESSAGE value="Need second main function to run" />
     <MESSAGE value="Wrote basic logic but not tested yet" />
     <MESSAGE value="Created wrappers and shit but need to test it out" />
@@ -774,7 +772,8 @@
     <MESSAGE value="TODO async fix and a bug" />
     <MESSAGE value="fixed bug related to async" />
     <MESSAGE value="Added Design Documentation.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Design Documentation.md" />
+    <MESSAGE value="Fixed issue of using logger in lambda of a new thread" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed issue of using logger in lambda of a new thread" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

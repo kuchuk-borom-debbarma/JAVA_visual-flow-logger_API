@@ -1,5 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" style="height:64px;margin-right:32px"/>
-
 # Visual Flow Logger (VFL) System Documentation
 
 ## System Overview
@@ -34,7 +32,6 @@ public class Block {
 }
 ```
 
-
 #### Log Entity
 
 ```java
@@ -47,7 +44,6 @@ public class Log {
     private long timestamp;         // Precise timing information
 }
 ```
-
 
 #### SubBlockStartLog - The Universal Hierarchy Bridge
 
@@ -77,7 +73,6 @@ VFL defines standard flow types that all implementations can represent:
 - **PUBLISH_EVENT**: Event publishing in event-driven architectures
 - **EVENT_LISTENER**: Event listener activation
 
-
 ### Universal Buffer Interface
 
 All VFL implementations use a consistent buffer interface for data ingestion:
@@ -94,17 +89,237 @@ public interface VFLBuffer {
 
 The buffer system is implementation-agnostic and can be synchronous, asynchronous, batched, in-memory, networked, or hybrid depending on requirements.
 
-## VFL Implementation Approaches
+## VFL Buffer System Architecture
 
-VFL provides multiple integration approaches to fit different coding styles and requirements. Each approach uses the same core data model and buffer system but provides different ways to integrate VFL into your application.
+The VFL system provides a flexible buffering architecture that handles data collection and output through a unified interface. The buffer system operates on a producer-consumer model where VFL operations produce data and flush handlers consume it.
 
-### Current Implementation: Annotation-Based Approach
+### Buffer Base Classes
 
-The annotation-based implementation is one approach that provides automatic, transparent VFL integration through runtime instrumentation.
+#### VFLBufferWithFlushHandlerBase
 
-#### Annotation-Based Components
+This abstract base class provides core buffering functionality that all VFL buffers extend:
 
-**@VFLBlock Annotation:**
+```java
+public abstract class VFLBufferWithFlushHandlerBase implements VFLBuffer {
+    protected final int bufferSize;
+    protected final VFLFlushHandler flushHandler;
+    
+    // Thread-safe storage for buffered data
+    private final List<Log> logBuffer = Collections.synchronizedList(new ArrayList<>());
+    private final List<Block> blockBuffer = Collections.synchronizedList(new ArrayList<>());
+    private final Map<String, Long> blockStartBuffer = new ConcurrentHashMap<>();
+    private final Map<String, BlockEndData> blockEndBuffer = new ConcurrentHashMap<>();
+}
+```
+
+**Core Buffer Operations:**
+
+- **Data Collection**: Thread-safe storage of blocks, logs, start times, and end data
+- **Buffer Management**: Automatic flushing when buffer size limits are reached
+- **Ordered Flushing**: Ensures data is sent to flush handlers in the correct order (blocks → starts → logs → ends)
+
+**Flush Coordination:**
+
+```java
+protected final void performOrderedFlush(List<Log> logs, List<Block> blocks, 
+                                       Map<String, Long> blockStarts, 
+                                       Map<String, BlockEndData> blockEnds) {
+    // Ordered execution ensures data dependencies are respected
+    flushHandler.pushBlocksToServer(blocks);
+    flushHandler.pushBlockStartsToServer(blockStarts);  
+    flushHandler.pushLogsToServer(logs);
+    flushHandler.pushBlockEndsToServer(blockEnds);
+}
+```
+
+### Buffer Implementations
+
+#### SynchronousBuffer
+
+The simplest buffer implementation that processes data immediately:
+
+```java
+public class SynchronousBuffer extends VFLBufferWithFlushHandlerBase {
+    @Override
+    protected void executeFlushAll(List<Log> logs, List<Block> blocks, 
+                                 Map<String, Long> blockStarts, 
+                                 Map<String, BlockEndData> blockEnds) {
+        // Execute synchronously - directly call the ordered flush
+        performOrderedFlush(logs, blocks, blockStarts, blockEnds);
+    }
+}
+```
+
+**Characteristics:**
+- No threading complexity
+- Immediate data processing
+- Minimal resource usage
+- Suitable for development, testing, and low-throughput scenarios
+
+#### AsyncBuffer
+
+A sophisticated asynchronous buffer with periodic flushing and graceful shutdown:
+
+```java
+public class AsyncBuffer extends VFLBufferWithFlushHandlerBase {
+    private final ExecutorService flushExecutor;           // Handles flush operations
+    private final ScheduledExecutorService periodicExecutor; // Manages periodic flushing
+    private final int flushTimeout;                         // Shutdown timeout
+}
+```
+
+**Advanced Features:**
+
+**Periodic Flushing:**
+```java
+// Automatic background flushing at regular intervals
+periodicExecutor.scheduleWithFixedDelay(this::flushAll, 
+    periodicFlushTimeMillisecond, periodicFlushTimeMillisecond, TimeUnit.MILLISECONDS);
+```
+
+**Resilient Execution:**
+```java
+@Override
+protected void executeFlushAll(/*...*/) {
+    if (flushExecutor.isShutdown()) {
+        log.warn("Executor is shutdown, performing synchronous flush");
+        performOrderedFlush(logs, blocks, blockStarts, blockEnds);
+        return;
+    }
+    
+    try {
+        flushExecutor.submit(() -> performOrderedFlush(logs, blocks, blockStarts, blockEnds));
+    } catch (RejectedExecutionException e) {
+        log.warn("Task rejected by executor, performing synchronous flush", e);
+        performOrderedFlush(logs, blocks, blockStarts, blockEnds);
+    }
+}
+```
+
+**Graceful Shutdown:**
+```java
+@Override
+public void flushAndClose() {
+    // 1. Stop periodic flushing
+    periodicExecutor.shutdown();
+    
+    // 2. Flush remaining data
+    super.flushAll();
+    
+    // 3. Shutdown flush executor with timeout
+    flushExecutor.shutdown();
+    
+    // 4. Wait for completion with timeout handling
+    if (!flushExecutor.awaitTermination(flushTimeout, TimeUnit.MILLISECONDS)) {
+        flushExecutor.shutdownNow();
+        throw new RuntimeException("Flush timeout exceeded: " + flushTimeout + "ms");
+    }
+    
+    // 5. Close flush handler
+    flushHandler.closeFlushHandler();
+}
+```
+
+### Flush Handler System
+
+#### VFLFlushHandler Interface
+
+Defines how buffered data is ultimately processed and output:
+
+```java
+public interface VFLFlushHandler {
+    boolean pushLogsToServer(List<Log> logs);
+    boolean pushBlocksToServer(List<Block> blocks);
+    boolean pushBlockStartsToServer(Map<String, Long> blockStarts);
+    boolean pushBlockEndsToServer(Map<String, BlockEndData> blockEnds);
+    void closeFlushHandler();
+}
+```
+
+#### NestedJsonFlushHandler Implementation
+
+A comprehensive flush handler that generates hierarchical JSON output:
+
+```java
+public class NestedJsonFlushHandler implements VFLFlushHandler {
+    // Thread-safe data storage
+    private final Map<String, Block> blocks = new ConcurrentHashMap<>();
+    private final Map<String, Log> logs = new ConcurrentHashMap<>();
+    private final Map<String, Long> blockStarts = new ConcurrentHashMap<>();
+    private final Map<String, BlockEndData> blockEnds = new ConcurrentHashMap<>();
+}
+```
+
+**Hierarchical Structure Building:**
+
+```java
+private List<BlockJson> buildNestedStructure() {
+    // Find root blocks (blocks with no parent)
+    List<Block> rootBlocksList = blocks.values().stream()
+        .filter(block -> block.getParentBlockId() == null)
+        .toList();
+    
+    List<BlockJson> result = new ArrayList<>();
+    for (Block rootBlock : rootBlocksList) {
+        result.add(buildBlockJson(rootBlock));
+    }
+    return result;
+}
+```
+
+**Recursive Log Chain Construction:**
+
+```java
+private List<LogJson> buildLogsChain(String blockId, String parentLogId) {
+    // Get logs for this block with specified parent
+    List<Log> blockLogs = logs.values().stream()
+        .filter(log -> Objects.equals(log.getBlockId(), blockId))
+        .filter(log -> Objects.equals(log.getParentLogId(), parentLogId))
+        .sorted(Comparator.comparing(Log::getTimestamp))
+        .toList();
+    
+    // Process each log and build nested structures
+    for (Log log : blockLogs) {
+        // Handle SubBlockStartLog special case with referenced blocks
+        if (log instanceof SubBlockStartLog subBlockLog) {
+            // Add referenced block and timing information
+            logJson.referencedBlock = buildBlockJson(referencedBlock);
+        }
+        
+        // Recursively build nested log chains
+        List<LogJson> nestedLogs = buildLogsChain(blockId, log.getId());
+        if (!nestedLogs.isEmpty()) {
+            logJson.logsChain = nestedLogs;
+        }
+    }
+}
+```
+
+**Duration and Timing Calculations:**
+
+```java
+private String formatDuration(long durationMillis) {
+    if (durationMillis < 1000) {
+        return durationMillis + "ms";
+    } else if (durationMillis < 60000) {
+        double seconds = durationMillis / 1000.0;
+        return String.format("%.3fs", seconds);
+    } else {
+        long minutes = durationMillis / 60000;
+        long remainingMs = durationMillis % 60000;
+        double remainingSeconds = remainingMs / 1000.0;
+        return String.format("%dmin %.3fs", minutes, remainingSeconds);
+    }
+}
+```
+
+## Current Implementation: Annotation-Based Approach
+
+The annotation-based implementation provides automatic, transparent VFL integration through runtime instrumentation.
+
+### Annotation-Based Components
+
+#### @VFLBlock Annotation
 
 ```java
 @VFLBlock(blockName = "Processing order {0}")
@@ -113,174 +328,229 @@ public Order processOrder(String orderId) {
 }
 ```
 
-**VFLAnnotationProcessor:**
+#### VFLAnnotationProcessor
+
 Uses ByteBuddy for runtime bytecode transformation, automatically adding VFL hooks to annotated methods.
 
-**ContextManager:**
-Manages thread-local context stacks specific to the annotation approach:
+#### ContextManager - Core Context Management
+
+The ContextManager serves as the central coordination point for the annotation-based approach:
 
 ```java
 public class ContextManager {
+    // Thread-local storage for context stacks
     public static final ThreadLocal<Stack<VFLBlockContext>> loggerCtxStack = new ThreadLocal<>();
     public static final ThreadLocal<SpawnedThreadContext> spawnedThreadContext = new ThreadLocal<>();
+    
+    // Global buffer reference
     public static VFLBuffer AnnotationBuffer;
 }
 ```
 
-**VFLAnnotationAdvice:**
-Bytecode advice that intercepts method entry/exit for annotated methods:
-
-```java
-public class VFLAnnotationAdvice {
-    @Advice.OnMethodEnter
-    public static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args)
-    
-    @Advice.OnMethodExit(onThrowable = Throwable.class)
-    public static void onExit(/* parameters */)
-}
-```
-
-**Static Log API:**
-Provides convenient static methods for the annotation approach:
-
-```java
-public class Log {
-    public static void Info(String message, Object... args)
-    public static <R> R InfoFn(Supplier<R> fn, Function<R, String> messageSerializer)
-    // Other logging methods
-}
-```
-
-
-#### How the Annotation Approach Works
-
-**Runtime Instrumentation Process:**
-
-1. ByteBuddy agent installs at application startup
-2. Classes with `@VFLBlock` methods are identified and transformed
-3. Method entry/exit advice is injected into annotated methods
-4. Original method behavior remains unchanged
-
-**Thread-Local Context Management:**
-
-1. Each thread maintains its own context stack
-2. Annotated method entry creates/pushes block context
-3. Method exit pops context and closes block
-4. Cross-thread propagation handled through spawned contexts
-
-**Automatic Hierarchy Creation:**
-
-1. First annotated method on thread creates root block
-2. Nested annotated methods create child blocks
-3. Parent-child relationships established automatically
-4. Log sequencing maintained within each block context
-
-### Future Implementation Approaches
-
-These approaches will use the same core VFL data model and buffer system but provide different integration methods:
-
-#### Context-Passing Approach (Planned)
-
-Explicit context objects passed through application calls, providing full control over block boundaries and relationships.
-
-#### Scoped Logger Approach (Planned)
-
-Try-with-resources pattern for automatic scope management, enabling clean resource handling and guaranteed cleanup.
-
-#### Fluent API Approach (Planned)
-
-Method chaining for readable logging sequences, allowing expressive and intuitive VFL usage.
-
-## Annotation-Based Implementation Details
-
-*Note: The following sections describe the specific mechanics of the current annotation-based implementation, not universal VFL concepts.*
-
-### Annotation-Based Context Architecture
-
-The annotation implementation uses thread-local context stacks to maintain execution hierarchy:
-
-```java
-public class VFLBlockContext {
-    public final Block blockInfo;              // Current block metadata
-    public final AtomicBoolean blockStarted;   // Lazy initialization flag
-    public final VFLBuffer buffer;             // Data output destination
-    public String currentLogId;                // Last log in sequence
-}
-```
-
-**Stack Operations in Annotation Approach:**
+**Core Context Operations:**
 
 **Context Initialization:**
+```java
+private static void initializeContextStack() {
+    loggerCtxStack.set(new Stack<>());
+}
 
-```pseudocode
-function initializeContextStack():
-    threadLocalStack = new Stack<VFLBlockContext>()
-    setThreadLocal(threadLocalStack)
+private static void pushContext(VFLBlockContext context) {
+    if (loggerCtxStack.get() == null) {
+        initializeContextStack();
+    }
+    loggerCtxStack.get().push(context);
+}
 ```
 
-**Context Pushing (Method Entry):**
+**Root Block Management:**
+```java
+public static void startRootBlock(String blockName) {
+    Block rootBlock = CreateBlockAndPush2Buffer(blockName, null, AnnotationBuffer);
+    VFLBlockContext rootContext = new VFLBlockContext(rootBlock, AnnotationBuffer);
+    
+    initializeContextStack();
+    pushContext(rootContext);
+    spawnedThreadContext.remove(); // Clean up any leftover context
+    logger.ensureBlockStarted();
+}
+```
 
-```pseudocode
-function startSubBlock(blockName):
-    parentContext = getCurrentContext()
+**Sub-Block Creation:**
+```java
+public static void startSubBlock(String blockName) {
+    VFLBlockContext parentContext = getCurrentContext();
     
     // Create child block with parent relationship
-    childBlock = createBlock(blockName, parentContext.blockInfo.id)
+    Block primarySubBlockStart = CreateBlockAndPush2Buffer(
+        blockName, parentContext.blockInfo.getId(), AnnotationBuffer
+    );
     
     // Create linking log in parent's sequence
-    linkingLog = createSubBlockStartLog(
-        parentBlockId = parentContext.blockInfo.id,
-        parentLogId = parentContext.currentLogId,
-        referencedBlockId = childBlock.id
-    )
+    SubBlockStartLog subBlockStartLog = CreateLogAndPush2Buffer(
+        parentContext.blockInfo.getId(),
+        parentContext.currentLogId,
+        null,
+        primarySubBlockStart.getId(),
+        LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY,
+        AnnotationBuffer
+    );
     
     // Update parent's log sequence
-    parentContext.currentLogId = linkingLog.id
+    parentContext.currentLogId = subBlockStartLog.getId();
     
-    // Push new context for child block
-    childContext = new VFLBlockContext(childBlock, buffer)
-    threadLocalStack.push(childContext)
+    // Create and push new context
+    VFLBlockContext currentContext = new VFLBlockContext(primarySubBlockStart, AnnotationBuffer);
+    pushContext(currentContext);
+    logger.ensureBlockStarted();
+}
 ```
 
-**Context Popping (Method Exit):**
-
-```pseudocode
-function closeCurrentContext(returnValue):
-    currentContext = getCurrentContext()
-    closeBlock(currentContext, returnValue)
-    poppedContext = threadLocalStack.pop()
+**Context Cleanup:**
+```java
+public static void closeCurrentContext(Object returnValue) {
+    // Close the logger context
+    logger.close("Returning " + returnValue);
     
-    if threadLocalStack.isEmpty():
-        cleanupThreadResources()
+    // Pop the context
+    Stack<VFLBlockContext> stack = loggerCtxStack.get();
+    if (stack != null && !stack.isEmpty()) {
+        VFLBlockContext poppedContext = stack.pop();
+        
+        // Clean up if stack is empty
+        if (stack.isEmpty()) {
+            cleanupThreadContext(poppedContext);
+        }
+    }
+}
+
+private static void cleanupThreadContext(VFLBlockContext lastContext) {
+    boolean isRootThread = !isSpawnedThread();
+    
+    if (isRootThread) {
+        // Trigger final flush and close
+        AnnotationBuffer.flushAndClose();
+    }
+    
+    // Clean up thread-local resources
+    loggerCtxStack.remove();
+    spawnedThreadContext.remove();
+}
 ```
 
+### Advanced Cross-Thread Propagation: VFLFutures
 
-### Annotation-Based Cross-Thread Propagation
+VFLFutures provides sophisticated cross-thread context propagation for asynchronous operations:
 
-The annotation implementation handles asynchronous operations through spawned thread contexts:
+#### SpawnedThreadContext Record
 
 ```java
 public record SpawnedThreadContext(
     VFLBlockContext parentContext,        // Original thread's context
-    LogTypeBlockStartEnum startType       // Relationship type
+    LogTypeBlockStartEnum startType       // Relationship type (JOIN vs NO_JOIN)
 )
 ```
 
-**Async Operation Wrapping:**
+#### Context Wrapping Mechanisms
 
-```pseudocode
-function createAsyncOperation(supplier):
-    currentContext = getCurrentContext()
-    spawnedContext = new SpawnedThreadContext(currentContext, SUB_BLOCK_START_SECONDARY_JOIN)
-    
-    wrappedSupplier = () -> {
-        setSpawnedThreadContext(spawnedContext)
-        return supplier.get()
-    }
-    
-    return CompletableFuture.supplyAsync(wrappedSupplier)
+**Supplier Wrapping:**
+```java
+private static <R> Supplier<R> wrapSupplier(Supplier<R> supplier) {
+    var spawnedThreadCtx = createSpawnedThreadContext();
+    return () -> {
+        try {
+            setupSpawnedThreadContext(spawnedThreadCtx);
+            return supplier.get();
+        } finally {
+            // Manual cleanup for lambda-created contexts
+            // CM only manages @VFLBlock annotated methods
+            loggerCtxStack.remove();
+            spawnedThreadContext.remove();
+        }
+    };
+}
 ```
 
+**Runnable Wrapping:**
+```java
+private static Runnable wrapRunnable(Runnable runnable) {
+    var spawnedThreadCtx = createSpawnedThreadContext();
+    return () -> {
+        try {
+            setupSpawnedThreadContext(spawnedThreadCtx);
+            runnable.run();
+        } finally {
+            // Manual cleanup for lambda-created contexts
+            loggerCtxStack.remove();
+            spawnedThreadContext.remove();
+        }
+    };
+}
+```
+
+#### Context Setup Process
+
+```java
+private static void setupSpawnedThreadContext(SpawnedThreadContext spawnedThreadContext) {
+    if (!VFLAnnotationProcessor.initialized) return;
+    
+    // Validate context state
+    var existingCtx = ContextManager.spawnedThreadContext.get();
+    if (existingCtx != null) {
+        log.warn("Spawned Thread Context is not null! {}", GetThreadInfo());
+    }
+    
+    // Set the spawned context for the new thread
+    ContextManager.spawnedThreadContext.set(spawnedThreadContext);
+}
+```
+
+#### Public API Methods
+
+```java
+public class VFLFutures {
+    // Supplier-based async operations
+    public static <R> CompletableFuture<R> supplyAsync(Supplier<R> supplier)
+    public static <R> CompletableFuture<R> supplyAsync(Supplier<R> supplier, Executor executor)
+    
+    // Runnable-based async operations  
+    public static CompletableFuture<Void> runAsync(Runnable runnable)
+    public static CompletableFuture<Void> runAsync(Runnable runnable, Executor executor)
+}
+```
+
+#### Spawned Thread Block Creation
+
+When a spawned thread begins logging without an active @VFLBlock context:
+
+```java
+public static void startSubBlockFromSpawnedThreadContext(String blockName) {
+    SpawnedThreadContext callerData = spawnedThreadContext.get();
+    
+    // Create sub block in new thread with parent relationship
+    Block subBlockNewThread = CreateBlockAndPush2Buffer(
+        blockName,
+        callerData.parentContext().blockInfo.getId(),
+        AnnotationBuffer
+    );
+    
+    // Create linking log in parent thread's sequence
+    CreateLogAndPush2Buffer(
+        callerData.parentContext().blockInfo.getId(),
+        callerData.parentContext().currentLogId,
+        null,
+        subBlockNewThread.getId(),
+        callerData.startType(), // SUB_BLOCK_START_SECONDARY_JOIN
+        AnnotationBuffer
+    );
+    
+    // Initialize new thread's context stack
+    VFLBlockContext currentContext = new VFLBlockContext(subBlockNewThread, AnnotationBuffer);
+    initializeContextStack();
+    pushContext(currentContext);
+    logger.ensureBlockStarted();
+}
+```
 
 ### Annotation-Based VFL Core Engine
 
@@ -312,11 +582,51 @@ public abstract class VFL {
 public static VFL logger = new VFL() {
     @Override
     protected VFLBlockContext getContext() {
-        return ContextManager.getCurrentContext();
+        // Auto-create spawned thread blocks when needed
+        if (!hasActiveContext() && isSpawnedThread()) {
+            startSubBlockFromSpawnedThreadContext(
+                Thread.currentThread().getName() + "_" + Thread.currentThread().getId()
+            );
+        }
+        return getCurrentContext();
     }
 };
 ```
 
+### Static Log API
+
+Provides convenient static methods for the annotation approach:
+
+```java
+public class Log {
+    public static void Info(String message, Object... args)
+    public static <R> R InfoFn(Supplier<R> fn, Function<R, String> messageSerializer)
+    // Other logging methods
+}
+```
+
+### How the Annotation Approach Works
+
+#### Runtime Instrumentation Process
+
+1. ByteBuddy agent installs at application startup
+2. Classes with `@VFLBlock` methods are identified and transformed
+3. Method entry/exit advice is injected into annotated methods
+4. Original method behavior remains unchanged
+
+#### Thread-Local Context Management
+
+1. Each thread maintains its own context stack
+2. Annotated method entry creates/pushes block context
+3. Method exit pops context and closes block
+4. Cross-thread propagation handled through spawned contexts
+
+#### Automatic Hierarchy Creation
+
+1. First annotated method on thread creates root block
+2. Nested annotated methods create child blocks
+3. Parent-child relationships established automatically
+4. Log sequencing maintained within each block context
 
 ### Annotation-Based Error Handling
 
@@ -342,7 +652,6 @@ function onMethodExit(method, args, returnValue, thrownException):
 - Buffer failures don't block application execution
 - Context corruption triggers cleanup and continuation
 - Thread-local cleanup prevents memory leaks
-
 
 ### Annotation-Based Usage Patterns
 
@@ -375,10 +684,32 @@ public void processDataAsync() {
 }
 ```
 
+## Future Implementation Approaches
+
+These approaches will use the same core VFL data model and buffer system but provide different integration methods:
+
+### Context-Passing Approach (Planned)
+
+Explicit context objects passed through application calls, providing full control over block boundaries and relationships.
+
+### Scoped Logger Approach (Planned)
+
+Try-with-resources pattern for automatic scope management, enabling clean resource handling and guaranteed cleanup.
+
+### Fluent API Approach (Planned)
+
+Method chaining for readable logging sequences, allowing expressive and intuitive VFL usage.
 
 ## Summary
 
-VFL is a universal hierarchical logging framework built around core Block and Log entities. The annotation-based implementation described in this document is one approach to integrating VFL into applications. Future implementations will provide alternative integration methods (context-passing, scoped logger, fluent API) while maintaining the same core data model, buffer system, and hierarchical concepts.
+VFL is a universal hierarchical logging framework built around core Block and Log entities. The annotation-based implementation described in this document is one approach to integrating VFL into applications.
 
-The annotation approach provides transparent, automatic VFL integration through runtime instrumentation, while other approaches will offer different trade-offs in terms of control, explicitness, and integration complexity.
+Key architectural components:
 
+- **Universal Data Model**: Block and Log entities with hierarchical relationships
+- **Flexible Buffer System**: Synchronous and asynchronous buffer implementations with pluggable flush handlers
+- **Annotation-Based Integration**: Runtime instrumentation with automatic context management
+- **Cross-Thread Propagation**: Proper async operation support through VFLFutures
+- **Output Flexibility**: JSON flush handler with hierarchical structure generation for development and testing or Flush to VFL Hub for centralized storage for distributed systems
+
+The annotation approach provides transparent, automatic VFL integration through runtime instrumentation, while the buffer system ensures efficient data handling and flexible output options. Future implementations will provide alternative integration methods while maintaining the same core data model, buffer system, and hierarchical concepts.
