@@ -25,6 +25,7 @@ public class ThreadLocalLogAdvice {
 
     @Advice.OnMethodEnter
     static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
+        if (!ThreadLocalLogAnnotationProcessor.initialized) return;
 
         String blockName = GetMethodName(method, args);
         // 1. No stack yet – either root call or sub-block in fresh thread
@@ -83,6 +84,7 @@ public class ThreadLocalLogAdvice {
     static void onExit(@Advice.Origin Method method,
                        @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue
     ) {
+        if (!ThreadLocalLogAnnotationProcessor.initialized) return;
         // close current logger
         ThreadVFL logger = ThreadVFL.getCurrentLogger();
         log.debug("[VFL] EXIT {} (blockId={})", method.getName(), Objects.requireNonNull(logger).loggerContext.blockInfo.getId());

@@ -303,7 +303,7 @@ log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
 ## Enhanced Fluent API System
 
 ### 1. FluentVFL (Base Fluent Class)
-**Location**: `dev.kuku.vfl.core.fluent_api.FluentVFL`
+**Location**: `dev.kuku.vfl.core.fluent.FluentVFL`
 **Purpose**: Universal fluent wrapper for any VFL instance
 **Key Features**:
 - Parameter substitution in log messages with `FormatMessage`
@@ -311,7 +311,7 @@ log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
 - Basic fluent operations for call() and run()
 
 ### 2. FluentVFLCallable (Extends FluentVFL)
-**Location**: `dev.kuku.vfl.core.fluent_api.callable.FluentVFLCallable`
+**Location**: `dev.kuku.vfl.core.fluent.callable.FluentVFLCallable`
 **Purpose**: Fluent API for VFLCallable instances
 **Key Features**:
 - Enhanced supplier and runnable steps
@@ -339,7 +339,7 @@ String result = FluentThreadVFL.Call(() -> processData())
 ### 4. Fluent API Step Classes
 
 #### AsSubBlockStep
-**Location**: `dev.kuku.vfl.core.fluent_api.callable.steps.AsSubBlockStep`
+**Location**: `dev.kuku.vfl.core.fluent.callable.steps.AsSubBlockStep`
 **Purpose**: Configurable sub-block execution
 **Key Features**:
 - Start message configuration

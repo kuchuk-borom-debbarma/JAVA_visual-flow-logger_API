@@ -22,13 +22,13 @@ public class AnnotationTest {
 
     @Test
     void test() {
-        ThreadLocalLogAnnotationProcessor.initialise(createBuffer("linear"), false);
+        //ThreadLocalLogAnnotationProcessor.initialise(createBuffer("linear"), false);
         new TestService().linear();
     }
 
     @Test
     void asyncTest() {
-        ThreadLocalLogAnnotationProcessor.initialise(createBuffer("async"), false);
+        //ThreadLocalLogAnnotationProcessor.initialise(createBuffer("async"), false);
         long before = System.currentTimeMillis();
         new TestService().asyncTest();
         long after = System.currentTimeMillis();

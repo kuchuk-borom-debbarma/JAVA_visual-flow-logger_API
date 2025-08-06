@@ -1,7 +1,7 @@
-package dev.kuku.vfl.core.fluent_api;
+package dev.kuku.vfl.core.fluent;
 
-import dev.kuku.vfl.core.fluent_api.steps.RunnableStep;
-import dev.kuku.vfl.core.fluent_api.steps.SupplierStep;
+import dev.kuku.vfl.core.fluent.steps.RunnableStep;
+import dev.kuku.vfl.core.fluent.steps.SupplierStep;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
 
 import java.util.function.Supplier;

@@ -1,4 +1,4 @@
-package dev.kuku.vfl.core.fluent_api.steps;
+package dev.kuku.vfl.core.fluent.steps;
 
 import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;

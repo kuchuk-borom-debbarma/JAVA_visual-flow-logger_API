@@ -7,5 +7,6 @@ public class Main {
         //todo exceotion advice snnotation
         //TODO use VFLExecution exception
         //TODO event publisher and dispatcher not handled yet for annotaion and fluent
+        //TODO refacro threadVFL suply and run async to look similar to annotation one
     }
 }
