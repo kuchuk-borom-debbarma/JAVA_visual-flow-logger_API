@@ -8,5 +8,6 @@ public class Main {
         //TODO use VFLExecution exception
         //TODO event publisher and dispatcher not handled yet for annotaion and fluent
         //TODO refacro threadVFL suply and run async to look similar to annotation one
+        //TODO unify annotaion and rthread vfl use Log class to log stuff and VFLFutures to wrap futures
     }
 }

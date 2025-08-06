@@ -4,39 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Adding loggins">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/ContextManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/Log.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationAdvice.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="New design in progress. Super simple and unifed the logger and annotation">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationProcessor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLFutures.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/FluentVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/FluentVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/RunnableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/RunnableStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/SupplierStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/SupplierStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/annotations/SpawnedThreadContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/annotations/SpawnedThreadContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/annotations/ThreadVFLAdviceData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/annotations/ThreadVFLAdviceData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/annotations/ThreadVFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/annotations/ThreadVFLAnnotationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/annotations/ThreadVFLAnnotationProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/annotations/ThreadVFLAnnotationProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/annotations/ThreadVFLCompletableFuture.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/annotations/ThreadVFLCompletableFuture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/annotations/VFLBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/FluentThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/FluentThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/FluentThreadVFLOps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/FluentThreadVFLOps.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/ThreadVFLRunnableAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/ThreadVFLRunnableAsyncStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/ThreadVFLRunnableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/ThreadVFLRunnableStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/ThreadVFLSupplierAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/ThreadVFLSupplierAsyncStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/ThreadVFLSupplierStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/ThreadVFLSupplierStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/sub_block/AsSubBlockCallableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/sub_block/AsSubBlockCallableStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/sub_block/AsSubBlockRunnableAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/sub_block/AsSubBlockRunnableAsyncStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/sub_block/AsSubBlockRunnableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/sub_block/AsSubBlockRunnableStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/fluent/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/fluent/flient_steps/sub_block/AsSubBlockSupplierAsyncStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/logger/ThreadVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/logger/ThreadVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/logger/ThreadVFLOps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/logger/ThreadVFLOps.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal/logger/ThreadVFLRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/logger/ThreadVFLRunner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/FluentThreadVFLOpsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/FluentThreadVFLOpsTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/ThreadVFLOpsTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/ThreadVFLOpsTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationAdvice.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -352,14 +325,6 @@
       <workItem from="1754423681859" duration="81000" />
       <workItem from="1754423771713" duration="2538000" />
       <workItem from="1754443176965" duration="3932000" />
-    </task>
-    <task id="LOCAL-00123" summary="updated workscpace seting">
-      <option name="closed" value="true" />
-      <created>1752885528938</created>
-      <option name="number" value="00123" />
-      <option name="presentableId" value="LOCAL-00123" />
-      <option name="project" value="LOCAL" />
-      <updated>1752885528938</updated>
     </task>
     <task id="LOCAL-00124" summary="Removed package info for now">
       <option name="closed" value="true" />
@@ -745,7 +710,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754464821035</updated>
     </task>
-    <option name="localTasksCounter" value="172" />
+    <task id="LOCAL-00172" summary="New design in progress. Super simple and unifed the logger and annotation">
+      <option name="closed" value="true" />
+      <created>1754467872397</created>
+      <option name="number" value="00172" />
+      <option name="presentableId" value="LOCAL-00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1754467872397</updated>
+    </task>
+    <option name="localTasksCounter" value="173" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -763,7 +736,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated git ignore" />
     <MESSAGE value="Updated base fluent. Removed other fluents." />
     <MESSAGE value="updated runnable step" />
     <MESSAGE value="Added AsSubBlockCallableStep" />
@@ -788,7 +760,8 @@
     <MESSAGE value="Project structure refactor" />
     <MESSAGE value="Fixed bug" />
     <MESSAGE value="Adding loggins" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding loggins" />
+    <MESSAGE value="New design in progress. Super simple and unifed the logger and annotation" />
+    <option name="LAST_COMMIT_MESSAGE" value="New design in progress. Super simple and unifed the logger and annotation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
