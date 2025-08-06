@@ -6,7 +6,7 @@ import dev.kuku.vfl.core.models.logs.Log;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
-import dev.kuku.vfl.core.vfl_abstracts.VFL;
+import dev.kuku.vfl.core.VFL;
 
 import java.time.Instant;
 import java.util.function.Function;

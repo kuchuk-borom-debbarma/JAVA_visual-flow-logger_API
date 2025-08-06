@@ -1,6 +1,6 @@
 package dev.kuku.vfl.core.helpers;
 
-import dev.kuku.vfl.impl.threadlocal.annotations.VFLBlock;
+import dev.kuku.vfl.impl.annotation.VFLBlock;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
