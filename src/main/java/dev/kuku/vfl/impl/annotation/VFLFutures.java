@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal_annotation;
+package dev.kuku.vfl.impl.annotation;
 
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import lombok.extern.slf4j.Slf4j;

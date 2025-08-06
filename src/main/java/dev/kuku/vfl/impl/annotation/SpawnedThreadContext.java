@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal_annotation;
+package dev.kuku.vfl.impl.annotation;
 
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;

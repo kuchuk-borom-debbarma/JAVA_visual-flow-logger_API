@@ -1,4 +1,4 @@
-package dev.kuku.vfl.core.vfl_abstracts;
+package dev.kuku.vfl.core;
 
 import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;

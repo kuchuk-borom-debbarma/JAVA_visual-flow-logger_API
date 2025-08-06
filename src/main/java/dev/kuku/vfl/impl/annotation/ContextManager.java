@@ -1,10 +1,10 @@
-package dev.kuku.vfl.impl.threadlocal_annotation;
+package dev.kuku.vfl.impl.annotation;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import dev.kuku.vfl.core.vfl_abstracts.VFL;
+import dev.kuku.vfl.core.VFL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

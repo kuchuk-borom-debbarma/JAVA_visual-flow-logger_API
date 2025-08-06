@@ -5,9 +5,9 @@ import dev.kuku.vfl.core.buffer.NoOpsBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
-import dev.kuku.vfl.impl.threadlocal_annotation.Log;
-import dev.kuku.vfl.impl.threadlocal_annotation.VFLAnnotationProcessor;
-import dev.kuku.vfl.impl.threadlocal_annotation.VFLBlock;
+import dev.kuku.vfl.impl.annotation.Log;
+import dev.kuku.vfl.impl.annotation.VFLAnnotationProcessor;
+import dev.kuku.vfl.impl.annotation.VFLBlock;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
@@ -22,8 +22,8 @@ public class AnnotationTest {
     }
 
     @Test
-    void test() {
-        VFLAnnotationProcessor.initialise(new NoOpsBuffer());
+    void linear() {
+        VFLAnnotationProcessor.initialise(createBuffer("linear"));
         new TestService().linear();
     }
 
@@ -44,7 +44,7 @@ class TestService {
     @VFLBlock
     public void linear() {
         Log.Info("SUP");
-        int a = square(10);
+        int a = square(12);
         int b = squareAndMultiply(a, 2);
         square(b);
     }

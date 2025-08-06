@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal_annotation;
+package dev.kuku.vfl.impl.annotation;
 
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;

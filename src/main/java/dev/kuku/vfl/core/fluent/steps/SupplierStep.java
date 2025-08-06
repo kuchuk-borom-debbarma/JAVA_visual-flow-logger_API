@@ -1,7 +1,7 @@
 package dev.kuku.vfl.core.fluent.steps;
 
 import dev.kuku.vfl.core.helpers.Util;
-import dev.kuku.vfl.core.vfl_abstracts.VFL;
+import dev.kuku.vfl.core.VFL;
 import lombok.RequiredArgsConstructor;
 
 import java.util.function.Function;

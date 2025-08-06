@@ -1,4 +1,4 @@
-package dev.kuku.vfl.impl.threadlocal_annotation;
+package dev.kuku.vfl.impl.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

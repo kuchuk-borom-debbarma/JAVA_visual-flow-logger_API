@@ -235,7 +235,7 @@ new LogType(LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY)
 ### Abstract Base Classes
 
 #### 1. VFL (Base Abstract Class)
-**Location**: `dev.kuku.vfl.core.vfl_abstracts.VFL`
+**Location**: `dev.kuku.vfl.core.VFL`
 **Purpose**: Foundation class providing basic logging functionality
 **Key Features**:
 - Thread-safe block lifecycle management (`ensureBlockStarted()`)
@@ -273,7 +273,7 @@ new LogType(LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY)
 ### Concrete Implementations
 
 #### 1. ThreadVFL (Extends VFLCallable)
-**Location**: `dev.kuku.vfl.impl.threadlocal_annotation.logger.ThreadVFL`
+**Location**: `dev.kuku.vfl.impl.annotation.logger.ThreadVFL`
 **Purpose**: ThreadLocal-based automatic context management
 **Key Features**:
 - **ThreadLocal Stack**: Uses `ThreadLocal<Stack<ThreadVFL>>` for context
@@ -319,7 +319,7 @@ log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
 - Method chaining for configuration
 
 ### 3. FluentThreadVFL (Static Wrapper)
-**Location**: `dev.kuku.vfl.impl.threadlocal_annotation.fluent.FluentThreadVFL`
+**Location**: `dev.kuku.vfl.impl.annotation.fluent.FluentThreadVFL`
 **Purpose**: Static fluent API for ThreadVFL
 **Key Features**:
 - **Static Methods**: No instantiation needed
