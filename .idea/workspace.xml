@@ -4,30 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="VFL annotation works properly now">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Refactoring in progress. Logic not workign as expected">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/FluentVFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/FluentVFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/RunnableStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/RunnableStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/SupplierStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/fluent/steps/SupplierStep.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLFlowHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLFlowHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/models/VFLExecutionException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLCallable.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/VFLFn.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLCallableRunner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLFnRunner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/vfl_abstracts/runner/VFLRunner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/supplied/SuppliedVFL.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/ContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/SpawnedThreadContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SpawnedThreadContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -348,15 +328,7 @@
       <workItem from="1754423681859" duration="81000" />
       <workItem from="1754423771713" duration="2538000" />
       <workItem from="1754443176965" duration="3932000" />
-      <workItem from="1754479312633" duration="5591000" />
-    </task>
-    <task id="LOCAL-00129" summary="Now threadVFL is passed to every thread nicely&#10;next we need to figure out why double blocks are getting created">
-      <option name="closed" value="true" />
-      <created>1753541922487</created>
-      <option name="number" value="00129" />
-      <option name="presentableId" value="LOCAL-00129" />
-      <option name="project" value="LOCAL" />
-      <updated>1753541922487</updated>
+      <workItem from="1754479312633" duration="6136000" />
     </task>
     <task id="LOCAL-00130" summary="Never mind it seems to be working lol">
       <option name="closed" value="true" />
@@ -742,7 +714,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754484051685</updated>
     </task>
-    <option name="localTasksCounter" value="178" />
+    <task id="LOCAL-00178" summary="Refactoring in progress. Logic not workign as expected">
+      <option name="closed" value="true" />
+      <created>1754484968103</created>
+      <option name="number" value="00178" />
+      <option name="presentableId" value="LOCAL-00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1754484968103</updated>
+    </task>
+    <option name="localTasksCounter" value="179" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -760,7 +740,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Created fluent for ThreadVFL" />
     <MESSAGE value="Deleted fluent for SuppliedVFL" />
     <MESSAGE value="Created Static ThreadVFL wrapper for ease of use" />
     <MESSAGE value="Created Static fluent" />
@@ -785,7 +764,8 @@
     <MESSAGE value="Defined Annotation advice and context maanger" />
     <MESSAGE value="Defined VFL annotation" />
     <MESSAGE value="VFL annotation works properly now" />
-    <option name="LAST_COMMIT_MESSAGE" value="VFL annotation works properly now" />
+    <MESSAGE value="Refactoring in progress. Logic not workign as expected" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactoring in progress. Logic not workign as expected" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -2,14 +2,17 @@ package dev.kuku.vfl.core;
 
 import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
+import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@Slf4j
 public abstract class VFL {
 
     protected final AtomicBoolean blockStarted = new AtomicBoolean(false);
@@ -24,6 +27,7 @@ public abstract class VFL {
     }
 
     public void close(String endMessage) {
+        log.debug("[VFL] Closing {}-{} with message: {}", getContext().blockInfo.getBlockName(), Util.TrimId(getContext().blockInfo.getId()), endMessage);
         ensureBlockStarted();
 
         final VFLBlockContext context = getContext();

@@ -1,10 +1,10 @@
 package dev.kuku.vfl.impl.annotation;
 
+import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import dev.kuku.vfl.core.VFL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,6 +188,8 @@ public class ContextManager {
             if (stack.isEmpty()) {
                 cleanupThreadContext(poppedContext);
             }
+        } else {
+            log.warn("[VFL] Stack is empty or null when it shouldn't be {}");
         }
     }
 
