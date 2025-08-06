@@ -5,7 +5,6 @@ import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.vfl_abstracts.VFL;
-import dev.kuku.vfl.impl.threadlocal_annotation.annotations.SpawnedThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +88,7 @@ public class ContextManager {
 
 
     public static void startSubBlockFromSpawnedThreadContext(String blockName) {
+        log.debug("Starting sub block from spawned thread context {}", blockName);
         SpawnedThreadContext callerData = spawnedThreadContext.get();
 
         // Create sub block in new thread
@@ -125,6 +125,7 @@ public class ContextManager {
         VFLBlockContext parentContext = getCurrentContext();
 
         // Create sub block
+        assert parentContext != null;
         Block primarySubBlockStart = CreateBlockAndPush2Buffer(
                 blockName,
                 parentContext.blockInfo.getId(),

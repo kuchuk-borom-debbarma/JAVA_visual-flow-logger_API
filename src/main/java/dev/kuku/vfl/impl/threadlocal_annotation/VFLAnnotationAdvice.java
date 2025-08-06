@@ -26,13 +26,15 @@ public class VFLAnnotationAdvice {
         }
     }
 
-    @Advice.OnMethodExit
+    @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onExit(@Advice.Origin Method method,
                               @Advice.AllArguments Object[] args,
                               @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue,
                               @Advice.Thrown Throwable threw) {
+
         // Log exception if present
         ContextManager.logException(threw);
+
         // Close current context and perform cleanup
         ContextManager.closeCurrentContext(returnedValue);
     }

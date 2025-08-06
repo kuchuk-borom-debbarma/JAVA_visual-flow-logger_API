@@ -1,7 +1,6 @@
 package dev.kuku.vfl.impl.threadlocal_annotation;
 
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import dev.kuku.vfl.impl.threadlocal_annotation.annotations.SpawnedThreadContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
