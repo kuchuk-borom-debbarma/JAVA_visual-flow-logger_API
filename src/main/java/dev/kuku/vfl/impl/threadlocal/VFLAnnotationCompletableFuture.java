@@ -16,7 +16,7 @@ public class VFLAnnotationCompletableFuture {
 
         return CompletableFuture.supplyAsync(() -> {
             if (spawnedThreadData != null) {
-                ThreadVFLAnnotationAdvice.parentThreadLoggerData.set(spawnedThreadData);
+                ThreadVFLAnnotation.parentThreadLoggerData.set(spawnedThreadData);
             }
             return supplier.get();
         });
@@ -28,7 +28,7 @@ public class VFLAnnotationCompletableFuture {
 
         return CompletableFuture.supplyAsync(() -> {
             if (spawnedThreadData != null) {
-                ThreadVFLAnnotationAdvice.parentThreadLoggerData.set(spawnedThreadData);
+                ThreadVFLAnnotation.parentThreadLoggerData.set(spawnedThreadData);
             }
             return supplier.get();
         }, executor);
@@ -40,7 +40,7 @@ public class VFLAnnotationCompletableFuture {
 
         return CompletableFuture.runAsync(() -> {
             if (spawnedThreadData != null) {
-                ThreadVFLAnnotationAdvice.parentThreadLoggerData.set(spawnedThreadData);
+                ThreadVFLAnnotation.parentThreadLoggerData.set(spawnedThreadData);
             }
             runnable.run();
         });
@@ -52,7 +52,7 @@ public class VFLAnnotationCompletableFuture {
 
         return CompletableFuture.runAsync(() -> {
             if (spawnedThreadData != null) {
-                ThreadVFLAnnotationAdvice.parentThreadLoggerData.set(spawnedThreadData);
+                ThreadVFLAnnotation.parentThreadLoggerData.set(spawnedThreadData);
             }
             runnable.run();
         }, executor);
