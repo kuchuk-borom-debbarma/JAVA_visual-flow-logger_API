@@ -1,12 +1,12 @@
 package threadvfl;
 
-import dev.kuku.vfl.core.buffer.AsyncVFLBuffer;
+import dev.kuku.vfl.core.buffer.AsyncBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
-import dev.kuku.vfl.impl.threadlocal.ThreadVFLAnnotation;
-import dev.kuku.vfl.impl.threadlocal.VFLAnnotationCompletableFuture;
-import dev.kuku.vfl.impl.threadlocal.VFLBlock;
+import dev.kuku.vfl.impl.threadlocal.annotations.ThreadLocalLogAnnotationProcessor;
+import dev.kuku.vfl.impl.threadlocal.annotations.VFLAnnotationCompletableFuture;
+import dev.kuku.vfl.impl.threadlocal.annotations.VFLBlock;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
@@ -16,19 +16,19 @@ public class AnnotationTest {
 
     static VFLBuffer createBuffer(String fileName) {
         VFLFlushHandler f = new NestedJsonFlushHandler("test/output/" + AnnotationTest.class.getSimpleName() + "/" + fileName + ".json");
-        return new AsyncVFLBuffer(100, 3000, 100, f, Executors.newVirtualThreadPerTaskExecutor(), Executors.newSingleThreadScheduledExecutor());
-        //return new DummyBuffer();
+        return new AsyncBuffer(100, 3000, 100, f, Executors.newVirtualThreadPerTaskExecutor(), Executors.newSingleThreadScheduledExecutor());
+        //return new NoOpsBuffer();
     }
 
     @Test
     void test() {
-        ThreadVFLAnnotation.initialise(createBuffer("linear"), false);
+        ThreadLocalLogAnnotationProcessor.initialise(createBuffer("linear"), false);
         new TestService().linear();
     }
 
     @Test
     void asyncTest() {
-        ThreadVFLAnnotation.initialise(createBuffer("async"), false);
+        ThreadLocalLogAnnotationProcessor.initialise(createBuffer("async"), false);
         long before = System.currentTimeMillis();
         new TestService().asyncTest();
         long after = System.currentTimeMillis();
