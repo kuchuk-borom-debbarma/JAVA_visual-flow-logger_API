@@ -4,6 +4,7 @@ import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +134,7 @@ public class ContextManager {
         );
 
         // Create sub block start log and add it to caller's log
-        CreateLogAndPush2Buffer(
+        SubBlockStartLog subBlockStartLog = CreateLogAndPush2Buffer(
                 parentContext.blockInfo.getId(),
                 parentContext.currentLogId,
                 null,
@@ -143,7 +144,7 @@ public class ContextManager {
         );
 
         // Move forward the flow
-        parentContext.currentLogId = primarySubBlockStart.getId();
+        parentContext.currentLogId = subBlockStartLog.getId();
 
         // Create context for started sub block and push it to stack
         VFLBlockContext currentContext = new VFLBlockContext(primarySubBlockStart, AnnotationBuffer);
@@ -189,7 +190,7 @@ public class ContextManager {
                 cleanupThreadContext(poppedContext);
             }
         } else {
-            log.warn("[VFL] Stack is empty or null when it shouldn't be {}");
+            log.warn("[VFL] Stack is empty or null when it shouldn't be");
         }
     }
 

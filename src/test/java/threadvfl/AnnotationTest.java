@@ -44,7 +44,7 @@ class TestService {
     @VFLBlock
     public void linear() {
         Log.Info("SUP");
-        int a = square(12);
+        int a = Log.InfoFn(() -> square(12), "Squaring {} = {}", 12);
         int b = squareAndMultiply(a, 2);
         square(b);
     }
