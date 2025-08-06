@@ -27,13 +27,6 @@ public class ContextManager {
     public static final ThreadLocal<SpawnedThreadContext> spawnedThreadContext = new ThreadLocal<>();
     public static VFLBuffer AnnotationBuffer;
 
-    public static VFL logger = new VFL() {
-        @Override
-        protected VFLBlockContext getContext() {
-            return getCurrentContext();
-        }
-    };
-
     /**
      * Gets the current context from the stack
      */
@@ -47,7 +40,17 @@ public class ContextManager {
      */
     public static boolean hasActiveContext() {
         return loggerCtxStack.get() != null;
-    }
+    }    public static VFL logger = new VFL() {
+        @Override
+        protected VFLBlockContext getContext() {
+            //If attempting to log in a new thread with no logger context stack, create a new sub block call.
+            //Users MUST use VFLFutures for this operation because VFLFutures clean up the left-over lambdas
+            if (!hasActiveContext() && isSpawnedThread()) {
+                startSubBlockFromSpawnedThreadContext(Thread.currentThread().getName() + "_" + Thread.currentThread().getId());
+            }
+            return getCurrentContext();
+        }
+    };
 
     /**
      * Checks if the current thread is a spawned thread with context
@@ -88,7 +91,6 @@ public class ContextManager {
         log.debug("[VFL] Started root block: {}-{} in thread {}",
                 rootBlock.getBlockName(), TrimId(rootBlock.getId()), GetThreadInfo());
     }
-
 
     public static void startSubBlockFromSpawnedThreadContext(String blockName) {
         SpawnedThreadContext callerData = spawnedThreadContext.get();
@@ -224,4 +226,8 @@ public class ContextManager {
         Stack<VFLBlockContext> stack = loggerCtxStack.get();
         return stack == null || stack.isEmpty();
     }
+
+
+
+
 }

@@ -9,6 +9,8 @@ import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.helpers.Util.GetThreadInfo;
+import static dev.kuku.vfl.impl.annotation.ContextManager.loggerCtxStack;
+import static dev.kuku.vfl.impl.annotation.ContextManager.spawnedThreadContext;
 
 @Slf4j
 public class VFLFutures {
@@ -40,8 +42,14 @@ public class VFLFutures {
     private static <R> Supplier<R> wrapSupplier(Supplier<R> supplier) {
         var spawnedThreadCtx = createSpawnedThreadContext();
         return () -> {
-            setupSpawnedThreadContext(spawnedThreadCtx);
-            return supplier.get();
+            try {
+                setupSpawnedThreadContext(spawnedThreadCtx);
+                return supplier.get();
+            } finally {
+                //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @VFLBlock and needs to be removed manually.
+                loggerCtxStack.remove();
+                spawnedThreadContext.remove();
+            }
         };
     }
 
@@ -51,8 +59,15 @@ public class VFLFutures {
     private static Runnable wrapRunnable(Runnable runnable) {
         var spawnedThreadCtx = createSpawnedThreadContext();
         return () -> {
-            setupSpawnedThreadContext(spawnedThreadCtx);
-            runnable.run();
+            try {
+                setupSpawnedThreadContext(spawnedThreadCtx);
+                runnable.run();
+
+            } finally {
+                //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @VFLBlock and needs to be removed manually.
+                loggerCtxStack.remove();
+                spawnedThreadContext.remove();
+            }
         };
     }
 

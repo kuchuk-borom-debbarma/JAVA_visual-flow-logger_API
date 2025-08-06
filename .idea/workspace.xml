@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="fixed bug related to async">
-      <change afterPath="$PROJECT_DIR$/mds/see my codebase again_the context manager, Log, VF.md" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added Design Documentation.md">
+      <change afterPath="$PROJECT_DIR$/mds/prompts/Create Design doc prompt.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -337,15 +337,7 @@
       <workItem from="1754423771713" duration="2538000" />
       <workItem from="1754443176965" duration="3932000" />
       <workItem from="1754479312633" duration="8106000" />
-      <workItem from="1754494426182" duration="3308000" />
-    </task>
-    <task id="LOCAL-00136" summary="Added tests for byte buddy">
-      <option name="closed" value="true" />
-      <created>1754173568694</created>
-      <option name="number" value="00136" />
-      <option name="presentableId" value="LOCAL-00136" />
-      <option name="project" value="LOCAL" />
-      <updated>1754173568694</updated>
+      <workItem from="1754494426182" duration="4973000" />
     </task>
     <task id="LOCAL-00137" summary="Created new dto for inheritable thread local">
       <option name="closed" value="true" />
@@ -731,7 +723,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754495325038</updated>
     </task>
-    <option name="localTasksCounter" value="185" />
+    <task id="LOCAL-00185" summary="Added Design Documentation.md">
+      <option name="closed" value="true" />
+      <created>1754498177124</created>
+      <option name="number" value="00185" />
+      <option name="presentableId" value="LOCAL-00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1754498177124</updated>
+    </task>
+    <option name="localTasksCounter" value="186" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -749,7 +749,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed string formatter bug which contains return value" />
     <MESSAGE value="Basic setup done" />
     <MESSAGE value="Need second main function to run" />
     <MESSAGE value="Wrote basic logic but not tested yet" />
@@ -774,7 +773,8 @@
     <MESSAGE value="Made it so that if logger is not initialized it works fine" />
     <MESSAGE value="TODO async fix and a bug" />
     <MESSAGE value="fixed bug related to async" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed bug related to async" />
+    <MESSAGE value="Added Design Documentation.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Design Documentation.md" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
