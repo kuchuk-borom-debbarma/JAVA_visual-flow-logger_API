@@ -1,11 +1,13 @@
 package threadvfl;
 
 import dev.kuku.vfl.core.buffer.AsyncBuffer;
+import dev.kuku.vfl.core.buffer.NoOpsBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
-import dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLCompletableFuture;
+import dev.kuku.vfl.impl.threadlocal_annotation.VFLAnnotationProcessor;
 import dev.kuku.vfl.impl.threadlocal_annotation.VFLBlock;
+import dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLCompletableFuture;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
@@ -21,7 +23,7 @@ public class AnnotationTest {
 
     @Test
     void test() {
-        //ThreadVFLAnnotationProcessor.initialise(createBuffer("linear"), false);
+        VFLAnnotationProcessor.initialise(new NoOpsBuffer());
         new TestService().linear();
     }
 

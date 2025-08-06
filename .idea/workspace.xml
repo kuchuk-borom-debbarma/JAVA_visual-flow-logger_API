@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Defined Annotation advice and context maanger">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Defined VFL annotation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/ContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/ContextManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationAdvice.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLAnnotationProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/threadlocal_annotation/VFLFutures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +154,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest.asyncTest">
+  <component name="RunManager" selected="JUnit.AnnotationTest.test">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -233,8 +235,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AnnotationTest.asyncTest" />
         <item itemvalue="JUnit.AnnotationTest.test" />
+        <item itemvalue="JUnit.AnnotationTest.asyncTest" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.VFLBootstrap" />
         <item itemvalue="Application.TestBlockLibrary" />
@@ -323,15 +325,7 @@
       <workItem from="1754423681859" duration="81000" />
       <workItem from="1754423771713" duration="2538000" />
       <workItem from="1754443176965" duration="3932000" />
-      <workItem from="1754479312633" duration="3727000" />
-    </task>
-    <task id="LOCAL-00126" summary="Code much more clean now">
-      <option name="closed" value="true" />
-      <created>1752888885790</created>
-      <option name="number" value="00126" />
-      <option name="presentableId" value="LOCAL-00126" />
-      <option name="project" value="LOCAL" />
-      <updated>1752888885790</updated>
+      <workItem from="1754479312633" duration="3939000" />
     </task>
     <task id="LOCAL-00127" summary="Code clean, removed ContextualVFL.java">
       <option name="closed" value="true" />
@@ -717,7 +711,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754482663640</updated>
     </task>
-    <option name="localTasksCounter" value="175" />
+    <task id="LOCAL-00175" summary="Defined VFL annotation">
+      <option name="closed" value="true" />
+      <created>1754483068020</created>
+      <option name="number" value="00175" />
+      <option name="presentableId" value="LOCAL-00175" />
+      <option name="project" value="LOCAL" />
+      <updated>1754483068020</updated>
+    </task>
+    <option name="localTasksCounter" value="176" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -735,7 +737,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added AsSubBlockCallableStep" />
     <MESSAGE value="Added Async step" />
     <MESSAGE value="Created fluent for ThreadVFL" />
     <MESSAGE value="Deleted fluent for SuppliedVFL" />
@@ -760,7 +761,8 @@
     <MESSAGE value="New design in progress. Super simple and unifed the logger and annotation" />
     <MESSAGE value="Added todos and all required components" />
     <MESSAGE value="Defined Annotation advice and context maanger" />
-    <option name="LAST_COMMIT_MESSAGE" value="Defined Annotation advice and context maanger" />
+    <MESSAGE value="Defined VFL annotation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Defined VFL annotation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

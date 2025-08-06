@@ -2,7 +2,6 @@ package dev.kuku.vfl.impl.threadlocal_annotation;
 
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLAdviceData;
-import dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLAnnotationAdvice;
 import dev.kuku.vfl.impl.threadlocal_annotation.annotations.ThreadVFLAnnotationProcessor;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -18,16 +17,7 @@ public class VFLAnnotationProcessor {
 
     public static volatile boolean initialized = false;
 
-    public static synchronized void initialise(VFLBuffer buffer, boolean disable) {
-        if (disable) {
-            log.debug("Disable flag is true, skipping instrumentation");
-            return;
-        }
-        if (initialized) {
-            log.debug("[VFL] Agent already initialised – skipping");
-            return;
-        }
-
+    public static synchronized void initialise(VFLBuffer buffer) {
         try {
             Instrumentation inst = ByteBuddyAgent.install();
             ThreadVFLAdviceData.buffer = buffer;
@@ -35,7 +25,7 @@ public class VFLAnnotationProcessor {
             new AgentBuilder.Default().with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
                     .type(ElementMatchers.declaresMethod(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
                     .transform((b, td, cl, jm, pd) ->
-                            b.visit(Advice.to(ThreadVFLAnnotationAdvice.class)
+                            b.visit(Advice.to(VFLAnnotationAdvice.class)
                                     .on(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
                     )
                     .installOn(inst);

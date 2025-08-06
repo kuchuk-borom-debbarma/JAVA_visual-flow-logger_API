@@ -15,10 +15,9 @@ public class VFLAnnotationAdvice {
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
         String blockName = GetMethodName(method, args);
-
         if (!ContextManager.hasActiveContext()) {
             if (ContextManager.isSpawnedThread()) {
-                ContextManager.startSpawnedThreadBlock(blockName);
+                ContextManager.startSubBlockFromSpawnedThreadContext(blockName);
             } else {
                 ContextManager.startRootBlock(blockName);
             }

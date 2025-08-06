@@ -87,10 +87,8 @@ public class ContextManager {
                 rootBlock.getBlockName(), TrimId(rootBlock.getId()), GetThreadInfo());
     }
 
-    /**
-     * Creates and starts a spawned thread block context
-     */
-    public static void startSpawnedThreadBlock(String blockName) {
+
+    public static void startSubBlockFromSpawnedThreadContext(String blockName) {
         SpawnedThreadContext callerData = spawnedThreadContext.get();
 
         // Create sub block in new thread
