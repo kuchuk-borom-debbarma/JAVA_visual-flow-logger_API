@@ -3,6 +3,9 @@ package dev.kuku.vfl.core;
 import dev.kuku.vfl.core.dtos.BlockEndData;
 import dev.kuku.vfl.core.dtos.VFLBlockContext;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
@@ -117,6 +120,20 @@ public abstract class VFL {
      */
     public final void error(String message) {
         logInternal(LogTypeEnum.ERROR, message);
+    }
+
+    public final Block publish(String publisherName, String message) {
+        //Create publisher block
+        Block publisherBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(publisherName, getContext().blockInfo.getId(), getContext().buffer);
+        //Add log about publishing to the block
+        SubBlockStartLog publisherBlockLog = VFLFlowHelper.CreateLogAndPush2Buffer(getContext().blockInfo.getId(),
+                getContext().currentLogId,
+                message, publisherBlock.getId(),
+                LogTypeBlockStartEnum.PUBLISH_EVENT,
+                getContext().buffer);
+        //Update the flow
+        getContext().currentLogId = publisherBlock.getId();
+        return publisherBlock;
     }
 
     /**
