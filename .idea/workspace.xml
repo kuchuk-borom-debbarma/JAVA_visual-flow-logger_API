@@ -4,22 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Created publish block">
-      <change afterPath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/FlowHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLOpStarter.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/AdviceOpLayer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/Design Documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/Design Documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/VFLBlockContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/BlockContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/FlowHandler.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLInitializer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SubBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SpawnedThreadContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SpawnedThreadContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLOpStarter.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -350,15 +348,7 @@
       <workItem from="1754479312633" duration="8106000" />
       <workItem from="1754494426182" duration="5496000" />
       <workItem from="1754519130424" duration="5223000" />
-      <workItem from="1754590394886" duration="11468000" />
-    </task>
-    <task id="LOCAL-00140" summary="Some progress. Multi thread works. Just need to figure out thread pooling stuff now">
-      <option name="closed" value="true" />
-      <created>1754202358443</created>
-      <option name="number" value="00140" />
-      <option name="presentableId" value="LOCAL-00140" />
-      <option name="project" value="LOCAL" />
-      <updated>1754202358443</updated>
+      <workItem from="1754590394886" duration="15445000" />
     </task>
     <task id="LOCAL-00141" summary="intercepting completable futures with advice">
       <option name="closed" value="true" />
@@ -744,7 +734,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754591023398</updated>
     </task>
-    <option name="localTasksCounter" value="189" />
+    <task id="LOCAL-00189" summary="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety">
+      <option name="closed" value="true" />
+      <created>1754634490928</created>
+      <option name="number" value="00189" />
+      <option name="presentableId" value="LOCAL-00189" />
+      <option name="project" value="LOCAL" />
+      <updated>1754634490928</updated>
+    </task>
+    <option name="localTasksCounter" value="190" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -762,7 +760,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Created wrappers and shit but need to test it out" />
     <MESSAGE value="Code refactor" />
     <MESSAGE value="Re did the logic for advice" />
     <MESSAGE value="Annotation seems working" />
@@ -787,7 +784,8 @@
     <MESSAGE value="Fixed issue of using logger in lambda of a new thread" />
     <MESSAGE value="Added road map" />
     <MESSAGE value="Created publish block" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created publish block" />
+    <MESSAGE value="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

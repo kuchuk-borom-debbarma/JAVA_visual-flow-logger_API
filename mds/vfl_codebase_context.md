@@ -63,7 +63,7 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 - **JSON Support**: `@JsonValue` and `@JsonCreator` annotations for proper serialization
 - **Purpose**: Unified type system for different log categories
 
-**VFLBlockContext** (`dev.kuku.vfl.core.dtos.VFLBlockContext`)
+**VFLBlockContext** (`dev.kuku.vfl.core.dtos.BlockContext`)
 - Runtime context for active blocks
 - **Fields**:
   - `Block blockInfo`: Associated block metadata
