@@ -15,14 +15,14 @@ public class VFLAnnotationAdvice {
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
         String blockName = GetMethodName(method, args);
-        if (!ContextManager.hasActiveContext()) {
-            if (ContextManager.isSpawnedThread()) {
-                ContextManager.startSubBlockFromSpawnedThreadContext(blockName);
+        if (!ThreadContextManager.hasActiveContext()) {
+            if (ThreadContextManager.isSpawnedThread()) {
+                ThreadContextManager.startSubBlockFromSpawnedThreadContext(blockName);
             } else {
-                ContextManager.startRootBlock(blockName);
+                ThreadContextManager.startRootBlock(blockName);
             }
         } else {
-            ContextManager.startSubBlock(blockName);
+            ThreadContextManager.startSubBlock(blockName);
         }
     }
 
@@ -33,9 +33,9 @@ public class VFLAnnotationAdvice {
                               @Advice.Thrown Throwable threw) {
 
         // Log exception if present
-        ContextManager.logException(threw);
+        ThreadContextManager.logException(threw);
 
         // Close current context and perform cleanup
-        ContextManager.closeCurrentContext(returnedValue);
+        ThreadContextManager.closeCurrentContext(returnedValue);
     }
 }

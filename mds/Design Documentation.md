@@ -463,7 +463,7 @@ private static <R> Supplier<R> wrapSupplier(Supplier<R> supplier) {
             return supplier.get();
         } finally {
             // Manual cleanup for lambda-created contexts
-            // CM only manages @VFLBlock annotated methods
+            // CM only manages @SubBlock annotated methods
             loggerCtxStack.remove();
             spawnedThreadContext.remove();
         }

@@ -9,14 +9,14 @@ import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 import static dev.kuku.vfl.core.helpers.Util.GetThreadInfo;
-import static dev.kuku.vfl.impl.annotation.ContextManager.loggerCtxStack;
-import static dev.kuku.vfl.impl.annotation.ContextManager.spawnedThreadContext;
+import static dev.kuku.vfl.impl.annotation.ThreadContextManager.loggerCtxStack;
+import static dev.kuku.vfl.impl.annotation.ThreadContextManager.spawnedThreadContext;
 
 @Slf4j
 public class VFLFutures {
     private static SpawnedThreadContext createSpawnedThreadContext() {
         return new SpawnedThreadContext(
-                ContextManager.getCurrentContext(),
+                ThreadContextManager.getCurrentContext(),
                 LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN
         );
     }
@@ -25,15 +25,15 @@ public class VFLFutures {
      * Common logic for setting up spawned thread context
      */
     private static void setupSpawnedThreadContext(SpawnedThreadContext spawnedThreadContext) {
-        if (!VFLAnnotationProcessor.initialized) return;
+        if (!VFLInitializer.initialized) return;
 
         log.debug("Spawned thread context: {}-{}", spawnedThreadContext.parentContext().blockInfo.getBlockName(), Util.TrimId(spawnedThreadContext.parentContext().blockInfo.getId()));
 
-        var existingCtx = ContextManager.spawnedThreadContext.get();
+        var existingCtx = ThreadContextManager.spawnedThreadContext.get();
         if (existingCtx != null) {
             log.warn("Spawned Thread Context is not null! {}", GetThreadInfo());
         }
-        ContextManager.spawnedThreadContext.set(spawnedThreadContext);
+        ThreadContextManager.spawnedThreadContext.set(spawnedThreadContext);
     }
 
     /**
@@ -46,7 +46,7 @@ public class VFLFutures {
                 setupSpawnedThreadContext(spawnedThreadCtx);
                 return supplier.get();
             } finally {
-                //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @VFLBlock and needs to be removed manually.
+                //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @SubBlock and needs to be removed manually.
                 loggerCtxStack.remove();
                 spawnedThreadContext.remove();
             }
@@ -64,7 +64,7 @@ public class VFLFutures {
                 runnable.run();
 
             } finally {
-                //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @VFLBlock and needs to be removed manually.
+                //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @SubBlock and needs to be removed manually.
                 loggerCtxStack.remove();
                 spawnedThreadContext.remove();
             }

@@ -114,6 +114,19 @@ public abstract class VFL {
     }
 
     /**
+     * Executes a function and logs its result at the ERROR level.
+     * Useful for operations that fail or produce error conditions while still returning a value.
+     *
+     * @param <R>               The return type of the function
+     * @param fn                The function to execute
+     * @param messageSerializer Function to convert the result to an error message
+     * @return The result of the executed function
+     */
+    public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
+        return logFnInternal(LogTypeEnum.ERROR, fn, messageSerializer);
+    }
+
+    /**
      * Logs an error message at the ERROR level.
      *
      * @param message The error message to log
@@ -134,19 +147,6 @@ public abstract class VFL {
         //Update the flow
         getContext().currentLogId = publisherBlock.getId();
         return publisherBlock;
-    }
-
-    /**
-     * Executes a function and logs its result at the ERROR level.
-     * Useful for operations that fail or produce error conditions while still returning a value.
-     *
-     * @param <R>               The return type of the function
-     * @param fn                The function to execute
-     * @param messageSerializer Function to convert the result to an error message
-     * @return The result of the executed function
-     */
-    public final <R> R errorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
-        return logFnInternal(LogTypeEnum.ERROR, fn, messageSerializer);
     }
 
     /**

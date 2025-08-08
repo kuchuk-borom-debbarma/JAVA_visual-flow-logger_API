@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 
-public class VFLAnnotationProcessor {
-    public static Logger log = LoggerFactory.getLogger(VFLAnnotationProcessor.class);
+public class VFLInitializer {
+    public static Logger log = LoggerFactory.getLogger(VFLInitializer.class);
 
     public static volatile boolean initialized = false;
 
     public static synchronized void initialise(VFLBuffer buffer) {
         try {
             Instrumentation inst = ByteBuddyAgent.install();
-            ContextManager.AnnotationBuffer = buffer;
+            ThreadContextManager.AnnotationBuffer = buffer;
 
             new AgentBuilder.Default()
                     .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
@@ -54,13 +54,13 @@ public class VFLAnnotationProcessor {
                             // Called when transformation is complete
                         }
                     })
-                    // Target classes that declare methods with @VFLBlock annotation
-                    .type(ElementMatchers.declaresMethod(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
+                    // Target classes that declare methods with @SubBlock annotation
+                    .type(ElementMatchers.declaresMethod(ElementMatchers.isAnnotatedWith(SubBlock.class)))
                     .transform((builder, typeDescription, classLoader, javaModule, protectionDomain) -> {
                         log.debug("[VFL] Attempting to instrument: {}", typeDescription.getName());
                         return builder.visit(
                                 Advice.to(VFLAnnotationAdvice.class)
-                                        .on(ElementMatchers.isAnnotatedWith(VFLBlock.class)
+                                        .on(ElementMatchers.isAnnotatedWith(SubBlock.class)
                                                 .and(ElementMatchers.not(ElementMatchers.isAbstract())) // Exclude abstract methods
                                         )
                         );
@@ -71,8 +71,7 @@ public class VFLAnnotationProcessor {
             log.info("[VFL] Instrumentation initialised successfully");
 
             // Log some debug information
-            log.debug("[VFL] ByteBuddy Agent installed: {}", inst != null);
-            log.debug("[VFL] VFLBuffer set: {}", ContextManager.AnnotationBuffer != null);
+            log.debug("[VFL] VFLBuffer set: {}", ThreadContextManager.AnnotationBuffer != null);
 
         } catch (Exception e) {
             log.error("[VFL] Initialisation failed", e);

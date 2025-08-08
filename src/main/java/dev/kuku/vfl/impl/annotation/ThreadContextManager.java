@@ -20,8 +20,8 @@ import static dev.kuku.vfl.core.helpers.VFLFlowHelper.CreateLogAndPush2Buffer;
 /**
  * Provides context that is persistent per thread and manages VFL context operations
  */
-public class ContextManager {
-    public static final Logger log = LoggerFactory.getLogger(ContextManager.class);
+public class ThreadContextManager {
+    public static final Logger log = LoggerFactory.getLogger(ThreadContextManager.class);
 
     public static final ThreadLocal<Stack<VFLBlockContext>> loggerCtxStack = new ThreadLocal<>();
     public static final ThreadLocal<SpawnedThreadContext> spawnedThreadContext = new ThreadLocal<>();
@@ -40,17 +40,7 @@ public class ContextManager {
      */
     public static boolean hasActiveContext() {
         return loggerCtxStack.get() != null;
-    }    public static VFL logger = new VFL() {
-        @Override
-        protected VFLBlockContext getContext() {
-            //If attempting to log in a new thread with no logger context stack, create a new sub block call.
-            //Users MUST use VFLFutures for this operation because VFLFutures clean up the left-over lambdas
-            if (!hasActiveContext() && isSpawnedThread()) {
-                startSubBlockFromSpawnedThreadContext(Thread.currentThread().getName() + "_" + Thread.currentThread().getId());
-            }
-            return getCurrentContext();
-        }
-    };
+    }
 
     /**
      * Checks if the current thread is a spawned thread with context
@@ -121,7 +111,17 @@ public class ContextManager {
 
         log.debug("[VFL] Started spawned thread block: {}-{} in thread {}",
                 subBlockNewThread.getBlockName(), TrimId(subBlockNewThread.getId()), GetThreadInfo());
-    }
+    }    public static VFL logger = new VFL() {
+        @Override
+        protected VFLBlockContext getContext() {
+            //If attempting to log in a new thread with no logger context stack, create a new sub block call.
+            //Users MUST use VFLFutures for this operation because VFLFutures clean up the left-over lambdas
+            if (!hasActiveContext() && isSpawnedThread()) {
+                startSubBlockFromSpawnedThreadContext(Thread.currentThread().getName() + "_" + Thread.currentThread().getId());
+            }
+            return getCurrentContext();
+        }
+    };
 
     /**
      * Creates and starts a sub block context
@@ -157,6 +157,15 @@ public class ContextManager {
 
         log.debug("[VFL] Started sub block: {}-{} in thread {}",
                 primarySubBlockStart.getBlockName(), TrimId(primarySubBlockStart.getId()), GetThreadInfo());
+    }
+
+    /**
+     * Clean up thread local variables and start a sub block from the provided block. This will not push the block to buffer and assumes that it has already been pushed. It will just set the thread local variables as required
+     */
+    public static void startSubBlockCleanFrom(Block from) {
+        spawnedThreadContext.remove();
+        initializeContextStack();
+        pushContext(new VFLBlockContext(from, AnnotationBuffer));
     }
 
     /**
@@ -226,7 +235,6 @@ public class ContextManager {
         Stack<VFLBlockContext> stack = loggerCtxStack.get();
         return stack == null || stack.isEmpty();
     }
-
 
 
 
