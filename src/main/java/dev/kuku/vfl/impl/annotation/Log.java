@@ -4,10 +4,7 @@ import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
 import dev.kuku.vfl.core.helpers.Util;
-import dev.kuku.vfl.core.helpers.VFLFlowHelper;
-import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -24,50 +21,19 @@ public class Log {
         }
     };
 
-    private static void startLambdaSubBlock() {
-        BlockContext parentContext = ThreadContextManager.spawnedThreadContext.get().parentContext();
-        var subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(
-                Util.FormatMessage("Lambda-{}-{}", Util.GetThreadInfo(), Util.TrimId(UUID.randomUUID().toString())),
-                parentContext.blockInfo.getId(),
-                Configuration.INSTANCE.buffer);
-
-        var subBlockStart = VFLFlowHelper.CreateLogAndPush2Buffer(
-                parentContext.blockInfo.getId(),
-                parentContext.currentLogId,
-                null,
-                subBlock.getId(),
-                LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY,
-                Configuration.INSTANCE.buffer
-        );
-
-        parentContext.currentLogId = subBlockStart.getId();
-        ThreadContextManager.InitializeStackWithBlock(subBlock);
-    }
-
     // ================ INFO METHODS ================
     public static void Info(String message, Object... args) {
         if (!VFLInitializer.initialized) return;
-        //If attempting to log in a lambda function of VFLFutures then stack will be empty and this will throw exception.
-        //In such cases we need to check if it's a spawned thread and create sub block logger
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
         INSTANCE.info(Util.FormatMessage(message, args));
     }
 
     public static <R> R InfoFn(Supplier<R> fn, Function<R, String> messageSerializer) {
         if (!VFLInitializer.initialized) return fn.get();
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
         return INSTANCE.infoFn(fn, messageSerializer);
     }
 
     public static <R> R InfoFn(Supplier<R> fn, String message, Object... args) {
         if (!VFLInitializer.initialized) return fn.get();
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
         Function<R, String> s = (r) -> Util.FormatMessage(message, Util.CombineArgsWithReturn(args, r));
         return INSTANCE.infoFn(fn, s);
     }
@@ -77,9 +43,7 @@ public class Log {
             runnable.run();
             return;
         }
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         Supplier<Void> supplier = () -> {
             runnable.run();
             return null;
@@ -91,25 +55,19 @@ public class Log {
     // ================ WARN METHODS ================
     public static void Warn(String message, Object... args) {
         if (!VFLInitializer.initialized) return;
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         INSTANCE.warn(Util.FormatMessage(message, args));
     }
 
     public static <R> R WarnFn(Supplier<R> fn, Function<R, String> messageSerializer) {
         if (!VFLInitializer.initialized) return fn.get();
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         return INSTANCE.warnFn(fn, messageSerializer);
     }
 
     public static <R> R WarnFn(Supplier<R> fn, String message, Object... args) {
         if (!VFLInitializer.initialized) return fn.get();
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         Function<R, String> s = (r) -> Util.FormatMessage(message, Util.CombineArgsWithReturn(args, r));
         return INSTANCE.warnFn(fn, s);
     }
@@ -119,9 +77,7 @@ public class Log {
             runnable.run();
             return;
         }
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         Supplier<Void> supplier = () -> {
             runnable.run();
             return null;
@@ -133,25 +89,19 @@ public class Log {
     // ================ ERROR METHODS ================
     public static void Error(String message, Object... args) {
         if (!VFLInitializer.initialized) return;
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         INSTANCE.error(Util.FormatMessage(message, args));
     }
 
     public static <R> R ErrorFn(Supplier<R> fn, Function<R, String> messageSerializer) {
         if (!VFLInitializer.initialized) return fn.get();
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         return INSTANCE.errorFn(fn, messageSerializer);
     }
 
     public static <R> R ErrorFn(Supplier<R> fn, String message, Object... args) {
         if (!VFLInitializer.initialized) return fn.get();
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         Function<R, String> s = (r) -> Util.FormatMessage(message, Util.CombineArgsWithReturn(args, r));
         return INSTANCE.errorFn(fn, s);
     }
@@ -161,9 +111,7 @@ public class Log {
             runnable.run();
             return;
         }
-        if (ThreadContextManager.IsSpawnedThread() && ThreadContextManager.GetCurrentBlockContext() == null) {
-            startLambdaSubBlock();
-        }
+
         Supplier<Void> supplier = () -> {
             runnable.run();
             return null;

@@ -4,9 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(log): auto-create lambda sub-blocks for logging in spawned thread contexts&#10;When logging inside a lambda executed via `VFLFutures`, the thread-local block stack may be empty, causing errors or missing context linkage.&#10;This update adds logic in `Log` methods to detect spawned threads with no active block context and automatically start a temporary lambda sub-block linked to the originating parent context.&#10;Key changes:&#10;&#9;•&#9;Added `startLambdaSubBlock()` to `Log` to create and push a sub-block when logging in spawned threads without context.&#10;&#9;•&#9;Injected this check into all `Info`, `Warn`, and `Error` logging variants (sync and function forms).&#10;&#9;•&#9;Standardized spawned thread initialization via new `ThreadContextManager.InitializeSpawnedThreadContext(...)`.&#10;&#9;•&#9;Updated `VFLFutures` to use the new initialization method for both join and no-join async execution.&#10;Impact:&#10;&#9;•&#9;Ensures logs inside `CompletableFuture` lambdas are correctly linked to the VFL flow.&#10;&#9;•&#9;Prevents `NullPointerException` from empty thread-local context stacks in async scenarios.&#10;&#9;•&#9;Improves async/sub-block lifecycle consistency across threads.">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/BlockContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/BlockContext.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SpawnedThreadContext.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -337,15 +344,7 @@
       <workItem from="1754479312633" duration="8106000" />
       <workItem from="1754494426182" duration="5496000" />
       <workItem from="1754519130424" duration="5223000" />
-      <workItem from="1754590394886" duration="28678000" />
-    </task>
-    <task id="LOCAL-00145" summary="Refactored ThreadVFL and its runner. Next is fixing fluents">
-      <option name="closed" value="true" />
-      <created>1754275545488</created>
-      <option name="number" value="00145" />
-      <option name="presentableId" value="LOCAL-00145" />
-      <option name="project" value="LOCAL" />
-      <updated>1754275545488</updated>
+      <workItem from="1754590394886" duration="31907000" />
     </task>
     <task id="LOCAL-00146" summary="Updated git ignore">
       <option name="closed" value="true" />
@@ -731,7 +730,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754736537364</updated>
     </task>
-    <option name="localTasksCounter" value="194" />
+    <task id="LOCAL-00194" summary="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking.">
+      <option name="closed" value="true" />
+      <created>1754737019067</created>
+      <option name="number" value="00194" />
+      <option name="presentableId" value="LOCAL-00194" />
+      <option name="project" value="LOCAL" />
+      <updated>1754737019067</updated>
+    </task>
+    <option name="localTasksCounter" value="195" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -749,7 +756,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added return value to annotated block" />
     <MESSAGE value="Project structure refactor" />
     <MESSAGE value="Fixed bug" />
     <MESSAGE value="Adding loggins" />
@@ -774,7 +780,8 @@
     <MESSAGE value="feat: add SubBlock advice logic for correct sub-block creation &amp; cleanup&#10;Changes:&#10;&#9;•&#9;Implemented full `VFLAnnotationAdvice` entry/exit logic:&#10;&#9;•&#9;Determines parent context from current stack, spawned thread context, or optional root auto-creation.&#10;&#9;•&#9;Added warnings for missing parent context when `autoCreateRootBlock` is disabled.&#10;&#9;•&#9;Logs detailed sub-block creation with parent info and `startType`.&#10;&#9;•&#9;Closes context and logs exceptions on method exit.&#10;&#9;•&#9;Extended `ThreadContextManager`:&#10;&#9;•&#9;Added `PopCurrentContext`, `PushBlockToThreadLogStack`, and `IsSpawnedThread` helpers.&#10;&#9;•&#9;Enhanced cleanup when top-level context is removed.&#10;&#9;•&#9;Updated `SubBlock` annotation with optional `startMessage` and `endMessage`.&#10;&#9;•&#9;Added `autoCreateRootBlock` flag in `Configuration`.&#10;&#9;•&#9;Minor adjustment: made `Log.INSTANCE` non-private for internal usage.&#10;&#9;•&#9;Refactored `VFLStarter`:&#10;&#9;•&#9;Renamed `ContinueAsBlock` → `StartOperationAsBlock`.&#10;&#9;•&#9;Added `Log.INSTANCE.close()` calls for consistent block closure.&#10;Next step: integrate with `VFLFutures` wrapper for async tracking." />
     <MESSAGE value="feat: finalize SubBlock lifecycle and add async context propagation with VFLFutures&#10;We now fully implement the `@SubBlock` advice logic so sub-blocks are correctly created and tracked, even in edge cases such as missing parent context or execution on spawned threads. The logic will auto-create a root block when enabled, warn if context is missing, and ensure proper cleanup at method exit, including exception logging.&#10;Additionally, the new `VFLFutures` wrapper allows async tasks executed via `CompletableFuture` to inherit correct parent block context. This ensures blocks and logs inside async lambdas are properly linked in the VFL flow across threads and executors, and all thread-local context is cleaned up after execution.&#10;Key changes:&#10;&#9;•&#9;Improved entry/exit advice for `@SubBlock` annotation.&#10;&#9;•&#9;Helper methods for managing context stack, pushed blocks, and spawned thread context.&#10;&#9;•&#9;New `autoCreateRootBlock` config option.&#10;&#9;•&#9;`VFLFutures.supplyAsync` and `VFLFutures.runAsync` now propagate context to threads and clean up after.&#10;&#9;•&#9;Better logging and exception reporting.&#10;&#9;•&#9;Consistent block closure logic on both sync and async operations." />
     <MESSAGE value="feat(log): auto-create lambda sub-blocks for logging in spawned thread contexts&#10;When logging inside a lambda executed via `VFLFutures`, the thread-local block stack may be empty, causing errors or missing context linkage.&#10;This update adds logic in `Log` methods to detect spawned threads with no active block context and automatically start a temporary lambda sub-block linked to the originating parent context.&#10;Key changes:&#10;&#9;•&#9;Added `startLambdaSubBlock()` to `Log` to create and push a sub-block when logging in spawned threads without context.&#10;&#9;•&#9;Injected this check into all `Info`, `Warn`, and `Error` logging variants (sync and function forms).&#10;&#9;•&#9;Standardized spawned thread initialization via new `ThreadContextManager.InitializeSpawnedThreadContext(...)`.&#10;&#9;•&#9;Updated `VFLFutures` to use the new initialization method for both join and no-join async execution.&#10;Impact:&#10;&#9;•&#9;Ensures logs inside `CompletableFuture` lambdas are correctly linked to the VFL flow.&#10;&#9;•&#9;Prevents `NullPointerException` from empty thread-local context stacks in async scenarios.&#10;&#9;•&#9;Improves async/sub-block lifecycle consistency across threads." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(log): auto-create lambda sub-blocks for logging in spawned thread contexts&#10;When logging inside a lambda executed via `VFLFutures`, the thread-local block stack may be empty, causing errors or missing context linkage.&#10;This update adds logic in `Log` methods to detect spawned threads with no active block context and automatically start a temporary lambda sub-block linked to the originating parent context.&#10;Key changes:&#10;&#9;•&#9;Added `startLambdaSubBlock()` to `Log` to create and push a sub-block when logging in spawned threads without context.&#10;&#9;•&#9;Injected this check into all `Info`, `Warn`, and `Error` logging variants (sync and function forms).&#10;&#9;•&#9;Standardized spawned thread initialization via new `ThreadContextManager.InitializeSpawnedThreadContext(...)`.&#10;&#9;•&#9;Updated `VFLFutures` to use the new initialization method for both join and no-join async execution.&#10;Impact:&#10;&#9;•&#9;Ensures logs inside `CompletableFuture` lambdas are correctly linked to the VFL flow.&#10;&#9;•&#9;Prevents `NullPointerException` from empty thread-local context stacks in async scenarios.&#10;&#9;•&#9;Improves async/sub-block lifecycle consistency across threads." />
+    <MESSAGE value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

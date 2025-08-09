@@ -17,7 +17,7 @@ public class Main {
             So we need to have an explicit VFL Starter and SubBlock will can be used inside it
              */
 
-            //TODO configuration option to auto create root log. If true then first SubBlock will be treated as root block, if false, user needs to use VFLOpStart.StartOperation to start
+            //TODO redo initializer with configuration and use disabled insstead of initializer static disabled
         }
     }
 }

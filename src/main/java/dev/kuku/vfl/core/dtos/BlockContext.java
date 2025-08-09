@@ -11,5 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BlockContext {
     public final Block blockInfo;
     public final AtomicBoolean blockStarted = new AtomicBoolean(false);
+    public final boolean isLambdaBlock;
     public String currentLogId;
 }
