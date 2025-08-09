@@ -5,6 +5,7 @@ import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
 import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -29,6 +30,17 @@ public class Log {
                 Util.FormatMessage("Lambda-{}-{}", Util.GetThreadInfo(), Util.TrimId(UUID.randomUUID().toString())),
                 parentContext.blockInfo.getId(),
                 Configuration.INSTANCE.buffer);
+
+        var subBlockStart = VFLFlowHelper.CreateLogAndPush2Buffer(
+                parentContext.blockInfo.getId(),
+                parentContext.currentLogId,
+                null,
+                subBlock.getId(),
+                LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY,
+                Configuration.INSTANCE.buffer
+        );
+
+        parentContext.currentLogId = subBlockStart.getId();
         ThreadContextManager.InitializeStackWithBlock(subBlock);
     }
 
