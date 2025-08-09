@@ -4,20 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety">
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/AdviceOpLayer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="refactor: simplify VFLStarter and streamline context management&#10;&#10;- Complete VFLStarter class with both Supplier&lt;R&gt; and Runnable variants&#10;- Implement Runnable methods as delegates to Supplier versions for DRY principle&#10;- Simplify ThreadContextManager to focus on core context operations only&#10;- Remove complex VFL logger instance from ThreadContextManager&#10;- Move VFL instance creation to Log class as static singleton&#10;- Rename VFLBlockContext → BlockContext and VFLOpStarter → VFLStarter&#10;- Refactor VFL.getContext() to separate getContext() and getBuffer() methods&#10;- Update Configuration class name from VFLAnnotationConfig&#10;- Add AdviceOpLayer as public interface for package-private operations&#10;- Clean up imports and references throughout codebase&#10;&#10;Breaking changes:&#10;- ThreadContextManager API simplified (removed logger and complex context management)&#10;- VFL abstract class now requires separate getBuffer() implementation&#10;- Class renames: VFLBlockContext → BlockContext, VFLOpStarter → VFLStarter">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/VFLBlockContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/BlockContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/FlowHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SpawnedThreadContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SpawnedThreadContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SubBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SubBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLOpStarter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -348,15 +342,7 @@
       <workItem from="1754479312633" duration="8106000" />
       <workItem from="1754494426182" duration="5496000" />
       <workItem from="1754519130424" duration="5223000" />
-      <workItem from="1754590394886" duration="15445000" />
-    </task>
-    <task id="LOCAL-00141" summary="intercepting completable futures with advice">
-      <option name="closed" value="true" />
-      <created>1754241644423</created>
-      <option name="number" value="00141" />
-      <option name="presentableId" value="LOCAL-00141" />
-      <option name="project" value="LOCAL" />
-      <updated>1754241644423</updated>
+      <workItem from="1754590394886" duration="24057000" />
     </task>
     <task id="LOCAL-00142" summary="Added Completable future with basics for now">
       <option name="closed" value="true" />
@@ -742,7 +728,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754634490928</updated>
     </task>
-    <option name="localTasksCounter" value="190" />
+    <task id="LOCAL-00190" summary="refactor: simplify VFLStarter and streamline context management&#10;&#10;- Complete VFLStarter class with both Supplier&lt;R&gt; and Runnable variants&#10;- Implement Runnable methods as delegates to Supplier versions for DRY principle&#10;- Simplify ThreadContextManager to focus on core context operations only&#10;- Remove complex VFL logger instance from ThreadContextManager&#10;- Move VFL instance creation to Log class as static singleton&#10;- Rename VFLBlockContext → BlockContext and VFLOpStarter → VFLStarter&#10;- Refactor VFL.getContext() to separate getContext() and getBuffer() methods&#10;- Update Configuration class name from VFLAnnotationConfig&#10;- Add AdviceOpLayer as public interface for package-private operations&#10;- Clean up imports and references throughout codebase&#10;&#10;Breaking changes:&#10;- ThreadContextManager API simplified (removed logger and complex context management)&#10;- VFL abstract class now requires separate getBuffer() implementation&#10;- Class renames: VFLBlockContext → BlockContext, VFLOpStarter → VFLStarter">
+      <option name="closed" value="true" />
+      <created>1754639080296</created>
+      <option name="number" value="00190" />
+      <option name="presentableId" value="LOCAL-00190" />
+      <option name="project" value="LOCAL" />
+      <updated>1754639080296</updated>
+    </task>
+    <option name="localTasksCounter" value="191" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -760,7 +754,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Code refactor" />
     <MESSAGE value="Re did the logic for advice" />
     <MESSAGE value="Annotation seems working" />
     <MESSAGE value="Added test showing annotations" />
@@ -785,7 +778,8 @@
     <MESSAGE value="Added road map" />
     <MESSAGE value="Created publish block" />
     <MESSAGE value="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety" />
+    <MESSAGE value="refactor: simplify VFLStarter and streamline context management&#10;&#10;- Complete VFLStarter class with both Supplier&lt;R&gt; and Runnable variants&#10;- Implement Runnable methods as delegates to Supplier versions for DRY principle&#10;- Simplify ThreadContextManager to focus on core context operations only&#10;- Remove complex VFL logger instance from ThreadContextManager&#10;- Move VFL instance creation to Log class as static singleton&#10;- Rename VFLBlockContext → BlockContext and VFLOpStarter → VFLStarter&#10;- Refactor VFL.getContext() to separate getContext() and getBuffer() methods&#10;- Update Configuration class name from VFLAnnotationConfig&#10;- Add AdviceOpLayer as public interface for package-private operations&#10;- Clean up imports and references throughout codebase&#10;&#10;Breaking changes:&#10;- ThreadContextManager API simplified (removed logger and complex context management)&#10;- VFL abstract class now requires separate getBuffer() implementation&#10;- Class renames: VFLBlockContext → BlockContext, VFLOpStarter → VFLStarter" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: simplify VFLStarter and streamline context management&#10;&#10;- Complete VFLStarter class with both Supplier&lt;R&gt; and Runnable variants&#10;- Implement Runnable methods as delegates to Supplier versions for DRY principle&#10;- Simplify ThreadContextManager to focus on core context operations only&#10;- Remove complex VFL logger instance from ThreadContextManager&#10;- Move VFL instance creation to Log class as static singleton&#10;- Rename VFLBlockContext → BlockContext and VFLOpStarter → VFLStarter&#10;- Refactor VFL.getContext() to separate getContext() and getBuffer() methods&#10;- Update Configuration class name from VFLAnnotationConfig&#10;- Add AdviceOpLayer as public interface for package-private operations&#10;- Clean up imports and references throughout codebase&#10;&#10;Breaking changes:&#10;- ThreadContextManager API simplified (removed logger and complex context management)&#10;- VFL abstract class now requires separate getBuffer() implementation&#10;- Class renames: VFLBlockContext → BlockContext, VFLOpStarter → VFLStarter" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -6,10 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for method to mark it as a block
+ * Annotation for method to mark it as a sub block
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SubBlock {
     String blockName() default "";
+
+    String startMessage() default "";
+
+    String endMessage() default "";
+
 }

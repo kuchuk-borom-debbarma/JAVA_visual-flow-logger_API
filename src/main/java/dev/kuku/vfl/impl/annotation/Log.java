@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Log {
-    private static VFL INSTANCE = new VFL() {
+    static VFL INSTANCE = new VFL() {
         @Override
         protected BlockContext getContext() {
             return ThreadContextManager.GetCurrentBlockContext();

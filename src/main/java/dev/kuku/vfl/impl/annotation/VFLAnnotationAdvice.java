@@ -1,5 +1,10 @@
 package dev.kuku.vfl.impl.annotation;
 
+import dev.kuku.vfl.core.dtos.BlockContext;
+import dev.kuku.vfl.core.helpers.Util;
+import dev.kuku.vfl.core.helpers.VFLFlowHelper;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import org.slf4j.Logger;
@@ -15,15 +20,51 @@ public class VFLAnnotationAdvice {
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
         String blockName = GetMethodName(method, args);
-        if (!ThreadContextManager.hasActiveContext()) {
-            if (ThreadContextManager.isSpawnedThread()) {
-                ThreadContextManager.startSubBlockFromSpawnedThreadContext(blockName);
-            } else {
-                ThreadContextManager.startRootBlock(blockName);
-            }
-        } else {
-            ThreadContextManager.startSubBlock(blockName);
+        log.debug("Entered SubBlock: {}", blockName);
+
+        LogTypeBlockStartEnum startType = LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY;
+        BlockContext parentBlockContext;
+
+        //Parent already exists
+        if (ThreadContextManager.GetCurrentBlockContext() != null) {
+            parentBlockContext = ThreadContextManager.GetCurrentBlockContext();
         }
+        //No parent in stack BUT is a spawned thread
+        else if (ThreadContextManager.IsSpawnedThread()) {
+            parentBlockContext = ThreadContextManager.spawnedThreadContext.get().parentContext();
+            startType = ThreadContextManager.spawnedThreadContext.get().startType();
+        }
+        //No parent nor spawned context, create root block IF it's enabled in configuration
+        else if (Configuration.INSTANCE.autoCreateRootBlock) {
+            log.warn("Auto-creating root block for @SubBlock-{}. This may obscure the start point; proceed only if acceptable.", blockName);
+            Block parentBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, Configuration.INSTANCE.buffer);
+            ThreadContextManager.InitializeStackWithBlock(parentBlock);
+            return;
+        }
+        //Can't create sub block for annotated method.
+        else {
+            log.warn("Could not create block for @SubBlock-{}: no parent or spawnedThreadContext, and autoCreateRootBlock is disabled.", blockName);
+            return;
+        }
+        //This should never happen but you never know
+        if (parentBlockContext == null) {
+            log.error("Parent Block Context is null when it should not be. It should have been valid after assigning it from top most stack or from spawnedThreadContext.");
+            return;
+        }
+        log.debug("Creating sub-block '{}' from parent '{}-{}' (startType: {}).",
+                blockName,
+                parentBlockContext.blockInfo.getBlockName(),
+                Util.TrimId(parentBlockContext.blockInfo.getId()),
+                startType);
+        //Create sub block
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlockContext.blockInfo.getId(), Configuration.INSTANCE.buffer);
+        //Create Sub block start log for parent
+        VFLFlowHelper.CreateLogAndPush2Buffer(parentBlockContext.blockInfo.getId(),
+                parentBlockContext.currentLogId,
+                null,
+                subBlock.getId(),
+                startType, Configuration.INSTANCE.buffer);
+        ThreadContextManager.PushBlockToThreadLogStack(subBlock);
     }
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -31,11 +72,12 @@ public class VFLAnnotationAdvice {
                               @Advice.AllArguments Object[] args,
                               @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue,
                               @Advice.Thrown Throwable threw) {
-
-        // Log exception if present
-        ThreadContextManager.logException(threw);
-
-        // Close current context and perform cleanup
-        ThreadContextManager.closeCurrentContext(returnedValue);
+        String blockName = GetMethodName(method, args);
+        if (threw != null) {
+            Log.Error("Exception: {}-{}", threw.getClass().getName(), threw.getMessage());
+        }
+        String endMsg = "Returned : " + returnedValue;
+        Log.INSTANCE.close(endMsg);
+        ThreadContextManager.PopCurrentContext(endMsg);
     }
 }

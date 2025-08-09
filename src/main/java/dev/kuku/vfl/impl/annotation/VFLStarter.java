@@ -8,7 +8,6 @@ import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import java.util.function.Supplier;
 
 public class VFLStarter {
-    // Original Supplier-based methods
     public static <R> R StartOperation(String blockName, Supplier<R> supplier) {
         ThreadContextManager.CleanThreadVariables();
         Block rootBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, Configuration.INSTANCE.buffer);
@@ -22,11 +21,12 @@ public class VFLStarter {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            Log.INSTANCE.close(null);
             ThreadContextManager.CleanThreadVariables();
         }
     }
 
-    public static <R> R ContinueAsBlock(Block block, Supplier<R> supplier) {
+    public static <R> R StartOperationAsBlock(Block block, Supplier<R> supplier) {
         ThreadContextManager.CleanThreadVariables();
         ThreadContextManager.InitializeStackWithBlock(block);
         R r;
@@ -38,6 +38,7 @@ public class VFLStarter {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            Log.INSTANCE.close(null);
             ThreadContextManager.CleanThreadVariables();
         }
     }
@@ -61,6 +62,7 @@ public class VFLStarter {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            Log.INSTANCE.close(null);
             ThreadContextManager.CleanThreadVariables();
         }
     }
@@ -73,8 +75,8 @@ public class VFLStarter {
         });
     }
 
-    public static void ContinueAsBlock(Block block, Runnable runnable) {
-        ContinueAsBlock(block, () -> {
+    public static void StartOperationAsBlock(Block block, Runnable runnable) {
+        StartOperationAsBlock(block, () -> {
             runnable.run();
             return null;
         });
