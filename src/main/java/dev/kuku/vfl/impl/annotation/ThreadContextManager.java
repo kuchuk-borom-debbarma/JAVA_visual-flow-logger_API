@@ -63,4 +63,9 @@ public class ThreadContextManager {
     public static void PushBlockToThreadLogStack(Block subBlock) {
         loggerCtxStack.get().push(new BlockContext(subBlock));
     }
+
+    public static void InitializeThreadStackWithSpawnedThreadContext(SpawnedThreadContext spawnedContext) {
+        CleanThreadVariables();
+        spawnedThreadContext.set(spawnedContext);
+    }
 }
