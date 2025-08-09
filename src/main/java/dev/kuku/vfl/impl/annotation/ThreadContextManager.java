@@ -13,6 +13,7 @@ import java.util.Stack;
  * Manager thread local context
  */
 public class ThreadContextManager {
+
     static final Logger log = LoggerFactory.getLogger(ThreadContextManager.class);
     static final ThreadLocal<Stack<BlockContext>> loggerCtxStack = new ThreadLocal<>();
     static final ThreadLocal<SpawnedThreadContext> spawnedThreadContext = new ThreadLocal<>();
@@ -26,6 +27,11 @@ public class ThreadContextManager {
     static void InitializeStackWithBlock(Block block) {
         loggerCtxStack.set(new Stack<>());
         loggerCtxStack.get().push(new BlockContext(block));
+    }
+
+    public static void InitializeSpawnedThreadContext(SpawnedThreadContext spawnedContext) {
+        CleanThreadVariables();
+        spawnedThreadContext.set(spawnedContext);
     }
 
     static BlockContext GetCurrentBlockContext() {
@@ -46,6 +52,7 @@ public class ThreadContextManager {
         BlockContext popped = loggerCtxStack.get().pop();
         log.debug("Popped current context : {}-{} for thread {}", popped.blockInfo.getBlockName(), Util.TrimId(popped.blockInfo.getId()), Util.GetThreadInfo());
 
+        //TODO Consider lambda started blocks too
         if (GetCurrentBlockContext() == null) {
             log.debug("Thread '{}' cleaned: popped first context '{}-{}'.",
                     Util.GetThreadInfo(),
@@ -62,10 +69,5 @@ public class ThreadContextManager {
 
     public static void PushBlockToThreadLogStack(Block subBlock) {
         loggerCtxStack.get().push(new BlockContext(subBlock));
-    }
-
-    public static void InitializeThreadStackWithSpawnedThreadContext(SpawnedThreadContext spawnedContext) {
-        CleanThreadVariables();
-        spawnedThreadContext.set(spawnedContext);
     }
 }

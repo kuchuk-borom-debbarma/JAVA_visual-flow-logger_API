@@ -18,7 +18,7 @@ public class VFLFutures {
         return () -> {
             try {
                 //Create spawned thread context in the executor thread
-                ThreadContextManager.InitializeThreadStackWithSpawnedThreadContext(new SpawnedThreadContext(parentContext, LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN));
+                ThreadContextManager.InitializeSpawnedThreadContext(new SpawnedThreadContext(parentContext, LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN));
                 return supplier.get();
             } finally {
                 //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @SubBlock and needs to be removed manually.
@@ -35,9 +35,8 @@ public class VFLFutures {
         return () -> {
             try {
                 //Create spawned thread context in the executor thread
-                ThreadContextManager.InitializeThreadStackWithSpawnedThreadContext(new SpawnedThreadContext(parentContext, LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN));
+                ThreadContextManager.InitializeSpawnedThreadContext(new SpawnedThreadContext(parentContext, LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN));
                 runnable.run();
-
             } finally {
                 //If user Logs inside the lambda but not within a VFL block then a lambda sub block start step is created as part of the flow which is NOT removed by context manager as CM only managers methods that are annotated with @SubBlock and needs to be removed manually.
                 ThreadContextManager.CleanThreadVariables();
