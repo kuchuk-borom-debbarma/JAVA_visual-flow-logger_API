@@ -17,7 +17,8 @@ public class Main {
             So we need to have an explicit VFL Starter and SubBlock will can be used inside it
              */
 
-            //TODO redo initializer with configuration and use disabled insstead of initializer static disabled
+
+            //private methods accessed using instance for advice
         }
     }
 }

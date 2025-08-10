@@ -30,7 +30,7 @@ public class VFLAnnotationAdvice {
         }
         //Can't create sub block for annotated method.
         else {
-            log.warn("Could not create block for @SubBlock-{}: no parent or spawnedThreadContext, and autoCreateRootBlock is disabled.", blockName);
+            log.warn("Could not create block for @SubBlock-{}: no parent or spawnedThreadContext.", blockName);
             return;
         }
         //This should never happen but you never know
@@ -46,14 +46,14 @@ public class VFLAnnotationAdvice {
                 Util.TrimId(parentBlockContext.blockInfo.getId()));
 
         //Create sub block
-        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlockContext.blockInfo.getId(), Configuration.INSTANCE.buffer);
+        Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlockContext.blockInfo.getId(), VFLInitializer.VFLAnnotationConfig.buffer);
         //Create Sub block start log for parent
         VFLFlowHelper.CreateLogAndPush2Buffer(parentBlockContext.blockInfo.getId(),
                 parentBlockContext.currentLogId,
                 null,
                 subBlock.getId(),
                 LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY,
-                Configuration.INSTANCE.buffer);
+                VFLInitializer.VFLAnnotationConfig.buffer);
         ThreadContextManager.PushBlockToThreadLogStack(subBlock);
     }
 
@@ -69,6 +69,7 @@ public class VFLAnnotationAdvice {
         }
 
         String endMsg = "Returned : " + returnedValue;
+
         ThreadContextManager.CloseAndPopCurrentContext(endMsg);
     }
 }

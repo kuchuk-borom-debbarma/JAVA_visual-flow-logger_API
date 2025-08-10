@@ -9,8 +9,12 @@ import java.util.function.Supplier;
 
 public class VFLStarter {
     public static <R> R StartRootBlock(String blockName, Supplier<R> supplier) {
+        if (!VFLInitializer.IsEnabled()) {
+            return supplier.get();
+        }
+
         ThreadContextManager.CleanThreadVariables();
-        Block rootBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, Configuration.INSTANCE.buffer);
+        Block rootBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, VFLInitializer.VFLAnnotationConfig.buffer);
         ThreadContextManager.InitializeStackWithBlock(rootBlock);
         R r;
         try {
@@ -31,6 +35,10 @@ public class VFLStarter {
      * Start operation with the provided block as first block. Does not push the block to buffer.
      */
     public static <R> R StartOperationAsBlock(Block block, Supplier<R> supplier) {
+        if (!VFLInitializer.IsEnabled()) {
+            return supplier.get();
+        }
+
         ThreadContextManager.CleanThreadVariables();
         ThreadContextManager.InitializeStackWithBlock(block);
         R r;
@@ -49,24 +57,22 @@ public class VFLStarter {
 
     /**
      * Start event listener for the provided publisherBlock
-     * @param publisherBlock
-     * @param eventListenerName
-     * @param message
-     * @param supplier
-     * @return
-     * @param <R>
      */
     public static <R> R StartEventListener(EventPublisherBlock publisherBlock, String eventListenerName, String message, Supplier<R> supplier) {
+        if (!VFLInitializer.IsEnabled()) {
+            return supplier.get();
+        }
+
         ThreadContextManager.CleanThreadVariables();
 
-        Block eventListenerBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(eventListenerName, publisherBlock.block().getId(), Configuration.INSTANCE.buffer);
+        Block eventListenerBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(eventListenerName, publisherBlock.block().getId(), VFLInitializer.VFLAnnotationConfig.buffer);
 
         VFLFlowHelper.CreateLogAndPush2Buffer(publisherBlock.block().getId(),
                 null,
                 message,
                 eventListenerBlock.getId(),
                 LogTypeBlockStartEnum.EVENT_LISTENER,
-                Configuration.INSTANCE.buffer);
+                VFLInitializer.VFLAnnotationConfig.buffer);
         ThreadContextManager.InitializeStackWithBlock(eventListenerBlock);
 
         R r;

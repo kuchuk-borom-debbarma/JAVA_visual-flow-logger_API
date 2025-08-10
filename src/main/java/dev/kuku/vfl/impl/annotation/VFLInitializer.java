@@ -1,6 +1,5 @@
 package dev.kuku.vfl.impl.annotation;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
@@ -14,14 +13,21 @@ import org.slf4j.LoggerFactory;
 import java.lang.instrument.Instrumentation;
 
 public class VFLInitializer {
-    public static Logger log = LoggerFactory.getLogger(VFLInitializer.class);
+    static Logger log = LoggerFactory.getLogger(VFLInitializer.class);
+    static VFLAnnotationConfig VFLAnnotationConfig;
+    static volatile boolean initialized = false;
 
-    public static volatile boolean initialized = false;
+    public static boolean IsEnabled() {
+        return initialized && VFLAnnotationConfig != null && VFLAnnotationConfig.disabled == false;
+    }
 
-    public static synchronized void initialise(VFLBuffer buffer) {
+    public static synchronized void initialise(VFLAnnotationConfig config) {
+        if (config == null | config.disabled) {
+            return;
+        }
         try {
             Instrumentation inst = ByteBuddyAgent.install();
-            ThreadContextManager.AnnotationBuffer = buffer;
+            VFLInitializer.VFLAnnotationConfig = config;
 
             new AgentBuilder.Default()
                     .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
@@ -69,10 +75,6 @@ public class VFLInitializer {
 
             initialized = true;
             log.info("[VFL] Instrumentation initialised successfully");
-
-            // Log some debug information
-            log.debug("[VFL] VFLBuffer set: {}", ThreadContextManager.AnnotationBuffer != null);
-
         } catch (Exception e) {
             log.error("[VFL] Initialisation failed", e);
             throw new RuntimeException(e);

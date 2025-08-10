@@ -4,8 +4,7 @@ import dev.kuku.vfl.core.buffer.VFLBuffer;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class Configuration {
-    static Configuration INSTANCE;
-    final boolean disabled;
-    final VFLBuffer buffer;
+public class VFLAnnotationConfig {
+    public final boolean disabled;
+    public final VFLBuffer buffer;
 }

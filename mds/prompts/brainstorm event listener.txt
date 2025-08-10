@@ -1169,7 +1169,7 @@ Service B: (linked via correlation ID)
 ## 4. Key Design Principles
 
 ### Automatic Detection
-- Zero configuration - just add annotations
+- Zero VFLAnnotationConfig - just add annotations
 - ByteBuddy automatically detects the scenario based on method parameters
 - Same annotation works for local, async, and distributed scenarios
 

@@ -17,7 +17,7 @@ public class Log {
 
         @Override
         protected VFLBuffer getBuffer() {
-            return Configuration.INSTANCE.buffer;
+            return VFLInitializer.VFLAnnotationConfig.buffer;
         }
     };
 

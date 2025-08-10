@@ -1,22 +1,19 @@
 package dev.kuku.vfl.impl.annotation;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
 import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.models.Block;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Stack;
 
 /**
  * Manager thread local context
  */
+@Slf4j
 public class ThreadContextManager {
 
-    static final Logger log = LoggerFactory.getLogger(ThreadContextManager.class);
     static final ThreadLocal<Stack<BlockContext>> loggerCtxStack = new ThreadLocal<>();
-    static VFLBuffer AnnotationBuffer;
 
     static void CleanThreadVariables() {
         loggerCtxStack.remove();
@@ -43,7 +40,7 @@ public class ThreadContextManager {
             return;
         }
         if (loggerCtxStack.get().isEmpty()) {
-            log.warn("Failed to close current context : Logger stack is empty");
+            Log.Warn("Failed to close current context : Logger stack is empty");
             return;
         }
 

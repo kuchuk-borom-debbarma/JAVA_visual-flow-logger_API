@@ -4,10 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases.">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Removed concept of auto start root block">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/java_vfl_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/java_vfl_documentation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/vfl_project_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_project_context.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLInitializer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -340,15 +351,7 @@
       <workItem from="1754494426182" duration="5496000" />
       <workItem from="1754519130424" duration="5223000" />
       <workItem from="1754590394886" duration="31946000" />
-      <workItem from="1754801688885" duration="156000" />
-    </task>
-    <task id="LOCAL-00147" summary="Updated base fluent. Removed other fluents.">
-      <option name="closed" value="true" />
-      <created>1754276268263</created>
-      <option name="number" value="00147" />
-      <option name="presentableId" value="LOCAL-00147" />
-      <option name="project" value="LOCAL" />
-      <updated>1754276268263</updated>
+      <workItem from="1754801688885" duration="1288000" />
     </task>
     <task id="LOCAL-00148" summary="updated runnable step">
       <option name="closed" value="true" />
@@ -734,7 +737,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754740208758</updated>
     </task>
-    <option name="localTasksCounter" value="196" />
+    <task id="LOCAL-00196" summary="Removed concept of auto start root block">
+      <option name="closed" value="true" />
+      <created>1754801859364</created>
+      <option name="number" value="00196" />
+      <option name="presentableId" value="LOCAL-00196" />
+      <option name="project" value="LOCAL" />
+      <updated>1754801859364</updated>
+    </task>
+    <option name="localTasksCounter" value="197" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -752,7 +763,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed bug" />
     <MESSAGE value="Adding loggins" />
     <MESSAGE value="New design in progress. Super simple and unifed the logger and annotation" />
     <MESSAGE value="Added todos and all required components" />
@@ -777,7 +787,8 @@
     <MESSAGE value="feat(log): auto-create lambda sub-blocks for logging in spawned thread contexts&#10;When logging inside a lambda executed via `VFLFutures`, the thread-local block stack may be empty, causing errors or missing context linkage.&#10;This update adds logic in `Log` methods to detect spawned threads with no active block context and automatically start a temporary lambda sub-block linked to the originating parent context.&#10;Key changes:&#10;&#9;•&#9;Added `startLambdaSubBlock()` to `Log` to create and push a sub-block when logging in spawned threads without context.&#10;&#9;•&#9;Injected this check into all `Info`, `Warn`, and `Error` logging variants (sync and function forms).&#10;&#9;•&#9;Standardized spawned thread initialization via new `ThreadContextManager.InitializeSpawnedThreadContext(...)`.&#10;&#9;•&#9;Updated `VFLFutures` to use the new initialization method for both join and no-join async execution.&#10;Impact:&#10;&#9;•&#9;Ensures logs inside `CompletableFuture` lambdas are correctly linked to the VFL flow.&#10;&#9;•&#9;Prevents `NullPointerException` from empty thread-local context stacks in async scenarios.&#10;&#9;•&#9;Improves async/sub-block lifecycle consistency across threads." />
     <MESSAGE value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
     <MESSAGE value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
+    <MESSAGE value="Removed concept of auto start root block" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed concept of auto start root block" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -83,7 +83,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
-                <configuration>
+                <VFLAnnotationConfig>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -91,7 +91,7 @@
                             <version>1.18.38</version>
                         </path>
                     </annotationProcessorPaths>
-                </configuration>
+                </VFLAnnotationConfig>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

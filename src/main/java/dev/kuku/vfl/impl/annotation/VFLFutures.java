@@ -18,15 +18,19 @@ import java.util.function.Supplier;
 @Slf4j
 public class VFLFutures {
     private static <R> Supplier<R> wrapSupplier(Supplier<R> supplier) {
+        if (!VFLInitializer.IsEnabled()) {
+            return supplier;
+        }
+
         BlockContext parentContext = ThreadContextManager.GetCurrentBlockContext();
-        String blockName = "Lambda block : " + Util.GetThreadInfo() + "-" + Util.TrimId(UUID.randomUUID().toString());
+        String blockName = "Lambda_JOIN block : " + Util.GetThreadInfo() + "-" + Util.TrimId(UUID.randomUUID().toString());
         //Called outside a block skip logging
         if (parentContext == null) {
             log.error("No parent context in thread {}. Supplier will be run as a normal Completable future.", Util.GetThreadInfo());
             return supplier;
         }
-        var lambdaSubBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentContext.blockInfo.getId(), Configuration.INSTANCE.buffer);
-        VFLFlowHelper.CreateLogAndPush2Buffer(parentContext.blockInfo.getId(), parentContext.currentLogId, null, lambdaSubBlock.getId(), LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN, Configuration.INSTANCE.buffer);
+        var lambdaSubBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentContext.blockInfo.getId(), VFLInitializer.VFLAnnotationConfig.buffer);
+        VFLFlowHelper.CreateLogAndPush2Buffer(parentContext.blockInfo.getId(), parentContext.currentLogId, null, lambdaSubBlock.getId(), LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_JOIN, VFLInitializer.VFLAnnotationConfig.buffer);
 
         return () -> {
             try {
@@ -41,14 +45,18 @@ public class VFLFutures {
     }
 
     private static Runnable wrapRunnable(Runnable runnable) {
+        if (!VFLInitializer.IsEnabled()) {
+            return runnable;
+        }
+
         BlockContext parentContext = ThreadContextManager.GetCurrentBlockContext();
-        String blockName = "Lambda block : " + Util.GetThreadInfo() + "-" + Util.TrimId(UUID.randomUUID().toString());
+        String blockName = "Lambda_NO_JOIN block : " + Util.GetThreadInfo() + "-" + Util.TrimId(UUID.randomUUID().toString());
         if (parentContext == null) {
             log.error("No parent context in thread {}. Runnable will be run as a normal Completable future.", Util.GetThreadInfo());
             return runnable;
         }
-        var lambdaSubBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentContext.blockInfo.getId(), Configuration.INSTANCE.buffer);
-        VFLFlowHelper.CreateLogAndPush2Buffer(parentContext.blockInfo.getId(), parentContext.currentLogId, null, lambdaSubBlock.getId(), LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN, Configuration.INSTANCE.buffer);
+        var lambdaSubBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentContext.blockInfo.getId(), VFLInitializer.VFLAnnotationConfig.buffer);
+        VFLFlowHelper.CreateLogAndPush2Buffer(parentContext.blockInfo.getId(), parentContext.currentLogId, null, lambdaSubBlock.getId(), LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN, VFLInitializer.VFLAnnotationConfig.buffer);
         return () -> {
             try {
                 ThreadContextManager.InitializeStackWithBlock(lambdaSubBlock);
