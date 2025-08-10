@@ -4,16 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added log4j again">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="“Added log4j back to the project and refactored buffer flush methods&#10;&#9;•&#9;Re-added log4j configuration and related changes previously removed&#10;&#9;•&#9;Refactored buffer interfaces and implementations to rename flushAndClose() to flush()&#10;&#9;•&#9;Updated VFLStarter to explicitly flush buffer after context cleanup&#10;&#9;•&#9;Added TODO comments in Main.java for RootBlock annotation and buffer flush sanity check&#10;&#9;•&#9;Enhanced async test in AnnotationTest with improved thread pool and logging">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/NoOpsBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/NoOpsBuffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/VFLBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/VFLBuffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferWithFlushHandlerBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferWithFlushHandlerBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -346,14 +339,6 @@
       <workItem from="1754519130424" duration="5223000" />
       <workItem from="1754590394886" duration="31946000" />
       <workItem from="1754801688885" duration="4533000" />
-    </task>
-    <task id="LOCAL-00152" summary="Deleted fluent for SuppliedVFL">
-      <option name="closed" value="true" />
-      <created>1754309107846</created>
-      <option name="number" value="00152" />
-      <option name="presentableId" value="LOCAL-00152" />
-      <option name="project" value="LOCAL" />
-      <updated>1754309107846</updated>
     </task>
     <task id="LOCAL-00153" summary="Created Static ThreadVFL wrapper for ease of use">
       <option name="closed" value="true" />
@@ -739,7 +724,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754862118457</updated>
     </task>
-    <option name="localTasksCounter" value="201" />
+    <task id="LOCAL-00201" summary="“Added log4j back to the project and refactored buffer flush methods&#10;&#9;•&#9;Re-added log4j configuration and related changes previously removed&#10;&#9;•&#9;Refactored buffer interfaces and implementations to rename flushAndClose() to flush()&#10;&#9;•&#9;Updated VFLStarter to explicitly flush buffer after context cleanup&#10;&#9;•&#9;Added TODO comments in Main.java for RootBlock annotation and buffer flush sanity check&#10;&#9;•&#9;Enhanced async test in AnnotationTest with improved thread pool and logging">
+      <option name="closed" value="true" />
+      <created>1754863180441</created>
+      <option name="number" value="00201" />
+      <option name="presentableId" value="LOCAL-00201" />
+      <option name="project" value="LOCAL" />
+      <updated>1754863180441</updated>
+    </task>
+    <option name="localTasksCounter" value="202" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -757,7 +750,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Defined VFL annotation" />
     <MESSAGE value="VFL annotation works properly now" />
     <MESSAGE value="Refactoring in progress. Logic not workign as expected" />
     <MESSAGE value="Is buffer broken or something else idk. Probably logic in advice or something" />
@@ -782,7 +774,8 @@
     <MESSAGE value="refactor(core): encapsulate complex logic and reduce API surface&#10;&#10;- Moved method enter/exit logic from static annotated methods in `VFLAnnotationAdvice` to instance methods, keeping static hooks minimal while preserving ByteBuddy integration.&#10;- Introduced public `instance` singleton in `VFLAnnotationAdvice` for delegated logic invocation.&#10;- Restricted `ThreadContextManager` class and methods to package-private, reducing its public API footprint.&#10;- Replaced `IsEnabled()` checks with `isDisabled()` for simpler early-return logic across `VFLFutures` and `VFLStarter`.&#10;- Removed obsolete `AdviceOpLayer.java`.&#10;- Added explicit reference to `VFLAnnotationAdvice.instance` in `Main` to ensure initialization." />
     <MESSAGE value="Removed log4j2.xml from build path" />
     <MESSAGE value="Added log4j again" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added log4j again" />
+    <MESSAGE value="“Added log4j back to the project and refactored buffer flush methods&#10;&#9;•&#9;Re-added log4j configuration and related changes previously removed&#10;&#9;•&#9;Refactored buffer interfaces and implementations to rename flushAndClose() to flush()&#10;&#9;•&#9;Updated VFLStarter to explicitly flush buffer after context cleanup&#10;&#9;•&#9;Added TODO comments in Main.java for RootBlock annotation and buffer flush sanity check&#10;&#9;•&#9;Enhanced async test in AnnotationTest with improved thread pool and logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="“Added log4j back to the project and refactored buffer flush methods&#10;&#9;•&#9;Re-added log4j configuration and related changes previously removed&#10;&#9;•&#9;Refactored buffer interfaces and implementations to rename flushAndClose() to flush()&#10;&#9;•&#9;Updated VFLStarter to explicitly flush buffer after context cleanup&#10;&#9;•&#9;Added TODO comments in Main.java for RootBlock annotation and buffer flush sanity check&#10;&#9;•&#9;Enhanced async test in AnnotationTest with improved thread pool and logging" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
