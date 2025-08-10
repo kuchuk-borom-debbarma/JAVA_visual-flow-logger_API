@@ -63,7 +63,7 @@ Visual Flow Logger (VFL) is a **hierarchical logging framework** that creates st
 - **JSON Support**: `@JsonValue` and `@JsonCreator` annotations for proper serialization
 - **Purpose**: Unified type system for different log categories
 
-**VFLBlockContext** (`dev.kuku.vfl.core.dtos.VFLBlockContext`)
+**VFLBlockContext** (`dev.kuku.vfl.core.dtos.BlockContext`)
 - Runtime context for active blocks
 - **Fields**:
   - `Block blockInfo`: Associated block metadata
@@ -316,7 +316,7 @@ log.debug("PUSH: Added logger '{}' to existing stack {} - Stack size: {}",
 **Key Features**:
 - Enhanced supplier and runnable steps
 - Sub-block fluent chains
-- Method chaining for configuration
+- Method chaining for VFLAnnotationConfig
 
 ### 3. FluentThreadVFL (Static Wrapper)
 **Location**: `dev.kuku.vfl.impl.annotation.fluent.FluentThreadVFL`
@@ -342,7 +342,7 @@ String result = FluentThreadVFL.Call(() -> processData())
 **Location**: `dev.kuku.vfl.core.fluent.callable.steps.AsSubBlockStep`
 **Purpose**: Configurable sub-block execution
 **Key Features**:
-- Start message configuration
+- Start message VFLAnnotationConfig
 - End message mapping with parameters
 - Multiple execution strategies (primary, secondary joining, secondary non-joining)
 
@@ -424,9 +424,9 @@ Both ThreadVFL.Runner and PassVFL.Runner extend their respective abstract runner
 - **Runner**: Different logger management strategies
 
 ### 3. Builder/Fluent Pattern
-- **FluentVFL**: Method chaining for readable configuration
-- **AsSubBlockStep**: Fluent configuration of sub-blocks
-- **Step Classes**: Progressive configuration building
+- **FluentVFL**: Method chaining for readable VFLAnnotationConfig
+- **AsSubBlockStep**: Fluent VFLAnnotationConfig of sub-blocks
+- **Step Classes**: Progressive VFLAnnotationConfig building
 
 ### 4. Factory Pattern
 - **VFLHelper**: Static factory methods for creating logs/blocks
@@ -536,4 +536,4 @@ ThreadVFL.Runner.StartVFL("Operation", buffer, () -> {
 - Simple single-threaded applications
 - Local file output (NestedJsonFlushHandler)
 
-This updated context reflects the significant architectural improvements, enhanced error handling, better thread safety, and more flexible configuration options in the VFL codebase.
+This updated context reflects the significant architectural improvements, enhanced error handling, better thread safety, and more flexible VFLAnnotationConfig options in the VFL codebase.

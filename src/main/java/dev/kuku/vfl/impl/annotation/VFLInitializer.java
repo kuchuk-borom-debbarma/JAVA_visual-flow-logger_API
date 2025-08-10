@@ -1,6 +1,5 @@
 package dev.kuku.vfl.impl.annotation;
 
-import dev.kuku.vfl.core.buffer.VFLBuffer;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
@@ -13,15 +12,22 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 
-public class VFLAnnotationProcessor {
-    public static Logger log = LoggerFactory.getLogger(VFLAnnotationProcessor.class);
+public class VFLInitializer {
+    static Logger log = LoggerFactory.getLogger(VFLInitializer.class);
+    static VFLAnnotationConfig VFLAnnotationConfig;
+    static volatile boolean initialized = false;
 
-    public static volatile boolean initialized = false;
+    public static boolean isDisabled() {
+        return !initialized || VFLAnnotationConfig == null || VFLAnnotationConfig.disabled != false;
+    }
 
-    public static synchronized void initialise(VFLBuffer buffer) {
+    public static synchronized void initialise(VFLAnnotationConfig config) {
+        if (config == null | config.disabled) {
+            return;
+        }
         try {
             Instrumentation inst = ByteBuddyAgent.install();
-            ContextManager.AnnotationBuffer = buffer;
+            VFLInitializer.VFLAnnotationConfig = config;
 
             new AgentBuilder.Default()
                     .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
@@ -54,13 +60,13 @@ public class VFLAnnotationProcessor {
                             // Called when transformation is complete
                         }
                     })
-                    // Target classes that declare methods with @VFLBlock annotation
-                    .type(ElementMatchers.declaresMethod(ElementMatchers.isAnnotatedWith(VFLBlock.class)))
+                    // Target classes that declare methods with @SubBlock annotation
+                    .type(ElementMatchers.declaresMethod(ElementMatchers.isAnnotatedWith(SubBlock.class)))
                     .transform((builder, typeDescription, classLoader, javaModule, protectionDomain) -> {
                         log.debug("[VFL] Attempting to instrument: {}", typeDescription.getName());
                         return builder.visit(
                                 Advice.to(VFLAnnotationAdvice.class)
-                                        .on(ElementMatchers.isAnnotatedWith(VFLBlock.class)
+                                        .on(ElementMatchers.isAnnotatedWith(SubBlock.class)
                                                 .and(ElementMatchers.not(ElementMatchers.isAbstract())) // Exclude abstract methods
                                         )
                         );
@@ -69,11 +75,6 @@ public class VFLAnnotationProcessor {
 
             initialized = true;
             log.info("[VFL] Instrumentation initialised successfully");
-
-            // Log some debug information
-            log.debug("[VFL] ByteBuddy Agent installed: {}", inst != null);
-            log.debug("[VFL] VFLBuffer set: {}", ContextManager.AnnotationBuffer != null);
-
         } catch (Exception e) {
             log.error("[VFL] Initialisation failed", e);
             throw new RuntimeException(e);

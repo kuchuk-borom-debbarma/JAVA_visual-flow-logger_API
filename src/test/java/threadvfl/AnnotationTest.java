@@ -4,10 +4,7 @@ import dev.kuku.vfl.core.buffer.AsyncBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
-import dev.kuku.vfl.impl.annotation.Log;
-import dev.kuku.vfl.impl.annotation.VFLAnnotationProcessor;
-import dev.kuku.vfl.impl.annotation.VFLBlock;
-import dev.kuku.vfl.impl.annotation.VFLFutures;
+import dev.kuku.vfl.impl.annotation.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
@@ -18,56 +15,63 @@ public class AnnotationTest {
     static VFLBuffer createBuffer(String fileName) {
         VFLFlushHandler f = new NestedJsonFlushHandler("test/output/" + AnnotationTest.class.getSimpleName() + "/" + fileName + ".json");
         return new AsyncBuffer(100, 3000, 100, f, Executors.newVirtualThreadPerTaskExecutor(), Executors.newSingleThreadScheduledExecutor());
-        //return new NoOpsBuffer();
     }
 
     @Test
     void linear() {
-        //VFLAnnotationProcessor.initialise(createBuffer("linear"));
+        VFLInitializer.initialise(new VFLAnnotationConfig(false, createBuffer("linear")));
         new TestService().linear();
     }
 
     @Test
     void async() {
-        VFLAnnotationProcessor.initialise(createBuffer("async"));
+        VFLInitializer.initialise(new VFLAnnotationConfig(false, createBuffer("async")));
         new TestService().async();
     }
 
 }
 
 class TestService {
-    @VFLBlock
+    @SubBlock
     private int square(int a) {
         return a * a;
     }
 
-    @VFLBlock
+    @SubBlock
     private int squareAndMultiply(int a, int b) {
         int num = a * b;
         return square(num);
     }
 
-    @VFLBlock
+    @SubBlock
     public void linear() {
-        Log.Info("SUP");
-        int a = Log.InfoFn(() -> square(12), "Squaring {} = {}", 12);
-        int b = squareAndMultiply(a, 2);
-        square(b);
+        VFLStarter.StartRootBlock("Linear operation", () -> {
+            Log.Info("SUP");
+            int a = Log.InfoFn(() -> square(12), "Squaring {} = {}", 12);
+            int b = squareAndMultiply(a, 2);
+            Log.Info("COMPLETE");
+        });
     }
 
-    @VFLBlock
     public void async() {
-        Log.Info("SUP");
-        var e = Executors.newFixedThreadPool(1);
-        var t = VFLFutures.runAsync(() -> {
-            Log.Info("CRASH");
-            square(1);
-        }, e);
-        var t2 = VFLFutures.runAsync(() -> square(1), e);
-        var t3 = VFLFutures.runAsync(() -> square(1), e);
-        t.join();
-        t2.join();
-        t3.join();
+        VFLStarter.StartRootBlock("Async operation", () -> {
+            Log.Info("Starting async test with thread pool");
+            var e = Executors.newFixedThreadPool(1);
+            var t = VFLFutures.runAsync(() -> {
+                Log.Info("CRASH");
+                square(1);
+            });
+            var t2 = VFLFutures.runAsync(() -> square(1), e);
+            var y = VFLFutures.supplyAsync(() -> {
+                Log.Info("Returning stuff");
+                return square(2);
+            }, e);
+
+            t.join();
+            t2.join();
+            int num = y.join();
+            Log.Info("COMPLETE with num {}", num);
+        });
     }
 
 }

@@ -1,6 +1,6 @@
 package dev.kuku.vfl.core.helpers;
 
-import dev.kuku.vfl.impl.annotation.VFLBlock;
+import dev.kuku.vfl.impl.annotation.SubBlock;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -72,7 +72,7 @@ public class Util {
 
 
     public static String GetMethodName(Method method, Object[] args) {
-        VFLBlock anno = method.getAnnotation(VFLBlock.class);
+        SubBlock anno = method.getAnnotation(SubBlock.class);
         if (anno != null && !anno.blockName().isEmpty()) {
             String name = anno.blockName();
             if (args != null) {

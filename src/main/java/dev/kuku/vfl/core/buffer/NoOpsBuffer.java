@@ -26,7 +26,7 @@ public class NoOpsBuffer implements VFLBuffer {
     }
 
     @Override
-    public void flushAndClose() {
+    public void flush() {
 
     }
 }

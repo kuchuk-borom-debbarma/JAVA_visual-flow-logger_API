@@ -42,7 +42,7 @@ Visual Flow Logger (VFL) is a **Hierarchical Logging Framework** that helps user
 
 ### 2. FlushHandler
 - Used internally by buffer to flush logs to output
-- Primary configuration point for users
+- Primary VFLAnnotationConfig point for users
 - Defines output destinations: VFL Hub, local files, custom outputs
 - Configures flush policies (time-based, size-based, event-driven)
 

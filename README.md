@@ -10,7 +10,7 @@
 7. [Block Types & Flow Control](#block-types--flow-control)
 8. [Alternative: PassVFL](#alternative-passvfl)
 9. [Complete Examples](#complete-examples)
-10. [Configuration Reference](#configuration-reference)
+10. [Configuration Reference](#VFLAnnotationConfig-reference)
 
 ---
 
