@@ -4,6 +4,7 @@ import dev.kuku.vfl.core.dtos.BlockContext;
 import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.asm.Advice;
@@ -60,12 +61,13 @@ public class VFLAnnotationAdvice {
         //Create sub block
         Block subBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, parentBlockContext.blockInfo.getId(), VFLInitializer.VFLAnnotationConfig.buffer);
         //Create Sub block start log for parent
-        VFLFlowHelper.CreateLogAndPush2Buffer(parentBlockContext.blockInfo.getId(),
+        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(parentBlockContext.blockInfo.getId(),
                 parentBlockContext.currentLogId,
                 null,
                 subBlock.getId(),
                 LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY,
                 VFLInitializer.VFLAnnotationConfig.buffer);
+        ThreadContextManager.GetCurrentBlockContext().currentLogId = subBlockStartLog.getId();
         ThreadContextManager.PushBlockToThreadLogStack(subBlock);
     }
 
