@@ -11,7 +11,7 @@ import java.util.Stack;
  * Manager thread local context
  */
 @Slf4j
-public class ThreadContextManager {
+class ThreadContextManager {
 
     static final ThreadLocal<Stack<BlockContext>> loggerCtxStack = new ThreadLocal<>();
 
@@ -24,7 +24,7 @@ public class ThreadContextManager {
         loggerCtxStack.get().push(new BlockContext(block, false));
     }
 
-    public static void InitializeStackWithContext(BlockContext blockContext) {
+    static void InitializeStackWithContext(BlockContext blockContext) {
         loggerCtxStack.set(new Stack<>());
         loggerCtxStack.get().push(blockContext);
     }
@@ -34,7 +34,7 @@ public class ThreadContextManager {
         return loggerCtxStack.get().peek();
     }
 
-    public static void CloseAndPopCurrentContext(String endMsg) {
+    static void CloseAndPopCurrentContext(String endMsg) {
         if (loggerCtxStack.get() == null) {
             log.warn("Failed to close current context : Logger stack is null");
             return;
@@ -58,7 +58,7 @@ public class ThreadContextManager {
         }
     }
 
-    public static void PushBlockToThreadLogStack(Block subBlock) {
+    static void PushBlockToThreadLogStack(Block subBlock) {
         loggerCtxStack.get().push(new BlockContext(subBlock, false));
     }
 }

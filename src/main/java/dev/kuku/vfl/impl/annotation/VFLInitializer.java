@@ -17,8 +17,8 @@ public class VFLInitializer {
     static VFLAnnotationConfig VFLAnnotationConfig;
     static volatile boolean initialized = false;
 
-    public static boolean IsEnabled() {
-        return initialized && VFLAnnotationConfig != null && VFLAnnotationConfig.disabled == false;
+    public static boolean isDisabled() {
+        return !initialized || VFLAnnotationConfig == null || VFLAnnotationConfig.disabled != false;
     }
 
     public static synchronized void initialise(VFLAnnotationConfig config) {

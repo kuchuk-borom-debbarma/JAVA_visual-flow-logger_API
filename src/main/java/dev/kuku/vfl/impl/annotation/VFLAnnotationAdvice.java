@@ -5,20 +5,32 @@ import dev.kuku.vfl.core.helpers.Util;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
 import static dev.kuku.vfl.core.helpers.Util.GetMethodName;
 
+@Slf4j
 public class VFLAnnotationAdvice {
-    public static final Logger log = LoggerFactory.getLogger(VFLAnnotationAdvice.class);
+    public static final VFLAnnotationAdvice instance = new VFLAnnotationAdvice();
 
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
+        VFLAnnotationAdvice.instance.on_enter(method, args);
+    }
+
+    @Advice.OnMethodExit(onThrowable = Throwable.class)
+    public static void onExit(@Advice.Origin Method method,
+                              @Advice.AllArguments Object[] args,
+                              @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue,
+                              @Advice.Thrown Throwable threw) {
+        VFLAnnotationAdvice.instance.on_exit(method, args, returnedValue, threw);
+    }
+
+    public void on_enter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
         String blockName = GetMethodName(method, args);
         log.debug("Entered SubBlock: {}", blockName);
 
@@ -57,11 +69,10 @@ public class VFLAnnotationAdvice {
         ThreadContextManager.PushBlockToThreadLogStack(subBlock);
     }
 
-    @Advice.OnMethodExit(onThrowable = Throwable.class)
-    public static void onExit(@Advice.Origin Method method,
-                              @Advice.AllArguments Object[] args,
-                              @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue,
-                              @Advice.Thrown Throwable threw) {
+    public void on_exit(@Advice.Origin Method method,
+                        @Advice.AllArguments Object[] args,
+                        @Advice.Return(typing = Assigner.Typing.DYNAMIC) Object returnedValue,
+                        @Advice.Thrown Throwable threw) {
         String blockName = GetMethodName(method, args);
 
         if (threw != null) {

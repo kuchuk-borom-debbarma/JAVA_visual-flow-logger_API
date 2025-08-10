@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 @Slf4j
 public class VFLFutures {
     private static <R> Supplier<R> wrapSupplier(Supplier<R> supplier) {
-        if (!VFLInitializer.IsEnabled()) {
+        if (VFLInitializer.isDisabled()) {
             return supplier;
         }
 
@@ -45,7 +45,7 @@ public class VFLFutures {
     }
 
     private static Runnable wrapRunnable(Runnable runnable) {
-        if (!VFLInitializer.IsEnabled()) {
+        if (VFLInitializer.isDisabled()) {
             return runnable;
         }
 
@@ -75,7 +75,6 @@ public class VFLFutures {
      * invokes the supplier with the passed executor. Creates a new sub block start of type {@link LogTypeBlockStartEnum#SUB_BLOCK_START_SECONDARY_JOIN}.
      */
     public static <R> CompletableFuture<R> supplyAsync(Supplier<R> supplier, Executor executor) {
-
         return CompletableFuture.supplyAsync(wrapSupplier(supplier), executor);
     }
 

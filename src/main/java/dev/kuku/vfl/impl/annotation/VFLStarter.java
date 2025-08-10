@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class VFLStarter {
     public static <R> R StartRootBlock(String blockName, Supplier<R> supplier) {
-        if (!VFLInitializer.IsEnabled()) {
+        if (VFLInitializer.isDisabled()) {
             return supplier.get();
         }
 
@@ -35,7 +35,7 @@ public class VFLStarter {
      * Start operation with the provided block as first block. Does not push the block to buffer.
      */
     public static <R> R StartOperationAsBlock(Block block, Supplier<R> supplier) {
-        if (!VFLInitializer.IsEnabled()) {
+        if (VFLInitializer.isDisabled()) {
             return supplier.get();
         }
 
@@ -59,7 +59,7 @@ public class VFLStarter {
      * Start event listener for the provided publisherBlock
      */
     public static <R> R StartEventListener(EventPublisherBlock publisherBlock, String eventListenerName, String message, Supplier<R> supplier) {
-        if (!VFLInitializer.IsEnabled()) {
+        if (VFLInitializer.isDisabled()) {
             return supplier.get();
         }
 

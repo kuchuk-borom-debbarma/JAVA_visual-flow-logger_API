@@ -4,17 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Removed concept of auto start root block">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/java_vfl_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/java_vfl_documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_codebase_context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_project_context.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/vfl_project_context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/AdviceOpLayer.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
@@ -351,15 +344,7 @@
       <workItem from="1754494426182" duration="5496000" />
       <workItem from="1754519130424" duration="5223000" />
       <workItem from="1754590394886" duration="31946000" />
-      <workItem from="1754801688885" duration="1288000" />
-    </task>
-    <task id="LOCAL-00148" summary="updated runnable step">
-      <option name="closed" value="true" />
-      <created>1754284403762</created>
-      <option name="number" value="00148" />
-      <option name="presentableId" value="LOCAL-00148" />
-      <option name="project" value="LOCAL" />
-      <updated>1754284403762</updated>
+      <workItem from="1754801688885" duration="2689000" />
     </task>
     <task id="LOCAL-00149" summary="Added AsSubBlockCallableStep">
       <option name="closed" value="true" />
@@ -745,7 +730,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754801859364</updated>
     </task>
-    <option name="localTasksCounter" value="197" />
+    <task id="LOCAL-00197" summary="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability.">
+      <option name="closed" value="true" />
+      <created>1754803125831</created>
+      <option name="number" value="00197" />
+      <option name="presentableId" value="LOCAL-00197" />
+      <option name="project" value="LOCAL" />
+      <updated>1754803125831</updated>
+    </task>
+    <option name="localTasksCounter" value="198" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -763,7 +756,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Adding loggins" />
     <MESSAGE value="New design in progress. Super simple and unifed the logger and annotation" />
     <MESSAGE value="Added todos and all required components" />
     <MESSAGE value="Defined Annotation advice and context maanger" />
@@ -788,7 +780,8 @@
     <MESSAGE value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
     <MESSAGE value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
     <MESSAGE value="Removed concept of auto start root block" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed concept of auto start root block" />
+    <MESSAGE value="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
