@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking.">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/BlockContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/dtos/BlockContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SpawnedThreadContext.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Configuration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -75,76 +70,76 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "Application.ByteBuddySupplierTest.executor": "Run",
-    "Application.Main.executor": "Run",
-    "Application.TestBlockLibrary.executor": "Run",
-    "Application.VFLBootstrap.executor": "Run",
-    "JUnit.AnnotationTest.async.executor": "Run",
-    "JUnit.AnnotationTest.asyncTest.executor": "Run",
-    "JUnit.AnnotationTest.linear.executor": "Run",
-    "JUnit.AnnotationTest.nest.executor": "Run",
-    "JUnit.AnnotationTest.test.executor": "Run",
-    "JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor": "Run",
-    "JUnit.ByteBuddyInterceptorTest.executor": "Run",
-    "JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor": "Run",
-    "JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor": "Run",
-    "JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor": "Run",
-    "JUnit.ScopedFluentAPITest.test.executor": "Run",
-    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
-    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
-    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
-    "JUnit.StaticFluentThreadVFLTest.flatFlow.executor": "Run",
-    "JUnit.StaticFluentThreadVFLTest.nest.executor": "Run",
-    "JUnit.StaticThreadVFLTest.asyncFlow.executor": "Run",
-    "JUnit.StaticThreadVFLTest.deepNestedFlow.executor": "Run",
-    "JUnit.StaticThreadVFLTest.flatFlow.executor": "Run",
-    "JUnit.StaticThreadVFLTest.flatNestedFlow.executor": "Run",
-    "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
-    "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
-    "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
-    "JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor": "Run",
-    "JUnit.ThreadVFLTest.multiThreadCleanupTest.executor": "Run",
-    "JUnit.ThreadVFLTest.nestedMultiThreadTest.executor": "Run",
-    "JUnit.ThreadVFLTest.threadPoolTest.executor": "Run",
-    "JUnit.VFLTests.executor": "Run",
-    "JUnit.VFLTests.expected.executor": "Run",
-    "JUnit.VFLTests.simple.executor": "Debug",
-    "Maven.vfl_java [clean].executor": "Run",
-    "Maven.vfl_java [install].executor": "Run",
-    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
-    "Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "enhancement/event-publisher",
-    "ignore.preview.features.used": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
-    "project.structure.last.edited": "Problems",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;Application.ByteBuddySupplierTest.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.TestBlockLibrary.executor&quot;: &quot;Run&quot;,
+    &quot;Application.VFLBootstrap.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AnnotationTest.async.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AnnotationTest.asyncTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AnnotationTest.linear.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AnnotationTest.nest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AnnotationTest.test.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ByteBuddyInterceptorTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedFluentAPITest.test.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ScopedLoggerTest$SimpleTest.run.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StaticFluentThreadVFLTest.flatFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StaticFluentThreadVFLTest.nest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StaticThreadVFLTest.asyncFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StaticThreadVFLTest.deepNestedFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StaticThreadVFLTest.flatFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StaticThreadVFLTest.flatNestedFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ThreadVFLTest$LinearFlow.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ThreadVFLTest.multiThreadCleanupTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ThreadVFLTest.nestedMultiThreadTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ThreadVFLTest.threadPoolTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.VFLTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.VFLTests.expected.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.VFLTests.simple.executor&quot;: &quot;Debug&quot;,
+    &quot;Maven.vfl_java [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.vfl_java [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;enhancement/event-publisher&quot;,
+    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
-      "SQLite"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;SQLite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="dev.kuku.vfl.impl.threadlocal.flient_steps.sub_block" />
@@ -344,15 +339,8 @@
       <workItem from="1754479312633" duration="8106000" />
       <workItem from="1754494426182" duration="5496000" />
       <workItem from="1754519130424" duration="5223000" />
-      <workItem from="1754590394886" duration="31907000" />
-    </task>
-    <task id="LOCAL-00146" summary="Updated git ignore">
-      <option name="closed" value="true" />
-      <created>1754275646544</created>
-      <option name="number" value="00146" />
-      <option name="presentableId" value="LOCAL-00146" />
-      <option name="project" value="LOCAL" />
-      <updated>1754275646545</updated>
+      <workItem from="1754590394886" duration="31946000" />
+      <workItem from="1754801688885" duration="156000" />
     </task>
     <task id="LOCAL-00147" summary="Updated base fluent. Removed other fluents.">
       <option name="closed" value="true" />
@@ -738,7 +726,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754737019067</updated>
     </task>
-    <option name="localTasksCounter" value="195" />
+    <task id="LOCAL-00195" summary="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases.">
+      <option name="closed" value="true" />
+      <created>1754740208758</created>
+      <option name="number" value="00195" />
+      <option name="presentableId" value="LOCAL-00195" />
+      <option name="project" value="LOCAL" />
+      <updated>1754740208758</updated>
+    </task>
+    <option name="localTasksCounter" value="196" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -756,7 +752,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Project structure refactor" />
     <MESSAGE value="Fixed bug" />
     <MESSAGE value="Adding loggins" />
     <MESSAGE value="New design in progress. Super simple and unifed the logger and annotation" />
@@ -781,7 +776,8 @@
     <MESSAGE value="feat: finalize SubBlock lifecycle and add async context propagation with VFLFutures&#10;We now fully implement the `@SubBlock` advice logic so sub-blocks are correctly created and tracked, even in edge cases such as missing parent context or execution on spawned threads. The logic will auto-create a root block when enabled, warn if context is missing, and ensure proper cleanup at method exit, including exception logging.&#10;Additionally, the new `VFLFutures` wrapper allows async tasks executed via `CompletableFuture` to inherit correct parent block context. This ensures blocks and logs inside async lambdas are properly linked in the VFL flow across threads and executors, and all thread-local context is cleaned up after execution.&#10;Key changes:&#10;&#9;•&#9;Improved entry/exit advice for `@SubBlock` annotation.&#10;&#9;•&#9;Helper methods for managing context stack, pushed blocks, and spawned thread context.&#10;&#9;•&#9;New `autoCreateRootBlock` config option.&#10;&#9;•&#9;`VFLFutures.supplyAsync` and `VFLFutures.runAsync` now propagate context to threads and clean up after.&#10;&#9;•&#9;Better logging and exception reporting.&#10;&#9;•&#9;Consistent block closure logic on both sync and async operations." />
     <MESSAGE value="feat(log): auto-create lambda sub-blocks for logging in spawned thread contexts&#10;When logging inside a lambda executed via `VFLFutures`, the thread-local block stack may be empty, causing errors or missing context linkage.&#10;This update adds logic in `Log` methods to detect spawned threads with no active block context and automatically start a temporary lambda sub-block linked to the originating parent context.&#10;Key changes:&#10;&#9;•&#9;Added `startLambdaSubBlock()` to `Log` to create and push a sub-block when logging in spawned threads without context.&#10;&#9;•&#9;Injected this check into all `Info`, `Warn`, and `Error` logging variants (sync and function forms).&#10;&#9;•&#9;Standardized spawned thread initialization via new `ThreadContextManager.InitializeSpawnedThreadContext(...)`.&#10;&#9;•&#9;Updated `VFLFutures` to use the new initialization method for both join and no-join async execution.&#10;Impact:&#10;&#9;•&#9;Ensures logs inside `CompletableFuture` lambdas are correctly linked to the VFL flow.&#10;&#9;•&#9;Prevents `NullPointerException` from empty thread-local context stacks in async scenarios.&#10;&#9;•&#9;Improves async/sub-block lifecycle consistency across threads." />
     <MESSAGE value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
+    <MESSAGE value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

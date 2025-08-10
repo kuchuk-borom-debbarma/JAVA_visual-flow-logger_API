@@ -28,13 +28,6 @@ public class VFLAnnotationAdvice {
         if (ThreadContextManager.GetCurrentBlockContext() != null) {
             parentBlockContext = ThreadContextManager.GetCurrentBlockContext();
         }
-        //No parent context, create root block IF it's enabled in configuration
-        else if (Configuration.INSTANCE.autoCreateRootBlock) {
-            log.warn("Auto-creating root block for @SubBlock-{}. This may obscure the start point; proceed only if acceptable.", blockName);
-            Block parentBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, Configuration.INSTANCE.buffer);
-            ThreadContextManager.InitializeStackWithBlock(parentBlock);
-            return;
-        }
         //Can't create sub block for annotated method.
         else {
             log.warn("Could not create block for @SubBlock-{}: no parent or spawnedThreadContext, and autoCreateRootBlock is disabled.", blockName);

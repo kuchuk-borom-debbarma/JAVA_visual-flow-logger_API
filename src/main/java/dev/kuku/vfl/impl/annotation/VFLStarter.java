@@ -22,6 +22,7 @@ public class VFLStarter {
             throw new RuntimeException(e);
         } finally {
             ThreadContextManager.CloseAndPopCurrentContext(null);
+            //Safety clean up. Should not be required
             ThreadContextManager.CleanThreadVariables();
         }
     }
