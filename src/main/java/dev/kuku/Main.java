@@ -1,7 +1,5 @@
 package dev.kuku;
 
-import dev.kuku.vfl.impl.annotation.VFLAnnotationAdvice;
-
 public class Main {
     private static class RoadMap {
         //1. Publisher Consumer Support
@@ -20,8 +18,6 @@ public class Main {
              */
 
 
-            //private methods accessed using instance for advice
-            VFLAnnotationAdvice.instance;
         }
     }
 }

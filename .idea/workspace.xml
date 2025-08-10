@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability.">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="refactor(core): encapsulate complex logic and reduce API surface&#10;&#10;- Moved method enter/exit logic from static annotated methods in `VFLAnnotationAdvice` to instance methods, keeping static hooks minimal while preserving ByteBuddy integration.&#10;- Introduced public `instance` singleton in `VFLAnnotationAdvice` for delegated logic invocation.&#10;- Restricted `ThreadContextManager` class and methods to package-private, reducing its public API footprint.&#10;- Replaced `IsEnabled()` checks with `isDisabled()` for simpler early-return logic across `VFLFutures` and `VFLStarter`.&#10;- Removed obsolete `AdviceOpLayer.java`.&#10;- Added explicit reference to `VFLAnnotationAdvice.instance` in `Main` to ensure initialization.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/AdviceOpLayer.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLInitializer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,76 +71,76 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Application.ByteBuddySupplierTest.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.TestBlockLibrary.executor&quot;: &quot;Run&quot;,
-    &quot;Application.VFLBootstrap.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.async.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.asyncTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.linear.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.nest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.test.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedFluentAPITest.test.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.run.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticFluentThreadVFLTest.flatFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticFluentThreadVFLTest.nest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.asyncFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.deepNestedFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.flatFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.flatNestedFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$LinearFlow.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.multiThreadCleanupTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.nestedMultiThreadTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.threadPoolTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.expected.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.simple.executor&quot;: &quot;Debug&quot;,
-    &quot;Maven.vfl_java [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;enhancement/event-publisher&quot;,
-    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Application.ByteBuddySupplierTest.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.TestBlockLibrary.executor": "Run",
+    "Application.VFLBootstrap.executor": "Run",
+    "JUnit.AnnotationTest.async.executor": "Run",
+    "JUnit.AnnotationTest.asyncTest.executor": "Run",
+    "JUnit.AnnotationTest.linear.executor": "Run",
+    "JUnit.AnnotationTest.nest.executor": "Run",
+    "JUnit.AnnotationTest.test.executor": "Run",
+    "JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor": "Run",
+    "JUnit.ScopedFluentAPITest.test.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.StaticFluentThreadVFLTest.flatFlow.executor": "Run",
+    "JUnit.StaticFluentThreadVFLTest.nest.executor": "Run",
+    "JUnit.StaticThreadVFLTest.asyncFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.deepNestedFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.flatFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.flatNestedFlow.executor": "Run",
+    "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
+    "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
+    "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
+    "JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor": "Run",
+    "JUnit.ThreadVFLTest.multiThreadCleanupTest.executor": "Run",
+    "JUnit.ThreadVFLTest.nestedMultiThreadTest.executor": "Run",
+    "JUnit.ThreadVFLTest.threadPoolTest.executor": "Run",
+    "JUnit.VFLTests.executor": "Run",
+    "JUnit.VFLTests.expected.executor": "Run",
+    "JUnit.VFLTests.simple.executor": "Debug",
+    "Maven.vfl_java [clean].executor": "Run",
+    "Maven.vfl_java [install].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "enhancement/event-publisher",
+    "ignore.preview.features.used": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
+    "project.structure.last.edited": "Problems",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
-      &quot;SQLite&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "SQLite"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="dev.kuku.vfl.impl.threadlocal.flient_steps.sub_block" />
@@ -163,7 +160,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest.async">
+  <component name="RunManager" selected="JUnit.AnnotationTest.linear">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -250,8 +247,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.linear" />
+        <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.test" />
         <item itemvalue="JUnit.AnnotationTest.asyncTest" />
         <item itemvalue="Application.Main" />
@@ -344,15 +341,7 @@
       <workItem from="1754494426182" duration="5496000" />
       <workItem from="1754519130424" duration="5223000" />
       <workItem from="1754590394886" duration="31946000" />
-      <workItem from="1754801688885" duration="2689000" />
-    </task>
-    <task id="LOCAL-00149" summary="Added AsSubBlockCallableStep">
-      <option name="closed" value="true" />
-      <created>1754303928488</created>
-      <option name="number" value="00149" />
-      <option name="presentableId" value="LOCAL-00149" />
-      <option name="project" value="LOCAL" />
-      <updated>1754303928488</updated>
+      <workItem from="1754801688885" duration="4533000" />
     </task>
     <task id="LOCAL-00150" summary="Added Async step">
       <option name="closed" value="true" />
@@ -738,7 +727,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754803125831</updated>
     </task>
-    <option name="localTasksCounter" value="198" />
+    <task id="LOCAL-00198" summary="refactor(core): encapsulate complex logic and reduce API surface&#10;&#10;- Moved method enter/exit logic from static annotated methods in `VFLAnnotationAdvice` to instance methods, keeping static hooks minimal while preserving ByteBuddy integration.&#10;- Introduced public `instance` singleton in `VFLAnnotationAdvice` for delegated logic invocation.&#10;- Restricted `ThreadContextManager` class and methods to package-private, reducing its public API footprint.&#10;- Replaced `IsEnabled()` checks with `isDisabled()` for simpler early-return logic across `VFLFutures` and `VFLStarter`.&#10;- Removed obsolete `AdviceOpLayer.java`.&#10;- Added explicit reference to `VFLAnnotationAdvice.instance` in `Main` to ensure initialization.">
+      <option name="closed" value="true" />
+      <created>1754804468758</created>
+      <option name="number" value="00198" />
+      <option name="presentableId" value="LOCAL-00198" />
+      <option name="project" value="LOCAL" />
+      <updated>1754804468758</updated>
+    </task>
+    <option name="localTasksCounter" value="199" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -756,7 +753,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="New design in progress. Super simple and unifed the logger and annotation" />
     <MESSAGE value="Added todos and all required components" />
     <MESSAGE value="Defined Annotation advice and context maanger" />
     <MESSAGE value="Defined VFL annotation" />
@@ -781,7 +777,8 @@
     <MESSAGE value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
     <MESSAGE value="Removed concept of auto start root block" />
     <MESSAGE value="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability." />
+    <MESSAGE value="refactor(core): encapsulate complex logic and reduce API surface&#10;&#10;- Moved method enter/exit logic from static annotated methods in `VFLAnnotationAdvice` to instance methods, keeping static hooks minimal while preserving ByteBuddy integration.&#10;- Introduced public `instance` singleton in `VFLAnnotationAdvice` for delegated logic invocation.&#10;- Restricted `ThreadContextManager` class and methods to package-private, reducing its public API footprint.&#10;- Replaced `IsEnabled()` checks with `isDisabled()` for simpler early-return logic across `VFLFutures` and `VFLStarter`.&#10;- Removed obsolete `AdviceOpLayer.java`.&#10;- Added explicit reference to `VFLAnnotationAdvice.instance` in `Main` to ensure initialization." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(core): encapsulate complex logic and reduce API surface&#10;&#10;- Moved method enter/exit logic from static annotated methods in `VFLAnnotationAdvice` to instance methods, keeping static hooks minimal while preserving ByteBuddy integration.&#10;- Introduced public `instance` singleton in `VFLAnnotationAdvice` for delegated logic invocation.&#10;- Restricted `ThreadContextManager` class and methods to package-private, reducing its public API footprint.&#10;- Replaced `IsEnabled()` checks with `isDisabled()` for simpler early-return logic across `VFLFutures` and `VFLStarter`.&#10;- Removed obsolete `AdviceOpLayer.java`.&#10;- Added explicit reference to `VFLAnnotationAdvice.instance` in `Main` to ensure initialization." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -805,8 +802,22 @@
           <properties class="java.lang.IllegalAccessError" package="java.lang" />
           <option name="timeStamp" value="8" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java</url>
+          <line>10</line>
+          <properties class="dev.kuku.vfl.impl.annotation.VFLStarter" method="StartRootBlock">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="java.lang.ThreadLocal" memberName="threadLocalHashCode" />
+      </pinned-members>
+    </pin-to-top-manager>
     <watches-manager>
       <configuration name="JUnit">
         <watch expression="((ThreadSafeSynchronousVflBuffer)buffer).logsToFlush" custom="dev.kuku.vfl.core.buffer.ThreadSafeSynchronousVflBuffer" />

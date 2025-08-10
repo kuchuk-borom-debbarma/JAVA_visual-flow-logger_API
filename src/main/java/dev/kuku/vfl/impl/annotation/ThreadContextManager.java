@@ -30,20 +30,15 @@ class ThreadContextManager {
     }
 
     static BlockContext GetCurrentBlockContext() {
-        if (loggerCtxStack.get() == null) return null;
+        if (loggerCtxStack.get() == null || loggerCtxStack.get().isEmpty()) return null;
         return loggerCtxStack.get().peek();
     }
 
     static void CloseAndPopCurrentContext(String endMsg) {
-        if (loggerCtxStack.get() == null) {
-            log.warn("Failed to close current context : Logger stack is null");
+        if(GetCurrentBlockContext() == null){
+            log.warn("Failed to close current context : Logger stack is empty or null. This usually happens when a method annotated with @SubBlock is invoked without parent(by using VFLStarter). Most of the time this should be okay.");
             return;
         }
-        if (loggerCtxStack.get().isEmpty()) {
-            Log.Warn("Failed to close current context : Logger stack is empty");
-            return;
-        }
-
         Log.INSTANCE.close(endMsg);
         BlockContext popped = loggerCtxStack.get().pop();
         log.debug("Popped current context : {}-{} for thread {}", popped.blockInfo.getBlockName(), Util.TrimId(popped.blockInfo.getId()), Util.GetThreadInfo());

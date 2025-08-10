@@ -42,7 +42,7 @@ public class VFLAnnotationAdvice {
         }
         //Can't create sub block for annotated method.
         else {
-            log.warn("Could not create block for @SubBlock-{}: no parent or spawnedThreadContext.", blockName);
+            log.warn("Could not create block for @SubBlock-{}: no parent block", blockName);
             return;
         }
         //This should never happen but you never know

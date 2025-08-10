@@ -4,10 +4,7 @@ import dev.kuku.vfl.core.buffer.AsyncBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
-import dev.kuku.vfl.impl.annotation.Log;
-import dev.kuku.vfl.impl.annotation.VFLInitializer;
-import dev.kuku.vfl.impl.annotation.SubBlock;
-import dev.kuku.vfl.impl.annotation.VFLFutures;
+import dev.kuku.vfl.impl.annotation.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
@@ -23,13 +20,13 @@ public class AnnotationTest {
 
     @Test
     void linear() {
-        //VFLInitializer.initialise(createBuffer("linear"));
+        VFLInitializer.initialise(new VFLAnnotationConfig(false, createBuffer("linear")));
         new TestService().linear();
     }
 
     @Test
     void async() {
-        VFLInitializer.initialise(createBuffer("async"));
+        VFLInitializer.initialise(new VFLAnnotationConfig(false, createBuffer("async")));
         new TestService().async();
     }
 
@@ -46,13 +43,14 @@ class TestService {
         int num = a * b;
         return square(num);
     }
-
     @SubBlock
     public void linear() {
-        Log.Info("SUP");
-        int a = Log.InfoFn(() -> square(12), "Squaring {} = {}", 12);
-        int b = squareAndMultiply(a, 2);
-        square(b);
+        VFLStarter.StartRootBlock("Linear operation", () -> {
+            Log.Info("SUP");
+            int a = Log.InfoFn(() -> square(12), "Squaring {} = {}", 12);
+            int b = squareAndMultiply(a, 2);
+            Log.Info("COMPLETE");
+        });
     }
 
     @SubBlock
