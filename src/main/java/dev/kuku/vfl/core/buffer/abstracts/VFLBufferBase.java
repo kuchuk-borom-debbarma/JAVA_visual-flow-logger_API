@@ -118,7 +118,7 @@ public abstract class VFLBufferBase implements VFLBuffer {
     }
 
     @Override
-    public void flushAndClose() {
+    public void flush() {
         flushAll();
     }
 

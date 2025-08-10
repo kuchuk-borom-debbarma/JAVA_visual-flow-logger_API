@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Removed log4j2.xml from build path">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added log4j again">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/NoOpsBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/NoOpsBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/VFLBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/VFLBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferWithFlushHandlerBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferWithFlushHandlerBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,7 +164,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest.linear">
+  <component name="RunManager" selected="JUnit.AnnotationTest.async">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
       <module name="vfl_java" />
@@ -245,8 +251,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest.async" />
+        <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest.test" />
         <item itemvalue="JUnit.AnnotationTest.asyncTest" />
         <item itemvalue="Application.Main" />
@@ -340,14 +346,6 @@
       <workItem from="1754519130424" duration="5223000" />
       <workItem from="1754590394886" duration="31946000" />
       <workItem from="1754801688885" duration="4533000" />
-    </task>
-    <task id="LOCAL-00151" summary="Created fluent for ThreadVFL">
-      <option name="closed" value="true" />
-      <created>1754309077041</created>
-      <option name="number" value="00151" />
-      <option name="presentableId" value="LOCAL-00151" />
-      <option name="project" value="LOCAL" />
-      <updated>1754309077041</updated>
     </task>
     <task id="LOCAL-00152" summary="Deleted fluent for SuppliedVFL">
       <option name="closed" value="true" />
@@ -733,7 +731,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754861799935</updated>
     </task>
-    <option name="localTasksCounter" value="200" />
+    <task id="LOCAL-00200" summary="Added log4j again">
+      <option name="closed" value="true" />
+      <created>1754862118457</created>
+      <option name="number" value="00200" />
+      <option name="presentableId" value="LOCAL-00200" />
+      <option name="project" value="LOCAL" />
+      <updated>1754862118457</updated>
+    </task>
+    <option name="localTasksCounter" value="201" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -751,7 +757,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Defined Annotation advice and context maanger" />
     <MESSAGE value="Defined VFL annotation" />
     <MESSAGE value="VFL annotation works properly now" />
     <MESSAGE value="Refactoring in progress. Logic not workign as expected" />
@@ -776,7 +781,8 @@
     <MESSAGE value="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability." />
     <MESSAGE value="refactor(core): encapsulate complex logic and reduce API surface&#10;&#10;- Moved method enter/exit logic from static annotated methods in `VFLAnnotationAdvice` to instance methods, keeping static hooks minimal while preserving ByteBuddy integration.&#10;- Introduced public `instance` singleton in `VFLAnnotationAdvice` for delegated logic invocation.&#10;- Restricted `ThreadContextManager` class and methods to package-private, reducing its public API footprint.&#10;- Replaced `IsEnabled()` checks with `isDisabled()` for simpler early-return logic across `VFLFutures` and `VFLStarter`.&#10;- Removed obsolete `AdviceOpLayer.java`.&#10;- Added explicit reference to `VFLAnnotationAdvice.instance` in `Main` to ensure initialization." />
     <MESSAGE value="Removed log4j2.xml from build path" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed log4j2.xml from build path" />
+    <MESSAGE value="Added log4j again" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added log4j again" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

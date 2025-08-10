@@ -28,6 +28,7 @@ public class VFLStarter {
             ThreadContextManager.CloseAndPopCurrentContext(null);
             //Safety clean up. Should not be required
             ThreadContextManager.CleanThreadVariables();
+            VFLInitializer.VFLAnnotationConfig.buffer.flush();
         }
     }
 
@@ -52,6 +53,7 @@ public class VFLStarter {
         } finally {
             ThreadContextManager.CloseAndPopCurrentContext(null);
             ThreadContextManager.CleanThreadVariables();
+            VFLInitializer.VFLAnnotationConfig.buffer.flush();
         }
     }
 
@@ -86,6 +88,7 @@ public class VFLStarter {
         } finally {
             ThreadContextManager.CloseAndPopCurrentContext(null);
             ThreadContextManager.CleanThreadVariables();
+            VFLInitializer.VFLAnnotationConfig.buffer.flush();
         }
     }
 

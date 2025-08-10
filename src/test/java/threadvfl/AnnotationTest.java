@@ -15,7 +15,6 @@ public class AnnotationTest {
     static VFLBuffer createBuffer(String fileName) {
         VFLFlushHandler f = new NestedJsonFlushHandler("test/output/" + AnnotationTest.class.getSimpleName() + "/" + fileName + ".json");
         return new AsyncBuffer(100, 3000, 100, f, Executors.newVirtualThreadPerTaskExecutor(), Executors.newSingleThreadScheduledExecutor());
-        //return new NoOpsBuffer();
     }
 
     @Test
@@ -43,6 +42,7 @@ class TestService {
         int num = a * b;
         return square(num);
     }
+
     @SubBlock
     public void linear() {
         VFLStarter.StartRootBlock("Linear operation", () -> {
@@ -53,19 +53,25 @@ class TestService {
         });
     }
 
-    @SubBlock
     public void async() {
-        Log.Info("SUP");
-        var e = Executors.newFixedThreadPool(1);
-        var t = VFLFutures.runAsync(() -> {
-            Log.Info("CRASH");
-            square(1);
-        }, e);
-        var t2 = VFLFutures.runAsync(() -> square(1), e);
-        var t3 = VFLFutures.runAsync(() -> square(1), e);
-        t.join();
-        t2.join();
-        t3.join();
+        VFLStarter.StartRootBlock("Async operation", () -> {
+            Log.Info("Starting async test with thread pool");
+            var e = Executors.newFixedThreadPool(1);
+            var t = VFLFutures.runAsync(() -> {
+                Log.Info("CRASH");
+                square(1);
+            });
+            var t2 = VFLFutures.runAsync(() -> square(1), e);
+            var y = VFLFutures.supplyAsync(() -> {
+                Log.Info("Returning stuff");
+                return square(2);
+            }, e);
+
+            t.join();
+            t2.join();
+            int num = y.join();
+            Log.Info("COMPLETE with num {}", num);
+        });
     }
 
 }

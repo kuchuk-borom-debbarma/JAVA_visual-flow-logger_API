@@ -23,8 +23,8 @@ public abstract class VFLBufferWithFlushHandlerBase extends VFLBufferBase {
     }
 
     @Override
-    public void flushAndClose() {
-        super.flushAndClose(); // Flush any remaining data
+    public void flush() {
+        super.flush(); // Flush any remaining data
         flushHandler.closeFlushHandler(); // Clean up the flush handler
     }
 

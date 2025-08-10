@@ -48,7 +48,7 @@ public class AsyncBuffer extends VFLBufferWithFlushHandlerBase {
     }
 
     @Override
-    public void flushAndClose() {
+    public void flush() {
         // First, stop the periodic executor to prevent new scheduled flushes
         periodicExecutor.shutdown();
         super.flushAll();

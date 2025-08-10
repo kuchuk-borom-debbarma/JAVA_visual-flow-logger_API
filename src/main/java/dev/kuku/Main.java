@@ -17,7 +17,8 @@ public class Main {
             So we need to have an explicit VFL Starter and SubBlock will can be used inside it
              */
 
-
+            //TODO RootBlock annotation
+            //TODO ensure the bfl buffer flush makes sense for all impls
         }
     }
 }
