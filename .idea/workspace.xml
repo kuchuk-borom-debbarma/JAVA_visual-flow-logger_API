@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="removed isLambda boolean for block">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(annotation): add arg/return placeholder support for @SubBlock messages&#10;&#10;- Updated @SubBlock Javadoc to clearly explain usage with {0}, {1} (args) and {r}/{return} (return value).&#10;- Enhanced VFLAnnotationAdvice to:&#10;  • Resolve endMessage with both arg and return placeholders&#10;  • Use regex patterns for {0}/{n} and {r}/{return} replacements&#10;  • Add helper methods replaceArgPlaceholders() and replaceReturnPlaceholder() for clarity&#10;- Improved null safety and readability in placeholder replacement and context handling.">
+      <change afterPath="$PROJECT_DIR$/mds/prompts/codebase.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SubBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/SubBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/prompts/Create Design doc prompt.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -342,14 +343,7 @@
       <workItem from="1754519130424" duration="5223000" />
       <workItem from="1754590394886" duration="31946000" />
       <workItem from="1754801688885" duration="4533000" />
-    </task>
-    <task id="LOCAL-00154" summary="Created Static fluent">
-      <option name="closed" value="true" />
-      <created>1754357991850</created>
-      <option name="number" value="00154" />
-      <option name="presentableId" value="LOCAL-00154" />
-      <option name="project" value="LOCAL" />
-      <updated>1754357991850</updated>
+      <workItem from="1754888333269" duration="2274000" />
     </task>
     <task id="LOCAL-00155" summary="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow">
       <option name="closed" value="true" />
@@ -735,7 +729,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754883176356</updated>
     </task>
-    <option name="localTasksCounter" value="203" />
+    <task id="LOCAL-00203" summary="feat(annotation): add arg/return placeholder support for @SubBlock messages&#10;&#10;- Updated @SubBlock Javadoc to clearly explain usage with {0}, {1} (args) and {r}/{return} (return value).&#10;- Enhanced VFLAnnotationAdvice to:&#10;  • Resolve endMessage with both arg and return placeholders&#10;  • Use regex patterns for {0}/{n} and {r}/{return} replacements&#10;  • Add helper methods replaceArgPlaceholders() and replaceReturnPlaceholder() for clarity&#10;- Improved null safety and readability in placeholder replacement and context handling.">
+      <option name="closed" value="true" />
+      <created>1754887670829</created>
+      <option name="number" value="00203" />
+      <option name="presentableId" value="LOCAL-00203" />
+      <option name="project" value="LOCAL" />
+      <updated>1754887670829</updated>
+    </task>
+    <option name="localTasksCounter" value="204" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -753,7 +755,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactoring in progress. Logic not workign as expected" />
     <MESSAGE value="Is buffer broken or something else idk. Probably logic in advice or something" />
     <MESSAGE value="Fixed logical bug" />
     <MESSAGE value="REmoved fluent" />
@@ -778,7 +779,8 @@
     <MESSAGE value="Added log4j again" />
     <MESSAGE value="“Added log4j back to the project and refactored buffer flush methods&#10;&#9;•&#9;Re-added log4j configuration and related changes previously removed&#10;&#9;•&#9;Refactored buffer interfaces and implementations to rename flushAndClose() to flush()&#10;&#9;•&#9;Updated VFLStarter to explicitly flush buffer after context cleanup&#10;&#9;•&#9;Added TODO comments in Main.java for RootBlock annotation and buffer flush sanity check&#10;&#9;•&#9;Enhanced async test in AnnotationTest with improved thread pool and logging" />
     <MESSAGE value="removed isLambda boolean for block" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed isLambda boolean for block" />
+    <MESSAGE value="feat(annotation): add arg/return placeholder support for @SubBlock messages&#10;&#10;- Updated @SubBlock Javadoc to clearly explain usage with {0}, {1} (args) and {r}/{return} (return value).&#10;- Enhanced VFLAnnotationAdvice to:&#10;  • Resolve endMessage with both arg and return placeholders&#10;  • Use regex patterns for {0}/{n} and {r}/{return} replacements&#10;  • Add helper methods replaceArgPlaceholders() and replaceReturnPlaceholder() for clarity&#10;- Improved null safety and readability in placeholder replacement and context handling." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(annotation): add arg/return placeholder support for @SubBlock messages&#10;&#10;- Updated @SubBlock Javadoc to clearly explain usage with {0}, {1} (args) and {r}/{return} (return value).&#10;- Enhanced VFLAnnotationAdvice to:&#10;  • Resolve endMessage with both arg and return placeholders&#10;  • Use regex patterns for {0}/{n} and {r}/{return} replacements&#10;  • Add helper methods replaceArgPlaceholders() and replaceReturnPlaceholder() for clarity&#10;- Improved null safety and readability in placeholder replacement and context handling." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

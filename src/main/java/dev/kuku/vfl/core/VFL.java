@@ -3,6 +3,7 @@ package dev.kuku.vfl.core;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
 import dev.kuku.vfl.core.dtos.BlockEndData;
+import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
@@ -136,7 +137,7 @@ public abstract class VFL {
         logInternal(LogTypeEnum.ERROR, message);
     }
 
-    public final Block publish(String publisherName, String message) {
+    public final EventPublisherBlock publish(String publisherName, String message) {
         //Create publisher block
         Block publisherBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(publisherName, getContext().blockInfo.getId(), getBuffer());
         //Add log about publishing to the block
@@ -147,7 +148,7 @@ public abstract class VFL {
                 getBuffer());
         //Update the flow
         getContext().currentLogId = publisherBlock.getId();
-        return publisherBlock;
+        return new EventPublisherBlock(publisherBlock);
     }
 
     /**

@@ -1,1 +1,0 @@
-Create design doc for the following code base ordered in a way that is easy to follow and goes from easy to understand to complex. Make sure to capture every tiny detail and easy to read

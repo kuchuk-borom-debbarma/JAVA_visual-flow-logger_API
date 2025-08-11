@@ -3,6 +3,7 @@ package dev.kuku.vfl.impl.annotation;
 import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
+import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.helpers.Util;
 
 import java.util.function.Function;
@@ -118,5 +119,22 @@ public class Log {
         };
         Function<Void, String> s = (r) -> Util.FormatMessage(message, args);
         INSTANCE.errorFn(supplier, s);
+    }
+
+    // ================ PUBLISH EVENT METHODS ================
+    public static EventPublisherBlock Publish(String publisherName, String message) {
+        if (!VFLInitializer.initialized) return null;
+        return INSTANCE.publish(publisherName, message);
+    }
+
+    public static EventPublisherBlock Publish(String publisherName, String message, Object... args) {
+        if (!VFLInitializer.initialized) return null;
+        return INSTANCE.publish(publisherName, Util.FormatMessage(message, args));
+    }
+
+    // Optional convenience overload if you sometimes don’t have a message
+    public static EventPublisherBlock Publish(String publisherName) {
+        if (!VFLInitializer.initialized) return null;
+        return INSTANCE.publish(publisherName, "");
     }
 }
