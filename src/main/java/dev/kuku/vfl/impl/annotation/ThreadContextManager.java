@@ -21,7 +21,7 @@ class ThreadContextManager {
 
     static void InitializeStackWithBlock(Block block) {
         loggerCtxStack.set(new Stack<>());
-        loggerCtxStack.get().push(new BlockContext(block, false));
+        loggerCtxStack.get().push(new BlockContext(block));
     }
 
     static void InitializeStackWithContext(BlockContext blockContext) {
@@ -45,6 +45,6 @@ class ThreadContextManager {
     }
 
     static void PushBlockToThreadLogStack(Block subBlock) {
-        loggerCtxStack.get().push(new BlockContext(subBlock, false));
+        loggerCtxStack.get().push(new BlockContext(subBlock));
     }
 }
