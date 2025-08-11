@@ -11,6 +11,7 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,10 +19,13 @@ import static dev.kuku.vfl.core.helpers.Util.GetMethodName;
 
 @Slf4j
 public class VFLAnnotationAdvice {
+
     public static final VFLAnnotationAdvice instance = new VFLAnnotationAdvice();
 
-    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(\\d+)\\}");
-    private static final Pattern RETURN_PLACEHOLDER_PATTERN = Pattern.compile("\\{return\\}", Pattern.CASE_INSENSITIVE);
+    // Regex for {0}, {1}, etc.
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(\\d+)}");
+    // Regex for {r} or {return} (case-insensitive)
+    private static final Pattern RETURN_PLACEHOLDER_PATTERN = Pattern.compile("\\{r(?:eturn)?}", Pattern.CASE_INSENSITIVE);
 
     @Advice.OnMethodEnter
     public static void onEnter(@Advice.Origin Method method, @Advice.AllArguments Object[] args) {
@@ -36,78 +40,102 @@ public class VFLAnnotationAdvice {
         VFLAnnotationAdvice.instance.on_exit(method, args, returnedValue, threw);
     }
 
+    /* -------------------- RESOLUTION HELPERS -------------------- */
+
     /**
-     * Resolves blockName from annotation or method name.
+     * Get block name from annotation or use the method name.
+     * Replaces {0}, {1}... placeholders with argument values.
      */
     private String resolveBlockName(Method method, Object[] args) {
         SubBlock annotation = method.getAnnotation(SubBlock.class);
         String rawName = (annotation != null && isValid(annotation.blockName()))
                 ? annotation.blockName().trim()
                 : GetMethodName(method, args);
+
         return replaceArgPlaceholders(rawName, args);
     }
 
     /**
-     * Resolves startMessage from annotation or returns null.
+     * Get start message from annotation if specified.
+     * Supports only argument placeholders.
      */
     private String resolveStartMessage(Method method, Object[] args) {
         SubBlock annotation = method.getAnnotation(SubBlock.class);
         if (annotation != null && isValid(annotation.startMessage())) {
-            return replaceArgPlaceholders(annotation.startMessage().trim(), args);
+            String msg = annotation.startMessage().trim();
+            return replaceArgPlaceholders(msg, args);
         }
-        return null; // fallback: no message
+        return null; // no start message
     }
 
     /**
-     * Resolves endMessage from annotation or default.
+     * Get end message from annotation if specified.
+     * Supports argument placeholders and {r}/{return}.
      */
     private String resolveEndMessage(Method method, Object[] args, Object returnedValue) {
         SubBlock annotation = method.getAnnotation(SubBlock.class);
-        String template;
         if (annotation != null && isValid(annotation.endMessage())) {
-            template = annotation.endMessage().trim();
-        } else {
-            template = "Returned : {return}";
+            String msg = annotation.endMessage().trim();
+            msg = replaceArgPlaceholders(msg, args);
+            msg = replaceReturnPlaceholder(msg, returnedValue);
+            return msg;
         }
-        // first replace {0} args placeholders
-        String msg = replaceArgPlaceholders(template, args);
-        // now replace {return}
-        return RETURN_PLACEHOLDER_PATTERN.matcher(msg)
-                .replaceAll(Matcher.quoteReplacement(String.valueOf(returnedValue)));
+        return null; // no end message
     }
 
     private boolean isValid(String str) {
         return str != null && !str.trim().isEmpty();
     }
 
+    /* -------------------- PLACEHOLDER REPLACERS -------------------- */
+
     /**
-     * Replace {0}, {1}, ... placeholders with arg.toString(), "null" for nulls.
+     * Replace {0}, {1}, etc. with args[i].toString() or "null".
      */
     private String replaceArgPlaceholders(String text, Object[] args) {
         if (text == null || args == null || args.length == 0) {
             return text;
         }
+
         Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
+
         while (matcher.find()) {
             int index;
             try {
                 index = Integer.parseInt(matcher.group(1));
             } catch (NumberFormatException e) {
-                continue;
+                continue; // should not happen
             }
+
             String replacement;
             if (index >= 0 && index < args.length) {
                 Object arg = args[index];
                 replacement = (arg == null) ? "null" : arg.toString();
             } else {
-                replacement = matcher.group(0); // keep original if out of bounds
+                replacement = matcher.group(0); // leave as-is if out of range
             }
+
             matcher.appendReplacement(sb, Matcher.quoteReplacement(replacement));
         }
+
         matcher.appendTail(sb);
         return sb.toString();
     }
+
+    /**
+     * Replace {r} or {return} with returnedValue.toString() or "null".
+     */
+    private String replaceReturnPlaceholder(String text, Object returnedValue) {
+        if (text == null) {
+            return null;
+        }
+        String replacement = (returnedValue == null) ? "null" : returnedValue.toString();
+        return RETURN_PLACEHOLDER_PATTERN.matcher(text)
+                .replaceAll(Matcher.quoteReplacement(replacement));
+    }
+
+    /* -------------------- METHOD HOOKS -------------------- */
 
     public void on_enter(Method method, Object[] args) {
         String blockName = resolveBlockName(method, args);
@@ -132,7 +160,7 @@ public class VFLAnnotationAdvice {
                 VFLInitializer.VFLAnnotationConfig.buffer
         );
 
-        // Use startMessage instead of hardcoded null
+        // Pass start message to log
         SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 parentBlockContext.blockInfo.getId(),
                 parentBlockContext.currentLogId,
@@ -142,7 +170,7 @@ public class VFLAnnotationAdvice {
                 VFLInitializer.VFLAnnotationConfig.buffer
         );
 
-        ThreadContextManager.GetCurrentBlockContext().currentLogId = subBlockStartLog.getId();
+        Objects.requireNonNull(ThreadContextManager.GetCurrentBlockContext()).currentLogId = subBlockStartLog.getId();
         ThreadContextManager.PushBlockToThreadLogStack(subBlock);
     }
 
@@ -150,7 +178,10 @@ public class VFLAnnotationAdvice {
         String blockName = resolveBlockName(method, args);
 
         if (threw != null) {
-            Log.Error("Exception in SubBlock '{}': {} - {}", blockName, threw.getClass().getName(), threw.getMessage());
+            Log.Error("Exception in SubBlock '{}': {} - {}",
+                    blockName,
+                    threw.getClass().getName(),
+                    threw.getMessage());
         }
 
         String endMsg = resolveEndMessage(method, args, returnedValue);

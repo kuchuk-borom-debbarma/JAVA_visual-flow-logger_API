@@ -32,7 +32,11 @@ public class AnnotationTest {
 }
 
 class TestService {
-    @SubBlock
+    @SubBlock(
+            blockName = "block name is square {0}",
+            startMessage = "squaring {0}",
+            endMessage = "returned value is {r} for {0}"
+    )
     private int square(int a) {
         return a * a;
     }
