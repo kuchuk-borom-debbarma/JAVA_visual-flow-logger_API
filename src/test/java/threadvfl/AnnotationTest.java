@@ -19,13 +19,13 @@ public class AnnotationTest {
 
     @Test
     void linear() {
-        VFLInitializer.initialise(new VFLAnnotationConfig(false, createBuffer("linear")));
+        VFLInitializer.initialize(new VFLAnnotationConfig(false, createBuffer("linear")));
         new TestService().linear();
     }
 
     @Test
     void async() {
-        VFLInitializer.initialise(new VFLAnnotationConfig(false, createBuffer("async")));
+        VFLInitializer.initialize(new VFLAnnotationConfig(false, createBuffer("async")));
         new TestService().async();
     }
 

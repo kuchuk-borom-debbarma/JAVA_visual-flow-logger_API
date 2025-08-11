@@ -17,11 +17,23 @@ public class VFLInitializer {
     static VFLAnnotationConfig VFLAnnotationConfig;
     static volatile boolean initialized = false;
 
+    /**
+     * Helper method to determine if VFL is functional or not.
+     *
+     * @return true if disabled else false
+     */
     public static boolean isDisabled() {
         return !initialized || VFLAnnotationConfig == null || VFLAnnotationConfig.disabled != false;
     }
 
-    public static synchronized void initialise(VFLAnnotationConfig config) {
+    /**
+     * Initialize Visual Flow Logger, this will inject code on methods annotated with @SubBlock at start and end.
+     * Make sure to ALWAYS do this first before the classes are loaded in JVM.
+     * Annotation on static methods will not work IF it's in the same class where the VFL initializer is invoked. This is because the class and the static methods are loaded first and thus cant have custom code injected in them.
+     *
+     * @param config configuration
+     */
+    public static synchronized void initialize(VFLAnnotationConfig config) {
         if (config == null | config.disabled) {
             return;
         }

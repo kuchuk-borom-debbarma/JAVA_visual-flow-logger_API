@@ -19,6 +19,7 @@ public class Main {
 
             //TODO RootBlock annotation
             //TODO ensure the bfl buffer flush makes sense for all impls
+            //TODO fluent in future
         }
     }
 }

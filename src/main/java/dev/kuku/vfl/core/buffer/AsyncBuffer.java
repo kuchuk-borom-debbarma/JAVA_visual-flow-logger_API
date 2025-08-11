@@ -14,6 +14,9 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Async buffer that uses executor to flush asynchronously. Also flushes periodically using scheduled executor
+ */
 @Slf4j
 public class AsyncBuffer extends VFLBufferWithFlushHandlerBase {
     private final ExecutorService flushExecutor;

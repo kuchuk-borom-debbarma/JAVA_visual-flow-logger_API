@@ -9,6 +9,9 @@ import dev.kuku.vfl.core.models.logs.Log;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Synchronous logger that flushing in blocking fashion
+ */
 public class SynchronousBuffer extends VFLBufferWithFlushHandlerBase {
     public SynchronousBuffer(int bufferSize, VFLFlushHandler flushHandler) {
         super(bufferSize, flushHandler);

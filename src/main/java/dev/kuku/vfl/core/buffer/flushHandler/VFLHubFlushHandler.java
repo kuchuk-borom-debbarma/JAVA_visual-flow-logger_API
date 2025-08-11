@@ -17,6 +17,7 @@ import java.util.Map;
 
 /**
  * VFL Hub flush handler with blocking HttpClient. This is because the order at which the requests are made may or may not be important.
+ * If used with AsyncBuffer this will not block main thread as it will be running in provided executor
  */
 @Slf4j
 @RequiredArgsConstructor
