@@ -185,6 +185,6 @@ public class VFLAnnotationAdvice {
         }
 
         String endMsg = resolveEndMessage(method, args, returnedValue);
-        ThreadContextManager.CloseAndPopCurrentContext(endMsg);
+        ThreadContextManager.PopCurrentStack(endMsg);
     }
 }

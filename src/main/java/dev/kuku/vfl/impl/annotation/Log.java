@@ -10,6 +10,7 @@ import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -136,17 +137,19 @@ public class Log {
         return INSTANCE.publish(publisherName, Util.FormatMessage(message, args));
     }
 
-    // Optional convenience overload if you sometimes don’t have a message
+    // Optional convenience overload if you sometimes don't have a message
     public static EventPublisherBlock Publish(String publisherName) {
         if (!VFLInitializer.initialized) return null;
         return INSTANCE.publish(publisherName, "");
     }
 
+    // ================ CREATE CONTINUATION BLOCK METHODS ================
+
     /**
      * Creates a detached sub-block that can be serialized and sent to external services
      * for distributed tracing continuation. This block is NOT added to the current thread's
      * context stack - it's designed to be passed as payload (headers/body) to other services
-     * which can then use {@link VFLStarter#StartAsBlock(Block, Supplier)} to continue the trace.
+     * which can then use {@link VFLStarter#ContinueFromBlock(Block, Supplier)} to continue the trace.
      *
      * <p>Use this when you need to:
      * <ul>
@@ -174,6 +177,8 @@ public class Log {
      * @return Result of the function execution
      */
     public static <R> R CreateContinuationBlock(String blockName, String startMessage, Function<Block, R> fn) {
+        if (!VFLInitializer.initialized) return fn.apply(null);
+
         BlockContext currentContext = ThreadContextManager.GetCurrentBlockContext();
         if (currentContext == null) {
             throw new IllegalStateException("Cannot create continuation block: no active VFL context. Ensure you're within a VFL root block or sub-block.");
@@ -211,7 +216,69 @@ public class Log {
             throw e;
         } finally {
             // TODO: Add sub-block end log to update timestamp
+            System.out.println("TODO");
         }
     }
 
+    /**
+     * Creates a continuation block with a formatted start message.
+     *
+     * @param blockName    Name of the detached block for tracing
+     * @param startMessage Message template with placeholders
+     * @param args         Arguments to format into the message
+     * @param fn           Function that receives the detached block and handles the external call
+     * @param <R>          Return type of the function
+     * @return Result of the function execution
+     */
+    public static <R> R CreateContinuationBlock(String blockName, String startMessage, Object[] args, Function<Block, R> fn) {
+        return CreateContinuationBlock(blockName, Util.FormatMessage(startMessage, args), fn);
+    }
+
+    /**
+     * Creates a continuation block with no start message logged.
+     *
+     * @param blockName Name of the detached block for tracing
+     * @param fn        Function that receives the detached block and handles the external call
+     * @param <R>       Return type of the function
+     * @return Result of the function execution
+     */
+    public static <R> R CreateContinuationBlock(String blockName, Function<Block, R> fn) {
+        return CreateContinuationBlock(blockName, "", fn);
+    }
+
+    /**
+     * Creates a continuation block for void operations (Runnable).
+     *
+     * @param blockName    Name of the detached block for tracing
+     * @param startMessage Message logged when the block starts
+     * @param consumer     Consumer that receives the detached block and handles the external call
+     */
+    public static void CreateContinuationBlock(String blockName, String startMessage, Consumer<Block> consumer) {
+        CreateContinuationBlock(blockName, startMessage, block -> {
+            consumer.accept(block);
+            return null;
+        });
+    }
+
+    /**
+     * Creates a continuation block for void operations with formatted start message.
+     *
+     * @param blockName    Name of the detached block for tracing
+     * @param startMessage Message template with placeholders
+     * @param args         Arguments to format into the message
+     * @param consumer     Consumer that receives the detached block and handles the external call
+     */
+    public static void CreateContinuationBlock(String blockName, String startMessage, Object[] args, Consumer<Block> consumer) {
+        CreateContinuationBlock(blockName, Util.FormatMessage(startMessage, args), consumer);
+    }
+
+    /**
+     * Creates a continuation block for void operations with no start message.
+     *
+     * @param blockName Name of the detached block for tracing
+     * @param consumer  Consumer that receives the detached block and handles the external call
+     */
+    public static void CreateContinuationBlock(String blockName, Consumer<Block> consumer) {
+        CreateContinuationBlock(blockName, "", consumer);
+    }
 }

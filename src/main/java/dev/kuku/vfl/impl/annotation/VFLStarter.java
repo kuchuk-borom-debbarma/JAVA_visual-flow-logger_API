@@ -21,14 +21,12 @@ public class VFLStarter {
      * @return return value of supplier
      */
     public static <R> R StartRootBlock(String blockName, Supplier<R> supplier) {
-        //TODO throw exception if operation is already running i guess?
         if (VFLInitializer.isDisabled()) {
             return supplier.get();
         }
 
-        ThreadContextManager.CleanThreadVariables();
         Block rootBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, VFLInitializer.VFLAnnotationConfig.buffer);
-        ThreadContextManager.InitializeStackWithBlock(rootBlock);
+        ThreadContextManager.PushBlockToThreadLogStack(rootBlock);
         R r;
         try {
             r = supplier.get();
@@ -38,9 +36,7 @@ public class VFLStarter {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            ThreadContextManager.CloseAndPopCurrentContext(null);
-            //Safety clean up. Should not be required
-            ThreadContextManager.CleanThreadVariables();
+            ThreadContextManager.PopCurrentStack(null);
             VFLInitializer.VFLAnnotationConfig.buffer.flush();
         }
     }
@@ -79,8 +75,7 @@ public class VFLStarter {
             return supplier.get();
         }
 
-        ThreadContextManager.CleanThreadVariables();
-        ThreadContextManager.InitializeStackWithBlock(continuationBlock);
+        ThreadContextManager.PushBlockToThreadLogStack(continuationBlock);
         R r;
         try {
             r = supplier.get();
@@ -90,8 +85,7 @@ public class VFLStarter {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            ThreadContextManager.CloseAndPopCurrentContext(null);
-            ThreadContextManager.CleanThreadVariables();
+            ThreadContextManager.PopCurrentStack(null);
             VFLInitializer.VFLAnnotationConfig.buffer.flush();
         }
     }
@@ -123,9 +117,13 @@ public class VFLStarter {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            ThreadContextManager.CloseAndPopCurrentContext(null);
+            ThreadContextManager.PopCurrentStack(null);
             VFLInitializer.VFLAnnotationConfig.buffer.flush();
         }
+    }
+
+    public static <R> R StartEventListener(EventPublisherBlock publisherBlock, String eventListenerName, Supplier<R> supplier) {
+        return StartEventListener(publisherBlock, eventListenerName, null, supplier);
     }
 
     // Runnable variants that delegate to Supplier versions
@@ -150,5 +148,8 @@ public class VFLStarter {
         });
     }
 
-
+    public static void StartEventListener(EventPublisherBlock publisherBlock, String eventListenerName, Runnable runnable) {
+        StartEventListener(publisherBlock, eventListenerName, null, () -> {
+        });
+    }
 }

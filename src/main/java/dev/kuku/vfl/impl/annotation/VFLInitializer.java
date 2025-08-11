@@ -23,7 +23,7 @@ public class VFLInitializer {
      * @return true if disabled else false
      */
     public static boolean isDisabled() {
-        return !initialized || VFLAnnotationConfig == null || VFLAnnotationConfig.disabled != false;
+        return !initialized || VFLAnnotationConfig == null || VFLAnnotationConfig.disabled;
     }
 
     /**
@@ -34,7 +34,7 @@ public class VFLInitializer {
      * @param config configuration
      */
     public static synchronized void initialize(VFLAnnotationConfig config) {
-        if (config == null | config.disabled) {
+        if (config == null || config.disabled) {
             return;
         }
         try {

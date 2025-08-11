@@ -15,26 +15,12 @@ class ThreadContextManager {
 
     static final ThreadLocal<Stack<BlockContext>> loggerCtxStack = new ThreadLocal<>();
 
-    static void CleanThreadVariables() {
-        loggerCtxStack.remove();
-    }
-
-    static void InitializeStackWithBlock(Block block) {
-        loggerCtxStack.set(new Stack<>());
-        loggerCtxStack.get().push(new BlockContext(block));
-    }
-
-    static void InitializeStackWithContext(BlockContext blockContext) {
-        loggerCtxStack.set(new Stack<>());
-        loggerCtxStack.get().push(blockContext);
-    }
-
     static BlockContext GetCurrentBlockContext() {
         if (loggerCtxStack.get() == null || loggerCtxStack.get().isEmpty()) return null;
         return loggerCtxStack.get().peek();
     }
 
-    static void CloseAndPopCurrentContext(String endMsg) {
+    static void PopCurrentStack(String endMsg) {
         if (GetCurrentBlockContext() == null) {
             log.warn("Failed to close current context : Logger stack is empty or null. This usually happens when a method annotated with @SubBlock is invoked without parent(by using VFLStarter). Most of the time this should be okay.");
             return;
@@ -43,10 +29,17 @@ class ThreadContextManager {
         BlockContext popped = loggerCtxStack.get().pop();
         log.debug("Popped current context : {}-{} for thread {}", popped.blockInfo.getBlockName(), Util.TrimId(popped.blockInfo.getId()), Util.GetThreadInfo());
 
-        //If we flush here then it will flush when executor thread pops
+        if (loggerCtxStack.get().isEmpty()) {
+            log.debug("LoggerCtxStack is empty for thread {}, Removing thread variable", Util.GetThreadInfo());
+            loggerCtxStack.remove();
+        }
     }
 
+    /// If stack is null create new stack
     static void PushBlockToThreadLogStack(Block subBlock) {
+        if (GetCurrentBlockContext() == null) {
+            loggerCtxStack.set(new Stack<>());
+        }
         loggerCtxStack.get().push(new BlockContext(subBlock));
     }
 }

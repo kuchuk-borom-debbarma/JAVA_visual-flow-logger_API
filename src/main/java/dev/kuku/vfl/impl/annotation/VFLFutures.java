@@ -34,12 +34,10 @@ public class VFLFutures {
 
         return () -> {
             try {
-                ThreadContextManager.InitializeStackWithBlock(lambdaSubBlock);
+                ThreadContextManager.PushBlockToThreadLogStack(lambdaSubBlock);
                 return supplier.get();
             } finally {
-                ThreadContextManager.CloseAndPopCurrentContext(null);
-                //Not necessary but safety precaution
-                ThreadContextManager.CleanThreadVariables();
+                ThreadContextManager.PopCurrentStack(null);
             }
         };
     }
@@ -59,12 +57,10 @@ public class VFLFutures {
         VFLFlowHelper.CreateLogAndPush2Buffer(parentContext.blockInfo.getId(), parentContext.currentLogId, null, lambdaSubBlock.getId(), LogTypeBlockStartEnum.SUB_BLOCK_START_SECONDARY_NO_JOIN, VFLInitializer.VFLAnnotationConfig.buffer);
         return () -> {
             try {
-                ThreadContextManager.InitializeStackWithBlock(lambdaSubBlock);
+                ThreadContextManager.PushBlockToThreadLogStack(lambdaSubBlock);
                 runnable.run();
             } finally {
-                ThreadContextManager.CloseAndPopCurrentContext(null);
-                //Not necessary but safety precaution
-                ThreadContextManager.CleanThreadVariables();
+                ThreadContextManager.PopCurrentStack(null);
             }
         };
     }
