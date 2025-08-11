@@ -5,6 +5,10 @@ import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.helpers.Util;
+import dev.kuku.vfl.core.helpers.VFLFlowHelper;
+import dev.kuku.vfl.core.models.Block;
+import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
+import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -137,4 +141,77 @@ public class Log {
         if (!VFLInitializer.initialized) return null;
         return INSTANCE.publish(publisherName, "");
     }
+
+    /**
+     * Creates a detached sub-block that can be serialized and sent to external services
+     * for distributed tracing continuation. This block is NOT added to the current thread's
+     * context stack - it's designed to be passed as payload (headers/body) to other services
+     * which can then use {@link VFLStarter#StartAsBlock(Block, Supplier)} to continue the trace.
+     *
+     * <p>Use this when you need to:
+     * <ul>
+     *   <li>Make HTTP calls to other services and want them to continue your trace</li>
+     *   <li>Send messages to queues/topics with trace context</li>
+     *   <li>Spawn processes that should inherit trace context</li>
+     * </ul>
+     *
+     * <p>Example usage:
+     * <pre>{@code
+     * Block continuationBlock = Log.CreateContinuationBlock(
+     *     "UserService.GetUser",
+     *     "Calling user service",
+     *     block -> {
+     *         // Add block to HTTP headers or request body
+     *         return httpClient.call("/users/123", headers.with("trace-block", serialize(block)));
+     *     }
+     * );
+     * }</pre>
+     *
+     * @param blockName    Name of the detached block for tracing
+     * @param startMessage Message logged when the block starts
+     * @param fn           Function that receives the detached block and handles the external call
+     * @param <R>          Return type of the function
+     * @return Result of the function execution
+     */
+    public static <R> R CreateContinuationBlock(String blockName, String startMessage, Function<Block, R> fn) {
+        BlockContext currentContext = ThreadContextManager.GetCurrentBlockContext();
+        if (currentContext == null) {
+            throw new IllegalStateException("Cannot create continuation block: no active VFL context. Ensure you're within a VFL root block or sub-block.");
+        }
+
+        // Create the detached sub-block
+        Block detachedBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(
+                blockName,
+                currentContext.blockInfo.getId(),
+                VFLInitializer.VFLAnnotationConfig.buffer
+        );
+
+        // Log the start of this detached block
+        SubBlockStartLog subBlockStartLog = VFLFlowHelper.CreateLogAndPush2Buffer(
+                currentContext.blockInfo.getId(),
+                currentContext.currentLogId,
+                startMessage,
+                detachedBlock.getId(),
+                LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY,
+                VFLInitializer.VFLAnnotationConfig.buffer
+        );
+
+        // Update current log ID to maintain the chain
+        currentContext.currentLogId = subBlockStartLog.getId();
+
+        R result;
+        try {
+            // Execute the function with the detached block
+            // Note: We deliberately do NOT push this block to the thread stack
+            result = fn.apply(detachedBlock);
+            return result;
+        } catch (Exception e) {
+            Log.Error("Exception in continuation block '{}': {} - {}",
+                    blockName, e.getClass().getSimpleName(), e.getMessage());
+            throw e;
+        } finally {
+            // TODO: Add sub-block end log to update timestamp
+        }
+    }
+
 }

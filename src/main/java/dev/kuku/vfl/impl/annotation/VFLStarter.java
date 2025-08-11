@@ -46,26 +46,47 @@ public class VFLStarter {
     }
 
     /**
-     * Start logger as a sub block, use this as the starter in scenarios where you need make a third party service call and as the service being called you want to continue from existing block that was sent as payload from by caller.
+     * Continue tracing from a block received from another service or process.
+     * Use this when you receive a Block object (via HTTP headers, message payload, etc.)
+     * from an upstream service and want to continue the distributed trace in your service.
      *
-     * @param block
-     * @param supplier
-     * @param <R>
-     * @return
+     * <p>This method:
+     * <ul>
+     *   <li>Initializes the current thread's VFL context with the received block</li>
+     *   <li>Maintains the parent-child relationship in the distributed trace</li>
+     *   <li>Ensures proper cleanup of thread-local variables</li>
+     * </ul>
+     *
+     * <p>Typical usage pattern:
+     * <pre>{@code
+     * // Extract block from HTTP request headers or body
+     * Block receivedBlock = deserialize(request.getHeader("trace-block"));
+     *
+     * return VFLStarter.ContinueFromBlock(receivedBlock, () -> {
+     *     // Your service logic here - all @SubBlock methods and Log.* calls
+     *     // will be part of the continued distributed trace
+     *     return processUserRequest();
+     * });
+     * }</pre>
+     *
+     * @param continuationBlock The block received from upstream service/process
+     * @param supplier          The method to execute within this trace context
+     * @param <R>               Return type of the supplier
+     * @return Result of the supplier execution
      */
-    public static <R> R StartAsBlock(Block block, Supplier<R> supplier) {
+    public static <R> R ContinueFromBlock(Block continuationBlock, Supplier<R> supplier) {
         if (VFLInitializer.isDisabled()) {
             return supplier.get();
         }
 
         ThreadContextManager.CleanThreadVariables();
-        ThreadContextManager.InitializeStackWithBlock(block);
+        ThreadContextManager.InitializeStackWithBlock(continuationBlock);
         R r;
         try {
             r = supplier.get();
             return r;
         } catch (Exception e) {
-            Log.Error("Exception: {}-{})", e.getClass().getSimpleName(), e.getMessage());
+            Log.Error("Exception in continuation block: {}-{}", e.getClass().getSimpleName(), e.getMessage());
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
@@ -118,8 +139,8 @@ public class VFLStarter {
         });
     }
 
-    public static void StartAsBlock(Block block, Runnable runnable) {
-        StartAsBlock(block, () -> {
+    public static void ContinueFromBlock(Block continuationBlock, Runnable runnable) {
+        ContinueFromBlock(continuationBlock, () -> {
             runnable.run();
             return null;
         });
@@ -131,4 +152,6 @@ public class VFLStarter {
             return null;
         });
     }
+
+
 }
