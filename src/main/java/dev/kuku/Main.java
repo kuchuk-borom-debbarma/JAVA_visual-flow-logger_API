@@ -20,7 +20,7 @@ public class Main {
             //TODO RootBlock annotation
             //TODO ensure the bfl buffer flush makes sense for all impls
             //TODO fluent in future
-            //todo service to service block creation
+            //todo service to service block creation. Add StartSubBlock method in Log with Supplier<R> supplier. Wrap it with try finally and note down the copletion as well. push new log type sub block start over something. If they want it to be async they can use it with vfl futures
         }
     }
 }
