@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(annotation): add arg/return placeholder support for @SubBlock messages&#10;&#10;- Updated @SubBlock Javadoc to clearly explain usage with {0}, {1} (args) and {r}/{return} (return value).&#10;- Enhanced VFLAnnotationAdvice to:&#10;  • Resolve endMessage with both arg and return placeholders&#10;  • Use regex patterns for {0}/{n} and {r}/{return} replacements&#10;  • Add helper methods replaceArgPlaceholders() and replaceReturnPlaceholder() for clarity&#10;- Improved null safety and readability in placeholder replacement and context handling.">
-      <change afterPath="$PROJECT_DIR$/mds/prompts/codebase.txt" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="refactor(tests): remove distributed tracing test methods and add flush comment&#10;&#10;• Removed publisherAndListener(), continueFromBlock(), and createContinuationBlock() test methods from AnnotationTest&#10;• Removed corresponding @Test annotations for these distributed tracing features&#10;• Added clarifying comment in ThreadContextManager about executor thread flushing behavior&#10;• Removed StartEventListener thread context cleanup to prevent issues when publisher and listener run in same thread&#10;• Updated VFLStarter StartEventListener Javadoc to clarify thread local variable handling&#10;&#10;This cleanup removes test methods that were likely moved elsewhere or are no longer needed, while improving thread context management documentation.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/prompts/Create Design doc prompt.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,77 +69,79 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Application.ByteBuddySupplierTest.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.TestBlockLibrary.executor&quot;: &quot;Run&quot;,
-    &quot;Application.VFLBootstrap.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.async.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.asyncTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.linear.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.nest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnnotationTest.test.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedFluentAPITest.test.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ScopedLoggerTest$SimpleTest.run.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticFluentThreadVFLTest.flatFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticFluentThreadVFLTest.nest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.asyncFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.deepNestedFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.flatFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StaticThreadVFLTest.flatNestedFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest$LinearFlow.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.multiThreadCleanupTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.nestedMultiThreadTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ThreadVFLTest.threadPoolTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.expected.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.VFLTests.simple.executor&quot;: &quot;Debug&quot;,
-    &quot;Maven.vfl_java [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Application.ByteBuddySupplierTest.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.TestBlockLibrary.executor": "Run",
+    "Application.VFLBootstrap.executor": "Run",
+    "JUnit.AnnotationTest.async.executor": "Run",
+    "JUnit.AnnotationTest.asyncTest.executor": "Run",
+    "JUnit.AnnotationTest.eventListenerSyncTest.executor": "Run",
+    "JUnit.AnnotationTest.linear.executor": "Run",
+    "JUnit.AnnotationTest.nest.executor": "Run",
+    "JUnit.AnnotationTest.test.executor": "Run",
+    "JUnit.ByteBuddyAlternativeTest.testCustomCompletableFutureInterception.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testCompletableFutureInterception.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testExecutionDurationMeasurement.executor": "Run",
+    "JUnit.ByteBuddyInterceptorTest.testMonitoredMethodInterception.executor": "Run",
+    "JUnit.ScopedFluentAPITest.test.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.heavyAsync.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.nonLinearFlow.executor": "Run",
+    "JUnit.ScopedLoggerTest$SimpleTest.run.executor": "Run",
+    "JUnit.StaticFluentThreadVFLTest.flatFlow.executor": "Run",
+    "JUnit.StaticFluentThreadVFLTest.nest.executor": "Run",
+    "JUnit.StaticThreadVFLTest.asyncFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.deepNestedFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.flatFlow.executor": "Run",
+    "JUnit.StaticThreadVFLTest.flatNestedFlow.executor": "Run",
+    "JUnit.ThreadVFLTest$AsyncFlow.asyncTest.executor": "Run",
+    "JUnit.ThreadVFLTest$EventFlow.linearEventFlow.executor": "Run",
+    "JUnit.ThreadVFLTest$LinearFlow.executor": "Debug",
+    "JUnit.ThreadVFLTest$LinearFlow.linearFlow.executor": "Run",
+    "JUnit.ThreadVFLTest.multiThreadCleanupTest.executor": "Run",
+    "JUnit.ThreadVFLTest.nestedMultiThreadTest.executor": "Run",
+    "JUnit.ThreadVFLTest.threadPoolTest.executor": "Run",
+    "JUnit.VFLTests.executor": "Run",
+    "JUnit.VFLTests.expected.executor": "Run",
+    "JUnit.VFLTests.simple.executor": "Debug",
+    "Maven.vfl_java [clean].executor": "Run",
+    "Maven.vfl_java [compile].executor": "Run",
+    "Maven.vfl_java [install].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean].executor": "Run",
+    "Maven.vfl_java [org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHELLCHECK.PATH": "/Users/kuchukboramdebbarma/Library/Application Support/JetBrains/IntelliJIdea2025.2/plugins/Shell Script/shellcheck",
+    "git-widget-placeholder": "main",
+    "ignore.preview.features.used": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/kuchukboramdebbarma/projects/Visual-Flow-Logger/client_apis/vfl_java",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/kuchukboramdebbarma/projects/vfl_java/src/main/java/dev/kuku/Main.java",
+    "project.structure.last.edited": "Problems",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
-      &quot;SQLite&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "SQLite"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="dev.kuku.vfl.impl.threadlocal.flient_steps.sub_block" />
@@ -151,6 +151,7 @@
       <recent name="dev.kuku.builder" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/mds" />
       <recent name="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers" />
     </key>
@@ -161,20 +162,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest.linear">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="dev.kuku.Main" />
-      <module name="vfl_java" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="dev.kuku.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.AnnotationTest.eventListenerSyncTest">
     <configuration name="AnnotationTest.async" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
@@ -202,6 +190,22 @@
       <option name="PACKAGE_NAME" value="threadvfl" />
       <option name="MAIN_CLASS_NAME" value="threadvfl.AnnotationTest" />
       <option name="METHOD_NAME" value="asyncTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AnnotationTest.eventListenerSyncTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="vfl_java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="threadvfl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="threadvfl" />
+      <option name="MAIN_CLASS_NAME" value="threadvfl.AnnotationTest" />
+      <option name="METHOD_NAME" value="eventListenerSyncTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -240,7 +244,7 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.Main" />
+      <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
       <item itemvalue="JUnit.AnnotationTest.async" />
       <item itemvalue="JUnit.AnnotationTest.linear" />
       <item itemvalue="JUnit.AnnotationTest.asyncTest" />
@@ -248,11 +252,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
         <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.test" />
         <item itemvalue="JUnit.AnnotationTest.asyncTest" />
-        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -343,47 +347,10 @@
       <workItem from="1754519130424" duration="5223000" />
       <workItem from="1754590394886" duration="31946000" />
       <workItem from="1754801688885" duration="4533000" />
-      <workItem from="1754888333269" duration="2274000" />
-    </task>
-    <task id="LOCAL-00155" summary="Updated nest json flush handler to not inclide nulls&#10;updated statoc thread vfl and tested flat flow">
-      <option name="closed" value="true" />
-      <created>1754359530911</created>
-      <option name="number" value="00155" />
-      <option name="presentableId" value="LOCAL-00155" />
-      <option name="project" value="LOCAL" />
-      <updated>1754359530911</updated>
-    </task>
-    <task id="LOCAL-00156" summary="Removed unnecessary public functions from threadVFL">
-      <option name="closed" value="true" />
-      <created>1754360319872</created>
-      <option name="number" value="00156" />
-      <option name="presentableId" value="LOCAL-00156" />
-      <option name="project" value="LOCAL" />
-      <updated>1754360319872</updated>
-    </task>
-    <task id="LOCAL-00157" summary="Added deep nested flow">
-      <option name="closed" value="true" />
-      <created>1754361318984</created>
-      <option name="number" value="00157" />
-      <option name="presentableId" value="LOCAL-00157" />
-      <option name="project" value="LOCAL" />
-      <updated>1754361318984</updated>
-    </task>
-    <task id="LOCAL-00158" summary="Added deep nested flow">
-      <option name="closed" value="true" />
-      <created>1754362792366</created>
-      <option name="number" value="00158" />
-      <option name="presentableId" value="LOCAL-00158" />
-      <option name="project" value="LOCAL" />
-      <updated>1754362792366</updated>
-    </task>
-    <task id="LOCAL-00159" summary="Fixed string formatter bug which contains return value">
-      <option name="closed" value="true" />
-      <created>1754367979038</created>
-      <option name="number" value="00159" />
-      <option name="presentableId" value="LOCAL-00159" />
-      <option name="project" value="LOCAL" />
-      <updated>1754367979038</updated>
+      <workItem from="1754888333269" duration="4131000" />
+      <workItem from="1754892772033" duration="79000" />
+      <workItem from="1754896179473" duration="21000" />
+      <workItem from="1754906656435" duration="4919000" />
     </task>
     <task id="LOCAL-00160" summary="Basic setup done">
       <option name="closed" value="true" />
@@ -737,7 +704,47 @@
       <option name="project" value="LOCAL" />
       <updated>1754887670829</updated>
     </task>
-    <option name="localTasksCounter" value="204" />
+    <task id="LOCAL-00204" summary="feat(core): introduce EventPublisherBlock and Log.Publish helpers&#10;&#9;•&#9;VFL.publish now returns a typed EventPublisherBlock instead of raw Block&#10;&#9;•&#9;Added new DTO wrapper EventPublisherBlock and integrated into VFL&#10;&#9;•&#9;Introduced Log.Publish(…) convenience methods with overloads:&#10;&#9;•&#9;Publish(publisherName, message)&#10;&#9;•&#9;Publish(publisherName, message, Object… args) with formatting&#10;&#9;•&#9;Publish(publisherName) for empty message&#10;&#9;•&#9;Updated imports and flow to set currentLogId consistently&#10;&#9;•&#9;Minor housekeeping in prompts/codebase.txt and workspace metadata&#10;This">
+      <option name="closed" value="true" />
+      <created>1754890708729</created>
+      <option name="number" value="00204" />
+      <option name="presentableId" value="LOCAL-00204" />
+      <option name="project" value="LOCAL" />
+      <updated>1754890708729</updated>
+    </task>
+    <task id="LOCAL-00205" summary="Added script to dump codebase in a file">
+      <option name="closed" value="true" />
+      <created>1754891836487</created>
+      <option name="number" value="00205" />
+      <option name="presentableId" value="LOCAL-00205" />
+      <option name="project" value="LOCAL" />
+      <updated>1754891836487</updated>
+    </task>
+    <task id="LOCAL-00206" summary="Added important todo">
+      <option name="closed" value="true" />
+      <created>1754892842296</created>
+      <option name="number" value="00206" />
+      <option name="presentableId" value="LOCAL-00206" />
+      <option name="project" value="LOCAL" />
+      <updated>1754892842296</updated>
+    </task>
+    <task id="LOCAL-00207" summary="feat(logging): add CreateContinuationBlock for distributed tracing&#10;&#10;• Added Log.CreateContinuationBlock() for creating detached sub-blocks that can be serialized and sent to external services&#10;• Renamed VFLStarter.StartAsBlock() to ContinueFromBlock() for better semantic clarity &#10;• Enhanced Javadoc with detailed usage examples for distributed tracing scenarios&#10;• Added proper error handling and context management for continuation blocks&#10;• Maintains parent-child relationships across service boundaries&#10;&#10;This enables seamless distributed tracing where services can create continuation blocks for HTTP calls, queue messages, or process spawning, and receiving services can continue the trace using ContinueFromBlock().">
+      <option name="closed" value="true" />
+      <created>1754909100594</created>
+      <option name="number" value="00207" />
+      <option name="presentableId" value="LOCAL-00207" />
+      <option name="project" value="LOCAL" />
+      <updated>1754909100594</updated>
+    </task>
+    <task id="LOCAL-00208" summary="refactor(tests): remove distributed tracing test methods and add flush comment&#10;&#10;• Removed publisherAndListener(), continueFromBlock(), and createContinuationBlock() test methods from AnnotationTest&#10;• Removed corresponding @Test annotations for these distributed tracing features&#10;• Added clarifying comment in ThreadContextManager about executor thread flushing behavior&#10;• Removed StartEventListener thread context cleanup to prevent issues when publisher and listener run in same thread&#10;• Updated VFLStarter StartEventListener Javadoc to clarify thread local variable handling&#10;&#10;This cleanup removes test methods that were likely moved elsewhere or are no longer needed, while improving thread context management documentation.">
+      <option name="closed" value="true" />
+      <created>1754910309012</created>
+      <option name="number" value="00208" />
+      <option name="presentableId" value="LOCAL-00208" />
+      <option name="project" value="LOCAL" />
+      <updated>1754910309012</updated>
+    </task>
+    <option name="localTasksCounter" value="209" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -755,11 +762,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Is buffer broken or something else idk. Probably logic in advice or something" />
-    <MESSAGE value="Fixed logical bug" />
-    <MESSAGE value="REmoved fluent" />
-    <MESSAGE value="Made it so that if logger is not initialized it works fine" />
-    <MESSAGE value="TODO async fix and a bug" />
     <MESSAGE value="fixed bug related to async" />
     <MESSAGE value="Added Design Documentation.md" />
     <MESSAGE value="Fixed issue of using logger in lambda of a new thread" />
@@ -780,7 +782,12 @@
     <MESSAGE value="“Added log4j back to the project and refactored buffer flush methods&#10;&#9;•&#9;Re-added log4j configuration and related changes previously removed&#10;&#9;•&#9;Refactored buffer interfaces and implementations to rename flushAndClose() to flush()&#10;&#9;•&#9;Updated VFLStarter to explicitly flush buffer after context cleanup&#10;&#9;•&#9;Added TODO comments in Main.java for RootBlock annotation and buffer flush sanity check&#10;&#9;•&#9;Enhanced async test in AnnotationTest with improved thread pool and logging" />
     <MESSAGE value="removed isLambda boolean for block" />
     <MESSAGE value="feat(annotation): add arg/return placeholder support for @SubBlock messages&#10;&#10;- Updated @SubBlock Javadoc to clearly explain usage with {0}, {1} (args) and {r}/{return} (return value).&#10;- Enhanced VFLAnnotationAdvice to:&#10;  • Resolve endMessage with both arg and return placeholders&#10;  • Use regex patterns for {0}/{n} and {r}/{return} replacements&#10;  • Add helper methods replaceArgPlaceholders() and replaceReturnPlaceholder() for clarity&#10;- Improved null safety and readability in placeholder replacement and context handling." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(annotation): add arg/return placeholder support for @SubBlock messages&#10;&#10;- Updated @SubBlock Javadoc to clearly explain usage with {0}, {1} (args) and {r}/{return} (return value).&#10;- Enhanced VFLAnnotationAdvice to:&#10;  • Resolve endMessage with both arg and return placeholders&#10;  • Use regex patterns for {0}/{n} and {r}/{return} replacements&#10;  • Add helper methods replaceArgPlaceholders() and replaceReturnPlaceholder() for clarity&#10;- Improved null safety and readability in placeholder replacement and context handling." />
+    <MESSAGE value="feat(core): introduce EventPublisherBlock and Log.Publish helpers&#10;&#9;•&#9;VFL.publish now returns a typed EventPublisherBlock instead of raw Block&#10;&#9;•&#9;Added new DTO wrapper EventPublisherBlock and integrated into VFL&#10;&#9;•&#9;Introduced Log.Publish(…) convenience methods with overloads:&#10;&#9;•&#9;Publish(publisherName, message)&#10;&#9;•&#9;Publish(publisherName, message, Object… args) with formatting&#10;&#9;•&#9;Publish(publisherName) for empty message&#10;&#9;•&#9;Updated imports and flow to set currentLogId consistently&#10;&#9;•&#9;Minor housekeeping in prompts/codebase.txt and workspace metadata&#10;This" />
+    <MESSAGE value="Added script to dump codebase in a file" />
+    <MESSAGE value="Added important todo" />
+    <MESSAGE value="feat(logging): add CreateContinuationBlock for distributed tracing&#10;&#10;• Added Log.CreateContinuationBlock() for creating detached sub-blocks that can be serialized and sent to external services&#10;• Renamed VFLStarter.StartAsBlock() to ContinueFromBlock() for better semantic clarity &#10;• Enhanced Javadoc with detailed usage examples for distributed tracing scenarios&#10;• Added proper error handling and context management for continuation blocks&#10;• Maintains parent-child relationships across service boundaries&#10;&#10;This enables seamless distributed tracing where services can create continuation blocks for HTTP calls, queue messages, or process spawning, and receiving services can continue the trace using ContinueFromBlock()." />
+    <MESSAGE value="refactor(tests): remove distributed tracing test methods and add flush comment&#10;&#10;• Removed publisherAndListener(), continueFromBlock(), and createContinuationBlock() test methods from AnnotationTest&#10;• Removed corresponding @Test annotations for these distributed tracing features&#10;• Added clarifying comment in ThreadContextManager about executor thread flushing behavior&#10;• Removed StartEventListener thread context cleanup to prevent issues when publisher and listener run in same thread&#10;• Updated VFLStarter StartEventListener Javadoc to clarify thread local variable handling&#10;&#10;This cleanup removes test methods that were likely moved elsewhere or are no longer needed, while improving thread context management documentation." />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(tests): remove distributed tracing test methods and add flush comment&#10;&#10;• Removed publisherAndListener(), continueFromBlock(), and createContinuationBlock() test methods from AnnotationTest&#10;• Removed corresponding @Test annotations for these distributed tracing features&#10;• Added clarifying comment in ThreadContextManager about executor thread flushing behavior&#10;• Removed StartEventListener thread context cleanup to prevent issues when publisher and listener run in same thread&#10;• Updated VFLStarter StartEventListener Javadoc to clarify thread local variable handling&#10;&#10;This cleanup removes test methods that were likely moved elsewhere or are no longer needed, while improving thread context management documentation." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

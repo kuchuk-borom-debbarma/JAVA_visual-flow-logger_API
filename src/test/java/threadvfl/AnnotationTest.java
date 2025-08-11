@@ -4,6 +4,7 @@ import dev.kuku.vfl.core.buffer.AsyncBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
+import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.impl.annotation.*;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,12 @@ public class AnnotationTest {
     void async() {
         VFLInitializer.initialize(new VFLAnnotationConfig(false, createBuffer("async")));
         new TestService().async();
+    }
+
+    @Test
+    void eventListenerSyncTest() {
+        VFLInitializer.initialize(new VFLAnnotationConfig(false, createBuffer("eventListenerSyncTest")));
+        new TestService().eventPublisher();
     }
 
 }
@@ -75,6 +82,32 @@ class TestService {
             t2.join();
             int num = y.join();
             Log.Info("COMPLETE with num {}", num);
+        });
+    }
+
+    public void eventPublisher() {
+        VFLStarter.StartRootBlock("Event publisher", () -> {
+            Log.Info("Starting event listener test");
+            System.err.println("Debug - About to publish event");
+            var p = Log.Publish("Ordered item");
+            System.err.println("Debug - Published event, result: " + p);
+            Log.Info("Published stuff");
+            listenerOne(p);
+            Log.Info("Another log after listener 1");
+            listenerTwo(p);
+        });
+    }
+
+
+    void listenerOne(EventPublisherBlock p) {
+        VFLStarter.StartEventListener(p, "Listener 1", null, () -> {
+            Log.Info("Listener 1");
+        });
+    }
+
+    void listenerTwo(EventPublisherBlock p) {
+        VFLStarter.StartEventListener(p, "Listener 2", null, () -> {
+            Log.Info("Listener 2");
         });
     }
 

@@ -112,8 +112,8 @@ public class VFLStarter {
                 eventListenerBlock.getId(),
                 LogTypeBlockStartEnum.EVENT_LISTENER,
                 VFLInitializer.VFLAnnotationConfig.buffer);
-        ThreadContextManager.InitializeStackWithBlock(eventListenerBlock);
 
+        ThreadContextManager.PushBlockToThreadLogStack(eventListenerBlock);
         R r;
         try {
             r = supplier.get();
