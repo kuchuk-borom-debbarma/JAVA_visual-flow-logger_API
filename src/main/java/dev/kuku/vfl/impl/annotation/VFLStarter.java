@@ -97,14 +97,12 @@ public class VFLStarter {
     }
 
     /**
-     * Start event listener for the provided publisherBlock
+     * Start event listener for the provided publisherBlock. Does not clear thread local variables in case both publisher and listener are running in same thread
      */
     public static <R> R StartEventListener(EventPublisherBlock publisherBlock, String eventListenerName, String message, Supplier<R> supplier) {
         if (VFLInitializer.isDisabled()) {
             return supplier.get();
         }
-
-        ThreadContextManager.CleanThreadVariables();
 
         Block eventListenerBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(eventListenerName, publisherBlock.block().getId(), VFLInitializer.VFLAnnotationConfig.buffer);
 
@@ -126,7 +124,6 @@ public class VFLStarter {
             throw new RuntimeException(e);
         } finally {
             ThreadContextManager.CloseAndPopCurrentContext(null);
-            ThreadContextManager.CleanThreadVariables();
             VFLInitializer.VFLAnnotationConfig.buffer.flush();
         }
     }

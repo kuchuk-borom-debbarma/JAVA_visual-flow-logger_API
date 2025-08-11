@@ -42,6 +42,8 @@ class ThreadContextManager {
         Log.INSTANCE.close(endMsg);
         BlockContext popped = loggerCtxStack.get().pop();
         log.debug("Popped current context : {}-{} for thread {}", popped.blockInfo.getBlockName(), Util.TrimId(popped.blockInfo.getId()), Util.GetThreadInfo());
+
+        //If we flush here then it will flush when executor thread pops
     }
 
     static void PushBlockToThreadLogStack(Block subBlock) {
