@@ -24,7 +24,6 @@ public abstract class VFL {
         final BlockContext context = getContext();
         if (context.blockStarted.compareAndSet(false, true)) {
             final long startTimestamp = Instant.now().toEpochMilli();
-            System.out.printf("Starting %s at %d%n", context.blockInfo.getId(), startTimestamp);
             getBuffer().pushLogStartToBuffer(context.blockInfo.getId(), startTimestamp);
         }
     }
