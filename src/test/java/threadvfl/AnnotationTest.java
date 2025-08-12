@@ -2,19 +2,20 @@ package threadvfl;
 
 import dev.kuku.vfl.core.buffer.AsyncBuffer;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
-import dev.kuku.vfl.core.buffer.flushHandler.NestedJsonFlushHandler;
 import dev.kuku.vfl.core.buffer.flushHandler.VFLFlushHandler;
+import dev.kuku.vfl.core.buffer.flushHandler.VFLHubFlushHandler;
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.impl.annotation.*;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.concurrent.Executors;
 
 public class AnnotationTest {
     static VFLBuffer b;
 
     static VFLBuffer createBuffer(String fileName) {
-        VFLFlushHandler f = new NestedJsonFlushHandler("test/output/" + AnnotationTest.class.getSimpleName() + "/" + fileName + ".json");
+        VFLFlushHandler f = new VFLHubFlushHandler(URI.create("http://localhost:8080"));
         return new AsyncBuffer(100, 3000, 100, f, Executors.newVirtualThreadPerTaskExecutor(), Executors.newSingleThreadScheduledExecutor());
     }
 
