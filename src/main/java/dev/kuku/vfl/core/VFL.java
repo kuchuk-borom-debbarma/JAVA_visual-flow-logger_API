@@ -12,20 +12,19 @@ import dev.kuku.vfl.core.models.logs.enums.LogTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Slf4j
 public abstract class VFL {
 
-    protected final AtomicBoolean blockStarted = new AtomicBoolean(false);
 
     public final void ensureBlockStarted() {
         // Use compare-and-set for atomic, thread-safe initialization
-        if (blockStarted.compareAndSet(false, true)) {
-            final BlockContext context = getContext();
+        final BlockContext context = getContext();
+        if (context.blockStarted.compareAndSet(false, true)) {
             final long startTimestamp = Instant.now().toEpochMilli();
+            System.out.printf("Starting %s at %d%n", context.blockInfo.getId(), startTimestamp);
             getBuffer().pushLogStartToBuffer(context.blockInfo.getId(), startTimestamp);
         }
     }

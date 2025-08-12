@@ -27,6 +27,7 @@ public class VFLStarter {
 
         Block rootBlock = VFLFlowHelper.CreateBlockAndPush2Buffer(blockName, null, VFLInitializer.VFLAnnotationConfig.buffer);
         ThreadContextManager.PushBlockToThreadLogStack(rootBlock);
+        Log.INSTANCE.ensureBlockStarted();
         R r;
         try {
             r = supplier.get();
@@ -76,6 +77,7 @@ public class VFLStarter {
         }
 
         ThreadContextManager.PushBlockToThreadLogStack(continuationBlock);
+        Log.INSTANCE.ensureBlockStarted();
         R r;
         try {
             r = supplier.get();
@@ -108,6 +110,7 @@ public class VFLStarter {
                 VFLInitializer.VFLAnnotationConfig.buffer);
 
         ThreadContextManager.PushBlockToThreadLogStack(eventListenerBlock);
+        Log.INSTANCE.ensureBlockStarted();
         R r;
         try {
             r = supplier.get();

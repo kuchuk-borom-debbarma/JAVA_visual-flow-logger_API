@@ -207,7 +207,7 @@ public class Log {
         R result;
         try {
             // Execute the function with the detached block
-            // Note: We deliberately do NOT push this block to the thread stack
+            // Note: We deliberately do NOT push this block to the thread stack nor do we call ensureStarted because it needs to be started by receiver
             result = fn.apply(detachedBlock);
             return result;
         } catch (Exception e) {

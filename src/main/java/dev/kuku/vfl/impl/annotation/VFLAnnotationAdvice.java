@@ -172,6 +172,9 @@ public class VFLAnnotationAdvice {
 
         Objects.requireNonNull(ThreadContextManager.GetCurrentBlockContext()).currentLogId = subBlockStartLog.getId();
         ThreadContextManager.PushBlockToThreadLogStack(subBlock);
+        //Since
+        Log.INSTANCE.ensureBlockStarted();
+        System.out.println("Ensured that block is started");
     }
 
     public void on_exit(Method method, Object[] args, Object returnedValue, Throwable threw) {

@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed a bug in vfl futures where blocks name were assigned in caller thread">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Testing out VFL hub now">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,7 +166,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest">
+  <component name="RunManager" selected="JUnit.AnnotationTest.linear">
     <configuration name="AnnotationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
@@ -244,16 +248,16 @@
     </configuration>
     <list>
       <item itemvalue="JUnit.AnnotationTest" />
-      <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
       <item itemvalue="JUnit.AnnotationTest.async" />
+      <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
       <item itemvalue="JUnit.AnnotationTest.linear" />
       <item itemvalue="JUnit.AnnotationTest.test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest" />
         <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
-        <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.test" />
       </list>
@@ -351,15 +355,9 @@
       <workItem from="1754896179473" duration="21000" />
       <workItem from="1754906656435" duration="6478000" />
       <workItem from="1754924895590" duration="221000" />
-      <workItem from="1754980992856" duration="156000" />
-    </task>
-    <task id="LOCAL-00163" summary="Created wrappers and shit but need to test it out">
-      <option name="closed" value="true" />
-      <created>1754413155279</created>
-      <option name="number" value="00163" />
-      <option name="presentableId" value="LOCAL-00163" />
-      <option name="project" value="LOCAL" />
-      <updated>1754413155279</updated>
+      <workItem from="1754980992856" duration="239000" />
+      <workItem from="1754999801701" duration="508000" />
+      <workItem from="1755011843389" duration="1810000" />
     </task>
     <task id="LOCAL-00164" summary="Code refactor">
       <option name="closed" value="true" />
@@ -745,7 +743,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754914070459</updated>
     </task>
-    <option name="localTasksCounter" value="212" />
+    <task id="LOCAL-00212" summary="Testing out VFL hub now">
+      <option name="closed" value="true" />
+      <created>1754981224824</created>
+      <option name="number" value="00212" />
+      <option name="presentableId" value="LOCAL-00212" />
+      <option name="project" value="LOCAL" />
+      <updated>1754981224824</updated>
+    </task>
+    <option name="localTasksCounter" value="213" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -763,7 +769,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added road map" />
     <MESSAGE value="Created publish block" />
     <MESSAGE value="refactor: explicit block initialization and event/distributed logging support&#10;&#10;- Require explicit block start via ensureBlockStarted() for better control flow&#10;- Rename VFLBlock -&gt; SubBlock and VFLAnnotationProcessor -&gt; VFLInitializer&#10;- Rename ContextManager -&gt; ThreadContextManager for clarity&#10;- Add VFLOpStarter and FlowHandler annotations for flow control&#10;- Implement publish() method for event-driven logging with publisher blocks&#10;- Update VFLFutures for improved async operation handling&#10;- Add distributed logging infrastructure for cross-thread operations&#10;- Refactor Main.java to use new explicit initialization pattern&#10;- Update Design Documentation to reflect architectural changes&#10;- Remove log4j2.xml in favor of programmatic logging configuration&#10;&#10;Breaking changes:&#10;- @VFLBlock annotation renamed to @SubBlock&#10;- Block initialization now requires explicit start call&#10;- Context management API changes for thread safety" />
     <MESSAGE value="refactor: simplify VFLStarter and streamline context management&#10;&#10;- Complete VFLStarter class with both Supplier&lt;R&gt; and Runnable variants&#10;- Implement Runnable methods as delegates to Supplier versions for DRY principle&#10;- Simplify ThreadContextManager to focus on core context operations only&#10;- Remove complex VFL logger instance from ThreadContextManager&#10;- Move VFL instance creation to Log class as static singleton&#10;- Rename VFLBlockContext → BlockContext and VFLOpStarter → VFLStarter&#10;- Refactor VFL.getContext() to separate getContext() and getBuffer() methods&#10;- Update Configuration class name from VFLAnnotationConfig&#10;- Add AdviceOpLayer as public interface for package-private operations&#10;- Clean up imports and references throughout codebase&#10;&#10;Breaking changes:&#10;- ThreadContextManager API simplified (removed logger and complex context management)&#10;- VFL abstract class now requires separate getBuffer() implementation&#10;- Class renames: VFLBlockContext → BlockContext, VFLOpStarter → VFLStarter" />
@@ -788,7 +793,8 @@
     <MESSAGE value="Fixed bug where we were reinitializing the thread stack instead we now do not clean thread stack and we also push to thread stack" />
     <MESSAGE value="refactor(threading): improve thread context management and fix initialization logic&#10;&#10;• Simplified ThreadContextManager by removing redundant initialization methods&#10;• Fixed thread stack management to avoid premature cleanup and reinitializations  &#10;• Updated PushBlockToThreadLogStack to create new stack if null instead of requiring pre-initialization&#10;• Renamed CloseAndPopCurrentContext to PopCurrentStack for better clarity&#10;• Added automatic ThreadLocal cleanup when stack becomes empty&#10;• Updated VFLStarter methods to use simplified push/pop pattern instead of init/clean cycle&#10;• Fixed VFLFutures to use consistent thread context management&#10;• Corrected boolean logic in VFLInitializer.isDisabled() and initialize() methods&#10;• Added missing Consumer import to Log.java for CreateContinuationBlock overloads&#10;• Added convenience overloads for StartEventListener methods&#10;• Removed unnecessary thread cleanup calls that were causing context issues&#10;&#10;This refactoring eliminates thread context management bugs where stacks were being reinitialized instead of properly managed, improving reliability for distributed tracing and async operations." />
     <MESSAGE value="Fixed a bug in vfl futures where blocks name were assigned in caller thread" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed a bug in vfl futures where blocks name were assigned in caller thread" />
+    <MESSAGE value="Testing out VFL hub now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing out VFL hub now" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
