@@ -225,7 +225,7 @@ import java.time.Instant;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.core.helpers.Util.UID;
+import static dev.kuku.vfl.core.helpers.VFLHelper.UID;
 
 public class VFLFlowHelper {
 
@@ -279,7 +279,7 @@ package dev.kuku.vfl.impl.annotation;
 import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
-import dev.kuku.vfl.core.helpers.Util;
+import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -288,8 +288,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
-import static dev.kuku.vfl.core.helpers.Util.GetThreadInfo;
-import static dev.kuku.vfl.core.helpers.Util.TrimId;
+import static dev.kuku.vfl.core.helpers.VFLHelper.GetThreadInfo;
+import static dev.kuku.vfl.core.helpers.VFLHelper.TrimId;
 import static dev.kuku.vfl.core.helpers.VFLFlowHelper.CreateBlockAndPush2Buffer;
 import static dev.kuku.vfl.core.helpers.VFLFlowHelper.CreateLogAndPush2Buffer;
 
@@ -510,7 +510,7 @@ public class ContextManager {
 
 package dev.kuku.vfl.impl.annotation;
 
-import dev.kuku.vfl.core.helpers.Util;
+import dev.kuku.vfl.core.helpers.VFLHelper;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -624,7 +624,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
-import static dev.kuku.vfl.core.helpers.Util.GetMethodName;
+import static dev.kuku.vfl.core.helpers.VFLHelper.GetMethodName;
 
 public class VFLAnnotationAdvice {
     public static final Logger log = LoggerFactory.getLogger(VFLAnnotationAdvice.class);
@@ -757,7 +757,7 @@ public @interface VFLBlock {
 }
 package dev.kuku.vfl.impl.annotation;
 
-import dev.kuku.vfl.core.helpers.Util;
+import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
 import lombok.extern.slf4j.Slf4j;
 
@@ -765,7 +765,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.core.helpers.Util.GetThreadInfo;
+import static dev.kuku.vfl.core.helpers.VFLHelper.GetThreadInfo;
 import static dev.kuku.vfl.impl.annotation.ThreadContextManager.loggerCtxStack;
 import static dev.kuku.vfl.impl.annotation.ThreadContextManager.spawnedThreadContext;
 

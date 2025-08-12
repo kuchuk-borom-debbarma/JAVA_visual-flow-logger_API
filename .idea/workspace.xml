@@ -5,9 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(logging): ensure blocks are explicitly started and improve debug visibility&#10;&#10;- Removed `AtomicBoolean blockStarted` from `VFL` and now use `BlockContext.blockStarted` for thread-safe start tracking&#10;- Added explicit `ensureBlockStarted()` calls in `VFLStarter` and `VFLAnnotationAdvice` to guarantee block start before execution&#10;- Added debug `System.out.printf` in `VFL.ensureBlockStarted()` to log block start time and ID&#10;- Updated `Log` annotation helper to clearly document that detached blocks are not automatically started and must be started by the receiver&#10;- Changed default logging level in `log4j2.xml` from INFO to DEBUG for more verbose runtime tracing&#10;- Adjusted comments and console output for easier tracing during development">
+      <change afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mds/prompts/codebase.txt" beforeDir="false" afterPath="$PROJECT_DIR$/mds/prompts/codebase.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/Main.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/NoOpsBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/NoOpsBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/SynchronousBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/SynchronousBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/VFLBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/VFLBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferWithFlushHandlerBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/abstracts/VFLBufferWithFlushHandlerBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/VFLFlushHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/VFLFlushHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/VFLHubFlushHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/flushHandler/VFLHubFlushHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/Util.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLFlowHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLFlowHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/ThreadContextManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLFutures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLInitializer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLStarter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

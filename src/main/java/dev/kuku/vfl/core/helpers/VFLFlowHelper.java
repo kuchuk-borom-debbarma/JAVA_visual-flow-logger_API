@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static dev.kuku.vfl.core.helpers.Util.UID;
+import static dev.kuku.vfl.core.helpers.VFLHelper.UID;
 
 public class VFLFlowHelper {
 
