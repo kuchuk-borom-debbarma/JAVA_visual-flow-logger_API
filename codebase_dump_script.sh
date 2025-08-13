@@ -15,7 +15,7 @@ CLI_FOLDERS=("$@")  # Folders specified via command line
 # Default folders to scan (relative paths from where script is run)
 # These will be used if no folders are specified on command line
 DEFAULT_FOLDERS=(
-    "src"
+    "src/main/java"
     # Add your project-specific folders here
     # "frontend/src"
     # "backend/api"

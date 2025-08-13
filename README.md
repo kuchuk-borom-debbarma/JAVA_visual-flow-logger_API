@@ -379,6 +379,7 @@ Reduce buffer size or flush interval.
 ---
 
 ## API Reference
+[Complete API Reference](API_REFERENCE.MD)
 
 ### VFLStarter Class
 
