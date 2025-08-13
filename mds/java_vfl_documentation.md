@@ -1,907 +1,357 @@
-# Java VFL Client API - User Documentation
+# Visual Flow Logger (VFL)
 
-## Table of Contents
-1. [What is VFL?](#what-is-vfl)
-2. [Installation & Setup](#installation--setup)
-3. [VFL Variants Overview](#vfl-variants-overview)
-4. [Recommended Approach: ThreadVFL](#recommended-approach-threadvfl)
-5. [Fluent API with FluentThreadVFL](#fluent-api-with-fluentthreadvfl)
-6. [Logging Methods Explained](#logging-methods-explained)
-7. [Block Types & Flow Control](#block-types--flow-control)
-8. [Alternative: PassVFL](#alternative-passvfl)
-9. [Complete Examples](#complete-examples)
-10. [Configuration Reference](#VFLAnnotationConfig-reference)
+## What is Visual Flow Logger?
 
----
+**Visual Flow Logger (VFL)** is a **Structured Logging Framework** designed to capture and visualize how your applications actually execute. Unlike traditional flat logging that gives you disconnected log entries, VFL creates a structured, hierarchical representation of your program's flow that shows the relationships between different operations and how they unfold over time.
 
-## What is VFL?
+VFL supports **distributed tracing**, meaning the structured flow of a single operation can seamlessly span multiple services and systems, giving you a complete picture of complex workflows across your entire architecture.
 
-Visual Flow Logger (VFL) creates **hierarchical logs** that mirror your application's execution flow. Instead of flat, unstructured logs, VFL organizes your logs into meaningful blocks that show:
+## Why VFL?
 
-- **Method execution flow** - See which methods call which
-- **Parallel operations** - Track concurrent executions  
-- **Timing relationships** - Understand execution order
-- **Context preservation** - Maintain scope across complex operations
-
-**Traditional Logging:**
+Traditional logging gives you this:
 ```
-[INFO] Starting user registration
-[INFO] Validating email
-[INFO] Email is valid
-[INFO] Checking email availability  
-[INFO] Email available
-[INFO] Hashing password
-[INFO] Password hashed
-[INFO] Saving user
-[INFO] User saved with ID: 123
+[INFO] Processing user order
+[INFO] Validating payment method
+[INFO] Checking inventory 
+[INFO] Payment processed
+[INFO] Inventory updated
+[INFO] Order completed
 ```
 
-**VFL Hierarchical Logging:**
+VFL gives you this structured view:
 ```
-📁 User Registration Flow
-  ├── 📝 Starting user registration  
-  ├── 📁 Validation Block
-  │   ├── 📝 Validating email format
-  │   └── 📝 Email format is valid
-  ├── 📁 Parallel Operations
-  │   ├── 📁 Email Check (async)
-  │   │   ├── 📝 Querying database for email
-  │   │   └── 📝 Email is available
-  │   └── 📁 Password Hashing (async)  
-  │       ├── 📝 Generating salt
-  │       └── 📝 Password hashed successfully
-  ├── 📁 User Creation
-  │   ├── 📝 Creating user record
-  │   └── 📝 User saved with ID: 123
-  └── 📝 Registration completed successfully
+📁 Process User Order
+  ├── 📝 Starting order processing
+  ├── 📁 Payment Processing (parallel)
+  │   ├── 📝 Validating payment method
+  │   ├── 📝 Contacting payment gateway
+  │   └── 📝 Payment authorized
+  ├── 📁 Inventory Check (parallel)
+  │   ├── 📝 Checking product availability
+  │   └── 📝 Stock confirmed
+  ├── 📝 Creating order record
+  └── 📝 Order #12345 completed
 ```
 
----
+## Key Features
 
-## Installation & Setup
+### Multiple Flow Patterns
 
-### 1. Add Repository
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
+VFL can represent the full spectrum of modern application execution patterns:
+
+- **Sequential Flow** - Step-by-step operations that happen one after another
+- **Parallel Operations** - Multiple operations running simultaneously
+- **Fire-and-Forget** - Background tasks that don't need to report back
+- **Rejoining Parallel** - Parallel operations that eventually merge back into the main flow
+- **Event-Driven** - Publisher/subscriber patterns and event-driven architectures
+- **Cross-Service Flows** - Operations that span multiple microservices or distributed systems
+
+### Distributed Tracing
+
+VFL's structured approach naturally extends across service boundaries. When Service A calls Service B, VFL maintains the hierarchical structure, showing you:
+
+- How requests flow between services
+- Timing relationships across your architecture
+- The complete end-to-end journey of complex operations
+- Dependencies and interactions in distributed systems
+
+### Flexible Representation
+
+VFL adapts to your architecture rather than forcing you into a rigid logging pattern:
+
+- **Microservices**: Track requests as they flow through multiple services
+- **Monoliths**: Understand complex internal workflows and dependencies
+- **Hybrid Systems**: Get visibility into both internal operations and external service calls
+- **Event-Driven Systems**: Visualize how events propagate through your system
+
+## Design Philosophy
+
+### Everything is Blocks and Logs
+
+VFL is built on two fundamental concepts:
+
+#### **Blocks**
+Blocks represent **scopes of execution** - any meaningful boundary in your application:
+- Method calls
+- Service operations
+- Database transactions
+- API requests
+- Business processes
+- Or any other logical grouping that makes sense to you
+
+Each block contains:
+- **Unique identifier** for linking and referencing
+- **Human-readable name** describing its purpose
+- **Timestamps** showing when it started and ended
+- **Hierarchical relationships** to parent and child blocks
+
+#### **Logs**
+Logs are the **individual events** that happen within blocks:
+- Method entry and exit points
+- Decision points and conditions
+- Data transformations
+- External service calls
+- Error conditions
+- Or any other significant events
+
+Logs are:
+- **Chronologically ordered** within their block
+- **Linked to their containing block** for context
+- **Typed** to indicate their significance (info, warning, error, etc.)
+
+### Nested Structure
+
+The power of VFL comes from how blocks and logs work together:
+
+- **Blocks contain logs** showing step-by-step execution
+- **Logs can reference other blocks**, creating hierarchical relationships
+- **Child blocks** represent sub-operations or deeper detail levels
+- **Parent blocks** provide context for understanding the bigger picture
+
+This creates a natural tree structure that mirrors how applications actually execute - from high-level business operations down to detailed implementation steps.
+
+### User-Defined Semantics
+
+VFL doesn't impose rigid meanings on your log types or block structures. You decide:
+
+- **What constitutes a meaningful block** boundary
+- **How to categorize different types of logs** (info, warning, error, debug, etc.)
+- **What level of detail** to capture
+- **How to structure** your hierarchical flows
+
+This flexibility means VFL can adapt to any application architecture, programming paradigm, or business domain.
+
+## The VFL Advantage
+
+VFL transforms logging from a debugging afterthought into a powerful tool for:
+
+- **Understanding complex systems** through clear visual structure
+- **Debugging distributed applications** with end-to-end trace visibility
+- **Performance analysis** with timing relationships preserved
+- **System monitoring** with meaningful operational context
+- **Team collaboration** through shared understanding of application flow
+
+Whether you're building a simple application or managing a complex distributed system, VFL provides the structured visibility you need to understand, debug, and optimize your software.
+
+## Flow Examples
+
+### Simple Sequential Flow
+
+```mermaid
+graph TD
+    A[📁 User Registration Process] --> B[📝 Starting user registration for email: john@example.com]
+    A --> C[📁 Email Validation]
+    C --> C1[📝 Checking email format]
+    C --> C2[📝 Email format is valid]
+    C --> C3[📝 Checking if email already exists]
+    C --> C4[📝 Email is available]
+    A --> D[📁 Password Processing]
+    D --> D1[📝 Validating password strength]
+    D --> D2[📝 Password meets requirements]
+    D --> D3[📝 Generating password hash]
+    D --> D4[📝 Password hashed successfully]
+    A --> E[📁 Database Operations]
+    E --> E1[📝 Creating user record]
+    E --> E2[📝 Saving to users table]
+    E --> E3[📝 User created with ID: 12345]
+    A --> F[📝 Registration completed successfully]
 ```
 
-### 2. Add Dependency
-```xml
-<dependency>
-    <groupId>com.github.kuchuk-borom-debbarma</groupId>
-    <artifactId>vfl_java</artifactId>
-    <version>0.1.1-alpha</version>
-</dependency>
-```
+### Parallel Operations with Rejoining
 
-### 3. Basic Setup
-```java
-// Create flush handler (where logs go)
-ThreadSafeInMemoryFlushHandlerImpl flushHandler = new ThreadSafeInMemoryFlushHandlerImpl();
-
-// Create buffer (manages log storage and flushing)
-VFLBuffer buffer = new ThreadSafeAsyncVFLBuffer(
-    100,                              // Buffer size
-    5000,                            // Flush every 5 seconds
-    flushHandler,                    // Where to send logs
-    Executors.newFixedThreadPool(2)  // Thread pool for async ops
-);
-```
-
----
-
-## VFL Variants Overview
-
-VFL provides four main approaches for different use cases:
-
-| Variant | Best For | Context Management | Complexity | Notes |
-|---------|----------|-------------------|------------|-------|
-| **ThreadVFL** ⭐ | Most applications | Automatic (ThreadLocal) | Simple | Static methods, automatic context |
-| **FluentThreadVFL** ⭐ | Expressive, readable code | Automatic (ThreadLocal) | Simple | Built on ThreadVFL, fluent syntax |
-| **PassVFL** | Legacy/specific needs | Manual passing | Complex | Manual logger passing |
-| **FluentVFL** | PassVFL with fluent API | Manual passing | Complex | Fluent wrapper for any VFL instance |
-
-### **Recommended: ThreadVFL + FluentThreadVFL**
-- **Automatic context management** - No need to pass loggers around
-- **Thread-safe** - Works seamlessly in multi-threaded applications  
-- **Clean syntax** - Static methods, fluent API
-- **Zero boilerplate** - Just start logging
-
-### **FluentVFL - Universal Fluent Wrapper**
-- **Works with any VFL instance** - Can wrap PassVFL, ThreadVFL, or any VFL implementation
-- **Manual instantiation required** - Must create new instance for each block/context
-- **Flexible** - Provides fluent API for PassVFL users
-
----
-
-## Recommended Approach: ThreadVFL
-
-ThreadVFL uses ThreadLocal storage to automatically manage logging context. You never need to pass logger instances around - just use static methods anywhere in your code.
-
-### Basic Structure
-```java
-ThreadVFL.Runner.Instance.StartVFL("Root Block Name", buffer, () -> {
-    // Your application logic with VFL logging
-    ThreadVFL.Log("This automatically knows which block it belongs to");
-    return null; // or return your result
-});
-```
-
-### Simple Logging Example
-```java
-ThreadVFL.Runner.Instance.StartVFL("User Service", buffer, () -> {
-    ThreadVFL.Log("Starting user service operation");
-    ThreadVFL.Warn("This is a warning message");
-    ThreadVFL.Error("This is an error message");
+```mermaid
+graph TD
+    A[📁 E-commerce Order Processing] --> B[📝 Processing order #ORD-789]
+    A --> C[📝 Starting parallel validations]
     
-    String result = "operation_completed";
-    ThreadVFL.Log("Service completed with result: {}", result);
-    return result;
-});
+    %% Parallel branches
+    A --> D[📁 Payment Authorization ⏱️ 1.2s]
+    A --> E[📁 Inventory Check ⏱️ 0.8s]
+    
+    %% Payment branch
+    D --> D1[📝 Validating credit card details]
+    D --> D2[📝 Contacting payment gateway]
+    D --> D3[📝 Payment authorized: $149.99]
+    D --> D4[📝 Transaction ID: TXN-ABC123]
+    
+    %% Inventory branch  
+    E --> E1[📝 Checking product availability]
+    E --> E2[📝 Product SKU-001: 15 units available]
+    E --> E3[📝 Product SKU-002: 8 units available]
+    E --> E4[📝 All items in stock - reserving inventory]
+    
+    %% Rejoining
+    D4 --> F[📝 Both validations completed - proceeding]
+    E4 --> F
+    F --> G[📁 Order Creation]
+    G --> G1[📝 Generating order confirmation]
+    G --> G2[📝 Updating inventory levels]
+    G --> G3[📝 Order record saved]
+    A --> H[📝 Order processing completed]
 ```
 
-### Hierarchical Blocks
-```java
-ThreadVFL.Runner.Instance.StartVFL("Main Process", buffer, () -> {
-    ThreadVFL.Log("Main process started");
+### Fire-and-Forget Background Operations
+
+```mermaid
+graph TD
+    A[📁 User Profile Update] --> B[📝 Updating profile for user: john_doe]
+    A --> C[📁 Profile Validation]
+    C --> C1[📝 Validating profile fields]
+    C --> C2[⚠️ Profile image size is large 2.5MB]
+    C --> C3[📝 Validation passed]
     
-    // Sequential sub-block
-    String processedData = ThreadVFL.CallPrimarySubBlock(
-        "Data Processing",              // Block name
-        "Starting data processing",     // Start message  
-        () -> {
-            ThreadVFL.Log("Loading raw data");
-            ThreadVFL.Log("Validating data format");
-            ThreadVFL.Log("Transforming data");
-            return "processed_data_v1";
-        },
-        result -> "Processing completed: " + result  // End message
-    );
+    A --> D[📁 Database Update]
+    D --> D1[📝 Updating user_profiles table]
+    D --> D2[📝 Profile updated successfully]
     
-    ThreadVFL.Log("Main process completed with: {}", processedData);
-    return null;
-});
+    %% Fire-and-forget operations (parallel, no return)
+    A --> E[📁 Cache Invalidation 🔥]
+    A --> F[📁 Analytics Tracking 🔥]
+    A --> G[📁 Email Notification 🔥]
+    
+    E --> E1[📝 Invalidating user cache]
+    E --> E2[📝 Cache cleared for user: john_doe]
+    
+    F --> F1[📝 Recording profile update event]
+    F --> F2[📝 Event sent to analytics service]
+    
+    G --> G1[📝 Preparing profile update email]
+    G --> G2[📝 Sending notification email]
+    G --> G3[📝 Email queued successfully]
+    
+    A --> H[📝 Profile update completed - background tasks initiated]
+    
+    %% Styling for fire-and-forget
+    classDef fireForget fill:#ffeb3b,stroke:#f57f17,stroke-width:2px,stroke-dasharray: 5 5
+    class E,F,G fireForget
 ```
 
----
+### Event-Driven Architecture
 
-## Fluent API with FluentThreadVFL
-
-FluentThreadVFL provides a more expressive, chainable API for complex operations. It's built on top of ThreadVFL and shares the same automatic context management.
-
-### Basic Fluent Logging
-```java
-ThreadVFL.Runner.Instance.StartVFL("Fluent Example", buffer, () -> {
-    // Fluent logging with parameter substitution
-    FluentThreadVFL.Log("Processing user {} with email {}", "john_doe", "john@example.com");
-    FluentThreadVFL.Warn("Memory usage is {}% - consider optimization", 85);
-    FluentThreadVFL.Error("Failed to connect to external service");
+```mermaid
+graph TD
+    A[📁 Order Placed Event Handler] --> B[📝 Received order placed event: ORDER-999]
+    A --> C[📊 Publishing Event: Order Confirmed]
+    C --> C1[📝 Event published with payload]
     
-    return null;
-});
+    %% Event listeners (parallel processing)
+    C --> D[📡 Inventory Service Listener]
+    C --> E[📡 Shipping Service Listener]  
+    C --> F[📡 Customer Service Listener]
+    
+    %% Inventory Service
+    D --> D1[📝 Listening for order confirmed events]
+    D --> D2[📝 Processing order: ORDER-999]
+    D --> D3[📝 Updating stock levels]
+    D --> D4[📝 Stock updated for 3 items]
+    D --> D5[📝 Inventory processing completed]
+    
+    %% Shipping Service
+    E --> E1[📝 Listening for order confirmed events]
+    E --> E2[📝 Creating shipping label for ORDER-999]
+    E --> E3[📝 Calculating shipping cost: $12.99]
+    E --> E4[📝 Scheduling pickup with carrier]
+    E --> E5[📝 Shipping arranged - tracking: TRACK-456]
+    
+    %% Customer Service
+    F --> F1[📝 Listening for order confirmed events]
+    F --> F2[📝 Sending order confirmation email]
+    F --> F3[📝 Updating customer order history]
+    F --> F4[📝 Customer notification completed]
+    
+    A --> G[📝 All event listeners processed successfully]
+    
+    %% Styling
+    classDef publisher fill:#4caf50,stroke:#2e7d32,stroke-width:3px
+    classDef listener fill:#2196f3,stroke:#1565c0,stroke-width:2px
+    class C publisher
+    class D,E,F listener
 ```
 
-### Fluent Function Calls
-```java
-ThreadVFL.Runner.Instance.StartVFL("Calculation Service", buffer, () -> {
-    // Execute function and log result
-    int result = FluentThreadVFL.Call(() -> calculateSomething(10, 20))
-        .asLog(value -> "Calculation result: " + value);
+### Distributed Cross-Service Flow
+
+```mermaid
+graph TD
+    A[📁 API Gateway: User Authentication] --> B[📝 Received login request for: john@example.com]
+    A --> C[📝 Routing to authentication service]
     
-    // Execute with warning level
-    String status = FluentThreadVFL.Call(() -> checkSystemHealth())
-        .asWarn(health -> "System health: " + health);
-        
-    return result;
-});
+    A --> D[🌐 Auth Service: Validate Credentials]
+    D --> D1[📝 Processing authentication request]
+    D --> D2[📝 Looking up user in database]
+    D --> D3[📁 Password Verification]
+    D3 --> D3a[📝 Retrieving stored password hash]
+    D3 --> D3b[📝 Comparing provided password]
+    D3 --> D3c[📝 Password verification successful]
+    D --> D4[📝 Calling token service for JWT generation]
+    
+    D --> E[🌐 Token Service: Generate JWT]
+    E --> E1[📝 Generating JWT token for user: 12345]
+    E --> E2[📝 Setting token expiration: 24 hours]
+    E --> E3[📝 Signing token with private key]
+    E --> E4[📝 Token generated successfully]
+    E --> E5[📝 Returning to auth service]
+    
+    E --> F[🌐 Auth Service: Complete Authentication]
+    F --> F1[📝 Received JWT token from token service]
+    F --> F2[📝 Recording login event in audit log]
+    F --> F3[📝 Authentication completed successfully]
+    F --> F4[📝 Returning to API gateway]
+    
+    F --> G[🌐 API Gateway: Return Response]
+    G --> G1[📝 Received successful auth response]
+    G --> G2[📝 Adding security headers]
+    G --> G3[📝 Returning JWT to client]
+    G --> G4[📝 Authentication flow completed total time: 245ms]
+    
+    %% Styling for cross-service calls
+    classDef crossService fill:#ff9800,stroke:#e65100,stroke-width:3px
+    class D,E,F,G crossService
 ```
 
-### Fluent Sub-blocks
-```java
-ThreadVFL.Runner.Instance.StartVFL("Order Processing", buffer, () -> {
-    FluentThreadVFL.Log("Starting order processing");
+### Error Handling and Recovery
+
+```mermaid
+graph TD
+    A[📁 Payment Processing with Fallback] --> B[📝 Processing payment for order: ORD-555]
     
-    // Primary sub-block (sequential)
-    Order validatedOrder = FluentThreadVFL.Call(() -> validateOrder(order))
-        .asSubBlock("Order Validation")
-        .withStartMessage("Validating order for customer: " + order.getCustomerId())
-        .withEndMessageMapper(o -> "Validation completed - Order total: $" + o.getTotal())
-        .startPrimary();
+    A --> C[📁 Primary Payment Gateway]
+    C --> C1[📝 Attempting payment with Stripe]
+    C --> C2[📝 Sending payment request]
+    C --> C3[❌ Payment gateway timeout after 5 seconds]
+    C --> C4[❌ Primary gateway failed - initiating fallback]
     
-    // Runnable sub-block
-    FluentThreadVFL.RunSubBlock(() -> sendConfirmationEmail(validatedOrder))
-        .withBlockName("Email Notification")  
-        .startPrimary();
-        
-    FluentThreadVFL.Log("Order processing completed");
-    return validatedOrder;
-});
+    C4 --> D[📁 Fallback Payment Gateway]
+    D --> D1[📝 Switching to PayPal gateway]
+    D --> D2[⚠️ Using fallback payment method]
+    D --> D3[📝 Sending payment request to PayPal]
+    D --> D4[📝 Payment processed successfully]
+    D --> D5[📝 Transaction ID: PP-789-XYZ]
+    
+    %% Fire-and-forget notification
+    C4 --> E[📁 Notification Service 🔥]
+    E --> E1[📝 Alerting ops team about gateway failure]
+    E --> E2[📝 Alert sent to monitoring system]
+    
+    A --> F[📝 Payment completed using fallback method]
+    
+    %% Styling
+    classDef error fill:#f44336,stroke:#c62828,stroke-width:2px
+    classDef warning fill:#ff9800,stroke:#f57c00,stroke-width:2px
+    classDef fireForget fill:#ffeb3b,stroke:#f57f17,stroke-width:2px,stroke-dasharray: 5 5
+    
+    class C3,C4 error
+    class D2 warning
+    class E fireForget
 ```
 
----
-
-## Logging Methods Explained
-
-### Basic Logging Methods
-
-#### `Log()` - Information Level
-Use for general information about application flow:
-```java
-ThreadVFL.Log("User authentication successful");
-ThreadVFL.Log("Processing {} records", recordCount);
-
-// Fluent version with parameter substitution
-FluentThreadVFL.Log("User {} logged in from IP {}", username, ipAddress);
-```
-
-#### `Warn()` - Warning Level  
-Use for concerning situations that don't stop execution:
-```java
-ThreadVFL.Warn("High memory usage detected: 85%");
-ThreadVFL.Warn("Retry attempt {} of {}", currentAttempt, maxAttempts);
-
-// Fluent version
-FluentThreadVFL.Warn("Database connection pool is {}% full", utilization);
-```
-
-#### `Error()` - Error Level
-Use for error conditions and exceptions:
-```java
-ThreadVFL.Error("Failed to connect to payment gateway");
-ThreadVFL.Error("Invalid user input: " + validationResult.getErrors());
-
-// Fluent version  
-FluentThreadVFL.Error("Critical system error occurred");
-```
-
-### Function Logging Methods
-
-These methods execute functions and automatically log their results:
-
-#### `LogFn()` - Execute and Log Result
-```java
-// Execute function and log result at INFO level
-String result = ThreadVFL.LogFn(
-    () -> processPayment(paymentRequest),           // Function to execute
-    payment -> "Payment processed: " + payment.getId()  // How to format result
-);
-
-// Fluent version
-String result = FluentThreadVFL.Call(() -> processPayment(paymentRequest))
-    .asLog(payment -> "Payment processed: " + payment.getId());
-```
-
-#### `WarnFn()` - Execute and Log Result as Warning
-```java
-// Execute function and log result at WARN level
-Integer connectionCount = ThreadVFL.WarnFn(
-    () -> database.getActiveConnectionCount(),
-    count -> "Active DB connections: " + count + " (threshold: 50)",
-    maxConnections  // Additional formatting parameters
-);
-
-// Fluent version
-Integer count = FluentThreadVFL.Call(() -> database.getActiveConnectionCount())
-    .asWarn(c -> "High connection usage: " + c);
-```
-
-#### `ErrorFn()` - Execute and Log Result as Error  
-```java
-// Execute function and log result at ERROR level (useful for error recovery)
-String fallbackResult = ThreadVFL.ErrorFn(
-    () -> getFallbackData(),
-    data -> "Using fallback data: " + data.getSource()
-);
-
-// Fluent version
-String fallback = FluentThreadVFL.Call(() -> getFallbackData())
-    .asError(data -> "Fallback activated: " + data.getSource());
-```
-
----
-
-## Block Types & Flow Control
-
-### Primary Sub-blocks (Sequential)
-**When to use**: Sequential operations that are part of the main flow
-
-```java
-// ThreadVFL
-String result = ThreadVFL.CallPrimarySubBlock(
-    "Database Operation",                    // Block name
-    "Querying user database",               // Start message
-    () -> {
-        ThreadVFL.Log("Connecting to database");
-        ThreadVFL.Log("Executing query: SELECT * FROM users");
-        return userRepository.findAll();
-    },
-    users -> "Found " + users.size() + " users"  // End message
-);
-
-// FluentThreadVFL  
-List<User> users = FluentThreadVFL.Call(() -> userRepository.findAll())
-    .asSubBlock("Database Query")
-    .withStartMessage("Fetching all users from database")
-    .withEndMessageMapper(userList -> "Retrieved " + userList.size() + " users")
-    .startPrimary();
-```
-
-### Secondary Joining Blocks (Parallel)
-**When to use**: Operations that run in parallel but need to join back to main flow
-
-```java
-ThreadVFL.Runner.Instance.StartVFL("Parallel Data Processing", buffer, () -> {
-    ThreadVFL.Log("Starting parallel operations");
-    
-    // Both operations run in parallel
-    CompletableFuture<String> userData = ThreadVFL.CallSecondaryJoiningBlock(
-        "User Data Fetch",
-        "Fetching user profile data", 
-        () -> {
-            ThreadVFL.Log("Calling user service API");
-            Thread.sleep(1000); // Simulate API call
-            return "user_profile_data";
-        },
-        data -> "User data retrieved: " + data
-    );
-    
-    CompletableFuture<String> preferences = ThreadVFL.CallSecondaryJoiningBlock(
-        "Preferences Fetch", 
-        "Fetching user preferences",
-        () -> {
-            ThreadVFL.Log("Querying preferences database");
-            Thread.sleep(800); // Simulate DB query
-            return "user_preferences"; 
-        },
-        prefs -> "Preferences loaded: " + prefs,
-        Executors.newVirtualThreadPerTaskExecutor() // Custom executor
-    );
-    
-    // Wait for both to complete (they ran in parallel)
-    String user = userData.get();
-    String prefs = preferences.get();
-    
-    ThreadVFL.Log("Both operations completed - User: {}, Prefs: {}", user, prefs);
-    return null;
-});
-
-// FluentThreadVFL version
-CompletableFuture<String> asyncResult = FluentThreadVFL.Call(() -> expensiveOperation())
-    .asSubBlock("Expensive Operation")  
-    .withStartMessage("Starting expensive async operation")
-    .withEndMessageMapper(result -> "Operation completed with: " + result)
-    .startSecondaryJoining(customExecutor);
-```
-
-### Secondary Non-Joining Blocks (Fire and Forget)
-**When to use**: Background operations that don't need to join back (logging, notifications, cleanup)
-
-```java
-// ThreadVFL
-ThreadVFL.CallSecondaryNonJoiningBlock(
-    "Audit Logging",
-    "Recording user action for audit", 
-    () -> {
-        ThreadVFL.Log("Preparing audit log entry");
-        ThreadVFL.Log("Writing to audit database");
-        auditService.logUserAction(userAction);
-    },
-    Executors.newSingleThreadExecutor()
-);
-
-// FluentThreadVFL
-FluentThreadVFL.RunSubBlock(() -> {
-        cleanupTempFiles();
-        notifyAdministrators();
-    })
-    .withBlockName("Background Cleanup")
-    .startSecondaryNonJoining(backgroundExecutor);
-```
-
-### Event Publisher/Listener Pattern
-**When to use**: Event-driven architectures, pub/sub patterns
-
-```java
-ThreadVFL.Runner.Instance.StartVFL("Event-Driven Process", buffer, () -> {
-    ThreadVFL.Log("Starting event-driven workflow");
-    
-    // Create event publisher
-    EventPublisherBlock orderEvent = ThreadVFL.CreateEventPublisherBlock(
-        "Order Placed Event",
-        "Order placed by customer: customer_123"
-    );
-    
-    // Multiple listeners handle the event
-    processInventoryUpdate(orderEvent);
-    sendOrderConfirmation(orderEvent); 
-    updateCustomerRewards(orderEvent);
-    
-    ThreadVFL.Log("Event processing initiated");
-    return null;
-});
-
-// Event listener implementation  
-private void processInventoryUpdate(EventPublisherBlock event) {
-    ThreadVFL.Runner.Instance.StartEventListenerLogger(
-        "Inventory Update",           // Listener name
-        "Updating inventory levels",  // Start message
-        buffer,                       // Same buffer
-        event,                        // Event to listen to
-        () -> {
-            ThreadVFL.Log("Checking current inventory levels");
-            ThreadVFL.Log("Updating stock quantities");
-            ThreadVFL.Log("Inventory update completed");
-        }
-    );
-}
-```
-
----
-
-## Alternative: PassVFL
-
-PassVFL requires manually passing logger instances but gives you complete control over the logging context. Use this when:
-- You need explicit control over logger lifecycle
-- Working with legacy systems that can't use ThreadLocal
-- Building frameworks or libraries
-
-### Basic PassVFL Usage
-```java
-PassVFL.Runner runner = new PassVFL.Runner();
-
-runner.StartVFL("Manual Context Example", buffer, (rootLogger) -> {
-    rootLogger.log("Starting with root logger");
-    
-    // Primary sub-block - logger is passed automatically
-    String result = rootLogger.callPrimarySubBlock(
-        "Processing Block",
-        "Starting data processing",
-        (subLogger) -> {
-            subLogger.log("Using sub-block logger");
-            subLogger.warn("This is within the sub-block context");
-            return "processed_data";
-        },
-        r -> "Processing completed: " + r
-    );
-    
-    rootLogger.log("Main process completed: " + result);
-    return result;
-});
-```
-
-### PassVFL with Manual Context Management
-```java
-// When you need to pass loggers to other methods
-private void processUserData(PassVFL logger, UserData data) {
-    logger.log("Processing user: " + data.getId());
-    
-    // Create sub-block and pass logger to another method
-    String result = logger.callPrimarySubBlock(
-        "Validation",
-        "Validating user data",  
-        (validationLogger) -> {
-            return validateUser(validationLogger, data);
-        },
-        r -> "Validation result: " + r
-    );
-    
-    logger.log("User processing completed: " + result);
-}
-
-private String validateUser(PassVFL logger, UserData data) {
-    logger.log("Checking user email format");
-    logger.log("Verifying user age");
-    return "valid";
-}
-```
-
-## FluentVFL - Universal Fluent Wrapper
-
-FluentVFL is a universal fluent wrapper that can work with **any VFL instance**. Unlike FluentThreadVFL which is tied to ThreadLocal context, FluentVFL must be manually instantiated for each logger instance.
-
-### Key Characteristics:
-- **Manual instantiation required** - Create new FluentVFL for each VFL instance
-- **Works with any VFL** - PassVFL, ThreadVFL, or custom VFL implementations
-- **Block-scoped** - Each sub-block needs its own FluentVFL instance
-- **Flexible** - Provides fluent API capabilities to any VFL variant
-
-### FluentVFL with PassVFL
-```java
-PassVFL.Runner runner = new PassVFL.Runner();
-
-runner.StartVFL("FluentVFL Example", buffer, (rootLogger) -> {
-    // Create FluentVFL wrapper for root logger
-    FluentVFL rootFluent = new FluentVFL(rootLogger);
-    
-    rootFluent.log("Starting with fluent PassVFL wrapper");
-    rootFluent.warn("This uses fluent syntax with PassVFL backend");
-    
-    // Execute function with fluent API
-    String result = rootFluent.call(() -> "processed_data")
-        .asLog(data -> "Processing completed: " + data);
-    
-    // Primary sub-block with fluent API
-    String processedResult = rootLogger.callPrimarySubBlock(
-        "Fluent Processing",
-        "Starting fluent processing block",
-        (subLogger) -> {
-            // Create new FluentVFL for sub-block logger
-            FluentVFL subFluent = new FluentVFL(subLogger);
-            
-            subFluent.log("Using fluent API in sub-block with {} parameter", result);
-            
-            return subFluent.call(() -> processData(result))
-                .asSubBlock("Data Processing")
-                .withStartMessage("Processing data: " + result)
-                .withEndMessageMapper(r -> "Data processed successfully: " + r)
-                .startPrimary();
-        },
-        r -> "Fluent processing completed: " + r
-    );
-    
-    rootFluent.log("All processing completed with result: {}", processedResult);
-    return processedResult;
-});
-```
-
-### FluentVFL Method Chaining
-```java
-// With PassVFL instance
-PassVFL passLogger = getPassVFLInstance();
-FluentVFL fluent = new FluentVFL(passLogger);
-
-// Fluent logging with parameter substitution
-fluent.log("Processing user {} with status {}", userId, status);
-fluent.warn("Memory usage at {}% - threshold is {}%", usage, threshold);
-
-// Fluent function calls
-String result = fluent.call(() -> calculateSomething())
-    .asLog(value -> "Calculation result: " + value);
-
-// Fluent sub-blocks (creates new sub-logger automatically)
-Order order = fluent.call(() -> processOrder(orderRequest))
-    .asSubBlock("Order Processing")
-    .withStartMessage("Processing order for customer: " + customerId)
-    .withEndMessageMapper(o -> "Order processed with ID: " + o.getId())
-    .startPrimary();
-
-// Runnable sub-blocks
-fluent.runSubBlock(() -> sendNotification(order))
-    .withBlockName("Notification Service")
-    .startPrimary();
-```
-
-### When to Use FluentVFL vs FluentThreadVFL
-
-#### Use FluentThreadVFL when:
-- Using ThreadVFL (recommended approach)
-- Want automatic context management
-- Building new applications
-- Need static method convenience
-
-```java
-// FluentThreadVFL - automatic context, static methods
-ThreadVFL.Runner.Instance.StartVFL("Example", buffer, () -> {
-    FluentThreadVFL.Log("Automatic context management");
-    
-    String result = FluentThreadVFL.Call(() -> doSomething())
-        .asSubBlock("Processing")
-        .startPrimary();
-    
-    return result;
-});
-```
-
-#### Use FluentVFL when:
-- Using PassVFL or custom VFL implementations
-- Need explicit control over logger instances
-- Working with legacy systems
-- Building frameworks that need flexibility
-
-```java
-// FluentVFL - manual instantiation, explicit control
-PassVFL.Runner runner = new PassVFL.Runner();
-runner.StartVFL("Example", buffer, (passLogger) -> {
-    FluentVFL fluent = new FluentVFL(passLogger);  // Manual creation
-    fluent.log("Explicit logger management");
-    
-    String result = passLogger.callPrimarySubBlock("Processing", "Starting", (subLogger) -> {
-        FluentVFL subFluent = new FluentVFL(subLogger);  // New instance for sub-block
-        return subFluent.call(() -> doSomething())
-            .asLog(r -> "Result: " + r);
-    }, r -> "Completed: " + r);
-    
-    return result;
-});
-```
-
-### FluentVFL Limitations
-- **Manual management** - Must create new instance for each logger
-- **Memory overhead** - Additional wrapper objects
-- **Complexity** - More verbose than FluentThreadVFL
-- **Block scope** - Each sub-block needs new FluentVFL instance
-
-**Recommendation**: Use FluentThreadVFL unless you specifically need the flexibility of PassVFL with fluent syntax.
-
----
-
-## Complete Examples
-
-### Web Service Example
-```java
-@Service
-public class OrderService {
-    private final VFLBuffer buffer;
-    
-    public OrderService() {
-        ThreadSafeInMemoryFlushHandlerImpl flushHandler = new ThreadSafeInMemoryFlushHandlerImpl();
-        this.buffer = new ThreadSafeAsyncVFLBuffer(200, 3000, flushHandler,
-            Executors.newFixedThreadPool(4));
-    }
-    
-    public Order processOrder(CreateOrderRequest request) {
-        return ThreadVFL.Runner.Instance.StartVFL("Process Order", buffer, () -> {
-            FluentThreadVFL.Log("Processing order for customer: {}", request.getCustomerId());
-            
-            // Sequential validation
-            OrderValidation validation = FluentThreadVFL.Call(() -> validateOrder(request))
-                .asSubBlock("Order Validation")
-                .withStartMessage("Validating order details and customer")
-                .withEndMessageMapper(v -> "Validation completed - Status: " + v.getStatus())
-                .startPrimary();
-                
-            if (!validation.isValid()) {
-                FluentThreadVFL.Error("Order validation failed: {}", validation.getErrors());
-                throw new InvalidOrderException(validation.getErrors());
-            }
-            
-            // Parallel operations
-            CompletableFuture<InventoryCheck> inventoryFuture = FluentThreadVFL.Call(() -> checkInventory(request))
-                .asSubBlock("Inventory Check")
-                .withStartMessage("Checking product availability")  
-                .withEndMessageMapper(check -> "Inventory status: " + check.getStatus())
-                .startSecondaryJoining(null);
-                
-            CompletableFuture<PaymentAuth> paymentFuture = FluentThreadVFL.Call(() -> authorizePayment(request))
-                .asSubBlock("Payment Authorization")
-                .withStartMessage("Authorizing payment method")
-                .withEndMessageMapper(auth -> "Payment authorized: " + auth.getTransactionId())
-                .startSecondaryJoining(Executors.newVirtualThreadPerTaskExecutor());
-            
-            // Wait for parallel operations
-            InventoryCheck inventory = inventoryFuture.get();
-            PaymentAuth payment = paymentFuture.get();
-            
-            if (!inventory.isAvailable()) {
-                FluentThreadVFL.Error("Insufficient inventory for order");
-                throw new InsufficientInventoryException();
-            }
-            
-            // Create order
-            Order order = FluentThreadVFL.Call(() -> createOrderRecord(request, payment))
-                .asSubBlock("Order Creation")
-                .withStartMessage("Creating order record in database")
-                .withEndMessageMapper(o -> "Order created with ID: " + o.getId())
-                .startPrimary();
-            
-            // Fire-and-forget operations
-            FluentThreadVFL.RunSubBlock(() -> sendOrderConfirmation(order))
-                .withBlockName("Order Confirmation Email")
-                .startSecondaryNonJoining(null);
-                
-            FluentThreadVFL.RunSubBlock(() -> updateInventoryLevels(request))
-                .withBlockName("Inventory Update")
-                .startSecondaryNonJoining(null);
-            
-            FluentThreadVFL.Log("Order processing completed successfully - Order ID: {}", order.getId());
-            return order;
-        });
-    }
-    
-    private OrderValidation validateOrder(CreateOrderRequest request) {
-        FluentThreadVFL.Log("Validating customer ID: {}", request.getCustomerId());
-        FluentThreadVFL.Log("Validating {} order items", request.getItems().size());
-        FluentThreadVFL.Log("Validating payment method: {}", request.getPaymentMethod());
-        return new OrderValidation(true, "Valid");
-    }
-    
-    private InventoryCheck checkInventory(CreateOrderRequest request) {
-        FluentThreadVFL.Log("Checking inventory for {} items", request.getItems().size());
-        // Simulate inventory check
-        try { Thread.sleep(500); } catch (InterruptedException e) {}
-        FluentThreadVFL.Log("All items are available in stock");
-        return new InventoryCheck(true, "Available");
-    }
-    
-    private PaymentAuth authorizePayment(CreateOrderRequest request) {
-        FluentThreadVFL.Log("Contacting payment gateway");
-        FluentThreadVFL.Log("Authorizing payment of ${}", request.getTotalAmount());
-        // Simulate payment authorization
-        try { Thread.sleep(800); } catch (InterruptedException e) {}
-        String transactionId = "TXN_" + System.currentTimeMillis();
-        FluentThreadVFL.Log("Payment authorized with transaction ID: {}", transactionId);
-        return new PaymentAuth(true, transactionId);
-    }
-}
-```
-
-### Event-Driven Microservice Example
-```java
-@Component
-public class UserRegistrationService {
-    
-    public void handleUserRegistration(UserRegisteredEvent event) {
-        ThreadVFL.Runner.Instance.StartVFL("User Registration Handler", buffer, () -> {
-            FluentThreadVFL.Log("Handling user registration for: {}", event.getEmail());
-            
-            // Create event for other services
-            EventPublisherBlock welcomeEvent = ThreadVFL.CreateEventPublisherBlock(
-                "New User Welcome",
-                "New user registered: " + event.getEmail()
-            );
-            
-            // Multiple services handle the welcome event
-            setupUserProfile(welcomeEvent, event);
-            sendWelcomeEmail(welcomeEvent, event);  
-            createUserPreferences(welcomeEvent, event);
-            recordAnalytics(welcomeEvent, event);
-            
-            FluentThreadVFL.Log("User registration handling completed");
-            return null;
-        });
-    }
-    
-    private void setupUserProfile(EventPublisherBlock event, UserRegisteredEvent userEvent) {
-        ThreadVFL.Runner.Instance.StartEventListenerLogger(
-            "Profile Setup",
-            "Setting up user profile",
-            buffer,
-            event,
-            () -> {
-                FluentThreadVFL.Log("Creating default user profile");
-                FluentThreadVFL.Log("Setting up account permissions");
-                FluentThreadVFL.Log("Profile setup completed for: {}", userEvent.getEmail());
-            }
-        );
-    }
-    
-    private void sendWelcomeEmail(EventPublisherBlock event, UserRegisteredEvent userEvent) {
-        ThreadVFL.Runner.Instance.StartEventListenerLogger(
-            "Welcome Email",
-            "Sending welcome email",
-            buffer, 
-            event,
-            () -> {
-                FluentThreadVFL.Log("Loading email template");
-                FluentThreadVFL.Log("Personalizing content for: {}", userEvent.getEmail());
-                FluentThreadVFL.Log("Sending email via SMTP");
-                FluentThreadVFL.Log("Welcome email sent successfully");
-            }
-        );
-    }
-}
-```
-
----
-
-## Configuration Reference
-
-### Buffer Types
-
-#### ThreadSafeAsyncVFLBuffer (Recommended)
-```java
-VFLBuffer buffer = new ThreadSafeAsyncVFLBuffer(
-    bufferSize,      // Number of log entries before forced flush (e.g., 100-500)
-    flushInterval,   // Milliseconds between periodic flushes (e.g., 1000-10000)  
-    flushHandler,    // Where to send logs
-    executor         // Thread pool for async operations
-);
-```
-
-**Best for**: High-throughput applications, production systems
-**Features**: Non-blocking, periodic flushing, better performance
-
-#### ThreadSafeSynchronousVflBuffer
-```java
-VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(
-    bufferSize,      // Number of log entries before forced flush
-    flushHandler     // Where to send logs
-);
-```
-
-**Best for**: Simple applications, testing, debugging
-**Features**: Simpler implementation, immediate consistency
-
-### Flush Handlers
-
-#### InMemoryFlushHandler (Development/Testing)
-```java
-ThreadSafeInMemoryFlushHandlerImpl flushHandler = new ThreadSafeInMemoryFlushHandlerImpl();
-
-// Later, get structured JSON output:
-String jsonOutput = flushHandler.generateNestedJsonStructure();
-System.out.println(jsonOutput);
-```
-
-#### VFL Hub (Production - Recommended for Distributed Systems)
-```java
-// Configure to send logs to VFL Hub server
-VFLFlushHandler flushHandler = new VFLHubFlushHandler("http://your-vfl-hub:8080");
-```
-
-**Important**: For microservices and distributed systems, always use VFL Hub to get a unified view of logs across all services.
-
-### Recommended Configurations
-
-#### Development/Testing
-```java
-ThreadSafeInMemoryFlushHandlerImpl flushHandler = new ThreadSafeInMemoryFlushHandlerImpl();
-VFLBuffer buffer = new ThreadSafeSynchronousVflBuffer(50, flushHandler);
-```
-
-#### Production (Single Service)  
-```java
-ThreadSafeInMemoryFlushHandlerImpl flushHandler = new ThreadSafeInMemoryFlushHandlerImpl();
-VFLBuffer buffer = new ThreadSafeAsyncVFLBuffer(200, 5000, flushHandler, 
-    Executors.newFixedThreadPool(3));
-```
-
-#### Production (Distributed Systems)
-```java
-VFLFlushHandler hubHandler = new VFLHubFlushHandler("http://vfl-hub.company.com:8080");
-VFLBuffer buffer = new ThreadSafeAsyncVFLBuffer(300, 3000, hubHandler,
-    Executors.newFixedThreadPool(5));
-```
-
-### Cleanup  
-Always ensure proper cleanup:
-```java
-try {
-    // Your VFL operations
-} finally {
-    buffer.flushAndClose();
-}
-```
-
----
-
-## Quick Reference
-
-### ThreadVFL Static Methods
-```java
-// Basic logging
-ThreadVFL.Log("message");
-ThreadVFL.Warn("warning");  
-ThreadVFL.Error("error");
-
-// Function logging
-ThreadVFL.LogFn(() -> function(), result -> "msg");
-ThreadVFL.WarnFn(() -> function(), result -> "msg");
-ThreadVFL.ErrorFn(() -> function(), result -> "msg");
-
-// Block operations
-ThreadVFL.CallPrimarySubBlock("name", "start", () -> code, result -> "end");
-ThreadVFL.CallSecondaryJoiningBlock("name", "start", () -> code, executor, result -> "end");
-ThreadVFL.CallSecondaryNonJoiningBlock("name", "start", () -> code, executor);
-ThreadVFL.CreateEventPublisherBlock("name", "message");
-```
-
-### FluentThreadVFL Static Methods  
-```java
-// Fluent logging
-FluentThreadVFL.Log("message with {} and {}", param1, param2);
-FluentThreadVFL.Warn("warning with {}", param);
-FluentThreadVFL.Error("error message");
-
-// Fluent calls
-FluentThreadVFL.Call(() -> function()).asLog(r -> "message");
-FluentThreadVFL.Call(() -> function()).asSubBlock("name").withStartMessage("start").startPrimary();
-FluentThreadVFL.RunSubBlock(() -> runnable()).withBlockName("name").startPrimary();
-```
-
-**Remember**: Always use `ThreadVFL.Runner.Instance.StartVFL()` to begin your VFL logging session!
+## Legend
+
+- 📁 **Block** - A scope of execution (method, operation, service call)
+- 📝 **Info Log** - Normal execution information
+- ⚠️ **Warning Log** - Concerning but non-critical events
+- ❌ **Error Log** - Error conditions and failures
+- 📊 **Event Publisher** - Creates events for other services/components
+- 📡 **Event Listener** - Responds to published events
+- 🔥 **Fire-and-Forget** - Background operation that doesn't block main flow
+- 🌐 **Cross-Service** - Operation spanning multiple services
+- ⏱️ **Timing** - Duration information for operations
