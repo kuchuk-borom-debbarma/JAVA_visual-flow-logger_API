@@ -4,19 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Added API reference">
-      <change afterPath="$PROJECT_DIR$/documentations/System_OVerview.MD" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Reorganising documentation">
+      <change afterPath="$PROJECT_DIR$/codebase_dump.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/API_REFERENCE.MD" beforeDir="false" afterPath="$PROJECT_DIR$/documentations/API_REFERENCE.MD" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CLIENT_DESIGN.MD" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/Design Documentation.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/Visual Flow Logger (VFL).md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/java_vfl_documentation.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/prompts/brainstorm event listener.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/prompts/codebase.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_codebase_context.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/vfl_project_context.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,7 +167,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest.linear">
+  <component name="RunManager" selected="JUnit.AnnotationTest">
     <configuration name="AnnotationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
@@ -263,8 +256,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest" />
+        <item itemvalue="JUnit.AnnotationTest.linear" />
         <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
         <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.test" />
@@ -367,15 +360,7 @@
       <workItem from="1754999801701" duration="508000" />
       <workItem from="1755011843389" duration="1810000" />
       <workItem from="1755013680692" duration="690000" />
-      <workItem from="1755044982964" duration="8765000" />
-    </task>
-    <task id="LOCAL-00169" summary="Project structure refactor">
-      <option name="closed" value="true" />
-      <created>1754463579417</created>
-      <option name="number" value="00169" />
-      <option name="presentableId" value="LOCAL-00169" />
-      <option name="project" value="LOCAL" />
-      <updated>1754463579417</updated>
+      <workItem from="1755044982964" duration="11127000" />
     </task>
     <task id="LOCAL-00170" summary="Fixed bug">
       <option name="closed" value="true" />
@@ -761,7 +746,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755050954917</updated>
     </task>
-    <option name="localTasksCounter" value="218" />
+    <task id="LOCAL-00218" summary="Reorganising documentation">
+      <option name="closed" value="true" />
+      <created>1755053981334</created>
+      <option name="number" value="00218" />
+      <option name="presentableId" value="LOCAL-00218" />
+      <option name="project" value="LOCAL" />
+      <updated>1755053981334</updated>
+    </task>
+    <option name="localTasksCounter" value="219" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -779,7 +772,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(log): auto-create lambda sub-blocks for logging in spawned thread contexts&#10;When logging inside a lambda executed via `VFLFutures`, the thread-local block stack may be empty, causing errors or missing context linkage.&#10;This update adds logic in `Log` methods to detect spawned threads with no active block context and automatically start a temporary lambda sub-block linked to the originating parent context.&#10;Key changes:&#10;&#9;•&#9;Added `startLambdaSubBlock()` to `Log` to create and push a sub-block when logging in spawned threads without context.&#10;&#9;•&#9;Injected this check into all `Info`, `Warn`, and `Error` logging variants (sync and function forms).&#10;&#9;•&#9;Standardized spawned thread initialization via new `ThreadContextManager.InitializeSpawnedThreadContext(...)`.&#10;&#9;•&#9;Updated `VFLFutures` to use the new initialization method for both join and no-join async execution.&#10;Impact:&#10;&#9;•&#9;Ensures logs inside `CompletableFuture` lambdas are correctly linked to the VFL flow.&#10;&#9;•&#9;Prevents `NullPointerException` from empty thread-local context stacks in async scenarios.&#10;&#9;•&#9;Improves async/sub-block lifecycle consistency across threads." />
     <MESSAGE value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
     <MESSAGE value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
     <MESSAGE value="Removed concept of auto start root block" />
@@ -804,7 +796,8 @@
     <MESSAGE value="Documentation updates" />
     <MESSAGE value="Added new log type" />
     <MESSAGE value="Added API reference" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added API reference" />
+    <MESSAGE value="Reorganising documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reorganising documentation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

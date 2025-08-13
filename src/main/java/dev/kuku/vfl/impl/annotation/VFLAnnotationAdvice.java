@@ -6,16 +6,15 @@ import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
-import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static dev.kuku.vfl.core.helpers.VFLHelper.GetMethodName;
 
 /**
  * ByteBuddy advice class injected into methods annotated with {@link SubBlock}.
@@ -48,11 +47,9 @@ import static dev.kuku.vfl.core.helpers.VFLHelper.GetMethodName;
  * matched in the ByteBuddy transformation phase via
  * {@code ElementMatchers.isAnnotatedWith(SubBlock.class)}.
  */
-@Slf4j
 public class VFLAnnotationAdvice {
-
     public static final VFLAnnotationAdvice instance = new VFLAnnotationAdvice();
-
+    private static final Logger log = LoggerFactory.getLogger(VFLAnnotationAdvice.class);
     // Regex for {0}, {1}, etc.
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{(\\d+)}");
     // Regex for {r} or {return} (case-insensitive)

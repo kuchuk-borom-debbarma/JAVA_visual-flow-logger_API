@@ -1,11 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Appenders>
+        <!-- Console Appender with colors and beautiful formatting -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level}{ERROR=red bold, WARN=yellow bold, INFO=green, DEBUG=cyan, TRACE=blue} %style{[%t]}{magenta} %style{%c{1.}}{bright blue} - %msg%n"/>
+        </Console>
+
+        <!-- Alternative pattern without colors (for environments that don't support ANSI) -->
+        <Console name="ConsoleNoColor" target="SYSTEM_OUT">
+            <PatternLayout pattern="📅 %d{yyyy-MM-dd HH:mm:ss.SSS} │ %-5level │ 🧵 %-15.15t │ 📦 %-30.30c{1.} │ %msg%n"/>
         </Console>
     </Appenders>
+
     <Loggers>
-        <Root level="DEBUG">
+        <!-- Your library's logger -->
+        <Logger name="dev.kuku" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Keep third-party libraries quieter -->
+        <Logger name="org.hibernate" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="org.springframework" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Root logger -->
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
