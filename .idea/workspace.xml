@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="feat(docs/refactor): improve JavaDocs across VFL core &amp; cleanup helper imports**&#10;&#10;**Summary**&#10;- Added comprehensive JavaDoc to core VFL classes (`VFL`, `VFLBuffer`, `VFLBufferBase`, `AsyncBuffer`, `SynchronousBuffer`, `NoOpsBuffer`, flush handlers, etc.)&#10;- Clarified purpose, usage patterns, method contracts, thread‑safety expectations, and provided example snippets&#10;- Consolidated helper method imports from `Util` to `VFLHelper`&#10;- Performed minor formatting and comment cleanups without functional changes&#10;&#10;**Details**&#10;- Ensured each public API method and important internal class now has clear, user‑ or maintainer‑targeted documentation&#10;- Standardized style: class‑level purpose, when to use, pros/cons, example&#10;- Updated `import` statements in multiple classes to reference `dev.kuku.vfl.core.helpers.VFLHelper` instead of deprecated `Util`&#10;- No change to runtime functionality—pure documentation, readability, and maintainability improvement">
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Documentation updates">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/Visual Flow Logger (VFL).md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/Visual Flow Logger (VFL).md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mds/java_vfl_documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/mds/java_vfl_documentation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/models/logs/enums/LogTypeBlockStartEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/models/logs/enums/LogTypeBlockStartEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/Log.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -357,15 +356,7 @@
       <workItem from="1754999801701" duration="508000" />
       <workItem from="1755011843389" duration="1810000" />
       <workItem from="1755013680692" duration="690000" />
-      <workItem from="1755044982964" duration="4474000" />
-    </task>
-    <task id="LOCAL-00166" summary="Annotation seems working">
-      <option name="closed" value="true" />
-      <created>1754423505792</created>
-      <option name="number" value="00166" />
-      <option name="presentableId" value="LOCAL-00166" />
-      <option name="project" value="LOCAL" />
-      <updated>1754423505792</updated>
+      <workItem from="1755044982964" duration="4898000" />
     </task>
     <task id="LOCAL-00167" summary="Added test showing annotations">
       <option name="closed" value="true" />
@@ -751,7 +742,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755021933672</updated>
     </task>
-    <option name="localTasksCounter" value="215" />
+    <task id="LOCAL-00215" summary="Documentation updates">
+      <option name="closed" value="true" />
+      <created>1755049661590</created>
+      <option name="number" value="00215" />
+      <option name="presentableId" value="LOCAL-00215" />
+      <option name="project" value="LOCAL" />
+      <updated>1755049661590</updated>
+    </task>
+    <option name="localTasksCounter" value="216" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -769,7 +768,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactor: simplify VFLStarter and streamline context management&#10;&#10;- Complete VFLStarter class with both Supplier&lt;R&gt; and Runnable variants&#10;- Implement Runnable methods as delegates to Supplier versions for DRY principle&#10;- Simplify ThreadContextManager to focus on core context operations only&#10;- Remove complex VFL logger instance from ThreadContextManager&#10;- Move VFL instance creation to Log class as static singleton&#10;- Rename VFLBlockContext → BlockContext and VFLOpStarter → VFLStarter&#10;- Refactor VFL.getContext() to separate getContext() and getBuffer() methods&#10;- Update Configuration class name from VFLAnnotationConfig&#10;- Add AdviceOpLayer as public interface for package-private operations&#10;- Clean up imports and references throughout codebase&#10;&#10;Breaking changes:&#10;- ThreadContextManager API simplified (removed logger and complex context management)&#10;- VFL abstract class now requires separate getBuffer() implementation&#10;- Class renames: VFLBlockContext → BlockContext, VFLOpStarter → VFLStarter" />
     <MESSAGE value="feat: add SubBlock advice logic for correct sub-block creation &amp; cleanup&#10;Changes:&#10;&#9;•&#9;Implemented full `VFLAnnotationAdvice` entry/exit logic:&#10;&#9;•&#9;Determines parent context from current stack, spawned thread context, or optional root auto-creation.&#10;&#9;•&#9;Added warnings for missing parent context when `autoCreateRootBlock` is disabled.&#10;&#9;•&#9;Logs detailed sub-block creation with parent info and `startType`.&#10;&#9;•&#9;Closes context and logs exceptions on method exit.&#10;&#9;•&#9;Extended `ThreadContextManager`:&#10;&#9;•&#9;Added `PopCurrentContext`, `PushBlockToThreadLogStack`, and `IsSpawnedThread` helpers.&#10;&#9;•&#9;Enhanced cleanup when top-level context is removed.&#10;&#9;•&#9;Updated `SubBlock` annotation with optional `startMessage` and `endMessage`.&#10;&#9;•&#9;Added `autoCreateRootBlock` flag in `Configuration`.&#10;&#9;•&#9;Minor adjustment: made `Log.INSTANCE` non-private for internal usage.&#10;&#9;•&#9;Refactored `VFLStarter`:&#10;&#9;•&#9;Renamed `ContinueAsBlock` → `StartOperationAsBlock`.&#10;&#9;•&#9;Added `Log.INSTANCE.close()` calls for consistent block closure.&#10;Next step: integrate with `VFLFutures` wrapper for async tracking." />
     <MESSAGE value="feat: finalize SubBlock lifecycle and add async context propagation with VFLFutures&#10;We now fully implement the `@SubBlock` advice logic so sub-blocks are correctly created and tracked, even in edge cases such as missing parent context or execution on spawned threads. The logic will auto-create a root block when enabled, warn if context is missing, and ensure proper cleanup at method exit, including exception logging.&#10;Additionally, the new `VFLFutures` wrapper allows async tasks executed via `CompletableFuture` to inherit correct parent block context. This ensures blocks and logs inside async lambdas are properly linked in the VFL flow across threads and executors, and all thread-local context is cleaned up after execution.&#10;Key changes:&#10;&#9;•&#9;Improved entry/exit advice for `@SubBlock` annotation.&#10;&#9;•&#9;Helper methods for managing context stack, pushed blocks, and spawned thread context.&#10;&#9;•&#9;New `autoCreateRootBlock` config option.&#10;&#9;•&#9;`VFLFutures.supplyAsync` and `VFLFutures.runAsync` now propagate context to threads and clean up after.&#10;&#9;•&#9;Better logging and exception reporting.&#10;&#9;•&#9;Consistent block closure logic on both sync and async operations." />
     <MESSAGE value="feat(log): auto-create lambda sub-blocks for logging in spawned thread contexts&#10;When logging inside a lambda executed via `VFLFutures`, the thread-local block stack may be empty, causing errors or missing context linkage.&#10;This update adds logic in `Log` methods to detect spawned threads with no active block context and automatically start a temporary lambda sub-block linked to the originating parent context.&#10;Key changes:&#10;&#9;•&#9;Added `startLambdaSubBlock()` to `Log` to create and push a sub-block when logging in spawned threads without context.&#10;&#9;•&#9;Injected this check into all `Info`, `Warn`, and `Error` logging variants (sync and function forms).&#10;&#9;•&#9;Standardized spawned thread initialization via new `ThreadContextManager.InitializeSpawnedThreadContext(...)`.&#10;&#9;•&#9;Updated `VFLFutures` to use the new initialization method for both join and no-join async execution.&#10;Impact:&#10;&#9;•&#9;Ensures logs inside `CompletableFuture` lambdas are correctly linked to the VFL flow.&#10;&#9;•&#9;Prevents `NullPointerException` from empty thread-local context stacks in async scenarios.&#10;&#9;•&#9;Improves async/sub-block lifecycle consistency across threads." />
@@ -794,7 +792,8 @@
     <MESSAGE value="Testing out VFL hub now" />
     <MESSAGE value="feat(logging): ensure blocks are explicitly started and improve debug visibility&#10;&#10;- Removed `AtomicBoolean blockStarted` from `VFL` and now use `BlockContext.blockStarted` for thread-safe start tracking&#10;- Added explicit `ensureBlockStarted()` calls in `VFLStarter` and `VFLAnnotationAdvice` to guarantee block start before execution&#10;- Added debug `System.out.printf` in `VFL.ensureBlockStarted()` to log block start time and ID&#10;- Updated `Log` annotation helper to clearly document that detached blocks are not automatically started and must be started by the receiver&#10;- Changed default logging level in `log4j2.xml` from INFO to DEBUG for more verbose runtime tracing&#10;- Adjusted comments and console output for easier tracing during development" />
     <MESSAGE value="feat(docs/refactor): improve JavaDocs across VFL core &amp; cleanup helper imports**&#10;&#10;**Summary**&#10;- Added comprehensive JavaDoc to core VFL classes (`VFL`, `VFLBuffer`, `VFLBufferBase`, `AsyncBuffer`, `SynchronousBuffer`, `NoOpsBuffer`, flush handlers, etc.)&#10;- Clarified purpose, usage patterns, method contracts, thread‑safety expectations, and provided example snippets&#10;- Consolidated helper method imports from `Util` to `VFLHelper`&#10;- Performed minor formatting and comment cleanups without functional changes&#10;&#10;**Details**&#10;- Ensured each public API method and important internal class now has clear, user‑ or maintainer‑targeted documentation&#10;- Standardized style: class‑level purpose, when to use, pros/cons, example&#10;- Updated `import` statements in multiple classes to reference `dev.kuku.vfl.core.helpers.VFLHelper` instead of deprecated `Util`&#10;- No change to runtime functionality—pure documentation, readability, and maintainability improvement" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(docs/refactor): improve JavaDocs across VFL core &amp; cleanup helper imports**&#10;&#10;**Summary**&#10;- Added comprehensive JavaDoc to core VFL classes (`VFL`, `VFLBuffer`, `VFLBufferBase`, `AsyncBuffer`, `SynchronousBuffer`, `NoOpsBuffer`, flush handlers, etc.)&#10;- Clarified purpose, usage patterns, method contracts, thread‑safety expectations, and provided example snippets&#10;- Consolidated helper method imports from `Util` to `VFLHelper`&#10;- Performed minor formatting and comment cleanups without functional changes&#10;&#10;**Details**&#10;- Ensured each public API method and important internal class now has clear, user‑ or maintainer‑targeted documentation&#10;- Standardized style: class‑level purpose, when to use, pros/cons, example&#10;- Updated `import` statements in multiple classes to reference `dev.kuku.vfl.core.helpers.VFLHelper` instead of deprecated `Util`&#10;- No change to runtime functionality—pure documentation, readability, and maintainability improvement" />
+    <MESSAGE value="Documentation updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="Documentation updates" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

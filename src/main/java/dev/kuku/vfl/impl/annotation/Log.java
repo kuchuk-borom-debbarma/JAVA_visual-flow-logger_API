@@ -4,8 +4,8 @@ import dev.kuku.vfl.core.VFL;
 import dev.kuku.vfl.core.buffer.VFLBuffer;
 import dev.kuku.vfl.core.dtos.BlockContext;
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
-import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
+import dev.kuku.vfl.core.helpers.VFLHelper;
 import dev.kuku.vfl.core.models.Block;
 import dev.kuku.vfl.core.models.logs.SubBlockStartLog;
 import dev.kuku.vfl.core.models.logs.enums.LogTypeBlockStartEnum;
@@ -107,7 +107,9 @@ public class Log {
 
     // -------------------- WARN --------------------
 
-    /** Same as {@link #Info(String, Object...)} but logs at WARN level. */
+    /**
+     * Same as {@link #Info(String, Object...)} but logs at WARN level.
+     */
     public static void Warn(String message, Object... args) {
         if (!VFLInitializer.initialized) return;
         INSTANCE.warn(VFLHelper.FormatMessage(message, args));
@@ -139,7 +141,9 @@ public class Log {
 
     // -------------------- ERROR --------------------
 
-    /** Same as {@link #Info(String, Object...)} but logs at ERROR level. */
+    /**
+     * Same as {@link #Info(String, Object...)} but logs at ERROR level.
+     */
     public static void Error(String message, Object... args) {
         if (!VFLInitializer.initialized) return;
         INSTANCE.error(VFLHelper.FormatMessage(message, args));
@@ -185,7 +189,9 @@ public class Log {
         return INSTANCE.publish(publisherName, VFLHelper.FormatMessage(message, args));
     }
 
-    /** Overload for when you have no start message. */
+    /**
+     * Overload for when you have no start message.
+     */
     public static EventPublisherBlock Publish(String publisherName) {
         if (!VFLInitializer.initialized) return null;
         return INSTANCE.publish(publisherName, "");
@@ -224,7 +230,7 @@ public class Log {
                 currentContext.currentLogId,
                 startMessage,
                 detachedBlock.getId(),
-                LogTypeBlockStartEnum.SUB_BLOCK_START_PRIMARY,
+                LogTypeBlockStartEnum.SUB_BLOCK_CONTINUE,
                 VFLInitializer.VFLAnnotationConfig.buffer
         );
 
@@ -237,21 +243,31 @@ public class Log {
                     blockName, e.getClass().getSimpleName(), e.getMessage());
             throw e;
         } finally {
-            // Future: consider adding sub-block end log here
+            VFLFlowHelper.CreateLogAndPush2Buffer(
+                    subBlockStartLog.getBlockId(),
+                    subBlockStartLog.getId(), null,
+                    null, LogTypeBlockStartEnum.SUB_BLOCK_CONTINUE_COMPLETE, VFLInitializer.VFLAnnotationConfig.buffer
+            );
         }
     }
 
-    /** Overload with formatted start message. */
+    /**
+     * Overload with formatted start message.
+     */
     public static <R> R CreateContinuationBlock(String blockName, String startMessage, Object[] args, Function<Block, R> fn) {
         return CreateContinuationBlock(blockName, VFLHelper.FormatMessage(startMessage, args), fn);
     }
 
-    /** Overload with no start message. */
+    /**
+     * Overload with no start message.
+     */
     public static <R> R CreateContinuationBlock(String blockName, Function<Block, R> fn) {
         return CreateContinuationBlock(blockName, "", fn);
     }
 
-    /** Void version accepting a {@link Consumer}. */
+    /**
+     * Void version accepting a {@link Consumer}.
+     */
     public static void CreateContinuationBlock(String blockName, String startMessage, Consumer<Block> consumer) {
         CreateContinuationBlock(blockName, startMessage, block -> {
             consumer.accept(block);
@@ -259,12 +275,16 @@ public class Log {
         });
     }
 
-    /** Void version with formatted message. */
+    /**
+     * Void version with formatted message.
+     */
     public static void CreateContinuationBlock(String blockName, String startMessage, Object[] args, Consumer<Block> consumer) {
         CreateContinuationBlock(blockName, VFLHelper.FormatMessage(startMessage, args), consumer);
     }
 
-    /** Void version with no message. */
+    /**
+     * Void version with no message.
+     */
     public static void CreateContinuationBlock(String blockName, Consumer<Block> consumer) {
         CreateContinuationBlock(blockName, "", consumer);
     }
