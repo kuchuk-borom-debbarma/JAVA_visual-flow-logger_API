@@ -515,12 +515,9 @@ public class EventService {
 
 ---
 
-## Next Steps
+## Technical Design documentation
 
-1. **Set up VFL Hub**: Install and run the VFL Hub server
-2. **Try the examples**: Start with the simple order processing example
-3. **View the visualization**: Use VFL Hub's web interface to see your traces
-4. **Explore advanced features**: Add async operations and events to your flows
+[Technical System Overview for developers](documentations/System_OVerview.MD)
 
 ---
 
