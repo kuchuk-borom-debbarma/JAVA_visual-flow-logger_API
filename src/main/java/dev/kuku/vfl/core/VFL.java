@@ -173,7 +173,7 @@ public abstract class VFL {
                 getContext().blockInfo.getId(),
                 getBuffer()
         );
-        VFLFlowHelper.CreateLogAndPush2Buffer(
+        var publishLog = VFLFlowHelper.CreateLogAndPush2Buffer(
                 getContext().blockInfo.getId(),
                 getContext().currentLogId,
                 message,
@@ -181,7 +181,7 @@ public abstract class VFL {
                 LogTypeBlockStartEnum.PUBLISH_EVENT,
                 getBuffer()
         );
-        getContext().currentLogId = publisherBlock.getId();
+        getContext().currentLogId = publishLog.getId();
         return new EventPublisherBlock(publisherBlock);
     }
 

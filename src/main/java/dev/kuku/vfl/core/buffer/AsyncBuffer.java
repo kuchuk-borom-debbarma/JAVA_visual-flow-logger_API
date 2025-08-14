@@ -83,7 +83,7 @@ public class AsyncBuffer extends VFLBufferWithFlushHandlerBase {
                                    Map<String, Long> blockStarts,
                                    Map<String, BlockEndData> blockEnds) {
         if (flushExecutor.isShutdown()) {
-            log.warn("Executor is shutdown, performing synchronous flush");
+            log.debug("Executor is shutdown, performing synchronous flush");
             performOrderedFlush(logs, blocks, blockStarts, blockEnds);
             return;
         }

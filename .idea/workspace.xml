@@ -4,12 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Reorganising documentation">
-      <change afterPath="$PROJECT_DIR$/codebase_dump.txt" afterDir="false" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Re-added logger config with info level">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/impl/annotation/VFLAnnotationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codebase_dump.txt" beforeDir="false" afterPath="$PROJECT_DIR$/codebase_dump.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,7 +169,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest">
+  <component name="RunManager" selected="JUnit.AnnotationTest.eventListenerSyncTest">
     <configuration name="AnnotationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
@@ -256,9 +258,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
         <item itemvalue="JUnit.AnnotationTest" />
         <item itemvalue="JUnit.AnnotationTest.linear" />
-        <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
         <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.test" />
       </list>
@@ -267,8 +269,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.23892.409" />
-        <option value="bundled-js-predefined-d6986cc7102b-e03c56caf84a-JavaScript-IU-252.23892.409" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
       </set>
     </attachedChunks>
   </component>
@@ -360,15 +362,8 @@
       <workItem from="1754999801701" duration="508000" />
       <workItem from="1755011843389" duration="1810000" />
       <workItem from="1755013680692" duration="690000" />
-      <workItem from="1755044982964" duration="11127000" />
-    </task>
-    <task id="LOCAL-00170" summary="Fixed bug">
-      <option name="closed" value="true" />
-      <created>1754463754376</created>
-      <option name="number" value="00170" />
-      <option name="presentableId" value="LOCAL-00170" />
-      <option name="project" value="LOCAL" />
-      <updated>1754463754376</updated>
+      <workItem from="1755044982964" duration="13863000" />
+      <workItem from="1755146848915" duration="1334000" />
     </task>
     <task id="LOCAL-00171" summary="Adding loggins">
       <option name="closed" value="true" />
@@ -754,7 +749,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755053981334</updated>
     </task>
-    <option name="localTasksCounter" value="219" />
+    <task id="LOCAL-00219" summary="Re-added logger config with info level">
+      <option name="closed" value="true" />
+      <created>1755056513494</created>
+      <option name="number" value="00219" />
+      <option name="presentableId" value="LOCAL-00219" />
+      <option name="project" value="LOCAL" />
+      <updated>1755056513494</updated>
+    </task>
+    <option name="localTasksCounter" value="220" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -772,7 +775,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(log): add sub-block start log when auto-creating lambda sub-blocks&#10;&#10;When creating a lambda sub-block in spawned threads, also push a&#10;SUB_BLOCK_START_PRIMARY log to the buffer and update the parent&#10;context’s currentLogId for proper flow linking." />
     <MESSAGE value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
     <MESSAGE value="Removed concept of auto start root block" />
     <MESSAGE value="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability." />
@@ -797,7 +799,8 @@
     <MESSAGE value="Added new log type" />
     <MESSAGE value="Added API reference" />
     <MESSAGE value="Reorganising documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Reorganising documentation" />
+    <MESSAGE value="Re-added logger config with info level" />
+    <option name="LAST_COMMIT_MESSAGE" value="Re-added logger config with info level" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

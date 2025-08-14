@@ -57,7 +57,7 @@ class TestService {
 
     @SubBlock
     public void linear() {
-        VFLStarter.StartRootBlock("Linear operation", () -> {
+        VFLStarter.StartRootBlock("Linear operation test", () -> {
             Log.Info("SUP");
             int a = Log.InfoFn(() -> square(12), "Squaring {} = {}", 12);
             int b = squareAndMultiply(a, 2);
@@ -66,7 +66,7 @@ class TestService {
     }
 
     public void async() {
-        VFLStarter.StartRootBlock("Async operation", () -> {
+        VFLStarter.StartRootBlock("Async operation test", () -> {
             Log.Info("Starting async test with thread pool");
             var e = Executors.newFixedThreadPool(1);
             var t = VFLFutures.runAsync(() -> {
@@ -87,14 +87,18 @@ class TestService {
     }
 
     public void eventPublisher() {
-        VFLStarter.StartRootBlock("Event publisher", () -> {
+        VFLStarter.StartRootBlock("Event publisher test", () -> {
             Log.Info("Starting event listener test");
             System.err.println("Debug - About to publish event");
             var p = Log.Publish("Ordered item");
             System.err.println("Debug - Published event, result: " + p);
             Log.Info("Published stuff");
             listenerOne(p);
+            listenerOne(p);
+            listenerOne(p);
             Log.Info("Another log after listener 1");
+            listenerTwo(p);
+            listenerTwo(p);
             listenerTwo(p);
         });
     }
@@ -103,12 +107,18 @@ class TestService {
     void listenerOne(EventPublisherBlock p) {
         VFLStarter.StartEventListener(p, "Listener 1", null, () -> {
             Log.Info("Listener 1");
+            square(23);
+            square(1);
+            square(2);
         });
     }
 
     void listenerTwo(EventPublisherBlock p) {
         VFLStarter.StartEventListener(p, "Listener 2", null, () -> {
             Log.Info("Listener 2");
+            square(21);
+            square(1);
+            square(8);
         });
     }
 
