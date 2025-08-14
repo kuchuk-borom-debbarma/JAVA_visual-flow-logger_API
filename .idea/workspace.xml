@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Re-added logger config with info level">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codebase_dump.txt" beforeDir="false" afterPath="$PROJECT_DIR$/codebase_dump.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/VFL.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/buffer/AsyncBuffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/threadvfl/AnnotationTest.java" afterDir="false" />
-    </list>
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed major logic bug related to publish block" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -363,15 +355,7 @@
       <workItem from="1755011843389" duration="1810000" />
       <workItem from="1755013680692" duration="690000" />
       <workItem from="1755044982964" duration="13863000" />
-      <workItem from="1755146848915" duration="1334000" />
-    </task>
-    <task id="LOCAL-00171" summary="Adding loggins">
-      <option name="closed" value="true" />
-      <created>1754464821035</created>
-      <option name="number" value="00171" />
-      <option name="presentableId" value="LOCAL-00171" />
-      <option name="project" value="LOCAL" />
-      <updated>1754464821035</updated>
+      <workItem from="1755146848915" duration="1362000" />
     </task>
     <task id="LOCAL-00172" summary="New design in progress. Super simple and unifed the logger and annotation">
       <option name="closed" value="true" />
@@ -757,7 +741,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755056513494</updated>
     </task>
-    <option name="localTasksCounter" value="220" />
+    <task id="LOCAL-00220" summary="Fixed major logic bug related to publish block">
+      <option name="closed" value="true" />
+      <created>1755148206616</created>
+      <option name="number" value="00220" />
+      <option name="presentableId" value="LOCAL-00220" />
+      <option name="project" value="LOCAL" />
+      <updated>1755148206616</updated>
+    </task>
+    <option name="localTasksCounter" value="221" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -775,7 +767,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat: refactor context management and block lifecycle for async/sub-block operations&#10;&#10;- Remove spawned thread context; all async operations now use local block context.&#10;- Refactor ThreadContextManager: unify stack initialization and block closing APIs.&#10;- VFLFutures now create and manage lambda sub-blocks directly, ensuring proper context and log linkage in async flows.&#10;- Rename VFLStarter.StartOperation → StartRootBlock; clarify method usage and cleanup logic.&#10;- Update BlockContext with isLambdaBlock flag for future lambda block identification.&#10;- Generalize sub-block creation and closure for improved correctness across sync/async/threaded use cases." />
     <MESSAGE value="Removed concept of auto start root block" />
     <MESSAGE value="feat(config): introduce VFLAnnotationConfig for centralized annotation configuration&#10;&#10;- Replaced `Configuration` singleton with new `VFLAnnotationConfig` class to hold `disabled` flag and `VFLBuffer` reference.&#10;- Updated all annotation-related components (`Log`, `VFLAnnotationAdvice`, `VFLFutures`, `VFLStarter`) to read buffer/config from `VFLInitializer.VFLAnnotationConfig` instead of `Configuration.INSTANCE`.&#10;- Enhanced `VFLInitializer` to accept `VFLAnnotationConfig` on initialization and added `IsEnabled()` check for feature gating.&#10;- Removed &quot;auto start root block&quot; logic; block creation now explicitly depends on configuration state.&#10;- Updated logging to use framework `Log` methods instead of raw SLF4J loggers in `ThreadContextManager`.&#10;- Adjusted block naming in `VFLFutures` (now differentiating JOIN vs NO_JOIN cases).&#10;- Documentation updates (`README.md`, `mds/*`) to rename “Configuration” references to “VFLAnnotationConfig”.&#10;&#10;Impact:&#10;Provides a single, configurable entry point for enabling/disabling VFL instrumentation and supplying the buffer, improving flexibility and maintainability." />
     <MESSAGE value="refactor(core): encapsulate complex logic and reduce API surface&#10;&#10;- Moved method enter/exit logic from static annotated methods in `VFLAnnotationAdvice` to instance methods, keeping static hooks minimal while preserving ByteBuddy integration.&#10;- Introduced public `instance` singleton in `VFLAnnotationAdvice` for delegated logic invocation.&#10;- Restricted `ThreadContextManager` class and methods to package-private, reducing its public API footprint.&#10;- Replaced `IsEnabled()` checks with `isDisabled()` for simpler early-return logic across `VFLFutures` and `VFLStarter`.&#10;- Removed obsolete `AdviceOpLayer.java`.&#10;- Added explicit reference to `VFLAnnotationAdvice.instance` in `Main` to ensure initialization." />
@@ -800,7 +791,8 @@
     <MESSAGE value="Added API reference" />
     <MESSAGE value="Reorganising documentation" />
     <MESSAGE value="Re-added logger config with info level" />
-    <option name="LAST_COMMIT_MESSAGE" value="Re-added logger config with info level" />
+    <MESSAGE value="Fixed major logic bug related to publish block" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed major logic bug related to publish block" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
