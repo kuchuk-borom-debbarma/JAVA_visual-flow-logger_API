@@ -18,7 +18,7 @@ Visual Flow Logger (VFL) is a sophisticated distributed tracing and flow visuali
 ```mermaid
 graph TB
     subgraph "Application Layer"
-        A[User Code] --> B[@SubBlock Methods]
+        A[User Code] --> B[SubBlock Methods]
         C[VFLStarter] --> D[Root/Continue/Event Blocks]
     end
     
