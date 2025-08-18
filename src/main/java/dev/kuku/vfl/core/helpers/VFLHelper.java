@@ -1,9 +1,10 @@
 package dev.kuku.vfl.core.helpers;
 
 import dev.kuku.vfl.impl.annotation.SubBlock;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedEpochGenerator;
 
 import java.lang.reflect.Method;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,8 +28,16 @@ public class VFLHelper {
     private static final Pattern RETURN_PLACEHOLDER_PATTERN =
             Pattern.compile("\\{r(?:eturn)?}", Pattern.CASE_INSENSITIVE);
 
+    // UUID v7 generator (time-based with Unix timestamp)
+    private static final TimeBasedEpochGenerator UUID_V7_GENERATOR = Generators.timeBasedEpochGenerator();
+
+    /**
+     * Generates a UUID v7 (time-based with Unix timestamp) for better sorting and indexing.
+     *
+     * @return UUID v7 as string
+     */
     public static String UID() {
-        return UUID.randomUUID().toString();
+        return UUID_V7_GENERATOR.generate().toString();
     }
 
     /**

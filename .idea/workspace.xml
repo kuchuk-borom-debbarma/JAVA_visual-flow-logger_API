@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Fixed major logic bug related to publish block" />
+    <list default="true" id="19ea8c2a-ceaf-44e0-8480-cb2e13ad769d" name="Changes" comment="Using UUID V7 for naturally sorted uid">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/dev/kuku/vfl/core/helpers/VFLHelper.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -161,7 +165,7 @@
       <recent name="bytebuddy" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnnotationTest.eventListenerSyncTest">
+  <component name="RunManager" selected="JUnit.AnnotationTest.async">
     <configuration name="AnnotationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="vfl_java" />
       <extension name="coverage">
@@ -250,10 +254,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.eventListenerSyncTest" />
         <item itemvalue="JUnit.AnnotationTest" />
         <item itemvalue="JUnit.AnnotationTest.linear" />
-        <item itemvalue="JUnit.AnnotationTest.async" />
         <item itemvalue="JUnit.AnnotationTest.test" />
       </list>
     </recent_temporary>
@@ -356,6 +360,7 @@
       <workItem from="1755013680692" duration="690000" />
       <workItem from="1755044982964" duration="13863000" />
       <workItem from="1755146848915" duration="1362000" />
+      <workItem from="1755499030773" duration="1354000" />
     </task>
     <task id="LOCAL-00172" summary="New design in progress. Super simple and unifed the logger and annotation">
       <option name="closed" value="true" />
