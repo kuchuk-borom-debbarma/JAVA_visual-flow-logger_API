@@ -14,7 +14,7 @@
 
     <Loggers>
         <!-- Your library's logger -->
-        <Logger name="dev.kuku" level="INFO" additivity="false">
+        <Logger name="dev.kuku" level="DEBUG" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
 
