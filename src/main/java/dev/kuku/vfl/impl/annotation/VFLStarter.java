@@ -1,5 +1,6 @@
 package dev.kuku.vfl.impl.annotation;
 //TODO async test needs to be done thoroughly
+//TODO do not throw exceptions as a logger it is bad. Use warnings
 import dev.kuku.vfl.core.dtos.EventPublisherBlock;
 import dev.kuku.vfl.core.helpers.VFLFlowHelper;
 import dev.kuku.vfl.core.models.Block;
