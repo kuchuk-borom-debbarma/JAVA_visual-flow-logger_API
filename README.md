@@ -23,7 +23,7 @@ The **VFL Client Java Framework** is a Java implementation of Visual Flow Logger
 
 ### Key Features
 
-- **Minimal Refactoring**: Add `@SubBlock` annotations to existing methods
+- **Minimal non breaking Refactoring**: Add `@SubBlock` annotations to existing methods
 - **Hierarchical Logging**: View your application flow as a tree structure
 - **Distributed Tracing**: Track operations across multiple services
 - **Asynchronous Support**: Handle parallel operations and background tasks
